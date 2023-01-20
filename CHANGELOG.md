@@ -1,5 +1,8 @@
 # chat21-web-widget ver 5.0
 
+### 5.0.53.1 in PROD
+- bug-fixed: sourceTitle is not the right one (about:srcdoc)
+
 ### 5.0.53 in PROD
 
 ### 5.0.53-rc.3
