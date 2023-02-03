@@ -1,5 +1,8 @@
 # chat21-web-widget ver 5.0
 
+### 5.0.53.2 in PROD
+- bug-fixed: is showAvailableAgents is false and no conversations exist, 'new conversation' button not displayed
+
 ### 5.0.53.1 in PROD
 - bug-fixed: sourceTitle is not the right one (about:srcdoc)
 
