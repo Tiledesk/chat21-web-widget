@@ -568,7 +568,7 @@ export class Globals {
     if(isOpen && isMobile){
       //block body scroll
       // window.parent.document.body.style.height = '100vh';
-      window.parent.document.body.style.height = '0';
+      // window.parent.document.body.style.height = '0';
       window.parent.document.body.style.width = '100%';
       window.parent.document.body.style.overflowY = 'hidden'
       window.parent.document.body.style.position = 'fixed';

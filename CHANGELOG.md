@@ -1,5 +1,8 @@
 # chat21-web-widget ver 5.0
 
+### 5.0.70-ionic in PROD
+- bug-fixed: widget not showed when click on launch button if is in mobile ionic app
+
 ### 5.0.70 in PROD
 
 ### 5.0.70-rc.1
