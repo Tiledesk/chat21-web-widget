@@ -5,6 +5,9 @@
     *Dario De Pascalis* 
 ### **Copyrigth**: *Tiledesk SRL*
 
+### 5.0.81-rc.1 
+- added: updateLeadInfo function in messageAdded subscription
+
 ### 5.0.80 in PROD
 
 ### 5.0.80-rc.2
