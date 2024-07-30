@@ -5,6 +5,9 @@
     *Dario De Pascalis* 
 ### **Copyrigth**: *Tiledesk SRL*
 
+### 5.0.81-rc.2
+- added: blank.html page to integrate widget on webview
+
 ### 5.0.81-rc.1 
 - added: updateLeadInfo function in messageAdded subscription
 
