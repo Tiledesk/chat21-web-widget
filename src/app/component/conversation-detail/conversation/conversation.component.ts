@@ -733,7 +733,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
           this.onNewMessageCreated.emit(msg)
           this.checkMessagesLegntForTranscriptDownloadMenuOption();
           this.resetTimeout();
-          this.updateLeadInfo(msg);
+          // this.updateLeadInfo(msg);
         }
       });
       const subscribe = {key: subscribtionKey, value: subscribtion };
