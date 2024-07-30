@@ -200,16 +200,31 @@
         window.Tiledesk('onInit', function(event_data) {
             console.log("onInit Tiledesk FN", event_data); 
             //open widget after 3s if is closed
-            // setTimeout(() => {
-            //     if(event_data && event_data.detail && event_data.detail.global && !event_data.detail.global.isOpen){
-            //         window.Tiledesk('open')
-            //     }
-            // }, 3000);
+            setTimeout(() => {
+                if(event_data && event_data.detail && event_data.detail.global && !event_data.detail.global.isOpen){
+                    window.Tiledesk('open')
+                }
+            }, 3000);
         });
 
         window.Tiledesk('onAuthStateChanged', function(event_data) {
-        	console.log("AUTHENTICATED!", event_data);
+        	console.log("onAuthStateChanged Tiledesk FN!", event_data);
         });
+
+         window.Tiledesk('onMessageCreated', function(event_data) {
+        	// console.log("onMessageCreated!", event_data);
+            window.parent.postMessage(event_data.detail, '*')
+       		// if(event_data.detail.isLogged){
+            // 	console.log("isLogged!!!!", event_data);
+            // 	window.Tiledesk('show')
+            // }
+        });
+
+        window.addEventListener('message', (event_data)=> {
+            if(event_data && event_data.data && event_data.data.action === 'restart'){
+                window.Tiledesk('startConversation', event_data.data.intentName)
+            }
+        })
     </script>
 
     <script type="application/javascript">
