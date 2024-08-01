@@ -64,3 +64,15 @@ export const IMG_PROFILE_DEFAULT = '/assets/images/avatar_male_tiledesk.svg';
 // start conversation bot (proxy)
 export const PROXY_MSG_START = '__start';
 
+export const HEADER_MENU_OPTION = {
+    LOGOUT      :   'logout',
+    VOLUME_ON   :   'volume_on',
+    VOLUME_OFF  :   'volume_off',
+    TRANSCRIPT  :   'transcript',
+    CLOSE       :   'close',
+    DETAIL      :   'detail',
+    RESTART     :   'restart',
+    MAXIMIZE    :   'maximize',
+    MINIMIZE    :   'minimize'
+}
+

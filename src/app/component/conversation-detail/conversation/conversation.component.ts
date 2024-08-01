@@ -14,7 +14,7 @@ import { ConversationModel } from 'src/chat21-core/models/conversation';
 
 // utils
 import { v4 as uuidv4 } from 'uuid';
-import { UID_SUPPORT_GROUP_MESSAGES } from 'src/app/utils/constants';
+import { HEADER_MENU_OPTION, UID_SUPPORT_GROUP_MESSAGES } from 'src/app/utils/constants';
 import { CHANNEL_TYPE, INFO_MESSAGE_TYPE, TYPE_MSG_TEXT } from 'src/chat21-core/utils/constants';
 import { getDateDifference } from 'src/chat21-core/utils/utils';
 import { isJustRecived, isUserBanned } from 'src/chat21-core/utils/utils-message';
@@ -219,7 +219,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'MINIMIZE',
       'CLOSE_CHAT',
       'RESTART',
-      'LOGOUT'
+      'LOGOUT',
+      'OPEN_DETAIL'
     ];
 
     const keysFooter = [
@@ -976,7 +977,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.onSoundChange.emit(soundEnabled)
   }
   /** CALLED BY: conv-header component */
-  onCloseChat(event){
+  onCloseChat(){
     this.logger.debug('[CONV-COMP] close chat with uid ', this.conversation.uid)
     this.tiledeskRequestService.closeSupportGroup(this.conversation.uid).then(data => {
       if(data === 'closed'){
@@ -988,7 +989,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     })
   }
   /** CALLED BY: conv-header component */
-  onRestartChat(event){
+  onRestartChat(){
     this.hideTextAreaContent = true
   }
   /** CALLED BY: conv-header component */
@@ -1004,6 +1005,42 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   /** CALLED BY: conv-header component */
   onSignOutFN(event){
     this.onSignOut.emit(true)
+  }
+
+  /** CALLED BY: conv-header conv-content component */
+  onMenuOptionClick(event){
+    switch(event){
+      case HEADER_MENU_OPTION.LOGOUT:
+        this.onSignOut.emit(true)
+        break;
+      case HEADER_MENU_OPTION.VOLUME_ON:{
+        let soundEnabled = true
+        this.onSoundChange.emit(soundEnabled)
+        break;
+      }
+      case HEADER_MENU_OPTION.VOLUME_OFF:{
+        let soundEnabled = false
+        this.onSoundChange.emit(soundEnabled)
+        break;
+      }
+      case HEADER_MENU_OPTION.TRANSCRIPT:
+        break;
+      case HEADER_MENU_OPTION.CLOSE:
+        this.onCloseChat()
+        break;
+      case HEADER_MENU_OPTION.DETAIL:
+        //TODO
+        break;
+      case HEADER_MENU_OPTION.RESTART:
+        this.onRestartChat()
+        break;
+      case HEADER_MENU_OPTION.MAXIMIZE:
+        this.onWidgetHeightChange('max')
+        break;
+      case HEADER_MENU_OPTION.MINIMIZE:
+        this.onWidgetHeightChange('min')
+        break;
+    }
   }
   /** CALLED BY: conv-header conv-content component */
   onMenuOption(event:boolean){

@@ -215,6 +215,7 @@ export class Globals {
   displayOnDesktop: boolean; // *******  new ********
 
   hiddenMessage: string; // *******  new ********
+  isDevMode: boolean; // *******  new ********
   constructor(
   ) { }
 
@@ -464,6 +465,8 @@ export class Globals {
     // this.parameters.push({'supportMode': true});
 
     this.newConversationStart = true;
+
+    this.isDevMode = false;
 
   }
 

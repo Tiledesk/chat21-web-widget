@@ -1779,6 +1779,11 @@ export class GlobalSettingsService {
         if (TEMP) {
             globals.hiddenMessage = TEMP;
         }
+
+        TEMP = getParameterByName(windowContext, 'td_draft');
+        if (TEMP) {
+            globals.isDevMode = stringToBoolean(TEMP);
+        }
         
     }
 

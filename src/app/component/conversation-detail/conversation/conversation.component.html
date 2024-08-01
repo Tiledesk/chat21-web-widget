@@ -18,6 +18,7 @@
         [hideRestartConversationOptionsMenu]="((!g?.singleConversation && !hideTextAreaContent) || g?.hideRestartConversationOptionsMenu)"
         [hideHeaderConversationOptionsMenu]="g?.hideHeaderConversationOptionsMenu"
         [hideSignOutOptionMenu]="(!g?.singleConversation || !g?.showLogoutOption)"
+        [hideChatDetailOptionMenu]="(!g?.isDevMode)"
         [stylesMap]="stylesMap"
         [translationMap]="translationMapHeader"
         [widgetTitle]="g?.project?.widgetTitle"
@@ -29,11 +30,7 @@
         [typingLocation]="g?.typingLocation"
         (onBack)="onBackHomeFN()"
         (onCloseWidget)="onCloseWidgetFN()"
-        (onSoundChange)="onSoundChangeFN($event)"
-        (onCloseChat)="onCloseChat($event)"
-        (onRestartChat)="onRestartChat($event)"
-        (onWidgetHeightChange)="onWidgetHeightChange($event)"
-        (onSignOut)="onSignOutFN($event)"
+        (onMenuOptionClick)="onMenuOptionClick($event)"
         (onMenuOptionShow)="onMenuOption($event)">
     </chat-conversation-header>
 

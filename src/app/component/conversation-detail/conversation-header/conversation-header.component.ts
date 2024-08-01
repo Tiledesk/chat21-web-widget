@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Globals } from 'src/app//utils/globals';
 import { AppConfigService } from 'src/app/providers/app-config.service';
+import { HEADER_MENU_OPTION } from 'src/app/utils/constants';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
@@ -27,6 +28,7 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
   @Input() hideHeaderBackButton: boolean;
   @Input() hideHeaderConversationOptionsMenu: boolean;
   @Input() hideSignOutOptionMenu: boolean;
+  @Input() hideChatDetailOptionMenu: boolean;
   @Input() windowContext;
   @Input() stylesMap: Map<string, string>
   @Input() translationMap: Map< string, string>;
@@ -34,11 +36,7 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
   @Input() build_version: string;
   @Output() onBack = new EventEmitter();
   @Output() onCloseWidget = new EventEmitter();
-  @Output() onSoundChange = new EventEmitter();
-  @Output() onCloseChat =  new EventEmitter();
-  @Output() onRestartChat =  new EventEmitter();
-  @Output() onWidgetHeightChange = new EventEmitter<string>();
-  @Output() onSignOut = new EventEmitter();
+  @Output() onMenuOptionClick = new EventEmitter();
   @Output() onMenuOptionShow = new EventEmitter();
   // ========= end:: Input/Output values
 
@@ -63,12 +61,11 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
     public g: Globals,
     public appConfigService: AppConfigService,) {
       this.API_URL = this.appConfigService.getConfig().apiUrl;
-     }
+  }
 
   ngOnInit() {
     this.logger.debug('[CONV-HEADER] ngOnInit: conversation-header COMPONENT ', this.translationMap);
     this.membersConversation.push(this.senderId)
-    //this.initializeTyping();
   }
 
   ngOnChanges(changes: SimpleChanges){
@@ -88,17 +85,38 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
     this.onBack.emit();
   }
 
-  closeChat(){
-    this.onCloseChat.emit();
-  }
-
-  restartChat(){
-    this.onRestartChat.emit();
-    this.onMenuOptionShow.emit(false)
-  }
-
   closeWidget() {
     this.onCloseWidget.emit();
+  }
+
+
+  closeChat(){
+    this.onMenuOptionClick.emit(HEADER_MENU_OPTION.CLOSE)
+  }
+  restartChat(){
+    this.onMenuOptionClick.emit(HEADER_MENU_OPTION.RESTART)
+    this.onMenuOptionShow.emit(false)
+  }
+  openDetail(){
+    this.onMenuOptionClick.emit(HEADER_MENU_OPTION.DETAIL)
+  }
+  signOut(){
+    this.onMenuOptionClick.emit(HEADER_MENU_OPTION.LOGOUT)
+  }
+  /**
+   * @param status : string 'max' || 'min'
+   */
+  maximizeMinimize(status){
+    this.heightStatus = status
+    if(status === 'min') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.MINIMIZE)
+    if(status === 'max') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.MAXIMIZE)
+    this.onMenuOptionShow.emit(false)
+  }
+  toggleSound() {
+    this.soundEnabled = !this.soundEnabled
+    if(this.soundEnabled) this.onMenuOptionClick.emit(HEADER_MENU_OPTION.VOLUME_ON)
+    if(!this.soundEnabled) this.onMenuOptionClick.emit(HEADER_MENU_OPTION.VOLUME_OFF)
+    this.onMenuOptionShow.emit(false)
   }
   // =========== END: event emitter function ====== //
 
@@ -108,28 +126,11 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
     windowContext.open(url, '_blank');
     this.onMenuOptionShow.emit(false)
   }
-  
-  toggleSound() {
-    this.onMenuOptionShow.emit(false)
-    this.onSoundChange.emit(!this.soundEnabled)
-  }
-
-  signOut(){
-    this.onSignOut.emit(true)
-  }
 
   toggleMenu() {
     this.onMenuOptionShow.emit(!this.isMenuShow)
   }
 
-  /**
-   * 
-   * @param status : string 'max' || 'min'
-   */
-  maximizeMinimize(status){
-    this.heightStatus = status
-    this.onWidgetHeightChange.emit(status)
-  }
 
 
 
