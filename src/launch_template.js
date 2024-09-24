@@ -7,6 +7,15 @@ ready(function() {
     initWidget();
 });
 
+function detectIfIsMobile(windowContext) {
+  let isMobile = false;
+  if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(windowContext.navigator.userAgent))
+    isMobile = true
+  else
+    isMobile = false
+  return isMobile;
+}
+
 /** */
 function ready(callbackFunction){
     // if(document.readyState != 'loading'){
@@ -21,6 +30,12 @@ function ready(callbackFunction){
     document.addEventListener('mousemove', start);
     document.addEventListener('touchstart', start);
     document.addEventListener('keydown', start);
+
+    let isMobile = detectIfIsMobile(window)
+    if(isMobile){
+      console.log('Mobile device detected: load Widget')
+      document.dispatchEvent(new Event('mousemove'))
+    }
 
     function start(){
       if(document.readyState==='complete'){
