@@ -1,0 +1,34 @@
+.audio-recorder {
+    text-align: center;
+    margin: 0px;
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    float: left;
+}
+
+button {
+    margin: 0px;
+    padding: 0px;
+    font-size: 16px;
+    border: none;
+    background-color: transparent;
+    fill: var(--icon-fill-color);
+    color: #5f6368;
+}
+
+
+
+.audio-track{
+    // position: absolute;
+    // bottom: 8px;
+    // left: 65px;
+    width: auto;
+
+
+}
+audio {
+    width: 290px;
+    height: 40px;
+    margin: 0 10px;
+}
