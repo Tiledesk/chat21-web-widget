@@ -6,7 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.82-rc.2
+- **added**: automatically start widget after 5s
+
 # 5.0.82-rc.1 
+- **added**: automatically load widget if is on mobile device
 
 # 5.0.81 in PROD
 
