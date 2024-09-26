@@ -30,6 +30,7 @@ function ready(callbackFunction){
   }, time)
 
   function start(){
+    clearTimeout(timeout);
     if(document.readyState==='complete'){
       callbackFunction()
     }else if(window.attachEvent){
