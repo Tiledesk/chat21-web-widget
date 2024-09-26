@@ -8,10 +8,15 @@
 
         <!-- ICON CLOSE CHAT -->
         <button [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-close c21-button-clean" [ngStyle]="{'display': (hideHeaderCloseButton)?'none':'flex'}" (click)="closeWidget()">
-            <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
+            <!-- <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
                 width="24px" height="24px" viewBox="0 0 24 24">
                 <path fill="none" d="M0 0h24v24H0V0z" />
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                <title id="altIconTitle">{{ translationMap?.get('BUTTON_CLOSE_TO_ICON') }}</title>
+            </svg> -->
+            <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
+                width="24px" height="24px" viewBox="0 0 24 24">
+                <path d="M19.35,9.21c.2-.2.2-.51,0-.71l-.71-.71c-.2-.2-.51-.2-.71,0l-5.94,5.94-5.94-5.94c-.2-.2-.51-.2-.71,0l-.71.71c-.2.2-.2.51,0,.71l7,7c.2.2.51.2.71,0l7-7Z"/>
                 <title id="altIconTitle">{{ translationMap?.get('BUTTON_CLOSE_TO_ICON') }}</title>
             </svg>
         </button>
