@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.82-rc.3
+- **changed**: close icon into home and conversation-detail components
+
 # 5.0.82-rc.2
 - **added**: automatically start widget after 5s
 
