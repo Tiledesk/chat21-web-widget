@@ -450,11 +450,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   onSendRecording(audioBlob: Blob | null) {
     this.isStartRec = false;
     if (audioBlob) {
-      console.log('invio traccia! URL audio:', audioBlob.text);
       this.convertBlobToBase64(audioBlob);
       this.isStopRec = false;
     } else {
-      console.log('non invio e chiudo URL.');
       this.isStopRec = false;
     }
   }
@@ -493,7 +491,13 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
         'uid': uid,
         'size': size
       };
-      that.uploadSingle(metadata, audioBlob, '');
+      
+      const file = new File([audioBlob], "audio-file.mp3", {
+        type: audioBlob.type,     
+        lastModified: Date.now()
+      });
+
+      that.uploadSingle(metadata, file, '');
     };
     //}, false);
   }

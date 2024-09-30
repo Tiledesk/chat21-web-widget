@@ -1,0 +1,29 @@
+
+<audio *ngIf="metadata" controls>
+    <source [src]="metadata.src" type="audio/mpeg">
+</audio> 
+
+<div class="audio-player">
+    <audio #audioElement [src]="audioUrl"></audio>
+    <!-- <canvas #canvasElement></canvas> -->
+    <canvas #canvasElement class="waveformCanvas"></canvas> 
+  </div>
+
+
+<!-- Audio nascosto per gestire manualmente la riproduzione -->
+<!-- <audio #audioElement [src]="audioUrl"></audio> -->
+<!-- <canvas #waveformCanvas class="waveformCanvas"></canvas>  -->
+ 
+<div *ngIf="audioUrl" class="audio-track">
+
+    <!-- Custom player controlli -->
+    <button *ngIf="!isPlaying" class="play-pause" (click)="playPauseAudio()"><i class="material-icons">play_arrow</i></button>
+    <button *ngIf="isPlaying" class="play-pause" (click)="playPauseAudio()"><i class="material-icons">pause</i></button>
+
+    <!-- Durata e tempo corrente -->
+    <div class="duration">
+        <span *ngIf="!isPlaying">{{ audioDuration ? formatTime(audioDuration) : '00:00' }}</span>
+        <span *ngIf="isPlaying">{{ formatTime(currentTime) }}</span>
+    </div>
+
+</div>

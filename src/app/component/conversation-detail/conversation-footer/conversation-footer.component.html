@@ -76,7 +76,7 @@
     </div>
 
     <!-- ICON REC -->
-    <div *ngIf="!textInputTextArea" tabindex="-1" class="chat21-textarea-button" [class.active]="isStopRec" id="chat21-button-rec">
+    <div *ngIf="!textInputTextArea" tabindex="-1" class="chat21-audio-button" [class.active]="isStopRec" id="chat21-button-rec">
         <chat-audio-recorder
         (startRecordingEvent)="onStartRecording()"
         (deleteRecordingEvent)="onDeleteRecording()"

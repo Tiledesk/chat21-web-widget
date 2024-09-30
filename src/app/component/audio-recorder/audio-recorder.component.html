@@ -1,20 +1,43 @@
 <div class="audio-recorder">
-    <button *ngIf="audioUrl" (click)="deleteRecording()"><i class="material-icons">delete_outline</i></button>
-    <div *ngIf="audioUrl" class="audio-track">
-      <audio [src]="audioUrl" controls></audio>
-    </div>
-    <button *ngIf="!isRecording && !audioUrl" (click)="startRecording()"><i class="material-icons">mic_none</i></button>
-    <button *ngIf="isRecording" (click)="stopRecording()"><i class="material-icons">pause_circle_outline</i></button>
+      <!-- Pulsante per eliminare la traccia -->
+      <button *ngIf="audioUrl" (click)="deleteRecording()"><i class="material-icons">delete_outline</i></button>
+
+      <chat-audio-track  *ngIf="rawAudioUrl"
+          [audioUrl] = "audioUrl"
+          [rawAudioUrl] =  "rawAudioUrl"
+          [audioBlob] = "audioBlob"
+      ></chat-audio-track>
+     
+      <!-- <canvas #waveformCanvas class="waveformCanvas"></canvas>
+      <\!-- Audio nascosto per gestire manualmente la riproduzione --\>
+      <\!-- <audio #audioElement [src]="audioUrl"></audio> --\>
+      <audio #audioElement [src]="audioUrl"></audio>
+      <div *ngIf="audioUrl" class="audio-track">
+      <\!-- <audio [src]="audioUrl" controls></audio> --\>
+     
+        <\!-- Custom player controlli --\>
+        <button *ngIf="!isPlaying" class="play-pause" (click)="playPauseAudio()"><i class="material-icons">play_arrow</i></button>
+        <button *ngIf="isPlaying" class="play-pause" (click)="playPauseAudio()"><i class="material-icons">pause</i></button>
+
+        <\!-- Durata e tempo corrente --\>
+        <div class="duration">
+          <span *ngIf="!isPlaying">{{ audioDuration ? formatTime(audioDuration) : '00:00' }}</span>
+          <span *ngIf="isPlaying">{{ formatTime(currentTime) }}</span>
+        </div>
+      </div> -->
+      
+    <button *ngIf="!audioUrl" class="mic-button" (mousedown)="startRecording()" (mouseup)="stopRecording()"><i class="material-icons">mic_none</i></button>
+    <!-- <button *ngIf="isRecording" (click)="stopRecording()"><i class="material-icons">pause_circle_outline</i></button> -->
 
     <!-- <button *ngIf="audioUrl" (click)="sendMessage()"><i class="material-icons">send</i></button> -->
     
     <!-- ICON SEND -->
-    <div *ngIf="audioUrl" (click)="sendMessage()">
+    <button *ngIf="audioUrl" (click)="sendMessage()">
       <span class="v-align-center">
-          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  height="24" width="24" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  height="20" width="24" viewBox="0 0 24 20" xml:space="preserve">
               <path d="M1.8,18.9V1.7L22,10.3L1.8,18.9z M3.9,15.6l12.6-5.4L3.9,4.9v3.7l6.4,1.6l-6.4,1.6V15.6z M3.9,15.6V4.9v7V15.6z"/>
           </svg>
       </span>
-    </div>
+    </button>
 
 </div>

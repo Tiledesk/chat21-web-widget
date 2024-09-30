@@ -135,6 +135,7 @@ import { CarouselComponent } from './component/message/carousel/carousel.compone
 import { BrandService } from './providers/brand.service';
 import { NetworkOfflineComponent } from './component/network-offline/network-offline.component';
 import { AudioRecorderComponent } from './component/audio-recorder/audio-recorder.component';
+import { AudioTrackComponent } from './component/message/audio-track/audio-track.component';
 
 
 
@@ -298,7 +299,8 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     AudioComponent,
     CarouselComponent,
     NetworkOfflineComponent,
-    AudioRecorderComponent
+    AudioRecorderComponent,
+    AudioTrackComponent
   ],
   imports: [
     BrowserModule,

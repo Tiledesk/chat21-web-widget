@@ -33,7 +33,6 @@
 .chat21-textarea-button {
     fill: var(--icon-fill-color);
     pointer-events: auto;
-
     height: var(--chat-footer-height);
     bottom: 22px;
     opacity: 0.3;
@@ -202,6 +201,7 @@ textarea:active{
     width: 34px;
     text-align: center;
     justify-content: center;
+    height: var(--chat-footer-height);
     &.active{
         width: 100%;
     }
