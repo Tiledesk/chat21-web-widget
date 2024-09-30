@@ -17,57 +17,6 @@ button {
     fill: var(--icon-fill-color);
 }
 
-.waveformCanvas {
-    // background-color: red;
-    width: calc(100% - 160px);
-    height: 50px;
-    position: absolute;
-    z-index: 2;
-    left: 95px;
-    padding: 10px;
-    margin-right: -20px;
-}
-
-.audio-track{
-    // width: auto;
-    width: 290px;
-    height: 30px;
-    background-color: #f5f5f5;
-    border-radius: 15px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    border: 1px solid #ddd;
-    
-    .play-pause {
-        font-size: 20px;
-        width: 30px;
-        background-color: transparent;
-        border-radius: 50%;
-        height: 30px;
-        margin: 0px;
-    }
-    .play-pause:hover {
-        background-color: #ddd;
-    }
-    .duration {
-        font-size: 12px;
-        padding: 0;
-    }
-}
-
-audio {
-    width: 290px;
-    height: 40px;
-    margin: 0 10px;
-}
-
-
-
-  
-
-
-
 .mic-button {
     position: relative;
     background-color: transparent;
@@ -85,7 +34,7 @@ audio {
   .mic-button svg {
     width: 24px;
     height: 24px;
-    fill: #000; /* Colore del microfono */
+    fill: #000;
   }
   
   .mic-button::before {
@@ -95,7 +44,7 @@ audio {
     left: auto;
     width: 40px;
     height: 40px;
-    background-color: rgba(82, 160, 252, 0.5);
+    background-color: rgba(82, 160, 252, 1);
     border-radius: 50%;
     transform: scale(0);
     transition: transform 0.3s ease;
@@ -104,22 +53,27 @@ audio {
   }
   
   .mic-button:active::before {
-    transform: scale(0.7); /* Effetto battito quando premuto */
+    transform: scale(0.7);
     animation: pulse 1s infinite ease-in-out;
   }
   
-  /* Animazione del battito */
+  .mic-button:active{
+    i {
+        color: #fff;
+    }
+  }
+
   @keyframes pulse {
     0% {
       transform: scale(1.2);
-      opacity: 0.5;
+      opacity: 1;
     }
     50% {
-      transform: scale(0.7);
-      opacity: 0.3;
+      transform: scale(0.9);
+      opacity: 0.7;
     }
     100% {
       transform: scale(1.2);
-      opacity: 0.5;
+      opacity: 1;
     }
   }

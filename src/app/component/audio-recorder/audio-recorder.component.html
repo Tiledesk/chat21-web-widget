@@ -1,37 +1,13 @@
 <div class="audio-recorder">
-      <!-- Pulsante per eliminare la traccia -->
       <button *ngIf="audioUrl" (click)="deleteRecording()"><i class="material-icons">delete_outline</i></button>
 
-      <chat-audio-track  *ngIf="rawAudioUrl"
-          [audioUrl] = "audioUrl"
-          [rawAudioUrl] =  "rawAudioUrl"
+      <chat-audio-track  *ngIf="audioBlob"
           [audioBlob] = "audioBlob"
       ></chat-audio-track>
      
-      <!-- <canvas #waveformCanvas class="waveformCanvas"></canvas>
-      <\!-- Audio nascosto per gestire manualmente la riproduzione --\>
-      <\!-- <audio #audioElement [src]="audioUrl"></audio> --\>
-      <audio #audioElement [src]="audioUrl"></audio>
-      <div *ngIf="audioUrl" class="audio-track">
-      <\!-- <audio [src]="audioUrl" controls></audio> --\>
-     
-        <\!-- Custom player controlli --\>
-        <button *ngIf="!isPlaying" class="play-pause" (click)="playPauseAudio()"><i class="material-icons">play_arrow</i></button>
-        <button *ngIf="isPlaying" class="play-pause" (click)="playPauseAudio()"><i class="material-icons">pause</i></button>
-
-        <\!-- Durata e tempo corrente --\>
-        <div class="duration">
-          <span *ngIf="!isPlaying">{{ audioDuration ? formatTime(audioDuration) : '00:00' }}</span>
-          <span *ngIf="isPlaying">{{ formatTime(currentTime) }}</span>
-        </div>
-      </div> -->
-      
     <button *ngIf="!audioUrl" class="mic-button" (mousedown)="startRecording()" (mouseup)="stopRecording()"><i class="material-icons">mic_none</i></button>
     <!-- <button *ngIf="isRecording" (click)="stopRecording()"><i class="material-icons">pause_circle_outline</i></button> -->
-
-    <!-- <button *ngIf="audioUrl" (click)="sendMessage()"><i class="material-icons">send</i></button> -->
     
-    <!-- ICON SEND -->
     <button *ngIf="audioUrl" (click)="sendMessage()">
       <span class="v-align-center">
           <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  height="20" width="24" viewBox="0 0 24 20" xml:space="preserve">

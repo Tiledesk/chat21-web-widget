@@ -1,81 +1,73 @@
-.audio-recorder {
-    text-align: center;
-    margin: 0px;
-    display: inline-flex;
-    align-items: center;
-    height: 100%;
-    float: left;
-}
-
-button {
-    margin: 0px;
-    padding: 0px;
-    font-size: 16px;
-    border: none;
-    background-color: transparent;
-    color: var(--icon-fill-color);
-    fill: var(--icon-fill-color);
-}
-
-.waveformCanvas {
-    width: 100%;
-    height: 32px;
-    z-index: 1;
-    padding: 0px;
-    margin: 0%;
-}
-
-.audio-track{
-    // width: auto;
-    width: 272px;
-    height: 30px;
-    background-color: #f5f5f5;
-    border-radius: 15px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    margin: 0 13px;
-    border: 1px solid #ddd;
-    
-    .play-pause {
-        font-size: 20px;
-        width: 30px;
-        background-color: transparent;
-        border-radius: 50%;
+    audio {
+        width: 272px;
         height: 30px;
+        margin: 0;
+        padding: 10px;
+    }
+
+    .audio-recorder {
+        text-align: center;
         margin: 0px;
+        display: inline-flex;
+        align-items: center;
+        height: 100%;
+        float: left;
     }
-    .play-pause:hover {
-        background-color: #ddd;
+
+    button {
+        margin: 0px;
+        padding: 0px;
+        font-size: 16px;
+        border: none;
+        background-color: transparent;
+        color: var(--icon-fill-color);
+        fill: var(--icon-fill-color);
     }
-    .duration {
-        font-size: 12px;
-        padding: 0;
+
+    .waveformCanvas {
+        width: 100%;
+        height: 32px;
+        z-index: 1;
+        padding: 0px;
+        margin: 0%;
     }
-}
 
-audio {
-    width: 272px;
-    height: 40px;
-    margin: 0 10px;
-}
+    .audio-track {
+        width: 272px;
+        height: 30px;
+        background-color: #f5f5f5;
+        border-radius: 15px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        margin: 0 13px;
+        border: 1px solid #ddd;
+
+        .play-pause {
+            font-size: 20px;
+            width: 30px;
+            background-color: transparent;
+            border-radius: 50%;
+            height: 30px;
+            margin: 0px;
+        }
+        .play-pause:hover {
+            background-color: #ddd;
+        }
+        .duration {
+            font-size: 12px;
+            padding: 0;
+        }
+    }
+
+    .audio-player {
+        width: 200px;
+        height: 32px;
+        margin-left: 75px;
+        position: absolute;
+        overflow: hidden;
+        z-index: 1;
+    }
 
 
-
-  
-
-
-.audio-player {
-    width: 200px;
-    height: 32px;
-    margin-left: 75px;
-    position: absolute;
-    overflow: hidden;
-    z-index: 1;
-}
-  
-  
-  audio {
-    margin-top: 10px;
-  }
   
