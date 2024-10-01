@@ -42,7 +42,7 @@ export class BubbleMessageComponent implements OnInit {
   constructor(public sanitizer: DomSanitizer) { }
 
   ngOnInit() {
-    console.log("---- > MSG:", this.message);
+    // console.log("---- > MSG:", this.message);
   }
 
   ngOnChanges() {

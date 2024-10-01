@@ -51,7 +51,7 @@ export class AudioTrackComponent implements AfterViewInit {
     const height = canvas.height;
     const rawData = audioBuffer.getChannelData(0);
 
-    const samples = 70;
+    const samples = 60;
     const blockSize = Math.floor(rawData.length / samples);
     const waveform = new Float32Array(samples);
   
@@ -64,15 +64,15 @@ export class AudioTrackComponent implements AfterViewInit {
     }
 
     canvasCtx.clearRect(0, 0, width, height);
-    const padding = 0.5;
+    const padding = 1;
     const barWidth = (width / samples) - padding * 2;
     const audio = this.audioElement.nativeElement;
     const playedPercent = audio.currentTime / this.audioDuration;
     // console.log('playedPercent: ', audio.currentTime, this.audioDuration);
     
     for (let i = 0; i < samples; i++) {
-      var barHeight = waveform[i] * height;
-      if (barHeight < 2) barHeight = 2;
+      var barHeight = waveform[i] * height * 4;
+      if (barHeight < 4) barHeight = 4;
       const x = i * (barWidth + padding * 2) + padding;
 
       if (i / samples < playedPercent) {

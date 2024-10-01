@@ -26,7 +26,7 @@
 
     .waveformCanvas {
         width: 100%;
-        height: 32px;
+        height: 28px;
         z-index: 1;
         padding: 0px;
         margin: 0%;
@@ -60,13 +60,15 @@
         }
     }
 
-    .audio-player {
+    .audio-player-custom {
         width: 200px;
         height: 32px;
         margin-left: 75px;
         position: absolute;
         overflow: hidden;
         z-index: 1;
+        display: flex;
+        align-items: center;
     }
 
 

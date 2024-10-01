@@ -1,3 +1,13 @@
+
+@font-face {
+    font-family: 'Material Icons';
+    src: url('https://fonts.googleapis.com/icon?family=Material+Icons');
+  }
+  
+  .material-icons.mic_none::before {
+    content: 'mic_none';
+  }
+
 .audio-recorder {
     text-align: center;
     margin: 0px;
@@ -34,7 +44,7 @@ button {
   .mic-button svg {
     width: 24px;
     height: 24px;
-    fill: #000;
+    fill: var(--icon-fill-color);
   }
   
   .mic-button::before {
@@ -57,9 +67,10 @@ button {
     animation: pulse 1s infinite ease-in-out;
   }
   
-  .mic-button:active{
-    i {
+  .mic-button:active {
+    svg {
         color: #fff;
+        fill: #fff;
     }
   }
 
