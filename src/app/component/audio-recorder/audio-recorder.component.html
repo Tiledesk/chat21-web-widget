@@ -1,7 +1,7 @@
 <div class="audio-recorder">
       <button *ngIf="audioUrl" (click)="deleteRecording()"><i class="material-icons">delete_outline</i></button>
 
-      <chat-audio-track  *ngIf="audioBlob"
+      <chat-audio-track  *ngIf="audioBlob && audioUrl"
           [audioBlob] = "audioBlob"
       ></chat-audio-track>
      
