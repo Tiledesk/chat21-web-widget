@@ -22,7 +22,7 @@
                 <div class="buttons" *ngIf="card?.buttons && card?.buttons.length > 0">
                     <div *ngFor="let button of card?.buttons" 
                         class="single-button action"
-                        [ngClass]="{'disabled': (isConversationArchived || button.type !== TYPE_BUTTON.URL), 'active': button?.active}"
+                        [ngClass]="{'disabled': (isConversationArchived || (!isLastMessage && button.type !== TYPE_BUTTON.URL)), 'active': button?.active}"
                         (click)="actionButtonClick($event, button, i)" >
                         {{button.value}}
                     </div>
