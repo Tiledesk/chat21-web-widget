@@ -496,10 +496,6 @@
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'tiledesk-jssdk'));
 
-        window.addEventListener('load', (event)=> {
-            document.dispatchEvent(new Event('mousemove'))
-        })
-
         window.Tiledesk('onLoadParams', function(event_data) {
             console.log("onLoadParams Tiledesk FN", event_data);
             // window.tiledesk.open();
