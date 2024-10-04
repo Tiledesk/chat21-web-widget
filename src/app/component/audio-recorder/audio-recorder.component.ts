@@ -16,6 +16,8 @@ export class AudioRecorderComponent {
   isRecording = false;
   rawAudioUrl: string | null = null;
   isPlaying: boolean = false;
+  startTime: number;
+
 
   @Output() startRecordingEvent = new EventEmitter<void>();
   @Output() deleteRecordingEvent = new EventEmitter<void>();
@@ -27,7 +29,8 @@ export class AudioRecorderComponent {
 
 
   startRecording() {
-    console.log('startRecording');
+    // console.log('startRecording');
+    this.startTime = Date.now();
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(stream => {
         this.mediaRecorder = new MediaRecorder(stream);
@@ -52,10 +55,25 @@ export class AudioRecorderComponent {
   }
 
   stopRecording() {
-    if (this.mediaRecorder) {
-      this.mediaRecorder.stop();
-      this.isRecording = false;
+    let endTime = Date.now();
+    let time = endTime - this.startTime;
+    if(time > 500){
+      setTimeout(() => {
+        if (this.mediaRecorder) {
+          this.mediaRecorder.stop();
+          this.isRecording = false;
+        }
+      }, 300);
+      
+    } else {
+      this.audioUrl = null;
+      this.isPlaying = false;
+      this.rawAudioUrl = null;
+      this.audioUrl = null;
+      this.audioBlob = null;
     }
+
+   
   }
 
   deleteRecording() {
