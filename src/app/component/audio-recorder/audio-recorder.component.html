@@ -1,0 +1,24 @@
+<div class="audio-recorder">
+      <button *ngIf="audioUrl" (click)="deleteRecording()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm80-160h80v-360h-80v360Zm160 0h80v-360h-80v360Z"/></svg>
+        <!-- <i class="material-icons">delete_outline</i> -->
+      </button>
+
+      <chat-audio-track  *ngIf="audioBlob && audioUrl"
+          [audioBlob] = "audioBlob"
+      ></chat-audio-track>
+     
+    <button *ngIf="!audioUrl" class="mic-button" (mousedown)="startRecording()" (mouseup)="stopRecording()">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-400q-50 0-85-35t-35-85v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q0 50-35 85t-85 35Zm0-240Zm-40 520v-123q-104-14-172-93t-68-184h80q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h80q0 105-68 184t-172 93v123h-80Zm40-360q17 0 28.5-11.5T520-520v-240q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240q0 17 11.5 28.5T480-480Z"/></svg>
+    </button>
+    <!-- <button *ngIf="isRecording" (click)="stopRecording()"><i class="material-icons">pause_circle_outline</i></button> -->
+    
+    <button *ngIf="audioUrl" (click)="sendMessage()">
+      <span class="v-align-center">
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  height="20" width="24" viewBox="0 0 24 20" xml:space="preserve">
+              <path d="M1.8,18.9V1.7L22,10.3L1.8,18.9z M3.9,15.6l12.6-5.4L3.9,4.9v3.7l6.4,1.6l-6.4,1.6V15.6z M3.9,15.6V4.9v7V15.6z"/>
+          </svg>
+      </span>
+    </button>
+
+</div>

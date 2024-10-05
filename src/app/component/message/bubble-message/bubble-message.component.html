@@ -36,10 +36,15 @@
         (onElementRendered)="onElementRenderedFN($event)">
       </chat-frame>
 
-      <chat-audio *ngIf="isAudio(message)"
+      <!-- <chat-audio *ngIf="isAudio(message)"
         [metadata]="message.metadata" 
         (onElementRendered)="onElementRenderedFN($event)">
-      </chat-audio>
+      </chat-audio> -->
+
+      <chat-audio-track  *ngIf="isAudio(message)"
+        [metadata]="message.metadata" 
+      ></chat-audio-track>
+
 
       <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"
         [metadata]="message.metadata"
@@ -51,7 +56,7 @@
       <!-- <div *ngIf="message.type == 'text'"> -->     
 
       <!-- tooltip="{{message.timestamp | dateAgo}} ({{message.timestamp | date:'shortDate'}} {{message.timestamp | date:'HH:mm:ss'}})" placement="bottom" -->
-      <div *ngIf="message?.text" >
+      <div *ngIf="message?.text && !isAudio(message)" >
 
         <!-- [htmlEnabled]="(message?.type==='html')? true : false" -->
         <chat-text *ngIf="message?.type !=='html'"

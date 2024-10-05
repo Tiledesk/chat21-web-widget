@@ -7,7 +7,7 @@
 <!-- TEXTAREA + ICONS: conv active-->
 <div class="textarea-container" *ngIf="!hideTextAreaContent && !hideTextReply">
     
-    <div class="icons-container">
+    <div *ngIf="!isStopRec" class="icons-container">
         <!-- ICON ATTACHMENT -->
         <label *ngIf="showAttachmentButton == true" tabindex="1502" aria-label="allegati" for="chat21-file" class="chat21-textarea-button" [class.active]="!isFilePendingToUpload && !hideTextReply" id="chat21-start-upload-doc">
             <span class="v-align-center">
@@ -44,7 +44,7 @@
 
 
 
-    <div class="visible-text-area"  [class.disabled] = "( isConversationArchived || hideTextReply)? true : null">
+    <div *ngIf="!isStopRec" class="visible-text-area"  [class.disabled] = "( isConversationArchived || hideTextReply)? true : null">
         <!-- isFilePendingToUpload || -->
       <textarea 
         [attr.disabled] = "(hideTextReply)? true : null"
@@ -67,12 +67,22 @@
     </div>
 
     <!-- ICON SEND -->
-    <div tabindex="-1" class="chat21-textarea-button" [class.active]="textInputTextArea && !hideTextReply" id="chat21-button-send" (click)="onSendPressed($event)">
+    <div *ngIf="textInputTextArea && !isStopRec" tabindex="-1" class="chat21-textarea-button" [class.active]="textInputTextArea && !hideTextReply" id="chat21-button-send" (click)="onSendPressed($event)">
         <span class="v-align-center">
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  height="24" width="24" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
                 <path d="M1.8,18.9V1.7L22,10.3L1.8,18.9z M3.9,15.6l12.6-5.4L3.9,4.9v3.7l6.4,1.6l-6.4,1.6V15.6z M3.9,15.6V4.9v7V15.6z"/>
             </svg>
         </span>
+    </div>
+
+    <!-- ICON REC -->
+    <div *ngIf="!textInputTextArea" tabindex="-1" class="chat21-audio-button" [class.active]="isStopRec" id="chat21-button-rec">
+        <chat-audio-recorder
+        (startRecordingEvent)="onStartRecording()"
+        (deleteRecordingEvent)="onDeleteRecording()"
+        (endRecordingEvent)="onEndRecording($event)"
+        (sendRecordingEvent)="onSendRecording($event)">
+        </chat-audio-recorder>
     </div>
 </div>
 

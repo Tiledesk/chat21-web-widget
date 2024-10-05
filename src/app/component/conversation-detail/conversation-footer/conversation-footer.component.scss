@@ -7,14 +7,16 @@
     display: flex;
     width: 100%;
     align-items: center;
-    gap: 10px;
+    gap: 0px;
     justify-content: space-between;
 }
 
 .icons-container{
     display: flex;
     align-self: flex-end;
-    margin-left: 8px
+    margin-left: 8px;
+    gap: 2px;
+    margin-right: 8px;
 }
 
 .visible-text-area {
@@ -31,7 +33,6 @@
 .chat21-textarea-button {
     fill: var(--icon-fill-color);
     pointer-events: auto;
-
     height: var(--chat-footer-height);
     bottom: 22px;
     opacity: 0.3;
@@ -185,11 +186,25 @@ textarea:active{
 }
 
 #chat21-button-send {
-    // right: 8px;
-    // bottom: 0;
     display: flex;
     align-self: flex-end;
-    margin: 0 8px
+    margin: 0 8px;
+    width: 34px;
+    text-align: center;
+    justify-content: center;
+}
+
+#chat21-button-rec {
+    display: flex;
+    align-self: flex-end;
+    margin: 0 8px;
+    width: 34px;
+    text-align: center;
+    justify-content: center;
+    height: var(--chat-footer-height);
+    &.active{
+        width: 100%;
+    }
 }
 
 #chat21-file{
@@ -337,7 +352,4 @@ textarea:active{
     // left: 10px;
     border: none;
     margin: -2px -2px 0px;
-
 }
-
-
