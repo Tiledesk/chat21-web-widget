@@ -6,7 +6,19 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.82 in PROD
+
+# 5.0.82-rc.4
+- **bug-fixed**: action buttons inside gallery not works
+
+# 5.0.82-rc.3
+- **changed**: close icon into home and conversation-detail components
+
+# 5.0.82-rc.2
+- **added**: automatically start widget after 5s
+
 # 5.0.82-rc.1 
+- **added**: automatically load widget if is on mobile device
 
 # 5.0.81 in PROD
 

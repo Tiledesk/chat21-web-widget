@@ -7,52 +7,45 @@ ready(function() {
     initWidget();
 });
 
-function detectIfIsMobile(windowContext) {
-  let isMobile = false;
-  if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(windowContext.navigator.userAgent))
-    isMobile = true
-  else
-    isMobile = false
-  return isMobile;
-}
 
 /** */
 function ready(callbackFunction){
-    // if(document.readyState != 'loading'){
-    //   console.log('in ifffffff', document.readyState)
-    //   callbackFunction()
-    // }
-    // else{
-    //   document.addEventListener("DOMContentLoaded", callbackFunction)
-    // }
-    document.addEventListener('scroll', start);
-    document.addEventListener('mousedown', start);
-    document.addEventListener('mousemove', start);
-    document.addEventListener('touchstart', start);
-    document.addEventListener('keydown', start);
+  // if(document.readyState != 'loading'){
+  //   console.log('in ifffffff', document.readyState)
+  //   callbackFunction()
+  // }
+  // else{
+  //   document.addEventListener("DOMContentLoaded", callbackFunction)
+  // }
+  document.addEventListener('scroll', start);
+  document.addEventListener('mousedown', start);
+  document.addEventListener('mousemove', start);
+  document.addEventListener('touchstart', start);
+  document.addEventListener('keydown', start);
 
-    let isMobile = detectIfIsMobile(window)
-    if(isMobile){
-      console.log('Mobile device detected: load Widget')
-      document.dispatchEvent(new Event('mousemove'))
-    }
+  let time = 5000;
+  let timeout = setTimeout(()=> {
+    console.log('in timeout')
+    start();
+  }, time)
 
-    function start(){
-      if(document.readyState==='complete'){
-        callbackFunction()
-      }else if(window.attachEvent){
-        window.attachEvent('onload',callbackFunction);
-      }else{
-        window.addEventListener('load',callbackFunction,false);
-      }
-      
-      document.removeEventListener('scroll', start);
-      document.removeEventListener('mousedown', start);
-      document.removeEventListener('mousemove', start);
-      document.removeEventListener('touchstart', start);
-      document.removeEventListener('scroll', start);
-      document.removeEventListener('keydown', start);
+  function start(){
+    clearTimeout(timeout);
+    if(document.readyState==='complete'){
+      callbackFunction()
+    }else if(window.attachEvent){
+      window.attachEvent('onload',callbackFunction);
+    }else{
+      window.addEventListener('load',callbackFunction,false);
     }
+    
+    document.removeEventListener('scroll', start);
+    document.removeEventListener('mousedown', start);
+    document.removeEventListener('mousemove', start);
+    document.removeEventListener('touchstart', start);
+    document.removeEventListener('scroll', start);
+    document.removeEventListener('keydown', start);
+  }
 
     
 }
