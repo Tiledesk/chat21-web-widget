@@ -29,6 +29,10 @@ export class AudioTrackComponent implements AfterViewInit {
       this.rawAudioUrl = URL.createObjectURL(this.audioBlob);
       this.audioUrl = this.sanitizer.bypassSecurityTrustUrl(this.rawAudioUrl);
       this.setupAudioContext();
+    } else {
+      this.rawAudioUrl = this.metadata.src;
+      this.audioUrl = this.sanitizer.bypassSecurityTrustUrl(this.rawAudioUrl);
+      this.setupAudioContext();
     }
   }
 

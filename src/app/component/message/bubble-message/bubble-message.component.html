@@ -1,9 +1,26 @@
 <!-- [ngClass]="{'button-in-msg' : message.metadata && message.metadata.button}" -->
 <!-- ngStyle]="{'padding': (isImage(message) || isFrame(message))?'1px':'0 8px'}" -->
 <!-- 'width': (isImage(message) || isFrame(message))? sizeImage?.width + 'px': null  -->
-<div id="bubble-message" [ngStyle]="{'padding': (isImage(message) || isFrame(message))?'0 0px':'0 8px'}" class="messages primary-color">
-  
+
+
     
+<!-- <div id="bubble-message" *ngIf="isAudio(message)" [ngStyle]="{'padding': '0'}" class="messages primary-color">
+  <div>
+    <chat-audio-track  *ngIf="isAudio(message)"
+      [metadata]="message.metadata" 
+    ></chat-audio-track>
+  </div>
+</div> 
+
+
+[ngStyle]="{'padding': (isImage(message) || isFrame(message) || isAudio(message))?'0 0px':'0 8px'}"
+-->
+
+
+
+
+
+<div id="bubble-message"  class="messages primary-color">
     <div>
 
       <div *ngIf="messageType(MESSAGE_TYPE_OTHERS, message) && !isSameSender"
