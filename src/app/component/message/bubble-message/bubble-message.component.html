@@ -59,8 +59,11 @@
       </chat-audio> -->
 
       <chat-audio-track  *ngIf="isAudio(message)"
-        [metadata]="message.metadata" 
-      ></chat-audio-track>
+        [metadata]="message.metadata"
+        [color]="fontColor"
+        [fontSize]="fontSize"
+        [stylesMap]="stylesMap">
+      </chat-audio-track>
 
 
       <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"

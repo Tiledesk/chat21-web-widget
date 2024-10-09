@@ -1,12 +1,18 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'chat-audio-recorder',
-  templateUrl: './audio-recorder.component.html',
-  styleUrls: ['./audio-recorder.component.scss']
+  templateUrl: './conversation-audio-recorder.component.html',
+  styleUrls: ['./conversation-audio-recorder.component.scss']
 })
-export class AudioRecorderComponent {
+export class ConversationAudioRecorderComponent {
+
+  @Input() stylesMap: Map<string, string>;
+  @Output() startRecordingEvent = new EventEmitter<void>();
+  @Output() deleteRecordingEvent = new EventEmitter<void>();
+  @Output() endRecordingEvent = new EventEmitter<Blob | null>();
+  @Output() sendRecordingEvent = new EventEmitter<Blob | null>();
 
   mediaRecorder: MediaRecorder | null = null;
   audioChunks: Blob[] = [];
@@ -18,11 +24,6 @@ export class AudioRecorderComponent {
   isPlaying: boolean = false;
   startTime: number;
 
-
-  @Output() startRecordingEvent = new EventEmitter<void>();
-  @Output() deleteRecordingEvent = new EventEmitter<void>();
-  @Output() endRecordingEvent = new EventEmitter<Blob | null>();
-  @Output() sendRecordingEvent = new EventEmitter<Blob | null>();
   
 
   constructor(private sanitizer: DomSanitizer) {}

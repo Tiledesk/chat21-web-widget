@@ -1,95 +1,107 @@
-    audio {
-        width: 272px;
-        height: 30px;
-        margin: 0;
-        padding: 10px;
-    }
+    
+:host {
+    --backgroundColor: #{var(--blue)};
+    --textColor: #{var(--bck-msg-sent)};
+    --hoverBackgroundColor: #{var(--bck-msg-sent)};
+    --hoverTextColor: #{var(--blue)};
+    --max-width: #{var(--button-in-msg-max-width)};
+}
 
-    .audio-recorder {
-        text-align: center;
-        margin: 0px;
-        display: inline-flex;
-        align-items: center;
-        height: 100%;
-        float: left;
-    }
+.audio-container{
+    position: relative; 
+    display: inline-flex;
+    width: 100%;
+    padding: 0px 12px;
+    margin: 6px 0px;
+}
 
-    button {
-        margin: 0px;
-        padding: 0px;
-        font-size: 16px;
-        border: none;
+audio {
+    width: 272px;
+    height: 30px;
+    margin: 0;
+    padding: 10px;
+}
+
+.audio-recorder {
+    text-align: center;
+    margin: 0px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    float: left;
+}
+
+button {
+    margin: 0px;
+    padding: 0px;
+    font-size: 16px;
+    border: none;
+    background-color: transparent;
+    color: var(--icon-fill-color);
+    fill: var(--icon-fill-color);
+}
+
+.waveformCanvas {
+    width: 100%;
+    height: 28px;
+    z-index: 1;
+    padding: 0px;
+    margin: 0%;
+}
+
+.audio-track {
+    // width: 247px;//272px;
+    // height: 30px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    // margin: 0 13px;
+    margin: 0px;
+    .play-pause {
+        font-size: 20px;
+        width: 30px;
         background-color: transparent;
-        color: var(--icon-fill-color);
-        fill: var(--icon-fill-color);
-    }
-
-    .waveformCanvas {
-        width: 100%;
-        height: 28px;
-        z-index: 1;
-        padding: 0px;
-        margin: 0%;
-    }
-
-    .audio-track {
-        width: 247px;//272px;
+        border-radius: 50%;
         height: 30px;
-        background-color: #f0f2f7;
-        border-radius: 15px;
-        position: relative;
-        display: flex;
-        align-items: center;
-        // margin: 0 13px;
-        border: 1px solid #f0f0f0;
         margin: 0px;
-        .play-pause {
-            font-size: 20px;
-            width: 30px;
-            background-color: transparent;
-            border-radius: 50%;
-            height: 30px;
-            margin: 0px;
-            transition: background-color 0.5s ease;
-            svg {
-                fill: rgb(82, 160, 252);
-            }
-        }
-        .play-pause:hover {
-            // background-color: #ddd;
-            // background-color: rgb(82, 160, 252);
-            background-color: #fff;
-            svg{
-                //fill:#fff;
-                fill: rgb(82, 160, 252);
-            }
-        }
-        .duration {
-            font-size: 12px;
-            padding: 0 3px;
-            color: #5f6368;
+        transition: background-color 0.5s ease;
+        
+    }
+    .play-pause:hover {
+        // background-color: #ddd;
+        // background-color: rgb(82, 160, 252);
+        background-color: #fff;
+        svg{
+            //fill:#fff;
+            fill: rgb(82, 160, 252);
         }
     }
-
-    .audio-player-custom {
-        // width: 200px;
-        // height: 32px;
-        // margin-left: 75px;
-        // position: absolute;
-        // overflow: hidden;
-        // z-index: 1;
-        // display: flex;
-        // align-items: center;
-
-        width: calc(100% - 75px);
-        height: 32px;
-        margin-left: 65px;
-        position: absolute;
-        overflow: hidden;
-        z-index: 1;
-        display: flex;
-        align-items: center;
+    .duration {
+        padding: 0 3px;
     }
+}
+
+.audio-player-custom {
+    // width: 200px;
+    // height: 32px;
+    // margin-left: 75px;
+    // position: absolute;
+    // overflow: hidden;
+    // z-index: 1;
+    // display: flex;
+    // align-items: center;
+
+    // width: calc(100% - 75px);
+    // height: 32px;
+    // margin-left: 65px;
+    // position: absolute;
+    overflow: hidden;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
 
 
-  

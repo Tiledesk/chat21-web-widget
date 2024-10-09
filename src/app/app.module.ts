@@ -15,6 +15,7 @@ import { ConversationContentComponent } from './component/conversation-detail/co
 import { ConversationFooterComponent } from './component/conversation-detail/conversation-footer/conversation-footer.component';
 import { ConversationInternalFrameComponent } from './component/conversation-detail/conversation-internal-frame/conversation-internal-frame.component';
 import { ConversationPreviewComponent } from './component/conversation-detail/conversation-preview/conversation-preview.component';
+import { ConversationAudioRecorderComponent } from './component/conversation-detail/conversation-audio-recorder/conversation-audio-recorder.component';
 /** CONVERSATION-DETAIL COMPONENTS */
 import { BubbleMessageComponent } from './component/message/bubble-message/bubble-message.component';
 import { AvatarComponent } from './component/message/avatar/avatar.component';
@@ -23,7 +24,7 @@ import { ImageComponent } from './component/message/image/image.component';
 import { InfoMessageComponent } from './component/message/info-message/info-message.component';
 import { HtmlComponent } from './component/message/html/html.component';
 import { FrameComponent } from './component/message/frame/frame.component';
-import { AudioComponent } from './component/message/audio/audio.component';
+import { AudioTrackComponent } from './component/message/audio-track/audio-track.component';
 import { UserTypingComponent } from './../chat21-core/utils/user-typing/user-typing.component';
 /** MESSAGE ATTACHMENTS COMPONENTS */
 import { MessageAttachmentComponent } from './component/message-attachment/message-attachment.component';
@@ -134,8 +135,7 @@ import { ScriptService } from 'src/chat21-core/providers/scripts/script.service'
 import { CarouselComponent } from './component/message/carousel/carousel.component';
 import { BrandService } from './providers/brand.service';
 import { NetworkOfflineComponent } from './component/network-offline/network-offline.component';
-import { AudioRecorderComponent } from './component/audio-recorder/audio-recorder.component';
-import { AudioTrackComponent } from './component/message/audio-track/audio-track.component';
+
 
 
 
@@ -277,6 +277,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     ConversationFooterComponent,
     ConversationPreviewComponent,
     ConversationInternalFrameComponent,
+    ConversationAudioRecorderComponent,
     BubbleMessageComponent,
     AvatarComponent,
     FrameComponent,
@@ -288,6 +289,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     ActionButtonComponent,
     LinkButtonComponent,
     TextButtonComponent,
+    AudioTrackComponent,
     UserTypingComponent,
     /**DIRECTIVES */
     HtmlEntitiesEncodePipe,
@@ -296,11 +298,9 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     SafeHtmlPipe,
     LikeUnlikeComponent,
     TooltipDirective,
-    AudioComponent,
     CarouselComponent,
     NetworkOfflineComponent,
-    AudioRecorderComponent,
-    AudioTrackComponent
+    
   ],
   imports: [
     BrowserModule,

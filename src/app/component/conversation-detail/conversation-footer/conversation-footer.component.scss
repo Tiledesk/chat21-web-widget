@@ -196,14 +196,18 @@ textarea:active{
 
 #chat21-button-rec {
     display: flex;
-    align-self: flex-end;
-    margin: 0 8px;
     width: 34px;
     text-align: center;
     justify-content: center;
     height: var(--chat-footer-height);
     &.active{
         width: 100%;
+    }
+    chat-audio-recorder {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 

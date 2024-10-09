@@ -1,5 +1,6 @@
 import { Component, ElementRef, AfterViewInit, Input, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 
 @Component({
   selector: 'chat-audio-track',
@@ -13,6 +14,9 @@ export class AudioTrackComponent implements AfterViewInit {
 
   @Input() audioBlob: Blob | null = null;
   @Input() metadata: any | null = null;
+  @Input() color: string;
+  @Input() fontSize: string;
+  @Input() stylesMap: Map<string, string>;
 
   audioUrl: SafeUrl | null = null;
   rawAudioUrl: string | null = null;
@@ -25,6 +29,7 @@ export class AudioTrackComponent implements AfterViewInit {
   constructor(private sanitizer: DomSanitizer) {}
 
   ngAfterViewInit() {
+    console.log('stylesssss', this.stylesMap)
     if (this.audioBlob) {
       this.rawAudioUrl = URL.createObjectURL(this.audioBlob);
       this.audioUrl = this.sanitizer.bypassSecurityTrustUrl(this.rawAudioUrl);
@@ -80,9 +85,9 @@ export class AudioTrackComponent implements AfterViewInit {
       const x = i * (barWidth + padding * 2) + padding;
 
       if (i / samples < playedPercent) {
-        canvasCtx.fillStyle = 'rgb(82, 160, 252)';
+        canvasCtx.fillStyle = this.color;
       } else {
-        canvasCtx.fillStyle = 'rgba(82, 160, 252, 0.5)';
+        canvasCtx.fillStyle = convertColorToRGBA(this.color, 50);;
       }
       canvasCtx.fillRect(x, height / 2 - barHeight, barWidth, barHeight);
       canvasCtx.fillRect(x, height / 2, barWidth, barHeight);

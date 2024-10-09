@@ -78,10 +78,11 @@
     <!-- ICON REC -->
     <div *ngIf="!textInputTextArea" tabindex="-1" class="chat21-audio-button" [class.active]="isStopRec" id="chat21-button-rec">
         <chat-audio-recorder
-        (startRecordingEvent)="onStartRecording()"
-        (deleteRecordingEvent)="onDeleteRecording()"
-        (endRecordingEvent)="onEndRecording($event)"
-        (sendRecordingEvent)="onSendRecording($event)">
+            (startRecordingEvent)="onStartRecording()"
+            (deleteRecordingEvent)="onDeleteRecording()"
+            (endRecordingEvent)="onEndRecording($event)"
+            (sendRecordingEvent)="onSendRecording($event)"
+            [stylesMap]="stylesMap">
         </chat-audio-recorder>
     </div>
 </div>
