@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.83-rc.2
+- **changed**: ui improvements on audio elements 
+
 # 5.0.83-rc.1
 - **added**: ability to send and receive voice message into the conversation
 
