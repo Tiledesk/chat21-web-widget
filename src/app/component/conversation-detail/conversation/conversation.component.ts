@@ -50,6 +50,8 @@ import { ConversationContentComponent } from '../conversation-content/conversati
 })
 export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('afConversationComponent') private afConversationComponent: ElementRef; // l'ID del div da scrollare
+  @ViewChild('mydialog') mydialog: ElementRef;
+
   // @HostListener('window:resize', ['$event'])
   // ========= begin:: Input/Output values
   // @Input() elRoot: ElementRef;
@@ -978,19 +980,27 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
   /** CALLED BY: conv-header component */
   onCloseChat(){
-    this.logger.debug('[CONV-COMP] close chat with uid ', this.conversation.uid)
-    this.tiledeskRequestService.closeSupportGroup(this.conversation.uid).then(data => {
+    // this.mydialog.nativeElement.showModal()
+    this.logger.debug('[CONV-COMP] close chat with uid ', this.conversation.uid, this.conversationId)
+    this.tiledeskRequestService.closeSupportGroup(this.conversationId).then(data => {
       if(data === 'closed'){
         this.isMenuShow = false
-        this.logger.debug('[CONV-COMP] chat closed successfully with uid ', this.conversation.uid)
+        this.logger.debug('[CONV-COMP] chat closed successfully with uid ', this.conversationId)
       }
     }).catch(error => {
-      this.logger.error('[CONV-COMP] ERROR while closing chat with id: ', this.conversation.uid, error)
+      this.logger.error('[CONV-COMP] ERROR while closing chat with id: ', this.conversationId, error)
     })
   }
   /** CALLED BY: conv-header component */
   onRestartChat(){
-    this.hideTextAreaContent = true
+    //restart SAME conversation calling /start againg
+    let attributes = {
+      subtype: 'info',
+      ... this.g.attributes
+    }
+    this.conversationFooter.sendMessage('/start', TYPE_MSG_TEXT, null, attributes) 
+
+    // this.hideTextAreaContent = true
   }
   /** CALLED BY: conv-header component */
   onWidgetHeightChange(mode){
