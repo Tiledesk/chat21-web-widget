@@ -1019,6 +1019,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     //restart SAME conversation calling /start againg
     let attributes = {
       subtype: 'info',
+      action: 'start',
       ... this.g.attributes
     }
     this.conversationFooter.sendMessage('/start', TYPE_MSG_TEXT, null, attributes) 
