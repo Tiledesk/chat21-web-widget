@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.83-rc.4
+- **added**: confirm-close modal before close a chat
+
 # 5.0.83-rc.3
 - **added**: send '/start' info message on restart header menu option
 - **bug-fixed**: close header menu option not send the last conversation id to close
