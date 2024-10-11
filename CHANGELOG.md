@@ -6,6 +6,21 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.83 in PROD
+
+# 5.0.83-rc.4
+- **added**: confirm-close modal before close a chat
+
+# 5.0.83-rc.3
+- **added**: send '/start' info message on restart header menu option
+- **bug-fixed**: close header menu option not send the last conversation id to close
+
+# 5.0.83-rc.2
+- **changed**: ui improvements on audio elements 
+
+# 5.0.83-rc.1
+- **added**: ability to send and receive voice message into the conversation
+
 # 5.0.82 in PROD
 
 # 5.0.82-rc.4
