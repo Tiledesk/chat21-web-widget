@@ -160,6 +160,17 @@
     }
 }
 
+dialog:-internal-dialog-in-top-layer{
+    border: 0px;
+    border-radius: 16px;
+    padding: 15px 15px;
+    &::backdrop {
+        border-radius: 16px;
+    }
+}
+
+
+
 /* ==================== MOBILE VERSION ==================== */ 
 @media (max-width: 451px) {
     #chat21-conversation-component {

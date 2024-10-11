@@ -1,5 +1,32 @@
 <div class="modal-container">
-    CLOSE CONVERSATION MODAL
+    <div class="header">
+        <!-- ICON CLOSE CHAT -->
+        <button tabindex="-1" class="c21-header-button c21-right c21-close c21-button-clean" (click)="onBack()">
+            <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('themeColor') }" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
+                <path fill="none" d="M0 0h24v24H0V0z" />
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                <title id="altIconTitle">{{ translationMap?.get('CLOSE') }}</title>
+            </svg>
+        </button>
+    </div>
+    <div class="content">
+        <div class="text">Are you sure you wanna close this chat?</div>
+        <div class="options">
+
+            <!-- BUTTON CANCEL-->
+            <span class="v-align-center c21-label-button back-button" (click)="onBack()">
+                {{translationMap?.get('BACK')}}
+            </span> 
+
+            <!-- BUTTON CLOSE-->
+            <button tabindex="1040" aflistconv #aflistconv class="c21-button-primary" (click)="onConfirm()" [ngStyle]="{'background-color': stylesMap?.get('themeColor'), 'border-color': stylesMap?.get('themeColor'), 'color': stylesMap?.get('themeForegroundColor') }">
+                <span class="v-align-center c21-label-button">
+                    {{translationMap?.get('CLOSE_CHAT')}}
+                </span> 
+                <div class="clear"></div>
+            </button>
+        </div>
+    </div>
 </div>
 
 

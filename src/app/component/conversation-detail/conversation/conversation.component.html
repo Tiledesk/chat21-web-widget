@@ -92,8 +92,10 @@
 
 
     <dialog #mydialog>
-        <chat-confirm-close>
-        
+        <chat-confirm-close
+            [translationMap]="translationMapCloseChatDialog"
+            [stylesMap]="stylesMap"
+            (onDiaglogClosed)="onCloseDialog($event)">
         </chat-confirm-close>
     </dialog>
 

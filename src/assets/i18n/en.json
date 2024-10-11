@@ -55,6 +55,7 @@
     "CLOSE_CHAT": "Close chat",
     "MINIMIZE":"Minimize",
     "MAXIMIZE":"Maximize",
+    "CONFIRM_CLOSE_CHAT":"Are you sure you wanna close this chat?",
     
     "INFO_SUPPORT_USER_ADDED_SUBJECT":"you",
     "INFO_SUPPORT_USER_ADDED_YOU_VERB":"have been added to ",

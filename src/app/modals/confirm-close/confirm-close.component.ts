@@ -1,4 +1,5 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+
 
 @Component({
   selector: 'chat-confirm-close',
@@ -7,18 +8,26 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 })
 export class ConfirmCloseComponent implements OnInit{
   
-  @ViewChild('mydialog') mydialog: ElementRef;
+  @Input() translationMap: Map< string, string>;
+  @Input() stylesMap: Map<string, string>;
+  @Output() onDiaglogClosed = new EventEmitter<{type: string, data: any}>();
 
   constructor() { }
 
   ngOnInit(): void {
-    // console.log('[CONFIRM CLOSE MODAL] onInit-->', this.dialog);
+    console.log('[CONFIRM CLOSE MODAL] onInit');
     // this.dialog.showModal();
   }
 
   ngAfterViewInit(){
-    // console.log('[CONFIRM CLOSE MODAL] ngAfterViewInit-->', this.mydialog);
-    // this.mydialog.nativeElement.showModal()
+  }
+
+  onBack(){
+    this.onDiaglogClosed.emit({type: 'back', data: null});
+  }
+
+  onConfirm(){
+    this.onDiaglogClosed.emit({type: 'confirm', data: null});
   }
 
 }
