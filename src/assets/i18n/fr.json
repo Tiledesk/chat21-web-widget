@@ -55,6 +55,7 @@
     "CLOSE_CHAT": "Fermer le chat",
     "MINIMIZE":"Minimiser",
     "MAXIMIZE":"Maximiser",
+    "CONFIRM_CLOSE_CHAT":"Etes-vous sûr de vouloir fermer cette discussion?",
 
     "INFO_SUPPORT_USER_ADDED_SUBJECT":"toi",
     "INFO_SUPPORT_USER_ADDED_YOU_VERB":"ont été ajoutés à ",

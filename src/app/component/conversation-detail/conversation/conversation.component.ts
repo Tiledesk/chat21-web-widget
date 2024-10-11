@@ -138,6 +138,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   translationMapFooter: Map<string, string>;
   translationMapContent: Map<string, string>;
   translationMapPreview: Map<string, string>;
+  translationMapCloseChatDialog: Map<string, string>;
 
   // ========== begin:: typying =======
   public isTypings = false;
@@ -257,11 +258,18 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'LABEL_PREVIEW'
     ];
 
+    const keysCloseChatDialog= [
+      'BACK', 
+      'CLOSE',
+      'CLOSE_CHAT'
+    ];
+
     
     this.translationMapHeader = this.customTranslateService.translateLanguage(keysHeader);
     this.translationMapFooter = this.customTranslateService.translateLanguage(keysFooter);
     this.translationMapContent = this.customTranslateService.translateLanguage(keysContent);
     this.translationMapPreview = this.customTranslateService.translateLanguage(keysPreview);
+    this.translationMapCloseChatDialog = this.customTranslateService.translateLanguage(keysCloseChatDialog)
   }
 
   ngAfterViewInit() {
@@ -980,17 +988,32 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
   /** CALLED BY: conv-header component */
   onCloseChat(){
-    // this.mydialog.nativeElement.showModal()
     this.logger.debug('[CONV-COMP] close chat with uid ', this.conversation.uid, this.conversationId)
-    this.tiledeskRequestService.closeSupportGroup(this.conversationId).then(data => {
-      if(data === 'closed'){
-        this.isMenuShow = false
-        this.logger.debug('[CONV-COMP] chat closed successfully with uid ', this.conversationId)
-      }
-    }).catch(error => {
-      this.logger.error('[CONV-COMP] ERROR while closing chat with id: ', this.conversationId, error)
-    })
+    this.mydialog.nativeElement.showModal();
+    this.isMenuShow = false
   }
+  /** CALLED BY: confirm-close modal component */
+  onCloseDialog(event: {type: string, data: any}){
+    this.logger.debug('[CONV-COMP] onCloseDialog data returned ', event)
+    switch(event.type){
+      case 'back':
+        this.mydialog.nativeElement.close()
+        break;
+      case 'confirm':
+        this.tiledeskRequestService.closeSupportGroup(this.conversationId).then(data => {
+          if(data === 'closed'){
+            this.mydialog.nativeElement.close()
+            this.logger.debug('[CONV-COMP] chat closed successfully with uid ', this.conversationId) 
+          }
+        }).catch(error => {
+          this.logger.error('[CONV-COMP] ERROR while closing chat with id: ', this.conversationId, error)
+        })
+        break;
+    }
+    
+    
+  }
+
   /** CALLED BY: conv-header component */
   onRestartChat(){
     //restart SAME conversation calling /start againg
