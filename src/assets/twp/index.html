@@ -245,7 +245,10 @@
     <meta property="og:locale" content="en">
     
     <link rel="icon" type="image/png" href="./tiledesk_widget_files/logo-short.png">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <!-- <link href="./tiledesk_widget_files/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <link href="./tiledesk_widget_files/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./tiledesk_widget_files/website-poly.min.css" rel="stylesheet" type="text/css">
     <script defer="" src="./tiledesk_widget_files/jquery.min.js"></script>
     <script defer="" src="./tiledesk_widget_files/bootstrap.min.js"></script>
 
@@ -297,7 +300,7 @@
                     
                     var enbedJs = event_data.detail.appConfigs.enbedJs? event_data.detail.appConfigs.enbedJs : false;
                     document.getElementById("enbed").style.display = enbedJs? "inline-block": "none";
-                    document.getElementById("base_url").innerHTML = enbedJs ? window.tiledesk.getBaseLocation() + '/launch.js': null;
+                    document.getElementById("base_url").value = enbedJs ? window.tiledesk.getBaseLocation() + '/launch.js': null;
                     
                     baseUrlConsole = event_data.detail.appConfigs.dashboardUrl? event_data.detail.appConfigs.dashboardUrl : baseUrlConsole;
                 }
@@ -436,8 +439,8 @@
         // console.log('project_name: ', project_name);
 
         window.onload = function() {
-            document.getElementById("project_id").innerHTML = '"' + tiledesk_projectid + '"';
-            document.getElementById("project_name").innerHTML = project_name;
+            document.getElementById("project_id").value = '"' + tiledesk_projectid + '"';
+            document.getElementById("project_name").value = project_name;
             
             if(role !== 'agent'){
                 document.getElementById("testPageButton").style.display = 'block'
@@ -629,14 +632,5 @@
 </script> -->
 
 <!-- Google Analytics -->
-
-
-
-
-<div>
-    <link href="./tiledesk_widget_files/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <!-- <link href="./tiledesk_widget_files/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
-    <link href="./tiledesk_widget_files/website-poly.min.css" rel="stylesheet" type="text/css">
-</div>
 </body>
 </html>
