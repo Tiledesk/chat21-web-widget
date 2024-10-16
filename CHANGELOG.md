@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.84-rc.1
+- **removed**: innerHtml from document element
+
 # 5.0.83 in PROD
 
 # 5.0.83-rc.4
