@@ -1,0 +1,32 @@
+
+<!-- <audio *ngIf="metadata" controls>
+    <source [src]="metadata.src" type="audio/mpeg">
+</audio>  *ngIf="!metadata"-->
+<div class="audio-container">
+  
+    <div class="audio-track">
+        <button *ngIf="!isPlaying" class="play-pause" (click)="playPauseAudio()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+                <path d="M320-200v-560l440 280-440 280Z"/>
+            </svg>
+            <!-- <i class="material-icons">play_arrow</i> -->
+        </button>
+        <button *ngIf="isPlaying" class="play-pause" (click)="playPauseAudio()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+                <path d="M560-200v-560h160v560H560Zm-320 0v-560h160v560H240Z"/>
+            </svg>
+            <!-- <i class="material-icons">pause</i> -->
+        </button>
+        <div class="duration" [style.color]="color" [style.font-size]="fontSize" >
+            <span *ngIf="!isPlaying">{{ audioDuration ? formatTime(audioDuration) : '00:00' }}</span>
+            <span *ngIf="isPlaying">{{ formatTime(currentTime) }}</span>
+        </div>
+
+    </div>
+
+    <div class="audio-player-custom">
+        <audio #audioElement [src]="audioUrl"></audio>
+        <canvas #canvasElement class="waveformCanvas"></canvas> 
+    </div>
+
+</div>
