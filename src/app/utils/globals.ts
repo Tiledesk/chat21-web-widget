@@ -567,10 +567,10 @@ export class Globals {
     if(isOpen && isMobile){
       //block body scroll
       // window.parent.document.body.style.height = '100vh';
-      window.parent.document.body.style.height = '0';
-      window.parent.document.body.style.width = '100%';
-      window.parent.document.body.style.overflowY = 'hidden'
-      window.parent.document.body.style.position = 'fixed';
+      window.parent.document.body.style.setProperty('height', '0', 'important')
+      window.parent.document.body.style.setProperty('width', '100%', 'important')
+      window.parent.document.body.style.setProperty('overflow-y', 'hidden', 'important')
+      window.parent.document.body.style.setProperty('position', 'fixed', 'important')
     }else if(!isOpen && isMobile){
       //reset body style
       window.parent.document.body.style.removeProperty('height')
