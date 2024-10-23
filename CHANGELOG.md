@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.84-rc.4
+- **added**: checkAcceptedFile fn on dragleave event conversation-content component
+- **added**: checkAcceptedFile fn  in conversation-footer component
+
 # 5.0.84-rc.3
 - **changed**: index-dev lib order import
 
