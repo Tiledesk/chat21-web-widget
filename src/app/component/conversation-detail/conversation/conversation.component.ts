@@ -39,6 +39,7 @@ import { CustomTranslateService } from 'src/chat21-core/providers/custom-transla
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { TiledeskRequestsService } from 'src/chat21-core/providers/tiledesk/tiledesk-requests.service';
 import { ConversationContentComponent } from '../conversation-content/conversation-content.component';
+import { checkAcceptedFile } from 'src/app/utils/utils';
 // import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -1346,34 +1347,32 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       var mimeType = fileList[0].type
       this.logger.log('[CONV-COMP] ----> FILE - DROP mimeType files ', mimeType)
 
-      // if (mimeType.startsWith("image") || mimeType.startsWith("application")) {
-      // this.logger.log('[CONV-COMP] ----> FILE - DROP mimeType files: ', this.appConfigProvider.getConfig().fileUploadAccept);
-      // this.checkAcceptedFile(mimeType);
-      // const isAccepted = this.checkAcceptedFile(mimeType)
-      // this.logger.log('[CONV-COMP] > checkAcceptedFile - fileUploadAccept isAcceptFile FILE - DROP',isAccepted)
-      // if (isAccepted === true) {
       this.dropEvent = event
-      // } else {
-      //   this.logger.log( '[CONV-COMP] ----> FILE - DROP mimeType files ', mimeType,'NOT SUPPORTED FILE TYPE')
-      //   this.presentToast(this.translationsMap.get('FAILED_TO_UPLOAD_THE_FORMAT_IS_NOT_SUPPORTED'), 'danger','toast-custom-class', 5000 )
-      //   // this.presentToastOnlyImageFilesAreAllowedToDrag()
-      // }
       
     }
   }
 
   allowDrop(event: any) {
-    event.preventDefault()
-    event.stopPropagation()
+    event.preventDefault();
+    event.stopPropagation();
     this.logger.log('[CONV-COMP] ----> FILE - (dragover) allowDrop ev ', event)
     this.isHovering = true
   }
 
   drag(event){
-    event.preventDefault()
+    event.preventDefault();
+    this.logger.log('[CONV-COMP] ----> FILE - (dragleave) drag ev ', event)
+    if (event.dataTransfer && event.dataTransfer.files) {
+      const files = event.dataTransfer.files;
+      const canUploadFile = checkAcceptedFile(files[0].type, this.appConfigService.getConfig().fileUploadAccept)
+      if(!canUploadFile){
+        this.logger.error('[IMAGE-UPLOAD] detectFiles: can not upload current file type--> NOT ALLOWED', this.appConfigService.getConfig().fileUploadAccept)
+        return;
+      }
+    }
     event.stopPropagation()
-    console.log('dragleave-->', event)
     this.isHovering = false
   }
 
 }
+

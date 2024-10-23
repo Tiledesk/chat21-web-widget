@@ -1,5 +1,6 @@
 import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
 import { Globals } from 'src/app/utils/globals';
+import { checkAcceptedFile } from 'src/app/utils/utils';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { UploadModel } from 'src/chat21-core/models/upload';
 import { ConversationHandlerService } from 'src/chat21-core/providers/abstract/conversation-handler.service';
@@ -129,48 +130,56 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
         
         const that = this;
         if (event.target.files && event.target.files[0]) {
-            const nameFile = event.target.files[0].name;
-            const typeFile = event.target.files[0].type;
-            const size = event.target.files[0].size
-            const reader = new FileReader();
-              that.logger.debug('[CONV-FOOTER] OK preload: ', nameFile, typeFile, reader);
-              reader.addEventListener('load', function () {
-                that.logger.debug('[CONV-FOOTER] addEventListener load', reader.result);
-                that.isFileSelected = true;
-                // se inizia con image
-                if (typeFile.startsWith('image') && !typeFile.includes('svg')) {
-                  const imageXLoad = new Image;
-                  that.logger.debug('[CONV-FOOTER] onload ', imageXLoad);
-                  imageXLoad.src = reader.result.toString();
-                  imageXLoad.title = nameFile;
-                  imageXLoad.onload = function () {
-                    that.logger.debug('[CONV-FOOTER] onload image');
-                    // that.arrayFilesLoad.push(imageXLoad);
-                    const uid = (new Date().getTime()).toString(36); // imageXLoad.src.substring(imageXLoad.src.length - 16);
-                    that.arrayFilesLoad[0] = { uid: uid, file: imageXLoad, type: typeFile, size: size };
-                    that.logger.debug('[CONV-FOOTER] OK: ', that.arrayFilesLoad[0]);
-                    // SEND MESSAGE
-                    that.loadFile();
-                  };
-                } else {
-                  that.logger.debug('[CONV-FOOTER] onload file');
-                  const fileXLoad = {
-                    src: reader.result.toString(),
-                    title: nameFile
-                  };
+
+          const canUploadFile = checkAcceptedFile(event.target.files[0].type, this.fileUploadAccept)
+          if(!canUploadFile){
+            this.logger.error('[IMAGE-UPLOAD] detectFiles: can not upload current file type--> NOT ALLOWED', this.fileUploadAccept)
+            this.isFilePendingToUpload = false;
+            return;
+          }
+
+          const nameFile = event.target.files[0].name;
+          const typeFile = event.target.files[0].type;
+          const size = event.target.files[0].size
+          const reader = new FileReader();
+            that.logger.debug('[CONV-FOOTER] OK preload: ', nameFile, typeFile, reader);
+            reader.addEventListener('load', function () {
+              that.logger.debug('[CONV-FOOTER] addEventListener load', reader.result);
+              that.isFileSelected = true;
+              // se inizia con image
+              if (typeFile.startsWith('image') && !typeFile.includes('svg')) {
+                const imageXLoad = new Image;
+                that.logger.debug('[CONV-FOOTER] onload ', imageXLoad);
+                imageXLoad.src = reader.result.toString();
+                imageXLoad.title = nameFile;
+                imageXLoad.onload = function () {
+                  that.logger.debug('[CONV-FOOTER] onload image');
                   // that.arrayFilesLoad.push(imageXLoad);
                   const uid = (new Date().getTime()).toString(36); // imageXLoad.src.substring(imageXLoad.src.length - 16);
-                  that.arrayFilesLoad[0] = { uid: uid, file: fileXLoad, type: typeFile, size: size };
+                  that.arrayFilesLoad[0] = { uid: uid, file: imageXLoad, type: typeFile, size: size };
                   that.logger.debug('[CONV-FOOTER] OK: ', that.arrayFilesLoad[0]);
                   // SEND MESSAGE
                   that.loadFile();
-                }
-              }, false);
-
-              if (event.target.files[0]) {
-                reader.readAsDataURL(event.target.files[0]);
-                that.logger.debug('[CONV-FOOTER] reader-result: ', event.target.files[0]);
+                };
+              } else {
+                that.logger.debug('[CONV-FOOTER] onload file');
+                const fileXLoad = {
+                  src: reader.result.toString(),
+                  title: nameFile
+                };
+                // that.arrayFilesLoad.push(imageXLoad);
+                const uid = (new Date().getTime()).toString(36); // imageXLoad.src.substring(imageXLoad.src.length - 16);
+                that.arrayFilesLoad[0] = { uid: uid, file: fileXLoad, type: typeFile, size: size };
+                that.logger.debug('[CONV-FOOTER] OK: ', that.arrayFilesLoad[0]);
+                // SEND MESSAGE
+                that.loadFile();
               }
+            }, false);
+
+            if (event.target.files[0]) {
+              reader.readAsDataURL(event.target.files[0]);
+              that.logger.debug('[CONV-FOOTER] reader-result: ', event.target.files[0]);
+            }
         }
     }
   }
