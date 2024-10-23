@@ -60,6 +60,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   // ========= end:: send image ========= //
 
   // isNewConversation = true;
+  isStartRec: boolean = false;
+  isStopRec: boolean = false;
   textInputTextArea: string;
   conversationHandlerService: ConversationHandlerService
 
@@ -99,7 +101,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   }
   
   ngAfterViewInit() {
-    this.logger.debug('[CONV-FOOTER] --------ngAfterViewInit: conversation-footer-------- '); 
+    this.logger.log('[CONV-FOOTER] --------ngAfterViewInit: conversation-footer-------- '); 
     // setTimeout(() => {
       this.showEmojiPicker = true
     // }, 500);
@@ -109,19 +111,18 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   // START LOAD IMAGE //
   /** load the selected image locally and open the pop up preview */
   detectFiles(event) {
-    this.logger.debug('[CONV-FOOTER] detectFiles: ', event);
-
+    this.logger.log('[CONV-FOOTER] detectFiles: ', event);
     if (event) {
         this.selectedFiles = event.target.files;
-        this.logger.debug('[CONV-FOOTER] AppComponent:detectFiles::selectedFiles', this.selectedFiles);
+        this.logger.log('[CONV-FOOTER] AppComponent:detectFiles::selectedFiles', this.selectedFiles);
         // this.onAttachmentButtonClicked.emit(this.selectedFiles)
         if (this.selectedFiles == null) {
           this.isFilePendingToUpload = false;
         } else {
           this.isFilePendingToUpload = true;
         }
-        this.logger.debug('[CONV-FOOTER] AppComponent:detectFiles::selectedFiles::isFilePendingToUpload', this.isFilePendingToUpload);
-        this.logger.debug('[CONV-FOOTER] fileChange: ', event.target.files);
+        this.logger.log('[CONV-FOOTER] AppComponent:detectFiles::selectedFiles::isFilePendingToUpload', this.isFilePendingToUpload);
+        this.logger.log('[CONV-FOOTER] fileChange: ', event.target.files);
         if (event.target.files.length <= 0) {
           this.isFilePendingToUpload = false;
         } else {
@@ -184,16 +185,18 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     }
   }
 
+  
+
 
   loadFile() {
-    this.logger.debug('[CONV-FOOTER] that.fileXLoad: ', this.arrayFilesLoad);
+    this.logger.log('[CONV-FOOTER] that.fileXLoad: ', this.arrayFilesLoad);
         // at the moment I only manage the upload of one image at a time
         if (this.arrayFilesLoad[0] && this.arrayFilesLoad[0].file) {
             const fileXLoad = this.arrayFilesLoad[0].file;
             const uid = this.arrayFilesLoad[0].uid;
             const type = this.arrayFilesLoad[0].type;
             const size = this.arrayFilesLoad[0].size
-            this.logger.debug('[CONV-FOOTER] that.fileXLoad: ', type);
+            this.logger.log('[CONV-FOOTER] that.fileXLoad: ', type);
             let metadata;
             if (type.startsWith('image') && !type.includes('svg')) {
                 metadata = {
@@ -214,7 +217,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
                     'size': size
                 };
             }
-            this.logger.debug('[CONV-FOOTER] metadata -------> ', metadata);
+            this.logger.log('[CONV-FOOTER] metadata -------> ', metadata);
             // this.scrollToBottom();
             // 1 - aggiungo messaggio localmente
             // this.addLocalMessageImage(metadata);
@@ -231,17 +234,20 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
     uploadSingle(metadata, file, messageText?: string) {
       const that = this;
-      const send_order_btn = <HTMLInputElement>document.getElementById('chat21-start-upload-doc');
-      send_order_btn.disabled = true;
-      that.logger.debug('[CONV-FOOTER] AppComponent::uploadSingle::', metadata, file);
+      try {
+        const send_order_btn = <HTMLInputElement>document.getElementById('chat21-start-upload-doc');
+        send_order_btn.disabled = true;
+      } catch (error) {
+        that.logger.log('[CONV-FOOTER] error::', error);
+      }
+      that.logger.log('[CONV-FOOTER] AppComponent::uploadSingle::', metadata, file);
       // const file = this.selectedFiles.item(0);
       const currentUpload = new UploadModel(file);
-
       // const uploadTask = this.upSvc.pushUpload(currentUpload);
       // uploadTask.then(snapshot => {
       //     return snapshot.ref.getDownloadURL();   // Will return a promise with the download link
       // }).then(downloadURL => {
-      //     that.logger.debug('[CONV-FOOTER] AppComponent::uploadSingle:: downloadURL', downloadURL]);
+      //     that.logger.log('[CONV-FOOTER] AppComponent::uploadSingle:: downloadURL', downloadURL]);
       //     that.g.wdLog([`Successfully uploaded file and got download link - ${downloadURL}`]);
 
       //     metadata.src = downloadURL;
@@ -261,8 +267,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       // this.resetLoadImage();
       
       this.uploadService.upload(this.senderId, currentUpload).then(data => {
-        that.logger.debug('[CONV-FOOTER] AppComponent::uploadSingle:: downloadURL', data);
-        that.logger.debug(`[CONV-FOOTER] Successfully uploaded file and got download link - ${data}`);
+        that.logger.log('[CONV-FOOTER] AppComponent::uploadSingle:: downloadURL', data);
+        that.logger.log(`[CONV-FOOTER] Successfully uploaded file and got download link - ${data}`);
 
         metadata.src = data.src;
         metadata.downloadURL = data.downloadURL;
@@ -291,7 +297,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
         that.logger.error(`[CONV-FOOTER] uploadSingle:: Failed to upload file and get link - ${error}`);
         that.isFilePendingToUpload = false;
       });
-      that.logger.debug('[CONV-FOOTER] reader-result: ', file);
+      that.logger.log('[CONV-FOOTER] reader-result: ', file);
     }
 
   /**
@@ -304,7 +310,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   sendMessage(msg: string, type: string, metadata?: any, additional_attributes?: any) { // sponziello
     (metadata) ? metadata = metadata : metadata = '';
     this.onEmojiiPickerShow.emit(false)
-    this.logger.debug('[CONV-FOOTER] SEND MESSAGE: ', msg, type, metadata, additional_attributes);
+    this.logger.log('[CONV-FOOTER] SEND MESSAGE: ', msg, type, metadata, additional_attributes);
     if (msg && msg.trim() !== '' || type === TYPE_MSG_IMAGE || type === TYPE_MSG_FILE ) {
 
       // msg = htmlEntities(msg);
@@ -387,7 +393,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   }
 
   private restoreTextArea() {
-    //   that.logger.debug('[CONV-FOOTER] AppComponent:restoreTextArea::restoreTextArea');
+    //   that.logger.log('[CONV-FOOTER] AppComponent:restoreTextArea::restoreTextArea');
     this.resizeInputField();
     const textArea = (<HTMLInputElement>document.getElementById('chat21-main-message-context'));
     this.textInputTextArea = ''; // clear the textarea
@@ -397,7 +403,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       if(textArea.style.height > this.HEIGHT_DEFAULT){
         document.getElementById('chat21-button-send').style.removeProperty('right')
       }
-      this.logger.debug('[CONV-FOOTER] AppComponent:restoreTextArea::restoreTextArea::textArea:', 'restored');
+      this.logger.log('[CONV-FOOTER] AppComponent:restoreTextArea::restoreTextArea::textArea:', 'restored');
     }
     this.setFocusOnId('chat21-main-message-context');
   }
@@ -411,7 +417,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     try {
       const target = document.getElementById('chat21-main-message-context') as HTMLInputElement;
       // tslint:disable-next-line:max-line-length
-      //   that.logger.debug('[CONV-FOOTER] H:: this.textInputTextArea', (document.getElementById('chat21-main-message-context') as HTMLInputElement).value , target.style.height, target.scrollHeight, target.offsetHeight, target.clientHeight);
+      //   that.logger.log('[CONV-FOOTER] H:: this.textInputTextArea', (document.getElementById('chat21-main-message-context') as HTMLInputElement).value , target.style.height, target.scrollHeight, target.offsetHeight, target.clientHeight);
       target? target.style.height = '100%': null;
       if (target && target.value === '\n') {
           target.value = '';
@@ -431,28 +437,104 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     }
   }
 
+
+
+  onStartRecording() {
+    this.isStartRec = true;
+    this.isStopRec = false;
+  }
+
+  onDeleteRecording(){
+    this.isStartRec = false;
+    this.isStopRec = false;
+  }
+
+  onEndRecording(audioBlob: Blob | null) {
+    this.isStartRec = false;
+    this.isStopRec = true;
+  }
+
+
+
+  onSendRecording(audioBlob: Blob | null) {
+    this.isStartRec = false;
+    if (audioBlob) {
+      this.convertBlobToBase64(audioBlob);
+      this.isStopRec = false;
+    } else {
+      this.isStopRec = false;
+    }
+  }
+
+
+
+  // Funzione per convertire Blob in Base64 usando FileReader
+  async convertBlobToBase64(audioBlob: Blob) {
+    let that = this;
+    if (audioBlob) {
+      this.isFilePendingToUpload = true;
+    } else {
+      this.isFilePendingToUpload = false;
+    }
+    const type = audioBlob.type;
+    const size = audioBlob.size;
+    const reader = new FileReader();
+    reader.readAsDataURL(audioBlob);
+    //reader.addEventListener('load', function () {
+    reader.onloadend = () => {
+      that.isFileSelected = true;
+      // const base64data = reader.result as string;
+      that.logger.log('[CONV-FOOTER] onload file');
+      const fileXLoad = {
+        src: reader.result.toString(),
+        title: 'audio-file'
+      };
+      const uid = (new Date().getTime()).toString(36);
+      that.arrayFilesLoad[0] = { uid: uid, file: fileXLoad, type: type, size: size };
+      that.logger.log('[CONV-FOOTER] OK: ', that.arrayFilesLoad[0]);
+      // SEND MESSAGE
+      let metadata = {
+        'name': 'audio-file',
+        'src': fileXLoad.src,
+        'type': type,
+        'uid': uid,
+        'size': size
+      };
+      
+      const file = new File([audioBlob], "audio-file.mp3", {
+        type: audioBlob.type,     
+        lastModified: Date.now()
+      });
+
+      that.uploadSingle(metadata, file, '');
+    };
+    //}, false);
+  }
+
+  
+
   onTextAreaChange(){
     this.resizeInputField()
     this.setWritingMessages(this.textInputTextArea)
   }
 
   onSendPressed(event) {
-    this.logger.debug('[CONV-FOOTER] onSendPressed:event', event);
+    this.logger.log('[CONV-FOOTER] onSendPressed:event', event);
     event.preventDefault();
-    this.logger.debug('[CONV-FOOTER] AppComponent::onSendPressed::isFilePendingToUpload:', this.isFilePendingToUpload);
+    this.logger.log('[CONV-FOOTER] AppComponent::onSendPressed::isFilePendingToUpload:', this.isFilePendingToUpload);
     if (this.isFilePendingToUpload) {
-      this.logger.debug('[CONV-FOOTER] AppComponent::onSendPressed', 'is a file');
+      this.logger.log('[CONV-FOOTER] AppComponent::onSendPressed', 'is a file');
       // its a file
       this.loadFile();
       this.isFilePendingToUpload = false;
       // disabilito pulsanti
-      this.logger.debug('[CONV-FOOTER] AppComponent::onSendPressed::isFilePendingToUpload:', this.isFilePendingToUpload);
+      this.logger.log('[CONV-FOOTER] AppComponent::onSendPressed::isFilePendingToUpload:', this.isFilePendingToUpload);
     } else {
       if ( this.textInputTextArea && this.textInputTextArea.length > 0 ) {
-        this.logger.debug('[CONV-FOOTER] AppComponent::onSendPressed', 'is a message');
+        this.logger.log('[CONV-FOOTER] AppComponent::onSendPressed', 'is a message');
         // its a message
         if (this.textInputTextArea.trim() !== '') {
-          //   that.logger.debug('[CONV-FOOTER] sendMessage -> ', this.textInputTextArea);
+          //   that.logger.log('[CONV-FOOTER] sendMessage -> ', this.textInputTextArea);
           // this.resizeInputField();
           // this.messagingService.sendMessage(msg, TYPE_MSG_TEXT);
           // this.setDepartment();
@@ -526,7 +608,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       setTimeout(function () {
         const textarea = document.getElementById(id);
         if (textarea) {
-            //   that.logger.debug('[CONV-FOOTER] 1--------> FOCUSSSSSS : ', textarea);
+            //   that.logger.log('[CONV-FOOTER] 1--------> FOCUSSSSSS : ', textarea);
             textarea.setAttribute('value', ' ');
             textarea.focus();
         }
@@ -566,7 +648,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     this.textInputTextArea = ((document.getElementById('chat21-main-message-context') as HTMLInputElement).value);
     if (keyCode === 13) { // ENTER pressed
       if (this.textInputTextArea && this.textInputTextArea.trim() !== '') {
-        //   that.logger.debug('[CONV-FOOTER] sendMessage -> ', this.textInputTextArea);
+        //   that.logger.log('[CONV-FOOTER] sendMessage -> ', this.textInputTextArea);
         // this.resizeInputField();
         // this.messagingService.sendMessage(msg, TYPE_MSG_TEXT);
         // this.setDepartment();
@@ -598,14 +680,14 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     this.resizeInputField()
     const items = (event.clipboardData || event.originalEvent.clipboardData).items;
     let file = null;
-    this.logger.debug('[CONV-FOOTER] onPaste items ', items);
+    this.logger.log('[CONV-FOOTER] onPaste items ', items);
     for (const item of items) {
-      this.logger.debug('[CONV-FOOTER] onPaste item ', item);
-      this.logger.debug('[CONV-FOOTER] onPaste item.type ', item.type);
+      this.logger.log('[CONV-FOOTER] onPaste item ', item);
+      this.logger.log('[CONV-FOOTER] onPaste item.type ', item.type);
       if (item.type.startsWith("image")) {
         // SEND TEXT MESSAGE IF EXIST
         // if(this.textInputTextArea){
-        //   this.logger.debug('[CONV-FOOTER] onPaste texttt ', this.textInputTextArea);
+        //   this.logger.log('[CONV-FOOTER] onPaste texttt ', this.textInputTextArea);
         //   this.sendMessage(this.textInputTextArea, TYPE_MSG_TEXT)
         // }
 
@@ -615,12 +697,12 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
           this.logger.error('[CONV-FOOTER] onPaste - error while restoring textArea:',e)
         }
         
-        this.logger.debug('[CONV-FOOTER] onPaste item.type', item.type);
+        this.logger.log('[CONV-FOOTER] onPaste item.type', item.type);
         file = item.getAsFile();
         const data = {target: new ClipboardEvent('').clipboardData || new DataTransfer()};
         data.target.items.add(new File([file], file.name, { type: file.type }));
-        this.logger.debug('[CONV-FOOTER] onPaste data', data);
-        this.logger.debug('[CONV-FOOTER] onPaste file ', file);
+        this.logger.log('[CONV-FOOTER] onPaste data', data);
+        this.logger.log('[CONV-FOOTER] onPaste file ', file);
         this.detectFiles(data)
       }
     }
@@ -629,15 +711,15 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   onDrop(event){
     const items = event.dataTransfer.files;
     let file = null;
-    this.logger.debug('[CONV-FOOTER] onDrop items ', items);
+    this.logger.log('[CONV-FOOTER] onDrop items ', items);
     for (const item of items) {
-      this.logger.debug('[CONV-FOOTER] onDrop item ', item);
-      this.logger.debug('[CONV-FOOTER] onDrop item.type ', item.type);
+      this.logger.log('[CONV-FOOTER] onDrop item ', item);
+      this.logger.log('[CONV-FOOTER] onDrop item.type ', item.type);
 
       const data = {target: {files: new DataTransfer()}}
       data.target.files = items
-      this.logger.debug('[CONV-FOOTER] onDrop data', data);
-      this.logger.debug('[CONV-FOOTER] onDrop file ', file);
+      this.logger.log('[CONV-FOOTER] onDrop data', data);
+      this.logger.log('[CONV-FOOTER] onDrop file ', file);
       this.detectFiles(data)
     }
   }
