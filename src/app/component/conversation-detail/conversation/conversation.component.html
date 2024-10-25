@@ -15,7 +15,7 @@
         [hideHeaderCloseButton]="g?.hideHeaderCloseButton"
         [hideHeaderBackButton]="g?.singleConversation"
         [hideCloseConversationOptionMenu]="(isConversationArchived || g?.hideCloseConversationOptionMenu)"
-        [hideRestartConversationOptionsMenu]="((!g?.singleConversation && !hideTextAreaContent) || g?.hideRestartConversationOptionsMenu)"
+        [hideRestartConversationOptionsMenu]="(isConversationArchived || (!g?.singleConversation && !hideTextAreaContent) || g?.hideRestartConversationOptionsMenu)"
         [hideHeaderConversationOptionsMenu]="g?.hideHeaderConversationOptionsMenu"
         [hideSignOutOptionMenu]="(!g?.singleConversation || !g?.showLogoutOption)"
         [hideChatDetailOptionMenu]="(!g?.isDevMode)"
