@@ -388,7 +388,7 @@ export class Globals {
     /**enable user to set a facebook messanger page to chat with */
     this.telegramUsername = ''
     /**enable user to set a telegram number to chat with */
-    this.fileUploadAccept = "image/*,.pdf,.txt"
+    this.fileUploadAccept = "image/*,.pdf,.txt,.mp3"
     /**enable auto disconnect from messaging after a defined amount of time (s)*/
     this.disconnetTime = 0
 

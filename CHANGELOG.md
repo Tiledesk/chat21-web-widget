@@ -8,6 +8,19 @@
 
 # 5.0.85 in PROD
 
+# 5.0.84-rc.4
+- **added**: checkAcceptedFile fn on dragleave event conversation-content component
+- **added**: checkAcceptedFile fn  in conversation-footer component
+
+# 5.0.84-rc.3
+- **changed**: index-dev lib order import
+
+# 5.0.84-rc.2
+- **changed**: bootstrap, jquery and font-awesome libs
+
+# 5.0.84-rc.1
+- **removed**: innerHtml from document element
+
 # 5.0.83 in PROD
 
 # 5.0.83-rc.4
