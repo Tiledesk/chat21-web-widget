@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.85-rc.1
+- **added**: hide header restart menu option if conversation is closed
+- **removed**: continueConversationBeforeTime settings property
+
 # 5.0.85 in PROD
 
 # 5.0.84-rc.4
