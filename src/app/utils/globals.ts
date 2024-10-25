@@ -201,7 +201,7 @@ export class Globals {
   showInfoMessage: Array<string>; // *******  new ********
   typingLocation: string; // *******  new ********
   allowReopen: boolean; // *******  new ********
-  continueConversationBeforeTime: number; // *******  new ********
+  // continueConversationBeforeTime: number; // *******  new ********
   participants: Array<string>; // *******  new ********
   whatsappNumber: string; // *******  new ********
   messangerPageTitle: string; // *******  new ********
@@ -378,7 +378,7 @@ export class Globals {
     /** set the location of typing indicator (header or content) */
     this.allowReopen = false;
     /** enable the user to reopen a closed conversation */
-    this.continueConversationBeforeTime = 48;
+    // this.continueConversationBeforeTime = 48;
     /** enable user to continue archived confersation before the value time from last timeout message */
     this.participants = [];
     /** enable user to talk with specific chat-bots/humans */

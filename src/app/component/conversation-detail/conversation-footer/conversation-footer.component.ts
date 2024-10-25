@@ -27,7 +27,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   @Input() userFullname: string;
   @Input() userEmail: string;
   @Input() showAttachmentButton: boolean;
-  @Input() showContinueConversationButton: boolean;
+  // @Input() showContinueConversationButton: boolean;
   @Input() isConversationArchived: boolean;
   @Input() hideTextAreaContent: boolean;
   @Input() hideTextReply: boolean;
@@ -502,11 +502,11 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     this.onNewConversationButtonClicked.emit();
   }
 
-  onContinueConversation(){
-    this.hideTextAreaContent = false;
-    this.onBackButton.emit(false)
-    this.restoreTextArea()
-  }
+  // onContinueConversation(){
+  //   this.hideTextAreaContent = false;
+  //   this.onBackButton.emit(false)
+  //   this.restoreTextArea()
+  // }
 
   onBackButtonFN(){
     this.onBackButton.emit(false)
