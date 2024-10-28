@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChange, SimpleChanges, ViewChild, OnDestroy } from '@angular/core';
 
 
 @Component({
@@ -7,8 +7,9 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
   styleUrls: ['./confirm-close.component.scss']
 })
 export class ConfirmCloseComponent implements OnInit{
-  
-  isLoadingActive: boolean = false;
+
+  @Input() isLoadingActive: boolean;
+  @Input() conversationId: string;
 
   @Input() translationMap: Map< string, string>;
   @Input() stylesMap: Map<string, string>;
@@ -17,8 +18,20 @@ export class ConfirmCloseComponent implements OnInit{
   constructor() { }
 
   ngOnInit(): void {
-    console.log('[CONFIRM CLOSE MODAL] onInit');
+    console.log('[CONFIRM CLOSE MODAL] onInit', this.isLoadingActive);
     // this.dialog.showModal();
+  }
+
+  ngOnChanges(changes: SimpleChanges){
+    console.log('changesssssss', changes, this.isLoadingActive)
+    if(changes && 
+      changes['conversationId'] && 
+      changes['conversationId'].previousValue !== undefined && 
+      (changes['conversationId'].previousValue !== changes['conversationId'].currentValue) &&
+      changes['conversationId'].currentValue
+    ){
+    this.isLoadingActive = false;
+  }
   }
 
   ngAfterViewInit(){
@@ -31,6 +44,11 @@ export class ConfirmCloseComponent implements OnInit{
   onConfirm(){
     this.isLoadingActive = true;
     this.onDiaglogClosed.emit({type: 'confirm', data: null});
+  }
+
+  ngOnDestroy(){
+    this.isLoadingActive = false;
+    console.log('destroyyy', this.isLoadingActive)
   }
 
 }

@@ -84,6 +84,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   isEmojiiPickerShow: boolean = false;
   
   isButtonsDisabled = true;
+  isClosingConversation: boolean = false;
   // isConversationArchived = false;
   hideFooterTextReply: boolean = false;
   hideTextAreaContent: boolean = false;
@@ -186,6 +187,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     // this.initAll();
     this.logger.debug('[CONV-COMP] ngOnInit: ', this.senderId);
     this.showMessageWelcome = false;
+    this.isClosingConversation = false;
     // const subscriptionEndRenderMessage = this.appComponent.obsEndRenderMessage.subscribe(() => {
     //   this.ngZone.run(() => {
     //     // that.scrollToBottom();
@@ -261,7 +263,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     const keysCloseChatDialog= [
       'BACK', 
       'CLOSE',
-      'CLOSE_CHAT'
+      'CLOSE_CHAT',
+      'CONFIRM_CLOSE_CHAT'
     ];
 
     
@@ -988,8 +991,10 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
   /** CALLED BY: conv-header component */
   onCloseChat(){
-    this.logger.debug('[CONV-COMP] close chat with uid ', this.conversation.uid, this.conversationId)
+    this.isClosingConversation = false;
+    this.logger.debug('[CONV-COMP] close chat with uid ', this.conversation.uid, this.conversationId, this.isClosingConversation)
     this.mydialog.nativeElement.showModal();
+    // this.isClosingConversation = false;
     this.isMenuShow = false
   }
   /** CALLED BY: confirm-close modal component */
@@ -997,15 +1002,18 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.logger.debug('[CONV-COMP] onCloseDialog data returned ', event)
     switch(event.type){
       case 'back':
+        this.isClosingConversation = false;
         this.mydialog.nativeElement.close()
         break;
       case 'confirm':
         this.tiledeskRequestService.closeSupportGroup(this.conversationId).then(data => {
           if(data === 'closed'){
+            this.isClosingConversation = false;
             this.mydialog.nativeElement.close()
             this.logger.debug('[CONV-COMP] chat closed successfully with uid ', this.conversationId) 
           }
         }).catch(error => {
+          this.isClosingConversation = false;
           this.logger.error('[CONV-COMP] ERROR while closing chat with id: ', this.conversationId, error)
         })
         break;
