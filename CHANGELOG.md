@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.85-rc.2
+- **added**: loading progress indicator while closing a conversation
+
 # 5.0.85-rc.1
 - **added**: hide header restart menu option if conversation is closed
 - **removed**: continueConversationBeforeTime settings property
