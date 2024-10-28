@@ -8,6 +8,8 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 })
 export class ConfirmCloseComponent implements OnInit{
   
+  isLoadingActive: boolean = false;
+
   @Input() translationMap: Map< string, string>;
   @Input() stylesMap: Map<string, string>;
   @Output() onDiaglogClosed = new EventEmitter<{type: string, data: any}>();
@@ -27,6 +29,7 @@ export class ConfirmCloseComponent implements OnInit{
   }
 
   onConfirm(){
+    this.isLoadingActive = true;
     this.onDiaglogClosed.emit({type: 'confirm', data: null});
   }
 
