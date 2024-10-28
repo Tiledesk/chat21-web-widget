@@ -28,12 +28,23 @@
         }
 
         .back-button{
-            color: #777777
+            color: #777777;
+
+            &.disabled{
+                cursor: not-allowed;
+                pointer-events: none;
+                opacity: 0.6
+            }
+        }
+
+        .spinner-container{
+            width: inherit;
+            height: inherit;
+            display: flex;
+            align-items: center;
         }
 
     }
-
-    
 }
 
 .c21-header-button{
@@ -44,6 +55,8 @@
 button.c21-button-primary{
     margin: 0 !important;
     height: 30px !important;
+    display: flex;
+    align-items: center;
 
     .c21-label-button{
         margin: 0 !important;

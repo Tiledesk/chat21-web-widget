@@ -91,7 +91,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   footerMessagePlaceholder: string = '';
   textInputTextArea: String;
   isTrascriptDownloadEnabled = false;
-  showContinueConversationButton: boolean = false
+  // showContinueConversationButton: boolean = false
   // ========= begin:: gestione scroll view messaggi ======= //
   //startScroll = true; // indica lo stato dello scroll: true/false -> è in movimento/ è fermo
   isScrolling = false;
@@ -262,7 +262,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     const keysCloseChatDialog= [
       'BACK', 
       'CLOSE',
-      'CLOSE_CHAT'
+      'CLOSE_CHAT',
+      'CONFIRM_CLOSE_CHAT'
     ];
 
     
@@ -402,8 +403,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
             this.conversation = conv;
             this.isConversationArchived = true;
             /**calc time difference between now and last conversation timestamp to allow "Continue" button */
-            let duration = getDateDifference(this.conversation.timestamp, Date.now())
-            duration.hours < this.g.continueConversationBeforeTime? this.showContinueConversationButton = true: this.showContinueConversationButton = false
+            // let duration = getDateDifference(this.conversation.timestamp, Date.now())
+            // duration.hours < this.g.continueConversationBeforeTime? this.showContinueConversationButton = true: this.showContinueConversationButton = false
             callback(this.isConversationArchived)
           }else if(!conv) {
             callback(null);
@@ -991,6 +992,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   onCloseChat(){
     this.logger.debug('[CONV-COMP] close chat with uid ', this.conversation.uid, this.conversationId)
     this.mydialog.nativeElement.showModal();
+    // this.isClosingConversation = false;
     this.isMenuShow = false
   }
   /** CALLED BY: confirm-close modal component */

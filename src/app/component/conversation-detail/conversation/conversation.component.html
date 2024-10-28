@@ -15,7 +15,7 @@
         [hideHeaderCloseButton]="g?.hideHeaderCloseButton"
         [hideHeaderBackButton]="g?.singleConversation"
         [hideCloseConversationOptionMenu]="(isConversationArchived || g?.hideCloseConversationOptionMenu)"
-        [hideRestartConversationOptionsMenu]="((!g?.singleConversation && !hideTextAreaContent) || g?.hideRestartConversationOptionsMenu)"
+        [hideRestartConversationOptionsMenu]="(isConversationArchived || (!g?.singleConversation && !hideTextAreaContent) || g?.hideRestartConversationOptionsMenu)"
         [hideHeaderConversationOptionsMenu]="g?.hideHeaderConversationOptionsMenu"
         [hideSignOutOptionMenu]="(!g?.singleConversation || !g?.showLogoutOption)"
         [hideChatDetailOptionMenu]="(!g?.isDevMode)"
@@ -93,6 +93,7 @@
 
     <dialog #mydialog>
         <chat-confirm-close
+            [conversationId]="conversationId"
             [translationMap]="translationMapCloseChatDialog"
             [stylesMap]="stylesMap"
             (onDiaglogClosed)="onCloseDialog($event)">
@@ -116,7 +117,6 @@
             [channelType]="g?.channelType"
             [userFullname]="g?.userFullname"
             [userEmail]="g?.userEmail"
-            [showContinueConversationButton]="g?.singleConversation && showContinueConversationButton"
             [showAttachmentButton]="g?.showAttachmentButton"
             [hideTextAreaContent]="(g?.singleConversation && hideTextAreaContent) || (isConversationArchived && !g?.allowReopen)"
             [isConversationArchived]="isConversationArchived"

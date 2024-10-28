@@ -974,7 +974,7 @@ export class GlobalSettingsService {
             globals.singleConversation = (TEMP === true) ? true : false;
         }
         TEMP = tiledeskSettings['restartConversation'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > continueConversationBeforeTime:: ', TEMP]);
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > restartConversation:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.restartConversation = (TEMP === true) ? true : false;
         }
@@ -1001,11 +1001,11 @@ export class GlobalSettingsService {
                 globals.showInfoMessage.push('CHAT_CLOSED')
             }
         }
-        TEMP = tiledeskSettings['continueConversationBeforeTime'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > continueConversationBeforeTime:: ', TEMP]);
-        if (TEMP !== undefined) {
-            globals.continueConversationBeforeTime = +TEMP;
-        }
+        // TEMP = tiledeskSettings['continueConversationBeforeTime'];
+        // // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > continueConversationBeforeTime:: ', TEMP]);
+        // if (TEMP !== undefined) {
+        //     globals.continueConversationBeforeTime = +TEMP;
+        // }
         TEMP = tiledeskSettings['participants'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > participants:: ', TEMP]);
         if (TEMP !== undefined) {
@@ -1310,10 +1310,10 @@ export class GlobalSettingsService {
                 this.globals.showInfoMessage.push('CHAT_CLOSED')
             }
         }
-        TEMP = el.nativeElement.getAttribute('continueConversationBeforeTime');
-        if (TEMP !== null) {
-            this.globals.continueConversationBeforeTime = +TEMP;
-        }
+        // TEMP = el.nativeElement.getAttribute('continueConversationBeforeTime');
+        // if (TEMP !== null) {
+        //     this.globals.continueConversationBeforeTime = +TEMP;
+        // }
         TEMP = el.nativeElement.getAttribute('participants');
         if (TEMP !== null) {
             this.globals.participants = TEMP.split(',').map(key => { return key.trim()});
@@ -1755,10 +1755,10 @@ export class GlobalSettingsService {
             }
         }
 
-        TEMP = getParameterByName(windowContext, 'tiledesk_continueConversationBeforeTime');
-        if (TEMP) {
-            globals.continueConversationBeforeTime = +TEMP;
-        }
+        // TEMP = getParameterByName(windowContext, 'tiledesk_continueConversationBeforeTime');
+        // if (TEMP) {
+        //     globals.continueConversationBeforeTime = +TEMP;
+        // }
 
         TEMP = getParameterByName(windowContext, 'tiledesk_participants');
         if (TEMP) {
