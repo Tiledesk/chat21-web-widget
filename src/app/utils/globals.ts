@@ -201,7 +201,7 @@ export class Globals {
   showInfoMessage: Array<string>; // *******  new ********
   typingLocation: string; // *******  new ********
   allowReopen: boolean; // *******  new ********
-  continueConversationBeforeTime: number; // *******  new ********
+  // continueConversationBeforeTime: number; // *******  new ********
   participants: Array<string>; // *******  new ********
   whatsappNumber: string; // *******  new ********
   messangerPageTitle: string; // *******  new ********
@@ -378,7 +378,7 @@ export class Globals {
     /** set the location of typing indicator (header or content) */
     this.allowReopen = false;
     /** enable the user to reopen a closed conversation */
-    this.continueConversationBeforeTime = 48;
+    // this.continueConversationBeforeTime = 48;
     /** enable user to continue archived confersation before the value time from last timeout message */
     this.participants = [];
     /** enable user to talk with specific chat-bots/humans */
@@ -567,10 +567,10 @@ export class Globals {
     if(isOpen && isMobile){
       //block body scroll
       // window.parent.document.body.style.height = '100vh';
-      window.parent.document.body.style.height = '0';
-      window.parent.document.body.style.width = '100%';
-      window.parent.document.body.style.overflowY = 'hidden'
-      window.parent.document.body.style.position = 'fixed';
+      window.parent.document.body.style.setProperty('height', '0', 'important')
+      window.parent.document.body.style.setProperty('width', '100%', 'important')
+      window.parent.document.body.style.setProperty('overflow-y', 'hidden', 'important')
+      window.parent.document.body.style.setProperty('position', 'fixed', 'important')
     }else if(!isOpen && isMobile){
       //reset body style
       window.parent.document.body.style.removeProperty('height')
