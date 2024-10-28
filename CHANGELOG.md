@@ -6,11 +6,33 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.88 in PROD
+
 # 5.0.87 in PROD
 
 # 5.0.86 in PROD
 
-# 5.0.85 in PROD
+# 5.0.85-rc.2
+- **added**: loading progress indicator while closing a conversation
+
+# 5.0.85-rc.1
+- **added**: hide header restart menu option if conversation is closed
+- **removed**: continueConversationBeforeTime settings property
+
+# 5.0.84 in PROD
+
+# 5.0.84-rc.4
+- **added**: checkAcceptedFile fn on dragleave event conversation-content component
+- **added**: checkAcceptedFile fn  in conversation-footer component
+
+# 5.0.84-rc.3
+- **changed**: index-dev lib order import
+
+# 5.0.84-rc.2
+- **changed**: bootstrap, jquery and font-awesome libs
+
+# 5.0.84-rc.1
+- **removed**: innerHtml from document element
 
 # 5.0.83 in PROD
 
