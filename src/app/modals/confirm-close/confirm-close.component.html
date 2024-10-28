@@ -14,7 +14,7 @@
         <div class="options">
 
             <!-- BUTTON CANCEL-->
-            <span class="v-align-center c21-label-button back-button" (click)="onBack()">
+            <span class="v-align-center c21-label-button back-button" [class.disabled]="isLoadingActive" (click)="onBack()">
                 {{translationMap?.get('BACK')}}
             </span> 
 
