@@ -44,6 +44,8 @@
 button.c21-button-primary{
     margin: 0 !important;
     height: 30px !important;
+    display: flex;
+    align-items: center;
 
     .c21-label-button{
         margin: 0 !important;
