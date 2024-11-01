@@ -1003,7 +1003,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       case 'confirm':
         this.tiledeskRequestService.closeSupportGroup(this.conversationId).then(data => {
           if(data === 'closed'){
-            this.mydialog.nativeElement.close()
+            this.mydialog.nativeElement.close();
+            this.appStorageService.removeItem('recipientId');
             this.logger.debug('[CONV-COMP] chat closed successfully with uid ', this.conversationId) 
           }
         }).catch(error => {
