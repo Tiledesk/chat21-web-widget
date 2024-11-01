@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.89-rc.1
+- **added**: remove recipientId from storage after conversation is closed
+
 # 5.0.85-rc.2
 - **added**: loading progress indicator while closing a conversation
 
