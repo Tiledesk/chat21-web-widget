@@ -10,20 +10,20 @@
         </button>
     </div>
     <div class="content">
-        <div class="text">Are you sure you wanna close this chat?</div>
+        <div class="text">{{ translationMap?.get('CONFIRM_CLOSE_CHAT') }}</div>
         <div class="options">
 
             <!-- BUTTON CANCEL-->
-            <span class="v-align-center c21-label-button back-button" (click)="onBack()">
+            <span class="v-align-center c21-label-button back-button" [class.disabled]="isLoadingActive" (click)="onBack()">
                 {{translationMap?.get('BACK')}}
             </span> 
 
             <!-- BUTTON CLOSE-->
-            <button tabindex="1040" aflistconv #aflistconv class="c21-button-primary" (click)="onConfirm()" [ngStyle]="{'background-color': stylesMap?.get('themeColor'), 'border-color': stylesMap?.get('themeColor'), 'color': stylesMap?.get('themeForegroundColor') }">
-                <span *ngIf="isLoadingActive" style="height: inherit; width: inherit;">
-                    <svg xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" with="25" height="25"
+            <button tabindex="1040" aflistconv #aflistconv class="c21-button-primary" (click)="onConfirm()" [ngStyle]="{'background-color': stylesMap?.get('themeColor'), 'border-color': stylesMap?.get('themeColor'), 'color': stylesMap?.get('foregroundColor') }">
+                <span *ngIf="isLoadingActive" class="spinner-container">
+                    <svg xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="25" height="25" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }"
                         viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
-                        <path fill="#fff" d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50">
+                        <path fill="inherit" d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50">
                         <animateTransform 
                             attributeName="transform" 
                             attributeType="XML" 

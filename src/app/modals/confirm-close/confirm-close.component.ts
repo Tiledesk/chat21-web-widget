@@ -1,4 +1,6 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChange, SimpleChanges, ViewChild, OnDestroy } from '@angular/core';
+import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
+import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 
 
 @Component({
@@ -7,18 +9,31 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
   styleUrls: ['./confirm-close.component.scss']
 })
 export class ConfirmCloseComponent implements OnInit{
-  
-  isLoadingActive: boolean = false;
+
+  @Input() isLoadingActive: boolean;
+  @Input() conversationId: string;
 
   @Input() translationMap: Map< string, string>;
   @Input() stylesMap: Map<string, string>;
   @Output() onDiaglogClosed = new EventEmitter<{type: string, data: any}>();
 
+  private logger: LoggerService = LoggerInstance.getInstance();
   constructor() { }
 
   ngOnInit(): void {
-    console.log('[CONFIRM CLOSE MODAL] onInit');
+    this.logger.log('[CONFIRM CLOSE MODAL] onInit', this.isLoadingActive, this.stylesMap);
     // this.dialog.showModal();
+  }
+
+  ngOnChanges(changes: SimpleChanges){
+    if(changes && 
+      changes['conversationId'] && 
+      changes['conversationId'].previousValue !== undefined && 
+      (changes['conversationId'].previousValue !== changes['conversationId'].currentValue) &&
+      changes['conversationId'].currentValue
+    ){
+    this.isLoadingActive = false;
+  }
   }
 
   ngAfterViewInit(){

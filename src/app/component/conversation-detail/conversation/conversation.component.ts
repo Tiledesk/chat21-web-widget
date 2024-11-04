@@ -262,7 +262,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     const keysCloseChatDialog= [
       'BACK', 
       'CLOSE',
-      'CLOSE_CHAT'
+      'CLOSE_CHAT',
+      'CONFIRM_CLOSE_CHAT'
     ];
 
     
@@ -991,6 +992,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   onCloseChat(){
     this.logger.debug('[CONV-COMP] close chat with uid ', this.conversation.uid, this.conversationId)
     this.mydialog.nativeElement.showModal();
+    // this.isClosingConversation = false;
     this.isMenuShow = false
   }
   /** CALLED BY: confirm-close modal component */
