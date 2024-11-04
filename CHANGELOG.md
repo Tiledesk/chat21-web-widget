@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.89-rc.2
+- minor fix
+
 # 5.0.89-rc.1
 - **added**: remove recipientId from storage after conversation is closed
 
