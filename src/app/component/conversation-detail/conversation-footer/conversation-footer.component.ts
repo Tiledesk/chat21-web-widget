@@ -27,7 +27,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   @Input() channelType: string;
   @Input() userFullname: string;
   @Input() userEmail: string;
-  @Input() showAttachmentButton: boolean;
+  @Input() showAttachmentFooterButton: boolean;
+  @Input() showEmojiFooterButton: boolean
   // @Input() showContinueConversationButton: boolean;
   @Input() isConversationArchived: boolean;
   @Input() hideTextAreaContent: boolean;

@@ -175,7 +175,6 @@ export class Globals {
   supportMode: boolean;
 
   customAttributes: any;
-  showAttachmentButton: boolean;
   showAllConversations: boolean;
   //  privacyField: string;
   jwt: string;
@@ -216,6 +215,9 @@ export class Globals {
 
   hiddenMessage: string; // *******  new ********
   isDevMode: boolean; // *******  new ********
+
+  showEmojiFooterButton: boolean // *******  new ********
+  showAttachmentFooterButton: boolean // *******  new ********
   constructor(
   ) { }
 
@@ -400,7 +402,6 @@ export class Globals {
     this.showLogoutOption = false;
 
     this.isOpenNewMessage = false;
-    this.showAttachmentButton = true;
     this.showAllConversations = true;
 
     //WIDGET VISIBILITY - desktop
@@ -412,6 +413,10 @@ export class Globals {
 
     /**set an hidden message to show when conversation starts */
     this.hiddenMessage = null
+    /** show/hide emoji option in footer chat-detail page */
+    this.showEmojiFooterButton = true;
+    /** show/hide attachment option in footer chat-detail page */
+    this.showAttachmentFooterButton = true;
 
     // ============ END: SET EXTERNAL PARAMETERS ==============//
 
@@ -540,10 +545,11 @@ export class Globals {
       'projectid': this.projectid,
       'recipientId': this.recipientId,
       'restartConversation': this.restartConversation,
+      'showAllConversations': this.showAllConversations, 'showAvailableAgents': this.showAvailableAgents,
+      'showAttachmentFooterButton': this.showAttachmentFooterButton, 'showEmojiFooterButton': this.showEmojiFooterButton, 
+      'showInfoMessage': this.showInfoMessage, 'showWaitTime': this.showWaitTime, 
+      'showLogoutOption': this.showLogoutOption,
       'singleConversation': this.singleConversation,
-      'showInfoMessage': this.showInfoMessage, 'showAllConversations': this.showAllConversations, 
-      'showWaitTime': this.showWaitTime, 'showAvailableAgents': this.showAvailableAgents,
-      'showLogoutOption': this.showLogoutOption, 'showAttachmentButton': this.showAttachmentButton,
       'soundEnabled': this.soundEnabled, 
       'startHidden': this.startHidden, 'startFromHome': this.startFromHome, 
       'tenant': this.tenant, 

@@ -196,25 +196,12 @@ export class GlobalSettingsService {
         } catch (error) {
             this.logger.error('[GLOBAL-SET] setMainParametersFromSettings filterByRequester > Error :', error);
         }
-        try {
-            const isLogEnabled = tiledeskSettings['isLogEnabled'];
-            if (typeof isLogEnabled !== 'undefined') { this.globals.isLogEnabled = (isLogEnabled === true) ? true : false; }
-        } catch (error) {
-            this.logger.error('[GLOBAL-SET] setMainParametersFromSettings isLogEnabled > Error :', error);
-        }
+
         try {
             const departmentID = tiledeskSettings['departmentID'];
             if (typeof departmentID !== 'undefined') { this.globals.departmentID = departmentID; }
         } catch (error) {
             this.logger.error('[GLOBAL-SET] setMainParametersFromSettings departmentID > Error :', error);
-        }
-
-        try {
-            const showAttachmentButton = tiledeskSettings['showAttachmentButton'];
-            // tslint:disable-next-line:max-line-length
-            if (typeof showAttachmentButton !== 'undefined') { this.globals.showAttachmentButton = (showAttachmentButton === true) ? true : false; }
-        } catch (error) {
-            this.logger.error('[GLOBAL-SET] setMainParametersFromSettings showAttachmentButton > Error :', error);
         }
 
         try {
@@ -839,11 +826,6 @@ export class GlobalSettingsService {
         if (TEMP !== undefined) {
             globals.customAttributes = TEMP;
         }
-        TEMP = tiledeskSettings['showAttachmentButton'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showAttachmentButton:: ', TEMP]);
-        if (TEMP !== undefined) {
-            globals.showAttachmentButton = (TEMP === true) ? true : false;
-        }
         TEMP = tiledeskSettings['showAllConversations'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showAllConversations:: ', TEMP]);
         if (TEMP !== undefined) {
@@ -889,10 +871,10 @@ export class GlobalSettingsService {
         if (TEMP !== undefined) {
             globals.hideSettings = (TEMP === true) ? true : false;;
         }
-        TEMP = tiledeskSettings['logLevel'];
+        TEMP = tiledeskSettings['isLogEnabled'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > logLevel:: ', TEMP]);
         if (TEMP !== undefined) {
-            globals.logLevel = TEMP;
+            globals.isLogEnabled = TEMP;
         }
         TEMP = tiledeskSettings['preChatFormJson'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > preChatFormJson:: ', TEMP]);
@@ -900,7 +882,6 @@ export class GlobalSettingsService {
             if(isJsonArray(TEMP)){
                 globals.preChatFormJson = TEMP;
             }
-
         }
         TEMP = tiledeskSettings['bubbleSentBackground'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > bubbleSentBackground:: ', TEMP);
@@ -1055,7 +1036,17 @@ export class GlobalSettingsService {
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > onPageChangeVisibilityMobile:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.onPageChangeVisibilityMobile = TEMP;
-        }     
+        }    
+        TEMP = tiledeskSettings['showAttachmentFooterButton'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showAttachmentFooterButton:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.showAttachmentFooterButton = (TEMP === true) ? true : false;
+        }
+        TEMP = tiledeskSettings['showEmojiFooterButton'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showEmojiFooterButton:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.showEmojiFooterButton = (TEMP === true) ? true : false;
+        } 
     }
 
     /**
@@ -1203,10 +1194,6 @@ export class GlobalSettingsService {
         if (TEMP !== null) {
             this.globals.filterByRequester = (TEMP === true) ? true : false;
         }
-        TEMP = el.nativeElement.getAttribute('showAttachmentButton');
-        if (TEMP !== null) {
-            this.globals.showAttachmentButton = (TEMP === true) ? true : false;
-        }
         TEMP = el.nativeElement.getAttribute('departmentID');
         if (TEMP !== null) {
             this.globals.departmentID = TEMP;
@@ -1325,6 +1312,14 @@ export class GlobalSettingsService {
         TEMP = el.nativeElement.getAttribute('disconnetTime');
         if (TEMP !== null) {
             this.globals.disconnetTime = +TEMP;
+        }
+        TEMP = el.nativeElement.getAttribute('showAttachmentFooterButton');
+        if (TEMP !== null) {
+            this.globals.showAttachmentFooterButton = (TEMP === true) ? true : false;
+        }
+        TEMP = el.nativeElement.getAttribute('showEmojiFooterButton');
+        if (TEMP !== null) {
+            this.globals.showEmojiFooterButton = (TEMP === true) ? true : false;
         }
         
         
@@ -1574,11 +1569,6 @@ export class GlobalSettingsService {
             globals.customAttributes = JSON.parse(TEMP);
         }
 
-        TEMP = getParameterByName(windowContext, 'tiledesk_showAttachmentButton');
-        if (TEMP) {
-            globals.showAttachmentButton = stringToBoolean(TEMP);
-        }
-
         TEMP = getParameterByName(windowContext, 'tiledesk_departmentID');
         if (TEMP) {
             globals.departmentID = TEMP;
@@ -1783,6 +1773,16 @@ export class GlobalSettingsService {
         TEMP = getParameterByName(windowContext, 'td_draft');
         if (TEMP) {
             globals.isDevMode = stringToBoolean(TEMP);
+        }
+
+        TEMP = getParameterByName(windowContext, 'tiledesk_showAttachmentFooterButton');
+        if (TEMP) {
+            globals.showAttachmentFooterButton = stringToBoolean(TEMP);
+        }
+
+        TEMP = getParameterByName(windowContext, 'tiledesk_showEmojiFooterButton');
+        if (TEMP) {
+            globals.showEmojiFooterButton = stringToBoolean(TEMP);
         }
         
     }
