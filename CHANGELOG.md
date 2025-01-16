@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.90-rc.2
+- **added**: ability to manage footer attachment and emoji buttons
 
 # 5.0.90-rc.1
 - **bug-fixed**: if autoStart is false, container page is blocked on mobile when onPageChangeVisibilityMobile is set to 'open'
