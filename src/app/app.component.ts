@@ -267,17 +267,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.disposeWidget()
                     return;
                 }
-                //set status (open /close)
-                if(this.g.isMobile && this.g.onPageChangeVisibilityMobile !== 'last'){
-                    let isOpen = this.g.onPageChangeVisibilityMobile === 'open'? true: false
-                    this.g.setIsOpen(isOpen)
-                    this.appStorageService.setItem('isOpen', isOpen)
-                }
-                if(!this.g.isMobile && this.g.onPageChangeVisibilityDesktop !== 'last'){
-                    let isOpen = this.g.onPageChangeVisibilityDesktop === 'open'? true: false
-                    this.g.setIsOpen(isOpen)
-                    this.appStorageService.setItem('isOpen', isOpen)
-                }
+
                 
                 /**CHECK IF JWT IS IN URL PARAMETERS */
                 this.logger.debug('[APP-COMP] check if token is passed throw url: ', this.g.jwt);
@@ -432,6 +422,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 if(!this.g.isOpen && this.g.disconnetTime > 0){
                     that.listenToWidgetClick()
                 }
+
+
+                //set status (open /close)
+                if(this.g.isMobile && this.g.onPageChangeVisibilityMobile !== 'last'){
+                    let isOpen = this.g.onPageChangeVisibilityMobile === 'open'? true: false
+                    this.g.setIsOpen(isOpen)
+                    this.appStorageService.setItem('isOpen', isOpen)
+                }
+                if(!this.g.isMobile && this.g.onPageChangeVisibilityDesktop !== 'last'){
+                    let isOpen = this.g.onPageChangeVisibilityDesktop === 'open'? true: false
+                    this.g.setIsOpen(isOpen)
+                    this.appStorageService.setItem('isOpen', isOpen)
+                }
+
 
             } else if (state && state === AUTH_STATE_OFFLINE && !this.forceDisconnect) {
                 /** non sono loggato */
