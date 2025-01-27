@@ -218,6 +218,7 @@ export class Globals {
 
   showEmojiFooterButton: boolean // *******  new ********
   showAttachmentFooterButton: boolean // *******  new ********
+  showRegisterAudioFooterButton: boolean // *******  new ********
   constructor(
   ) { }
 
@@ -417,6 +418,8 @@ export class Globals {
     this.showEmojiFooterButton = true;
     /** show/hide attachment option in footer chat-detail page */
     this.showAttachmentFooterButton = true;
+    /** show/hide rec audio option in footer chat-detail page */
+    this.showRegisterAudioFooterButton = true;
 
     // ============ END: SET EXTERNAL PARAMETERS ==============//
 
