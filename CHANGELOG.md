@@ -6,7 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# 5.0.90-rc.3
+# 5.0.90-rc.4
+- **added**: ability to manage footer audioRecord button
 
 # 5.0.90-rc.2
 - **added**: ability to manage footer attachment and emoji buttons
