@@ -506,6 +506,15 @@ export class GlobalSettingsService {
                     if (variables.hasOwnProperty('onPageChangeVisibilityMobile')) {
                         globals['onPageChangeVisibilityMobile'] = variables['onPageChangeVisibilityMobile'];
                     }
+                    if (variables.hasOwnProperty('showEmojiFooterButton')) {
+                        globals['showEmojiFooterButton'] = variables['showEmojiFooterButton'];
+                    }
+                    if (variables.hasOwnProperty('showAttachmentFooterButton')) {
+                        globals['showAttachmentFooterButton'] = variables['showAttachmentFooterButton'];
+                    }
+                    if (variables.hasOwnProperty('showRegisterAudioFooterButton')) {
+                        globals['showRegisterAudioFooterButton'] = variables['showRegisterAudioFooterButton'];
+                    }
                     
                 }
             }
@@ -1047,6 +1056,11 @@ export class GlobalSettingsService {
         if (TEMP !== undefined) {
             globals.showEmojiFooterButton = (TEMP === true) ? true : false;
         } 
+        TEMP = tiledeskSettings['showRegisterAudioFooterButton'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showEmojiFooterButton:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.showRegisterAudioFooterButton = (TEMP === true) ? true : false;
+        } 
     }
 
     /**
@@ -1320,6 +1334,10 @@ export class GlobalSettingsService {
         TEMP = el.nativeElement.getAttribute('showEmojiFooterButton');
         if (TEMP !== null) {
             this.globals.showEmojiFooterButton = (TEMP === true) ? true : false;
+        }
+        TEMP = el.nativeElement.getAttribute('showRegisterAudioFooterButton');
+        if (TEMP !== null) {
+            this.globals.showRegisterAudioFooterButton = (TEMP === true) ? true : false;
         }
         
         

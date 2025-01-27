@@ -29,6 +29,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   @Input() userEmail: string;
   @Input() showAttachmentFooterButton: boolean;
   @Input() showEmojiFooterButton: boolean
+  @Input() showRegisterAudioFooterButton: boolean
   // @Input() showContinueConversationButton: boolean;
   @Input() isConversationArchived: boolean;
   @Input() hideTextAreaContent: boolean;
@@ -318,83 +319,75 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       // msg = replaceEndOfLine(msg);
       // msg = msg.trim();
 
-        let recipientFullname = this.translationMap.get('GUEST_LABEL');
-          // sponziello: adds ADDITIONAL ATTRIBUTES TO THE MESSAGE
-        const g_attributes = this.attributes;
-        // added <any> to resolve the Error occurred during the npm installation: Property 'userFullname' does not exist on type '{}'
-        const attributes = <any>{};
-        if (g_attributes) {
-          for (const [key, value] of Object.entries(g_attributes)) {
-            attributes[key] = value;
-          }
+      let recipientFullname = this.translationMap.get('GUEST_LABEL');
+        // sponziello: adds ADDITIONAL ATTRIBUTES TO THE MESSAGE
+      const g_attributes = this.attributes;
+      // added <any> to resolve the Error occurred during the npm installation: Property 'userFullname' does not exist on type '{}'
+      const attributes = <any>{};
+      if (g_attributes) {
+        for (const [key, value] of Object.entries(g_attributes)) {
+          attributes[key] = value;
         }
-        if (additional_attributes) {
-          for (const [key, value] of Object.entries(additional_attributes)) {
-            attributes[key] = value;
-          }
+      }
+      if (additional_attributes) {
+        for (const [key, value] of Object.entries(additional_attributes)) {
+          attributes[key] = value;
         }
-          // fine-sponziello
-        // this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith)
-        const senderId = this.senderId;
-        const projectid = this.projectid;
-        const channelType = this.channelType;
-        const userFullname = this.userFullname;
-        const userEmail = this.userEmail;
-        const conversationWith = this.conversationWith;
+      }
+        // fine-sponziello
+      // this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith)
+      const senderId = this.senderId;
+      const projectid = this.projectid;
+      const channelType = this.channelType;
+      const userFullname = this.userFullname;
+      const userEmail = this.userEmail;
+      const conversationWith = this.conversationWith;
         
 
-        if (userFullname) {
-          recipientFullname = userFullname;
-        } else if (userEmail) {
-          recipientFullname = userEmail;
-        } else if (attributes && attributes['userFullname']) {
-          recipientFullname = attributes['userFullname'];
-        } else {
-          recipientFullname = this.translationMap.get('GUEST_LABEL');
-        }
+      if (userFullname) {
+        recipientFullname = userFullname;
+      } else if (userEmail) {
+        recipientFullname = userEmail;
+      } else if (attributes && attributes['userFullname']) {
+        recipientFullname = attributes['userFullname'];
+      } else {
+        recipientFullname = this.translationMap.get('GUEST_LABEL');
+      }
 
-        this.onBeforeMessageSent.emit({
-          senderFullname: recipientFullname,
-          text: msg,
-          type: type,
-          metadata: metadata,
-          conversationWith: conversationWith,
-          recipientFullname: recipientFullname,
-          attributes : attributes,
-          projectid: projectid,
-          channelType: channelType
-        })
+      this.onBeforeMessageSent.emit({
+        senderFullname: recipientFullname,
+        text: msg,
+        type: type,
+        metadata: metadata,
+        conversationWith: conversationWith,
+        recipientFullname: recipientFullname,
+        attributes : attributes,
+        projectid: projectid,
+        channelType: channelType
+      })
         
-        this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
-        const messageSent = this.conversationHandlerService.sendMessage(
-          msg,
-          type,
-          metadata,
-          conversationWith,
-          recipientFullname,
-          senderId,
-          recipientFullname,
-          channelType ,    
-          attributes
-        );
+      this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
+      const messageSent = this.conversationHandlerService.sendMessage(
+        msg,
+        type,
+        metadata,
+        conversationWith,
+        recipientFullname,
+        senderId,
+        recipientFullname,
+        channelType ,    
+        attributes
+      );
 
-        this.onAfterSendMessage.emit(messageSent)
-        // this.isNewConversation = false;
+      this.onAfterSendMessage.emit(messageSent)
+      // this.isNewConversation = false;
 
-        //TODO-GAB: da rivedere
-        try {
-          const target = document.getElementById('chat21-main-message-context') as HTMLInputElement;
-          target.value = '';
-          target.style.height = this.HEIGHT_DEFAULT;
-        } catch (e) {
-          this.logger.error('[CONV-FOOTER] > Error :' + e);
-        }
-        this.restoreTextArea();
+      this.restoreTextArea();
     }
   }
 
   private restoreTextArea() {
-    //   that.logger.log('[CONV-FOOTER] AppComponent:restoreTextArea::restoreTextArea');
+    // that.logger.log('[CONV-FOOTER] AppComponent:restoreTextArea::restoreTextArea');
     this.resizeInputField();
     const textArea = (<HTMLInputElement>document.getElementById('chat21-main-message-context'));
     this.textInputTextArea = ''; // clear the textarea
@@ -407,6 +400,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       this.logger.log('[CONV-FOOTER] AppComponent:restoreTextArea::restoreTextArea::textArea:', 'restored');
     }
     this.setFocusOnId('chat21-main-message-context');
+    this.isStopRec= false;
   }
 
   /**
@@ -418,18 +412,18 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     try {
       const target = document.getElementById('chat21-main-message-context') as HTMLInputElement;
       // tslint:disable-next-line:max-line-length
-      //   that.logger.log('[CONV-FOOTER] H:: this.textInputTextArea', (document.getElementById('chat21-main-message-context') as HTMLInputElement).value , target.style.height, target.scrollHeight, target.offsetHeight, target.clientHeight);
       target? target.style.height = '100%': null;
       if (target && target.value === '\n') {
-          target.value = '';
-          target.style.height = this.HEIGHT_DEFAULT;
-        } else if (target && target.scrollHeight > target.offsetHeight) {
-          target.style.height = target.scrollHeight + 2 + 'px';
-          target.style.minHeight = this.HEIGHT_DEFAULT;
-        } else if (target) {
-          target.style.height = this.HEIGHT_DEFAULT;
-          // segno sto scrivendo
-          // target.offsetHeight - 15 + 'px';
+        this.textInputTextArea = ''; // clear the textarea
+        target.value = '';
+        target.style.height = this.HEIGHT_DEFAULT;
+      } else if (target && target.scrollHeight > target.offsetHeight) {
+        target.style.height = target.scrollHeight + 2 + 'px';
+        target.style.minHeight = this.HEIGHT_DEFAULT;
+      } else if (target) {
+        target.style.height = this.HEIGHT_DEFAULT;
+        // segno sto scrivendo
+        // target.offsetHeight - 15 + 'px';
       }
       //this.setWritingMessages(target.value);
       this.onChangeTextArea.emit({textAreaEl: target, minHeightDefault: this.HEIGHT_DEFAULT})
@@ -610,7 +604,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
         const textarea = document.getElementById(id);
         if (textarea) {
             //   that.logger.log('[CONV-FOOTER] 1--------> FOCUSSSSSS : ', textarea);
-            textarea.setAttribute('value', ' ');
+            textarea.setAttribute('value', '');
             textarea.focus();
         }
       }, 500);
