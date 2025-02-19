@@ -419,7 +419,7 @@ export class Globals {
     /** show/hide attachment option in footer chat-detail page */
     this.showAttachmentFooterButton = true;
     /** show/hide rec audio option in footer chat-detail page */
-    this.showRegisterAudioFooterButton = false;
+    this.showRegisterAudioFooterButton = true;
 
     // ============ END: SET EXTERNAL PARAMETERS ==============//
 
