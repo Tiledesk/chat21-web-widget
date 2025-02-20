@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.91-rc2
+- **changed**: colors for chat-audio-track component managed
+
 # 5.0.91-rc1
 - **changed**: enabled showRegisterAudioFooterButton button 
 
