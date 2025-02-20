@@ -6,9 +6,9 @@
         </span>
       </button>
 
-      <chat-audio-track  *ngIf="audioBlob && audioUrl"
+      <chat-audio-track  class="test" *ngIf="audioBlob && audioUrl"
         [audioBlob] = "audioBlob"
-        [color]="stylesMap.get('themeColor')"
+        [color]="'var(--chat-footer-color)'"
         [fontSize]="stylesMap.get('fontSize')"
         [stylesMap]="stylesMap">
       </chat-audio-track>

@@ -2,9 +2,8 @@
 :host {
     --backgroundColor: #{var(--blue)};
     --textColor: #{var(--bck-msg-sent)};
-    --hoverBackgroundColor: #{var(--bck-msg-sent)};
-    --hoverTextColor: #{var(--blue)};
-    --max-width: #{var(--button-in-msg-max-width)};
+    --hoverBackgroundColor: var(--textColor);
+    --hoverTextColor:var(--backgroundColor);
 }
 
 .audio-container{
@@ -39,8 +38,8 @@ button {
     font-size: 16px;
     border: none;
     background-color: transparent;
-    color: var(--icon-fill-color);
-    fill: var(--icon-fill-color);
+    color: var(--textColor);
+    fill: var(--textColor);
 }
 
 .waveformCanvas {
@@ -72,10 +71,11 @@ button {
     .play-pause:hover {
         // background-color: #ddd;
         // background-color: rgb(82, 160, 252);
-        background-color: #fff;
+        background-color: var(--hoverBackgroundColor);
+        color: var(--hoverTextColor);
         svg{
             //fill:#fff;
-            fill: rgb(82, 160, 252);
+            fill: var(--hoverTextColor)
         }
     }
     .duration {

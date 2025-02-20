@@ -26,7 +26,10 @@ export class AudioTrackComponent implements AfterViewInit {
   currentTime: number = 0;
   isPlaying: boolean = false;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(
+    private sanitizer: DomSanitizer,
+    private elementRef: ElementRef
+  ) {}
 
   ngAfterViewInit() {
     console.log('stylesssss', this.stylesMap)
@@ -39,6 +42,11 @@ export class AudioTrackComponent implements AfterViewInit {
       this.audioUrl = this.sanitizer.bypassSecurityTrustUrl(this.rawAudioUrl);
       this.setupAudioContext();
     }
+
+    if(this.stylesMap.get('bubbleSentBackground')) this.elementRef.nativeElement.querySelector('.audio-container').style.setProperty('--backgroundColor', this.extractFirstColor(this.stylesMap.get('bubbleSentBackground')));
+    if(this.stylesMap.get('bubbleSentTextColor')) this.elementRef.nativeElement.querySelector('.audio-container').style.setProperty('--textColor', this.stylesMap.get('bubbleSentTextColor'));
+    if(this.stylesMap.get('bubbleSentBackground')) this.elementRef.nativeElement.querySelector('.audio-container').style.setProperty('--hoverBackgroundColor', this.stylesMap.get('bubbleSentTextColor'));
+    if(this.stylesMap.get('bubbleSentTextColor')) this.elementRef.nativeElement.querySelector('.audio-container').style.setProperty('--hoverTextColor', this.extractFirstColor(this.stylesMap.get('bubbleSentBackground')));
   }
 
   async setupAudioContext() {
@@ -144,4 +152,11 @@ export class AudioTrackComponent implements AfterViewInit {
       }
     });
   }
+
+  extractFirstColor(gradient: string): string | null {
+    const colorRegex = /rgba?\((\d+,\s*\d+,\s*\d+(,\s*\d+(\.\d+)?)?)\)/;
+    const match = gradient.match(colorRegex);
+    return match ? match[0] : null;
+  }
+
 }
