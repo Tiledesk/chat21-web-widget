@@ -1352,10 +1352,10 @@
             window.Tiledesk('restart')
         }
 
-        function onClickShowRegisterAudioFooterButton(){
-            let status = document.querySelector('input[name="showRegisterAudioFooterButton"]:checked').value
-            window.tiledeskSettings['showRegisterAudioFooterButton'] = stringToBoolean(status)
-            console.log('onClickShowRegisterAudioFooterButton:', window.tiledeskSettings)
+        function onClickshowAudioRecorderFooterButton(){
+            let status = document.querySelector('input[name="showAudioRecorderFooterButton"]:checked').value
+            window.tiledeskSettings['showAudioRecorderFooterButton'] = stringToBoolean(status)
+            console.log('onClickshowAudioRecorderFooterButton:', window.tiledeskSettings)
             window.Tiledesk('restart')
         }
 
@@ -2402,13 +2402,13 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-5 formElement"><span><em><strong>showRegisterAudioFooterButton</strong></em></span></div>
+                            <div class="col-md-5 formElement"><span><em><strong>showAudioRecorderFooterButton</strong></em></span></div>
                             <div class="col-md-5">
-                                <input class="form-check-input" type="radio" name="showRegisterAudioFooterButton" value="true" checked><label>True</label>
-                                <input class="form-check-input" type="radio" name="showRegisterAudioFooterButton" value="false"><label>False</label>
+                                <input class="form-check-input" type="radio" name="showAudioRecorderFooterButton" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio" name="showAudioRecorderFooterButton" value="false"><label>False</label>
                             </div>
                             <div class="col-md-2">
-                                <button class="btn btn-light" onclick="onClickShowRegisterAudioFooterButton()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                                <button class="btn btn-light" onclick="onClickshowAudioRecorderFooterButton()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
                             </div>
                         </div>
 

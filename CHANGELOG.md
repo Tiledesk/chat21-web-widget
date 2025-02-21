@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.91-rc3
+- **added**: showAudioRecorderFooterButton property variable
+
 # 5.0.91-rc2
 - **changed**: colors for chat-audio-track component managed
 

@@ -29,7 +29,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   @Input() userEmail: string;
   @Input() showAttachmentFooterButton: boolean;
   @Input() showEmojiFooterButton: boolean
-  @Input() showRegisterAudioFooterButton: boolean
+  @Input() showAudioRecorderFooterButton: boolean
   // @Input() showContinueConversationButton: boolean;
   @Input() isConversationArchived: boolean;
   @Input() hideTextAreaContent: boolean;
