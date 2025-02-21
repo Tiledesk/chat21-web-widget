@@ -3,11 +3,11 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 
 @Component({
-  selector: 'chat-audio-track',
-  templateUrl: './audio-track.component.html',
-  styleUrls: ['./audio-track.component.scss']
+  selector: 'chat-audio',
+  templateUrl: './audio.component.html',
+  styleUrls: ['./audio.component.scss']
 })
-export class AudioTrackComponent implements AfterViewInit {
+export class AudioComponent implements AfterViewInit {
 
   @ViewChild('audioElement', { static: true }) audioElement!: ElementRef<HTMLAudioElement>;
   @ViewChild('canvasElement', { static: true }) waveformCanvas!: ElementRef<HTMLCanvasElement>;
@@ -68,7 +68,7 @@ export class AudioTrackComponent implements AfterViewInit {
     const height = canvas.height;
     const rawData = audioBuffer.getChannelData(0);
 
-    const samples = 60;
+    const samples = 40;
     const blockSize = Math.floor(rawData.length / samples);
     const waveform = new Float32Array(samples);
   
@@ -81,7 +81,7 @@ export class AudioTrackComponent implements AfterViewInit {
     }
 
     canvasCtx.clearRect(0, 0, width, height);
-    const padding = 1;
+    const padding = 2;
     const barWidth = (width / samples) - padding * 2;
     const audio = this.audioElement.nativeElement;
     const playedPercent = audio.currentTime / this.audioDuration;
