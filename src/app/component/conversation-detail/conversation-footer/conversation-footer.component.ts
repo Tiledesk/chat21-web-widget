@@ -292,7 +292,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
         }else if ((metadata.type.startsWith('image') && metadata.type.includes('svg')) || !metadata.type.startsWith('image')){
           /** CASE FILE */  
           type_message = TYPE_MSG_FILE
-            message = message + '\n' + messageText
+          message = message + '\n' + messageText
         } else if (!metadata.type.startsWith('image')){
           /** CASE FILE */  
           type_message = TYPE_MSG_FILE
