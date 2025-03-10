@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.92
+- **added**: displayOnDesktop and displayOnMobile parameters in test mode with true value
+
 # 5.0.91
 
 # 5.0.91-rc4
