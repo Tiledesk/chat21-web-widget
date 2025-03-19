@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.93
+- **changed**: disabled sound on chatbot-panel.html
+
 # 5.0.92
 - **added**: displayOnDesktop and displayOnMobile parameters in test mode with true value
 
