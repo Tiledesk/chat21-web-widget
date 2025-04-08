@@ -48,3 +48,5 @@ src/environments
 src/environments/real_data
 src/widget-config-docker.json
 src/widget-config-native-mqtt.json
+
+./deploy*.js
