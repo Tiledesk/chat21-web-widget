@@ -548,7 +548,7 @@
 
         window.Tiledesk('onMessageCreated', function(event_data) {
         	// console.log("onMessageCreated!", event_data);
-            window.parent.postMessage(event_data.detail, '*')
+            window.parent.postMessage({ source: 'widget', data: event_data.detail}, '*')
        		// if(event_data.detail.isLogged){
             // 	console.log("isLogged!!!!", event_data);
             // 	window.Tiledesk('show')
