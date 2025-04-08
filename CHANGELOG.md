@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.94-rc1
+- **changed**: postMessage to cds for current intentMessage
+
 # 5.0.93
 - **changed**: disabled sound on chatbot-panel.html
 
