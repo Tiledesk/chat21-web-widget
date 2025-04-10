@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.94-rc4
+- **added**: publish onMessageCreated only if status is >= 100
+
 # 5.0.94-rc3
 - **bug-fixed**: if hiddenMessage exist, onNewConversation event is not fired
 
