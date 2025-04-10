@@ -729,7 +729,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.logger.debug('[APP-COMP] AppComponent::startNewConversation hiddenMessage',this.g.hiddenMessage );
         if(this.g.hiddenMessage){
             this.onNewConversationWithMessage(this.g.hiddenMessage)
-            return;
         }
 
         this.triggerNewConversationEvent(newConvId);
