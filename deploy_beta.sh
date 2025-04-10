@@ -2,8 +2,6 @@
 version=`node -e 'console.log(require("./package.json").version)'`
 echo "version $version"
 
-## Update package-lock.json
-npm install
 
 # Get curent branch name
 current_branch=$(git rev-parse --abbrev-ref HEAD)

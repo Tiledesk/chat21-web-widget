@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.94-rc3
+- **bug-fixed**: if hiddenMessage exist, onNewConversation event is not fired
+
 # 5.0.94-rc2
 - **added**: onNewConversation event in chatbot-panel.html page for logs 
 
