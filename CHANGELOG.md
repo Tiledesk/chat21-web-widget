@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.94-rc2
+- **added**: onNewConversation event in chatbot-panel.html page for logs 
+
 # 5.0.94-rc1
 - **changed**: postMessage to cds for current intentMessage
 
