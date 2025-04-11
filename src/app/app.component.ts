@@ -728,7 +728,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         /** allow to start conversation with an hidden message (without publishing 'new_conversation' event) */
         this.logger.debug('[APP-COMP] AppComponent::startNewConversation hiddenMessage',this.g.hiddenMessage );
         if(this.g.hiddenMessage){
-            this.onNewConversationWithMessage(this.g.hiddenMessage)
+            this.onNewConversationWithMessage(newConvId, this.g.hiddenMessage)
         }
 
         this.triggerNewConversationEvent(newConvId);
@@ -1791,24 +1791,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
 
-    onNewConversationWithMessage(text: string, subType: string = 'info'){
+    onNewConversationWithMessage(recipientId: string, text: string, subType: string = 'info'){
         this.logger.log('[APP-COMP] onNewConversationWithMessage in APP COMPONENT', text);
 
-        const newConvId = this.generateNewUidConversation();
-        this.g.setParameter('recipientId', newConvId);
-        this.appStorageService.setItem('recipientId', newConvId)
+        this.g.setParameter('recipientId', recipientId);
+        this.appStorageService.setItem('recipientId', recipientId)
 
         let message: any = {}
         message.attributes = { subtype: subType, ...this.g.attributes}
         message.userAgent = this.g.attributes['client']
-        message.request_id = newConvId
+        message.request_id = recipientId
         message.sourcePage = this.g.attributes['sourcePage']
         message.language = this.g.lang
         message.text = '/'+ text
         message.participants = this.g.participants
         message.departmentid = this.g.attributes.departmentId
         // this.sendMessage(message)
-        this.tiledeskRequestsService.sendMessageToRequest(newConvId, this.g.tiledeskToken, message)
+        this.tiledeskRequestsService.sendMessageToRequest(recipientId, this.g.tiledeskToken, message)
         return;
     }
 
