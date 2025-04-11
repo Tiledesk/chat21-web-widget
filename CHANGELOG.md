@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.94-rc5
+- **bug-fixed**: onNewConversationWithMessage create new conv and not use che current one just created
+
 # 5.0.94-rc4
 - **added**: publish onMessageCreated only if status is >= 100
 
