@@ -1794,9 +1794,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     onNewConversationWithMessage(recipientId: string, text: string, subType: string = 'info'){
         this.logger.log('[APP-COMP] onNewConversationWithMessage in APP COMPONENT', text);
 
-        this.g.setParameter('recipientId', recipientId);
-        this.appStorageService.setItem('recipientId', recipientId)
-
         let message: any = {}
         message.attributes = { subtype: subType, ...this.g.attributes}
         message.userAgent = this.g.attributes['client']
