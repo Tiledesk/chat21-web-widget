@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.94-rc6
+- **bug-fixed**: logoChat is not rendered if contains special characters (ex. "(" or ")" ) in the name of the resource
+
 # 5.0.94-rc5
 - **bug-fixed**: onNewConversationWithMessage create new conv and not use che current one just created
 
