@@ -1,4 +1,4 @@
-name: Docker Image Community latest CI
+name: Docker Chat21 Web Widget Image Community latest CI
 
 on:	
   push:	 

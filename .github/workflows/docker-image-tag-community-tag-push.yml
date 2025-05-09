@@ -1,4 +1,4 @@
-name: Publish Docker Community image tags
+name: Publish  Chat21 Web Widget Docker Community image tags
 
 on:
   push:
