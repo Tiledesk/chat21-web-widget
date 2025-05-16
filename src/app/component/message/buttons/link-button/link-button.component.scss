@@ -1,0 +1,62 @@
+// @import 'src/app/sass/variables';
+
+:host {
+    --backgroundColor: #{var(--blue)};
+    --textColor: #{var(--bck-msg-sent)};
+    --hoverBackgroundColor: #{var(--bck-msg-sent)};
+    --hoverTextColor: #{var(--blue)};
+    --buttonFontSize: #{var(--button-in-msg-font-size)};
+    --max-width: #{var(--button-in-msg-max-width)};
+}
+
+.button-in-msg {
+    padding: 8px 16px!important;
+    position: relative;
+    max-width: var(--max-width);
+    min-width: inherit;
+    cursor: pointer;
+    border: 1px solid var(--textColor);
+    border-radius: 20px;
+    margin: 3px;
+    background: var(--backgroundColor);
+    overflow: hidden;
+    font-family: 'Muli', sans-serif;
+    font-size: var(--buttonFontSize);
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: -0.24px;
+    -webkit-font-smoothing: antialiased;
+    color: var(--textColor);
+    line-height: 16px;
+}
+
+.url {
+    transition: background-color .6s ease;
+    .icon-button-action {
+        position: absolute;
+        top: -1px;
+        right: 1px;
+        svg {
+            fill: var(--textColor);
+        }
+    }
+    .icon-button-action-self{
+        position: absolute;
+        right: 1px;
+        svg {
+            fill: var(--textColor);
+        }
+    }
+    &:focus,
+    &:hover {
+        color: var(--hoverTextColor);
+        background:  var(--hoverBackgroundColor);
+        transform: scale(1.05);
+        .icon-button-action, .icon-button-action-self {
+            svg {
+                fill: var(--hoverTextColor);
+            }
+        }
+    }
+}

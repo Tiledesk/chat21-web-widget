@@ -1,0 +1,16 @@
+<div class="c21-icon-avatar">
+  <div class="c21-avatar-image profile_image">
+      <!-- is a BOT -->
+      <img *ngIf="senderID?.indexOf('bot_') !== -1 || senderFullname.toLowerCase().includes('bot')" [src]="url" (error)="onBotImgError($event)" (load)="onLoadedBot($event)"/>
+      <!-- is a HUMAN -->
+      <img *ngIf="senderID?.indexOf('bot_') === -1 && !senderFullname.toLowerCase().includes('bot')" [src]="url" (error)="onHumanImgError($event)" (load)="onLoadedHuman($event)"/>
+  </div> 
+</div>
+
+<!-- <div class="c21-pallozzo">
+    <div class="c21-ball" [ngStyle] = "{ 'background-color':setColorFromString(agent.firstname) }" >
+      <span class="c21-ball-label">{{avatarPlaceholder(agent.firstname)}}</span>
+      <div *ngIf="agent.imageurl" #avatarImage class="c21-avatar-image" [style.background-image]="'url(' + agent.imageurl + ')'"></div>
+    </div>
+</div> -->
+

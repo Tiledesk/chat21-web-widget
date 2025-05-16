@@ -1,0 +1,48 @@
+<div class="modal-container">
+    <div class="header">
+        <!-- ICON CLOSE CHAT -->
+        <button tabindex="-1" class="c21-header-button c21-right c21-close c21-button-clean" (click)="onBack()">
+            <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('themeColor') }" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
+                <path fill="none" d="M0 0h24v24H0V0z" />
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                <title id="altIconTitle">{{ translationMap?.get('CLOSE') }}</title>
+            </svg>
+        </button>
+    </div>
+    <div class="content">
+        <div class="text">{{ translationMap?.get('CONFIRM_CLOSE_CHAT') }}</div>
+        <div class="options">
+
+            <!-- BUTTON CANCEL-->
+            <span class="v-align-center c21-label-button back-button" [class.disabled]="isLoadingActive" (click)="onBack()">
+                {{translationMap?.get('BACK')}}
+            </span> 
+
+            <!-- BUTTON CLOSE-->
+            <button tabindex="1040" aflistconv #aflistconv class="c21-button-primary" (click)="onConfirm()" [ngStyle]="{'background-color': stylesMap?.get('themeColor'), 'border-color': stylesMap?.get('themeColor'), 'color': stylesMap?.get('foregroundColor') }">
+                <span *ngIf="isLoadingActive" class="spinner-container">
+                    <svg xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="25" height="25" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }"
+                        viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
+                        <path fill="inherit" d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50">
+                        <animateTransform 
+                            attributeName="transform" 
+                            attributeType="XML" 
+                            type="rotate"
+                            dur="1s" 
+                            from="0 50 50"
+                            to="360 50 50" 
+                            repeatCount="indefinite" />
+                        </path>
+                    </svg>
+                </span>
+                <span class="v-align-center c21-label-button">
+                    {{translationMap?.get('CLOSE_CHAT')}}
+                </span> 
+                <div class="clear"></div>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+

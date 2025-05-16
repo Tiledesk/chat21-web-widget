@@ -1,0 +1,72 @@
+<div id='c21-preview' >
+  <div class="modal-preview-image" #divPreview id="divPreview">
+
+    <div class="c21-header">
+      <div class="c21-header-container">
+
+        <div class="c21-header-content">
+          <!-- ICON CLOSE CHAT -->
+          <button tabindex="-1" class="c21-header-button c21-right c21-close c21-button-clean" [ngStyle]="{'display': (hideHeaderCloseButton)?'none':'flex'}" (click)="onClickClose()">
+            <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('themeColor') }" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
+                <path fill="none" d="M0 0h24v24H0V0z" />
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                <title id="altIconTitle">{{ translationMap?.get('CLOSE') }}</title>
+            </svg>
+        </button>
+
+           <!-- TITLE -->
+          <!-- <div class="c21-title" [ngStyle]="{'color': stylesMap?.get('themeColor') }">
+            <div class="titleText">{{ translationMap?.get('LABEL_PREVIEW') }}</div>
+          </div> -->
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="c21-content" #scrollMePreview id="scroll-me-preview">
+        <chat-image *ngIf="fileSelected"
+          [metadata]="fileSelected"
+          [width]="sizeImage?.width"
+          [height]="sizeImage?.height"
+          (onImageRendered)="onImageRenderedFN($event)">
+        </chat-image>
+        <div id="img-preview-file-extension">{{ file_extension }} </div>
+    </div>
+
+
+    <div id="c21-footer">
+      <div class="visible-text-area">
+        <textarea 
+          start-focus-chat21-conversation-preview-component
+          inputTextArea 
+          #textbox 
+          tabindex="1502" 
+          aria-labelledby="altTextArea"
+          rows="1" 
+          id="chat21-main-message-context-preview" 
+          class='f21textarea c21-button-clean'
+          [(ngModel)]="textInputTextArea"
+          (ngModelChange)="onTextAreaChange()" 
+          (keypress)="onkeypress($event)"
+          (keydown)="onkeydown($event)"
+          (paste)="onPaste($event)"
+          placeholder="{{ translationMap?.get('LABEL_PLACEHOLDER') }}">
+        </textarea>
+
+      </div>
+      <div tabindex="-1" class="chat21-textarea-button" id="chat21-button-send" [class.active]="!isFilePendingToLoad " (click)="onSendPressed($event)">
+        <span class="v-align-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+              <path d="M1.8,18.9V1.7L22,10.3L1.8,18.9z M3.9,15.6l12.6-5.4L3.9,4.9v3.7l6.4,1.6l-6.4,1.6V15.6z M3.9,15.6V4.9v7V15.6z"/>
+            </svg>
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+<span id="testFocus" tabindex="1599" onFocus="document.querySelector('[start-focus-chat21-conversation-preview-component]').focus()"></span>
+<span id="altTextArea" style="display: none">scrivi la tua domanda</span>

@@ -1,0 +1,370 @@
+// @import 'src/app/sass/variables';
+
+.textarea-container{
+    // padding: 8px 34px;
+    // padding-left: 70px;
+    // padding-right: 45px;
+    display: flex;
+    // width: 100%;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+    margin: 0px 8px;
+
+    //if attachment icon OR emoji icon is not in DOM -> increment textarea width
+    &:has(:not(#chat21-start-upload-doc), :not(#chat21-emoticon-picker)) .visible-text-area {
+        width: 80%;
+    }
+    //if attachment icon AND emoji icon is not in DOM -> increment textarea width
+    &:has(:not(#chat21-start-upload-doc)):has(:not(#chat21-emoticon-picker)) .visible-text-area {
+        width: 90%;
+      }
+
+}
+
+.icons-container{
+    display: flex;
+    align-self: flex-end;
+    // margin-left: 8px;
+    // margin-right: 8px;
+    gap: 8px;
+}
+
+.visible-text-area {
+    width: 70%;
+    margin: 8px 0px;
+    pointer-events: auto;
+    border-radius: var(--chat-footer-border-radius);
+    background-color: var(--chat-footer-background-color);
+    &.disabled {
+        background-color: rgb(232, 233, 237);
+    }
+}
+
+.chat21-textarea-button {
+    fill: var(--icon-fill-color);
+    pointer-events: auto;
+    height: var(--chat-footer-height);
+    bottom: 22px;
+    opacity: 0.3;
+    cursor: initial;
+    &.active {
+        opacity: 1;
+        cursor: pointer;
+    }
+}
+
+.chat21-textarea-button span svg:hover {
+    background: rgba(240,240,240,0.4)!important;
+    opacity: 1!important;
+    transition: all .45s ease-in-out 0s!important;
+    -moz-transition: all .45s ease-in-out 0s!important;
+    -webkit-transition: all .45s ease-in-out 0s!important;
+    padding: 0px;
+    margin: 0px;
+    border-radius: 50%;
+}
+
+textarea,
+textarea:visited,
+textarea:focus,
+textarea:hover,
+textarea:active{
+    all: unset;
+}
+
+#button {
+    position: absolute;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 1;
+}
+
+#button.chat-open:not(.sidebar) {
+    right: 5px;
+    left: auto;
+    background-color: white;
+}
+
+#button:not(.sidebar) .buttonWave {
+    position: absolute;
+    z-index: -1;
+    width: 60px;
+    height: 60px;
+}
+
+#button-body {
+    width: 40px;
+    height: 40px;
+    border-radius: 28px;
+    border-color: transparent;
+    display: inherit;
+    align-items: center;
+    justify-content: center;
+    pointer-events: initial;
+    transition: all 0.2s ease-in-out 0s;
+    position: relative;
+
+    box-shadow: rgba(3, 6, 12, 0.5) 0px 4px 10px;
+}
+
+
+/* resize and hide the text input area */
+// .hidden-text-area {
+//     display: hidden;
+//     height: 0px;
+// }
+
+// /* show and restore the text area size */
+// .visible-text-area {
+//     display: block;
+//     height: 100%;
+// }
+
+/* button scroll to bottom page */
+#chat21-buttonToBottom {
+    display: flex;
+    position: relative;
+    margin-right: -25px;
+    margin-top: -40px;
+    float: right;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    z-index: 1;
+    cursor: pointer;
+    background-color: #ffffff;
+    border: 1px solid var(--trasp-light-gray);
+    // -webkit-box-shadow: 0 3px 2px $trasp-light-black;
+    // box-shadow: 0 3px 2px $trasp-light-black;
+    text-align: center;
+    svg {
+        margin: auto;
+        fill: var(--gray);
+    }
+}
+#chat21-buttonToBottom:hover {
+    background-color: var(--blue);
+    opacity: 1!important;
+    transition: all .45s ease-in-out!important;
+    -moz-transition: all .45s ease-in-out!important;
+    -webkit-transition: all .45s ease-in-out!important;
+    border: 1px solid #ffffff;
+    svg {
+        fill: #ffffff;
+    }
+}
+
+
+#chat21-main-message-context {
+    overflow: hidden;
+    word-wrap: break-word;
+    resize: horizontal;
+    overflow-y: auto;
+    box-sizing: border-box;
+    color: var(--black);
+    min-width: 100%;
+    outline: 0;
+    resize: none;
+    font-size: 1.4em;
+    line-height: 1.4em;
+    font-weight: 300;
+    max-height: 110px;
+    min-height: auto;
+    height: 20px;
+    padding: 0px 12px; //0px 40px 0px 70px; //NEW FOR EMOJII BUTTON
+    margin: 10px 0px 10px;
+    border: none;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+        background-color: #00000000!important;
+    } 
+
+    &:hover {
+        &::-webkit-scrollbar-track {
+            background-color: #f9f9f9 !important;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background: #777777; 
+        }
+
+    }
+}
+
+#chat21-button-send {
+    display: flex;
+    align-self: flex-end;
+    // margin: 0 8px;
+    width: 34px;
+    text-align: center;
+    justify-content: center;
+}
+
+#chat21-button-rec {
+    display: flex;
+    width: 34px;
+    text-align: center;
+    justify-content: center;
+    height: var(--chat-footer-height);
+    &.active{
+        width: 100%;
+    }
+    chat-audio-recorder {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+#chat21-file{
+    left: 8px;
+    bottom: 0;
+}
+#chat21-emoticon-picker{
+    left: 36px;
+    bottom: 0;
+}
+#chat21-start-upload-doc,
+#chat21-start-mic {
+    left: 8px;
+    bottom: 0;
+}
+
+
+
+#floating-container{
+    width: 100%; //not 100% due to vertical scroll bar
+    // margin: 0px auto;
+    // height: 46px;
+    // position: absolute;
+    // bottom: 0px;
+    border-top: 0px solid var(--light-gray);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    vertical-align: top;
+    text-align: center;
+    padding: 8px 0px;
+
+    .c21-label-button {
+        margin-left: 8px;
+        font-weight: 400;
+        font-size: 1.2em;
+    }
+
+    .c21-button-primary {
+        height: 36px;
+        margin: 5px 3px;
+    }
+
+    .c21-waiting-time {
+        font-size: 1.3em;
+        font-weight: 200;
+        padding: 0px 24px 5px 24px;
+    }
+
+}
+
+
+#hiddenFooter{
+    // position: absolute;
+    bottom: 100%;
+    width: 100%;
+    height: var(--chat-footer-logo-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // position: absolute;
+    // box-shadow: inset 0px -22px 16px -15px rgba(0,0,0,0.1);
+    &.hideTextReply{
+        height: var(--chat-footer-height);
+        position: unset;
+        box-shadow: none;
+    }
+    .c21-powered-by {
+        // height: 40px;
+        text-align: center;
+        // padding: 0;
+        // margin: 5px 0;
+        // position: absolute;
+        color: var(--dark-gray);
+        // top: 0;
+        // left: 20px; //60px;
+        // right: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &::ng-deep a {
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-block;
+            color: var(--dark-gray);
+            font-size: 1.2em;
+            font-weight: 500;
+            line-height: 22px;
+
+            font-family: Mulish, sans-serif;
+            letter-spacing: 0.24px;
+            -webkit-font-smoothing: antialiased;
+            padding: 4px 12px;
+            
+            &:hover{
+                background: rgb(245, 245, 245);
+                border-radius: 16px;
+            }
+            span {
+                display: inline-block;
+                position: relative;
+                // top: 2px;
+            }
+
+            img {
+                width: 20px; //60px;
+                height: auto;
+                max-height: 40px;
+                position: relative;
+                vertical-align: middle;
+                object-fit: contain;
+                //filter: brightness(0) saturate(100%) invert(39%) sepia(12%) saturate(212%) hue-rotate(173deg) brightness(92%) contrast(88%);
+                padding-right: 5px;
+            }
+        }
+        b{
+            font-weight: bolder;
+        }
+    }
+}
+
+.fade-in-bottom {
+    -webkit-animation: fade-in-bottom 0.5s cubic-bezier(0.600, -0.280, 0.735, 0.045) 0.0s;
+    animation: fade-in-bottom 0.5s cubic-bezier(0.600, -0.280, 0.735, 0.045) 0.0s;
+}
+
+
+.emoji-container {
+    height: 312px;
+    position: absolute;
+    overflow: hidden;
+    width: 89%;
+    bottom: 100%;
+    z-index: 10;
+    left: 10px;
+    box-shadow: 0px -15px 20px -13px rgba(0, 0, 0 , 0.38);
+    -webkit-box-shadow: 0px -15px 20px -13px rgba(0, 0, 0 , 0.38);
+}
+.emoji-mart {
+    position: absolute;
+    // bottom: 40px;
+    // left: 10px;
+    border: none;
+    margin: -2px -2px 0px;
+}

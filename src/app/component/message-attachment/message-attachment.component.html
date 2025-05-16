@@ -1,0 +1,41 @@
+<div id="buttons-in-message">
+  <div class="buttons-wrapper">
+
+    <span *ngFor="let button of buttons | slice:0:limit" class="div-button">
+      
+      <chat-text-button-attachment *ngIf="button.type === 'text' && isLastMessage === true" class="div-button"
+        [button]="button"
+        [isConversationArchived]="isConversationArchived"
+        [fontSize]="stylesMap.get('buttonFontSize')"
+        [backgroundColor]="stylesMap.get('buttonBackgroundColor')"
+        [textColor]="stylesMap.get('buttonTextColor')"
+        [hoverBackgroundColor]="stylesMap.get('buttonHoverBackgroundColor')"
+        [hoverTextColor]="stylesMap.get('buttonHoverTextColor')"
+        (onButtonClicked)="returnOnAttachmentButtonClicked($event)">
+      </chat-text-button-attachment>
+
+      <chat-link-button-attachment *ngIf="button.type === 'url'" class="div-button"
+        [button]="button"
+        [fontSize]="stylesMap.get('buttonFontSize')"
+        [backgroundColor]="stylesMap.get('buttonBackgroundColor')"
+        [textColor]="stylesMap.get('buttonTextColor')"
+        [hoverBackgroundColor]="stylesMap.get('buttonHoverBackgroundColor')"
+        [hoverTextColor]="stylesMap.get('buttonHoverTextColor')"
+        (onButtonClicked)="returnOnAttachmentButtonClicked($event)">
+      </chat-link-button-attachment>
+
+      <chat-action-button-attachment *ngIf="button.type === 'action' && isLastMessage === true" class="div-button"
+        [button]="button"
+        [isConversationArchived]="isConversationArchived"
+        [fontSize]="stylesMap.get('buttonFontSize')"
+        [backgroundColor]="stylesMap.get('buttonBackgroundColor')"
+        [textColor]="stylesMap.get('buttonTextColor')"
+        [hoverBackgroundColor]="stylesMap.get('buttonHoverBackgroundColor')"
+        [hoverTextColor]="stylesMap.get('buttonHoverTextColor')"
+        (onButtonClicked)="returnOnAttachmentButtonClicked($event)">
+      </chat-action-button-attachment>
+
+
+    </span>
+  </div>
+</div>

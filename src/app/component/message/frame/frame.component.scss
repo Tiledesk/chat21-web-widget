@@ -1,0 +1,37 @@
+// @import 'src/app/sass/variables';
+
+:host{
+    // --borderRadius: #{$border-radius-bubble-message};
+    --borderRadius: 8px;
+}
+
+.loader {
+    float: left;
+    // position: absolute;
+    z-index: 1000;
+    // background-color: #ccc;
+    border-radius: var(--borderRadius);
+    background-image: linear-gradient(90deg, transparent 0px, #e8e8e8 40px, transparent 80px);
+    background-size: 600px;
+    animation: shine-loader 1.6s infinite linear;
+}
+
+.isLoadingImage {
+    // position: relative;
+    // top: 6px;
+    display: none;
+}
+
+iframe {
+    border:none; 
+    border-radius: var(--borderRadius)
+}
+
+@keyframes shine-loader {
+    0% {
+        background-position: -32px;
+    }
+    40%, 100% {
+        background-position: 208px;
+    }
+}

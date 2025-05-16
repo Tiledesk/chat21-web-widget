@@ -1,0 +1,31 @@
+#alert-container{
+    /* // z-index: 1051;
+    // position: fixed; */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border-radius: 3px;
+    box-shadow: rgba(0, 27, 71, .24) 0px 1px 3px;
+    background: rgb(14 14 14);
+    padding: 7px 10px;
+    bottom: 10px;
+    width: 90%;
+}
+
+span.material-icons,
+span.material-icons-outlined{
+    color: rgb(242, 247, 247);
+    font-size: 20px;
+}
+
+
+.alert-content{
+    color: rgb(242, 247, 247);
+    text-align: center;
+    transition: all 0.15s ease-in-out 0s;
+    font-size: 11px;
+    line-height: 18px;
+    /* // letter-spacing: -0.01em; */
+}

@@ -1,0 +1,180 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "widget": {
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "chat",
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist",
+            "baseHref":"/",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              "src/assets",
+              "src/test.html",
+              "src/test-new.html",
+              "src/test-custom-authentication.html",
+              "src/test-custom-auth.html",
+              "src/tiledesk.js",
+              "src/launch.js",
+              "src/iframe-style.css",
+              "src/widget-config-template.json",
+              "src/widget-config.json",
+              "src/environments/real_data/segment_script-dev.js",
+              "src/environments/real_data/widget-config-firebase.json",
+              "src/environments/real_data/widget-config-mqtt.json",
+              "src/environments/real_data/widget-config-docker.json",
+              "src/environments/real_data/widget-config-native-mqtt.json",
+              "src/environments/real_data/widget-config-native-prod.json"
+            ],
+            "styles": [
+              "src/app/sass/styles.scss"
+            ],
+            "scripts": [
+              "src/assets/js/mqtt/4.2.6/mqtt.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "node_modules/popper.js/dist/umd/popper.min.js"
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "allowedCommonJsDependencies": [
+              "rxjs-compat",
+              "idb",
+              "accept-language-parser",
+              "file-saver",
+              "dayjs"
+            ],
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
+          },
+          "configurations": {
+            "prod": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "4mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "pre": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.pre.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "4mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            },
+            "development": {}
+          },
+          "defaultConfiguration": "prod"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+          },
+          "configurations": {
+            "prod": {
+              "browserTarget": "widget:build:prod"
+            },
+            "pre": {
+              "browserTarget": "widget:build:pre"
+            },
+            "development": {
+              "browserTarget": "widget:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "widget:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": ["zone.js", "zone.js/testing"],
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
+            "assets": [
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": [],
+            "codeCoverage": true
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "e2e/protractor.conf.js"
+          },
+          "configurations": {
+            "prod": {
+              "devServerTarget": "widget:serve:prod"
+            },
+            "pre": {
+              "devServerTarget": "widget:serve:pre"
+            },
+            "development": {
+              "devServerTarget": "widget:serve:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
+    }}
+}

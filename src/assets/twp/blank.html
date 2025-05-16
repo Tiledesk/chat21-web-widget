@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> 
+
+    <title>Widget test page </title>
+    <style>
+
+        @-moz-keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* Firefox */
+        @-webkit-keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* Webkit */
+        @-ms-keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* IE */
+        @keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* Opera and prob css3 final iteration */
+
+        body{
+            --font-family-poppins: 'Poppins', 'Roboto', Arial, sans-serif;
+            --blu: #506493;
+            --gray-light-02: rgb(223, 227, 237);
+            --base-company-logo: rgb(224,106,88);
+            --header-height: 80px;
+            --footer-height: 80px;
+        }
+
+        #preloader {
+            background: #fff;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            z-index: 999999;
+            opacity: 1;
+            filter: alpha(opacity=100);
+            -webkit-transition: opacity 500ms ease;
+            transition: opacity 500ms ease, display 500ms;
+        }
+
+        #preloader .logo {
+            display: block;
+            width: 109px;
+            height: 39px;
+            background-repeat: no-repeat;
+            background-image: url(./tiledesk_widget_files/logo@2x-black.png);      
+            background-size: contain;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -20px 0 0 -55px;
+            -moz-transition:all 1s ease-in-out;
+            -webkit-transition:all 1s ease-in-out;
+            -o-transition:all 1s ease-in-out;
+            -ms-transition:all 1s ease-in-out;
+            transition:all 1s ease-in-out;
+            /* order: name, direction, duration, iteration-count, timing-function */
+            -moz-animation:blink normal 2s infinite ease-in-out; /* Firefox */
+            -webkit-animation:blink normal 2s infinite ease-in-out; /* Webkit */
+            -ms-animation:blink normal 2s infinite ease-in-out; /* IE */
+            animation:blink normal 2s infinite ease-in-out; /* Opera and prob css3 final iteration */
+        }
+
+        .loader{
+            display: block;
+            z-index: 99;
+            position: absolute;
+            top: calc( 50% - 50px);
+            left: calc( 50% - 50px);
+            width: 100px;
+            height: 100px;
+            border: 3px solid var(--base-company-logo);
+            border-radius: 50%;
+
+            animation: spin 7s ease-in-out;
+            animation-iteration-count: infinite;
+            transition-duration: 0.1s;
+        }
+
+        .loader:hover {
+            scale: 0.95;
+            /*Loader on hover effect*/
+        }
+
+        .loader:active {
+            scale: 1.2;
+            /*Loader on click effect*/
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+                border-bottom: solid 3px transparent;
+                border-top: solid 3px transparent;
+            }
+            50% {
+                transform: rotate(1800deg);
+                border: 3px solid white;
+                border-left: solid 3px transparent;
+                border-right: solid 3px transparent;
+            }
+            100% {
+                /*Reversed spinning*/
+                transform: rotate(0deg);
+                border-bottom: solid 3px transparent;
+                border-top: solid 3px transparent;
+            }
+        }
+
+        #deferred-styles {
+            display: none;
+        }
+
+        body {
+            background-color: #ffffff !important; /*#f4f5f5 !important;*/
+            font-family: Roboto, "Helvetica Neue", sans-serif;
+            font-weight: 300;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-weight: 300;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+
+        .container{
+            display: flex;
+            align-items: center;
+            width: 100% !important;
+            justify-content: space-around;
+        }
+
+        .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+    </style>
+
+    <meta property="og:title" content="Try Tiledesk now!" />
+    <meta property="og:description" content="Qualify your leads to increase your sales faster. It's really easy to do it with the Tiledesk conversational form builder" />
+    <meta property="og:image" content="https://tiledesk.com/wp-content/uploads/2022/12/6029654-02-min.png" />
+    <meta property="og:locale" content="en">
+    
+    <link href="./tiledesk_widget_files/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./tiledesk_widget_files/website-poly.min.css" rel="stylesheet" type="text/css">
+
+
+    <script type="application/javascript">
+        window.tiledeskSettings = {
+            marginX: "100px",
+            marginY: "50px",
+            // calloutTimer: 1
+            // autostart: false
+
+        };
+
+        (function(d, s, id) {
+            var w=window; var d=document;
+            var i=function() { 
+                i.c(arguments);
+            };
+            i.q=[];
+            i.c=function(args){ 
+                i.q.push(args);
+            };
+            w.Tiledesk=i;
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); 
+            js.id = id; js.async = true; js.src = "../../launch.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'tiledesk-jssdk'));
+        
+        window.addEventListener('load', (event)=> {
+            document.dispatchEvent(new Event('mousemove'))
+        })
+
+        window.Tiledesk('onLoadParams', function(event_data) {
+            console.log("onLoadParams Tiledesk FN", event_data);
+            // window.Tiledesk('signInWithCustomToken', 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDliOGVmYTg3MzJlYjAwMTQxNzYzZDlfNWU0ZWNiOThiNzhlZTQwMDE3NDA2MTEwIiwiZmlyc3RuYW1lIjoiS2VsbHkiLCJsYXN0bmFtZSI6IkdyYWNlIiwiZW1haWwiOiJncmFjZUBlbWFpbG5hLmNvIiwic3ViIjoidXNlcmV4dGVybmFsIiwiYXVkIjoiaHR0cHM6Ly90aWxlZGVzay5jb20vcHJvamVjdHMvNjA5YjhlZmE4NzMyZWIwMDE0MTc2M2Q5IiwiaWF0IjoxNjQxODAzODk0fQ.p0reTwd25p93CsDTyQa8tkihgFxThAI4DXloNc6vbXw')
+            //                 .then(response => console.log('signInWithCustomToken: user_logged -> ', response))
+            //                 .catch((error)=> console.error('signInWithCustomToken: error', error))
+        });
+        
+        window.Tiledesk('onBeforeInit', function(event_data) {
+            console.log("onBeforeInit Tiledesk FN", event_data);
+
+            var brandSrc = event_data.detail.appConfigs.brandSrc? getBrandResources(event_data.detail.appConfigs.brandSrc) : null;
+            
+            setTimeout(() => {
+                document.getElementById("preloader").style.display = "none";
+            }, 1000);
+
+        });
+        
+        window.Tiledesk('onInit', function(event_data) {
+            console.log("onInit Tiledesk FN", event_data); 
+            //open widget after 3s if is closed
+            setTimeout(() => {
+                if(event_data && event_data.detail && event_data.detail.global && !event_data.detail.global.isOpen){
+                    window.Tiledesk('open')
+                }
+            }, 3000);
+        });
+
+        window.Tiledesk('onAuthStateChanged', function(event_data) {
+        	console.log("onAuthStateChanged Tiledesk FN!", event_data);
+        });
+
+         window.Tiledesk('onMessageCreated', function(event_data) {
+        	// console.log("onMessageCreated!", event_data);
+            window.parent.postMessage(event_data.detail, '*')
+       		// if(event_data.detail.isLogged){
+            // 	console.log("isLogged!!!!", event_data);
+            // 	window.Tiledesk('show')
+            // }
+        });
+
+        window.addEventListener('message', (event_data)=> {
+            if(event_data && event_data.data && event_data.data.action === 'restart'){
+                window.Tiledesk('startConversation', event_data.data.intentName)
+            }
+        })
+    </script>
+
+    <script type="application/javascript">
+        
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+    
+        var currentUrl = window.location.href
+        var baseUrl = window.location.origin
+      
+
+        function getBrandResources(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    var brandJson = JSON.parse(xhr.response)
+                    if(brandJson){
+                        /** TITLE AND FAVICON **/
+                        brandJson['WIDGET'].META_TITLE? document.body.title = brandJson['WIDGET'].META_TITLE : null;
+                        brandJson['WIDGET'].FAVICON_URL?  document.querySelector("link[rel~='icon']").setAttribute('href', brandJson['WIDGET'].FAVICON_URL) : null;
+                        /** FOOTER-LOGO **/    
+                        brandJson['COMMON'].COMPANY_LOGO? document.getElementById('footer-logo').src = brandJson['COMMON'].COMPANY_LOGO : null;
+                        brandJson['COMMON'].COMPANY_SITE_NAME? document.getElementById('footer-logo').alt = brandJson['COMMON'].COMPANY_SITE_NAME : null;
+                        brandJson['COMMON'].COMPANY_SITE_URL? document.getElementById('footer-link').href = brandJson['COMMON'].COMPANY_SITE_URL : null;
+                        /** HEADER-LOGO **/  
+                        brandJson['COMMON'].BASE_LOGO_WHITE? document.getElementById('header-logo').src = brandJson['COMMON'].BASE_LOGO_WHITE : null;
+                        /** HEADER-DOCS RESOURCES **/   
+                        document.getElementsByClassName('docs')[0].style.display = 'none'
+                        brandJson['COMMON'].DOCS? null: document.getElementById('share').style.display = 'none'
+                        /** IFRAME TITLE**/
+                        brandJson['COMMON'].COMPANY_LOGO? document.getElementById('tiledeskiframe').title = brandJson['COMMON'].COMPANY_NAME + ' Widget' : null;
+                    }
+                    
+                }
+            }
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+            xhr.send();
+        }
+                        
+        var url = new URL(currentUrl);
+        var tiledesk_projectid = url.searchParams.get("tiledesk_projectid");
+        var project_name = url.searchParams.get("project_name");
+        // console.log('tiledesk_projectid: ', tiledesk_projectid);
+        // console.log('project_name: ', project_name);
+
+
+        // window.tileDeskAsyncInit = function() {
+        //     window.tiledesk.on('onLoadParams', function(event_data) {
+        //         // console.log('onLoadParams: ')
+        //         window.tiledesk.open();
+        //     });
+
+        //     window.tiledesk.on('onInit', function(event_data) {
+        //         setTimeout(() => {
+        //             document.getElementById("preloader").style.display = "none";
+        //         }, 1000);
+                
+        //     });
+        // };
+
+        function getQueryVariable(variable)     {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i=0;i<vars.length;i++) {
+                    var pair = vars[i].split("=");
+                    if(pair[0] == variable){return pair[1];}
+            }
+            return(false);
+        }
+    </script>
+    
+</head>
+
+<body class="website white" >
+    <!-- <div id="preloader">
+        <div class="logo"></div>
+    </div> -->
+
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+</body>
+</html>

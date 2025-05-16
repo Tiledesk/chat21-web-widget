@@ -1,0 +1,69 @@
+// @import 'src/app/sass/variables';
+
+:host{
+    // --borderRadius: #{$border-radius-bubble-message};
+    --borderRadius: 8px;
+}
+
+img {
+    border-radius: var(--borderRadius);
+    //padding: 3px;
+    margin-bottom: 0px;
+    max-width: calc(100% - 6px);
+    width: auto;
+    height: auto;
+    object-fit: cover;
+
+    transition: transform 0.3s ease-in-out 0s;
+    
+}
+
+.c21-img-container img:hover{
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
+  
+.c21-img-container {
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    // background-image: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url("https://firebasestorage.googleapis.com/v0/b/chat21-pre-01.appspot.com/o/public%2Fimages%2Fb4361ea5-5e37-433c-b727-9034eb5586fe%2F6d74f795-5873-49a8-9165-38f48642df51%2Ffacebook_like%20(3).png?alt=media&token=79afcfe5-ba0c-4573-9263-0877e0225c84");
+    // background-repeat: no-repeat;
+    // background-position: 50% 0;
+    // background-size: cover;
+    // border-top-left-radius: $border-radius-bubble-message;
+    // border-top-right-radius: $border-radius-bubble-message;
+    border-radius: var(--borderRadius);
+    
+}
+  
+  .demo-content {
+    position: relative;
+  }
+
+.isLoadingImage {
+    // position: relative;
+    // top: 6px;
+    display: none;
+}
+
+.loader {
+    float: left;
+    // position: absolute;
+    z-index: 1000;
+    // background-color: #ccc;
+    border-radius: var(--borderRadius);
+    background-image: linear-gradient(90deg, transparent 0px, #e8e8e8 40px, transparent 80px);
+    background-size: 600px;
+    animation: shine-loader 1.6s infinite linear;
+}
+  
+@keyframes shine-loader {
+    0% {
+        background-position: -32px;
+    }
+    40%, 100% {
+        background-position: 208px;
+    }
+}

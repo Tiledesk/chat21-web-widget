@@ -1,0 +1,39 @@
+<div class="wrapper">
+    <div id="left" class="arrow left" (click)="goTo('previous')" *ngIf="activeElement > 1">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+            <path d="M0 0h24v24H0V0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"/>
+        </svg>
+    </div>
+    <div class="carousel">
+        <!-- <div class="card" style="width: 17px;"></div> -->
+        <div class="card" *ngFor="let card of gallery; let i = index">
+            <div [style.opacity]="i+1 === activeElement? 1: 0.5">
+                <div class="card-image" *ngIf="card?.preview?.src !== ''">
+                    <img [src]="card?.preview?.src" alt="img" draggable="false">
+                </div>
+                <div class="card-image card-image-placeholder" *ngIf="card?.preview?.src == ''">
+                    <img src="assets/images/icons/no-image.svg" alt="img" draggable="false">
+                    <span>Image not available</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-title">{{card?.title}}</div>
+                    <div class="card-description">{{card?.description}}</div>
+                </div>
+                <div class="buttons" *ngIf="card?.buttons && card?.buttons.length > 0">
+                    <div *ngFor="let button of card?.buttons" 
+                        class="single-button action"
+                        [ngClass]="{'disabled': (isConversationArchived || (!isLastMessage && button.type !== TYPE_BUTTON.URL)), 'active': button?.active}"
+                        (click)="actionButtonClick($event, button, i)" >
+                        {{button.value}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="card" style="width: 17px;"></div> -->
+    </div>
+    <div id="right" class="arrow right" (click)="goTo('next')" *ngIf="activeElement !== gallery.length">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+            <path d="M0 0h24v24H0V0z" fill="none"/><path d="M10.02 6L8.61 7.41 13.19 12l-4.58 4.59L10.02 18l6-6-6-6z"/>
+        </svg>
+    </div>
+</div>

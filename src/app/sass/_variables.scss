@@ -1,0 +1,40 @@
+// =========== COLORS =============== //
+:root{
+    --black: #1a1a1a;
+    --light-white: #f7f7f7;
+    --gray: #aaaaaa;
+    --dark-gray: #5f6368;
+    --light-gray: #eeeeee;
+    --base-gray: #666666;
+    --danger: #a94442;
+    --blue: rgb(42, 106, 193);
+
+    --trasp-light-gray: rgba(191, 191, 191, 0.2);
+    $trasp-black:rgba(0,0,0,0.8);
+    --trasp-light-black:rgba(0,0,0,0.2);
+
+    // $theme-color: rgb(42, 106, 193);
+    /** conversation **/
+    --bck-msg-sent: rgb(98, 168, 234);
+    --col-msg-sent: #ffffff;
+
+    --border-radius-bubble-message: 20px;
+    --button-in-msg-font-size: 15px;
+    --button-in-msg-max-width: 280px;
+
+    --max-width-images: 230px; //change also MAX_WIDTH_IMAGES in constants.ts
+
+    --bkg-color-info-message: rgba(24, 119, 242, 0.1);
+
+    --chat-footer-height: 56px;
+    --chat-footer-logo-height: 30px;
+    --chat-footer-border-radius: 16px;
+    --chat-footer-background-color: #f6f7fb;
+
+    --icon-fill-color: #5f6368
+}
+
+$trasp-black:rgba(0,0,0,0.8);
+
+
+

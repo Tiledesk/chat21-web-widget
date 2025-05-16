@@ -1,0 +1,145 @@
+// @import 'src/app/sass/variables';
+
+ /* SET SCROLLBAR */
+// ============= CSS c21-header ================= // 
+.c21-header {
+    position: fixed;
+    left: 0px;
+    right: 0px;
+    .c21-header-container{
+        .c21-header-content {
+            .c21-header-writing{
+                position: absolute;
+                left: 40px;
+                right: 40px;
+                bottom: 3px;
+                width: auto;
+                text-align: center;
+                margin: 0px;
+                padding: 0px;
+                font-size: 1.1em;
+                color: #ffffff;
+            }
+
+            .c21-title {
+                position: absolute;
+                left: 50px;
+                right: 100px;
+                display: flex;
+                align-items: center;
+                width: auto;
+                height: 42px;
+                padding: 0px;
+                margin: 5px 0px;
+                font-size: 1.6em;
+                font-weight: 500;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                .titleText {
+                    position: relative;
+                    line-height: 40px;
+                    text-align: left;
+                    font-size: 1em;
+                }
+
+                .avatar-project {
+                    position: relative;
+                    padding: 0;
+                    margin: 0;
+                    margin: 0 10px 0 0;
+                    float: left;
+                    height: 42px;
+                    width: 42px;
+                    line-height: 42px;
+                }
+                .avatar-placeholder {
+                    font-size: 16px;
+                }
+                .avatar-image {
+                    max-width: 30px;
+                    max-height: 30px;
+                    margin: 6px;
+                }
+            }
+        }
+
+        // .c21-header-content::after{
+        //     content: "";
+        //     position: absolute;
+        //     width: calc(100% + 10px);
+        //     bottom: -8px;
+        //     left: -5px;
+        //     border-image-source: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNzIgMTUiPgogIDxwYXRoIGQ9Ik0zNDkuOCAxLjRDMzM0LjUuNCAzMTguNSAwIDMwMiAwaC0yLjVjLTkuMSAwLTE4LjQuMS0yNy44LjQtMzQuNSAxLTY4LjMgMy0xMDIuMyA0LjctMTQgLjUtMjggMS4yLTQxLjUgMS42Qzg0IDcuNyA0MS42IDUuMyAwIDIuMnY4LjRjNDEuNiAzIDg0IDUuMyAxMjguMiA0LjEgMTMuNS0uNCAyNy41LTEuMSA0MS41LTEuNiAzMy45LTEuNyA2Ny44LTMuNiAxMDIuMy00LjcgOS40LS4zIDE4LjctLjQgMjcuOC0uNGgyLjVjMTYuNSAwIDMyLjQuNCA0Ny44IDEuNCA4LjQuMyAxNS42LjcgMjIgMS4yVjIuMmMtNi41LS41LTEzLjgtLjUtMjIuMy0uOHoiIGZpbGw9IiNmZmYiLz4KPC9zdmc+Cg==);
+        //     border-image-slice: 0 0 100%;
+        //     border-image-width: 0 0 15px;
+        //     border-image-repeat: stretch;
+        //     border-width: 0px 0px 15px;
+        //     border-bottom-style: solid;
+        //     border-color: initial;
+        //     border-top-style: initial;
+        //     border-left-style: initial;
+        //     border-right-style: initial;
+        // }
+    }
+}
+
+/* ==================== OPTION MENU CONTAINER ==================== */ 
+#c21-options-menu {
+    width: auto;
+    height: auto;
+    //min-height: 40px;
+    min-width: 100px;
+    max-width: 80%;
+    position: absolute;
+    z-index: 10;
+    top: 40px;
+    right: 15px;
+    border-radius: 6px;
+    font-size: 1.2em;
+    line-height: normal;
+    overflow: hidden;
+    // border: 1px solid #d7d7d7;
+    color: var(--blue);
+    box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0  rgba(0, 0, 0, 0.2);
+    background-color: #ffffff;
+    // padding: 10px 0px 10px 0px;
+    .c21-header-button {
+        // padding: 6px 10px 6px 10px;
+        margin: 5px 5px;
+        padding: 5px 10px;
+        display: flex;
+        align-items: center;
+        color:#777777;
+    }
+    .c21-header-button:hover {
+        background-color: whitesmoke;
+        border-radius: 6px;;
+        cursor: pointer;
+    }
+    .label-menu-item{
+        line-height: 20px;
+        position: relative;
+        margin: 0 10px 0px 10px;
+    }
+    .icon-menu {
+        fill: var(--icon-fill-color);
+    }
+    .icon-menu#archive{
+        stroke: var(--icon-fill-color);
+    }
+
+    .build_version_menu {
+        color: var(--gray);
+        justify-content: center;
+        font-size: 0.8em;
+    }
+    
+    .build_version_menu:hover {
+        cursor: default;
+        background-color: unset;
+    }
+
+    
+}

@@ -1,0 +1,2 @@
+export const CURR_VER_DEV = 'test.001';
+export const CURR_VER_PROD = '1.009';

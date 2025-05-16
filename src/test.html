@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Widget Test Page</title>
+    <script type="application/javascript" async> 
+      // Handler for .ready() called.
+      window.tiledeskSettings = 
+      {
+          // PRE: 
+          // projectid: "6066e60cc3dade4e7389d182", //mqtt
+          projectid:"615577276b34e900353c1a63", //"62445574a0353b0035a05f27", //"6013ec749b32000045be650e", // firebase
+          // projectid: "609b8efa8732eb00141763d9", //mqtt-docker
+          // projectid: "61ae2f221c081a001a045961",//" 61b7840c7b4c750013b69025", //native-mqtt
+          // preChatForm: true, 
+          align:'left',
+          calloutTimer: 5,
+          // calloutTitle: 'TITOLO CALLOUT',
+          // calloutMsg: 'messaggio callout widget',
+          // welcomeTitle: 'CIAO CLIENT',
+          // welcomeMsg: 'Messaggio benvenuto widget',
+          widgetTitle: "widget Title Test",
+          //startFromHome: false,
+          // logoChat: 'https://miro.medium.com/proxy/1*8mpWApzQD5gZZlnYYUkbcA.png',
+          // lang: 'fr',
+          // hideHeaderCloseButton: true,1626341000398
+          // isOpen: true,
+          // fullscreenMode: true,
+          // themeColor: '#ffcb05',
+          // themeForegroundColor: '#000000',
+          // departmentID : "615579216b34e900353c1da0",
+          // isShown: true,
+          allowTranscriptDownload: true,
+          marginX: "100px",
+          // marginY: "200px",
+          // startHidden: true,
+          // persistence: 'session',
+          // showWaitTime: false,
+          showAvailableAgents: true,
+          // showLogoutOption: false,
+          isLogEnabled: true,
+          // logLevel: "DEBUG"
+          // userFullname: " ",
+          // userEmail: "",
+          // autoStart: false,
+          // persistence: 'session'
+          // tenant: "tenant test",
+          // showAttachmentButton: false,
+          // privacyField: 'Accetto i termini della privacy <a style="text-transform: none" target="_blank" href="http://www.tiledesk.com/privacy.html">Privacy Policy</a>'
+          // customAttributes: {"nome": "Andrea", "nazione": "italia", "userFullname":"carlo"},
+          // bubbleSentBackground: "#828282",
+          // bubbleSentTextColor: "#b61416",
+          // bubbleReceivedBackground: "rgb(182, 20, 22)",
+          // bubbleReceivedTextColor: "rgb(247, 247, 247)",
+          // buttonBackgroundColor: "#828282",
+          // buttonTextColor: "#b61416",
+          // buttonHoverTextColor: "#828282",
+          // buttonHoverBackgroundColor: "#b61416",
+          // preChatFormJson: [{"name": "userFullname", "type":"text", "mandatory":true, "label":"LABEL_FIELD_NAME"}]
+          hideSettings: false
+        };
+
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); 
+        js.id = id; //js.async=!0;
+        // PRE
+        js.src = "./launch.js"; //
+        // js.src = "https://widget-pre.tiledesk.com/v2/launch.js"; 
+        // PROD
+        // js.src = "https://widget.tiledesk.com/v4/launch.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'tiledesk-jssdk'));
+     
+
+      window.tileDeskAsyncInit = function() {
+
+        // var dateLoadPage = Date.now();
+        // window.tiledesk.on('onConversationUpdated', function(event_data) {
+        //   var dateConvUpdate = event_data.detail.conversation.timestamp
+        //   console.log(" TRIGGER onConversationUpdated -> ", event_data.detail.conversation);
+        //   console.log("dateLoadPage-> ", dateLoadPage);
+        //   console.log("dateConvUpdate-> ", dateConvUpdate);
+        //   if(dateLoadPage < dateConvUpdate){
+        //     console.log(" NUOVO MESSAGGIO!!!");
+        //   }
+        // });
+
+        // console.log("window.tileDeskAsyncInit()");
+        // window.tiledesk.on('onMessageCreated', function(event_data) {
+        //   console.log(" TRIGGER onMessageCreated -> ", event_data.detail);
+        // });
+        
+        window.tiledesk.on('onAuthStateChanged', function (event_data) {
+          /* passo event 
+           -2: vengo da un reinit. NON SCATTA L'EVENTO;
+           -1: vengo da un logout. NON SCATTA L'EVENTO;
+            0: non sono loggato;
+          200: sono loggato;
+          400: errore. IN CASO DI ERRORE NON SCATTA L'EVENTO
+          */
+            console.log("onAuthStateChanged----> ", event_data.detail.event, "<------");
+            if (!event_data.detail.isLogged) {
+                console.log("!NOT logged, fired also on startup!");
+                // window.tiledesk.setPreChatForm(true);
+                //window.tiledesk.signInAnonymous();
+                //window.tiledesk.signInWithCustomToken("JWT WRONG_TOKEN_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIxMjMiLCJmaXJzdG5hbWUiOiJtYXJpbyIsImxhc3RuYW1lIjoicm9zc2kiLCJlbWFpbCI6Im1hcmlvcm9zc2lAZW1haWwuY29tIiwiY3VzdG9tQXR0ciI6ImMxIiwic3ViIjoidXNlcmV4dGVybmFsIiwiYXVkIjoiaHR0cHM6Ly90aWxlZGVzay5jb20vcHJvamVjdHMvNWVjMjQ5OGY1YmRhMTQwMDM0Y2NlMjY3In0.DrupfEEu0rBzOF7zPYsoU5Yg0YlN_9v6dvduG2sbE8c");
+                //window.tiledesk.signInWithCustomToken("JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIxMjMiLCJmaXJzdG5hbWUiOiJtYXJpbyIsImxhc3RuYW1lIjoicm9zc2kiLCJlbWFpbCI6Im1hcmlvcm9zc2lAZW1haWwuY29tIiwiY3VzdG9tQXR0ciI6ImMxIiwic3ViIjoidXNlcmV4dGVybmFsIiwiYXVkIjoiaHR0cHM6Ly90aWxlZGVzay5jb20vcHJvamVjdHMvNWVjMjQ5OGY1YmRhMTQwMDM0Y2NlMjY3In0.J2QDzWxlou7dJzTIaOajJkN-yQ_EiJM6bLpJ7fm-EXM");
+                //window.tiledesk.hide();
+            } else {
+              console.log("logged in, fired also on startup!");
+              //window.tiledesk.show();
+            }
+        });
+        // window.tiledesk.on('loadParams', function(event_data) { 
+        // });
+        window.tiledesk.on('onBeforeMessageSend', function (event_data) {
+          console.log('testpage event OnBeforeSendMessage', event_data)
+        });
+
+        window.tiledesk.on('onNewConversationComponentInit', function (event_data) {
+          console.log('event onNewConversationComponentInit', event_data)
+        });
+
+      };
+      function approved() {
+          window.tiledesk.setPrivacyPolicy();
+      };
+    </script>
+  </head>
+  <body>
+    <div style="height: 900px; background-color: rgba(118, 154, 151, 48%);">
+      ciao div
+      <button id="isApproved" onclick="approved()">
+        SET APPROVED TRUE
+      </button>
+    </div>
+  </body>
+</html>

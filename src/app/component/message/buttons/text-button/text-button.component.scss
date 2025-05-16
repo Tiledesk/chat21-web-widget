@@ -1,0 +1,58 @@
+// @import 'src/app/sass/variables';
+
+:host {
+    --backgroundColor: #{var(--blue)};
+    --textColor: #{var(--bck-msg-sent)};
+    --hoverBackgroundColor: #{var(--bck-msg-sent)};
+    --hoverTextColor: #{var(--blue)};
+    --buttonFontSize: #{var(--button-in-msg-font-size)};
+    --max-width: #{var(--button-in-msg-max-width)};
+}
+
+
+.button-in-msg {
+
+    padding: 8px 16px!important;
+    position: relative;
+    max-width: var(--max-width);
+    min-width: inherit;
+    cursor: pointer;
+    border: 1px solid var(--textColor); //$blue
+    border-radius: 20px;
+    margin: 3px;
+    background: var(--backgroundColor);
+    overflow: hidden;
+    font-family: 'Muli', sans-serif;
+    font-size: var(--buttonFontSize);
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    // white-space: nowrap;
+    word-wrap: break-word;
+    letter-spacing: -0.24px;
+    -webkit-font-smoothing: antialiased;
+    color: var(--textColor); //$blue
+    line-height: 16px;
+}
+
+.text {
+    // color: rgb(42, 106, 193);
+    transition: background-color .6s ease;
+    &:focus,
+    &:hover {
+        color: var(--hoverTextColor);
+        background: var(--hoverBackgroundColor);
+        transform: scale(1.05);
+        .icon-button-action {
+            svg {
+                fill: var(--black);
+            }
+        }
+    }
+}
+
+.disabled {
+    // border: 1px solid #999999;
+    // background-color: #cccccc;
+    // color: #666666;
+    pointer-events: none;
+}

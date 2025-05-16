@@ -1,0 +1,71 @@
+<div id="messagePreview" *ngIf="g.isOpenNewMessage">
+  <div *ngFor="let message of messages; let i = index; first as isFirst; let last=last" class="message-wrp" #message_wrp> 
+    <!-- message recipient:: -->
+  
+    <div class="headerPreviewMessage" *ngIf="isFirst">
+  
+      <div class="boxButtons">
+        
+        <!-- <div role="button" tabindex="0" class="buttonMore" (click)="openConversationByID(conversation)">
+          <span>View more</span>
+        </div> -->
+  
+        <div aria-label="Dismiss" role="button" tabindex="0" class="buttonClose" (click)="closeMessagePreview()">
+          <span>
+            <svg aria-labelledby="altIconTitle" height="20px" role="img" viewBox="0 0 24 24" width="20px" xmlns="http://www.w3.org/2000/svg" style="fill: rgb(255, 255, 255);">
+              <path d="M0 0h24v24H0V0z" fill="none"></path>
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path>
+            </svg>
+          </span>
+        </div>
+  
+      </div>
+  
+    </div>
+  
+  
+    <div class="container">
+
+      <div class="previewNewMessagge" (click)="openConversationByID(conversation)"
+        [class.left-indicator]="isFirst && (!isImage(message) || isFrame(message))" 
+        [class.no-background]="(isImage(message) || isFrame(message)) && message?.text?.trim() === ''">
+  
+        <chat-bubble-message class="messages no-background"
+          [class.emoticon]="isEmojii(message?.text)"
+          [ngClass]="{'button-in-msg' : message?.metadata && message?.metadata?.button}"
+          [message]="message"
+          [isSameSender]="isSameSender(message?.sender, i)"
+          [fontColor]="stylesMap.get('bubbleReceivedTextColor')"
+          [fontSize]="stylesMap.get('fontSize')"
+          [fontFamily]="stylesMap.get('fontFamily')"
+          [stylesMap]="stylesMap"
+          (onElementRendered)="onElementRenderedFN($event)">
+        </chat-bubble-message>
+  
+        <div class="c21-icon-avatar" *ngIf="isFirst">
+          <div class="c21-avatar-image profile_image">
+            <chat-avatar-image class="slide-in-left"  
+              [senderID]="message?.sender"
+              [senderFullname]="message?.sender_fullname"
+              [baseLocation]="baseLocation">
+            </chat-avatar-image>
+          </div> 
+        </div>
+  
+      </div>
+  
+      <div *ngIf="message?.attributes && message?.attributes?.attachment && last" class="conversations-buttons">
+        <chat-message-attachment 
+          style="height: 100%; display: block;"
+          [message]="message"
+          [isLastMessage] = "true"
+          [limit]="3"
+          [stylesMap]="stylesMap"
+          (onAttachmentButtonClicked)="onAttachmentButtonClicked($event)">
+        </chat-message-attachment>
+      </div>
+     
+    </div>
+  
+  </div>
+</div>

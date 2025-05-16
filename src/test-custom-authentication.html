@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Widget Test Page</title>
+    <script type="application/javascript" async> 
+      // Handler for .ready() called.
+      window.tiledeskSettings = 
+      {
+          // PRE: 
+          // projectid: "6066e60cc3dade4e7389d182", //mqtt
+          projectid:"615577276b34e900353c1a63", //"62445574a0353b0035a05f27", //"6013ec749b32000045be650e", // firebase
+          // projectid: "609b8efa8732eb00141763d9", //mqtt-docker
+          // projectid: "61ae2f221c081a001a045961",//" 61b7840c7b4c750013b69025", //native-mqtt
+          // preChatForm: true, 
+          align:'left',
+          calloutTimer: 5,
+          // calloutTitle: 'TITOLO CALLOUT',
+          // calloutMsg: 'messaggio callout widget',
+          // welcomeTitle: 'CIAO CLIENT',
+          // welcomeMsg: 'Messaggio benvenuto widget',
+          widgetTitle: "widget Title Test",
+          //startFromHome: false,
+          // logoChat: 'https://miro.medium.com/proxy/1*8mpWApzQD5gZZlnYYUkbcA.png',
+          // lang: 'fr',
+          // hideHeaderCloseButton: true,1626341000398
+          // isOpen: true,
+          // fullscreenMode: true,
+          // themeColor: '#ffcb05',
+          // themeForegroundColor: '#000000',
+          // departmentID : "615579216b34e900353c1da0",
+          // isShown: true,
+          allowTranscriptDownload: true,
+          marginX: "100px",
+          // marginY: "200px",
+          // startHidden: true,
+          // persistence: 'session',
+          // showWaitTime: false,
+          autoStart: false,
+          showAvailableAgents: true,
+          // showLogoutOption: false,
+          isLogEnabled: true,
+          // logLevel: "DEBUG"
+          // userFullname: " ",
+          // userEmail: "",
+          // autoStart: false,
+          // persistence: 'session'
+          // tenant: "tenant test",
+          // showAttachmentButton: false,
+          // privacyField: 'Accetto i termini della privacy <a style="text-transform: none" target="_blank" href="http://www.tiledesk.com/privacy.html">Privacy Policy</a>'
+          // customAttributes: {"nome": "Andrea", "nazione": "italia", "userFullname":"carlo"},
+          // bubbleSentBackground: "#828282",
+          // bubbleSentTextColor: "#b61416",
+          // bubbleReceivedBackground: "rgb(182, 20, 22)",
+          // bubbleReceivedTextColor: "rgb(247, 247, 247)",
+          // buttonBackgroundColor: "#828282",
+          // buttonTextColor: "#b61416",
+          // buttonHoverTextColor: "#828282",
+          // buttonHoverBackgroundColor: "#b61416",
+          // preChatFormJson: [{"name": "userFullname", "type":"text", "mandatory":true, "label":"LABEL_FIELD_NAME"}]
+          hideSettings: false
+        };
+
+      (function(d, s, id) {
+        var w = window; var d = document; var i = function () {i.c(arguments);};
+        i.q = []; i.c = function (args) {i.q.push(args);}; w.Tiledesk = i;
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id; js.async = true; js.src = "./launch.js"; //
+        fjs.parentNode.insertBefore(js, fjs);
+
+      }(document, 'script', 'tiledesk-jssdk'));
+     
+
+      window.Tiledesk('logout');
+
+      window.Tiledesk('onLoadParams', function(event_data) {
+        console.log("onLoadParams Tiledesk FN", event_data);
+        // let token = 'JWT eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI4ODgzNTQ4Ny05ZjllLTRiMGItOGRmNy0wMDA0NWUwYTY4NjYiLCJmaXJzdG5hbWUiOiJndWVzdCM4ODgzIiwiaWQiOiI4ODgzNTQ4Ny05ZjllLTRiMGItOGRmNy0wMDA0NWUwYTY4NjYiLCJmdWxsTmFtZSI6Imd1ZXN0Izg4ODMgIiwiaWF0IjoxNzEyNzQyNTA1LCJhdWQiOiJodHRwczovL3RpbGVkZXNrLmNvbSIsImlzcyI6Imh0dHBzOi8vdGlsZWRlc2suY29tIiwic3ViIjoiZ3Vlc3QiLCJqdGkiOiJkNDJhZmY5MS0xZTgxLTQyYjAtOGIyYS1mMjU3YzdmMzc4YWEifQ.UCKvk5VE4XMlXKB20hjOYZTuq3YE1XyfpcXQfJnwclgvFaoyZzIuX5_1mz1ZMauWMV69ZecwkkwKb1S6rPH4bf0VqWO0Ez9LJYA1ZI0FU4HZO4oAGivYh-tPArP41k7bxl369314QKesm4-a7_S81T_i4wrmB663u7th5WVKjkg'
+        // window.Tiledesk('signInWithCustomToken',token);
+        window.Tiledesk('signInAnonymous')
+        
+      });
+
+      window.Tiledesk('onBeforeInit', function(event_data) {
+        console.log("onBeforeInit Tiledesk FN", event_data);
+       
+      });
+      
+      window.Tiledesk('onAuthStateChanged', function(event_data) {
+        console.log("onAuthStateChanged FN", event_data);
+        if (event_data.detail.isLogged) {
+          document.getElementById("status").innerHTML = "Signed in.";
+          window.Tiledesk('show')
+        }
+      });
+
+      window.Tiledesk('onLoggedOut', function(event_data) {
+        console.log("onLoggedOut FN", event_data);
+      });
+
+      
+
+
+      function authenticate(email, password, callback) {
+      // Endpoint's backend source code: https://replit.com/@tiledesk/tiledesk-jwt-token-example#index.js  
+      const options = {
+        url: `https://87d1bd2e-fa44-4b02-b8ab-e7797f7d92f7-00-eswv3xnlk9yn.kirk.replit.dev/authpre`, // https://tiledesk-jwt-token-example.tiledesk.repl.co/auth
+        method: 'POST'
+      };
+      let xmlhttp = new XMLHttpRequest();
+      xmlhttp.open(options.method, options.url, true);
+      xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xmlhttp.onreadystatechange = function () {
+        if (callback && xmlhttp.readyState == 4 && xmlhttp.status == 200 && xmlhttp.responseText) {
+          try {
+            const json = JSON.parse(xmlhttp.responseText);
+            let token = json.token;
+            if (token && !token.startsWith("JWT ")) {
+              token = "JWT " + token;
+            }
+            callback(null, token);
+          }
+          catch (err) {
+            callback(err, null);
+          }
+        }
+      };
+      xmlhttp.send(JSON.stringify({
+        "email": email,
+        "password": password
+      }));
+    }
+    </script>
+  </head>
+  <body>
+    <h1>Tiledesk Custom JWT Authentication live App</h1>
+    <h2 id="status">Authenticating...</h2>
+  </body>
+</html>

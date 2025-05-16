@@ -1,0 +1,50 @@
+// @import 'src/app/sass/variables';
+
+.message_innerhtml {
+    margin: 0px;
+    // padding: 0px 14px;
+    &.marked{
+        padding:8px;
+        margin-block-start: 0em!important;
+        margin-block-end: 0em!important;
+    }
+    
+    .text-message {
+        padding-top: 14px;
+    }
+}
+
+p {
+    font-size: 1.4em;
+    margin: 0;
+    padding: 14px;
+    line-height: 1.4em;
+    font-style: normal;
+    letter-spacing: normal;
+    font-stretch: normal;
+    font-variant: normal;
+    font-weight: 300;
+    overflow: hidden;
+    
+}
+
+p ::ng-deep a {
+    word-break: break-word;
+}
+
+p ::ng-deep p{
+    margin-block-end: 0em;
+    margin-block-start: 0em
+}
+
+p ::ng-deep ol{
+    margin-block-end: 0em;
+    margin-block-start: 0em;
+    padding-inline-start: 15px;
+    
+    li:before {
+        content:"";
+        font-size: 1.4em;
+        vertical-align:middle;
+    }
+}

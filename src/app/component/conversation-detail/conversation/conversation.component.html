@@ -1,0 +1,146 @@
+
+<!-- tabindex="1500"-->
+<!-- onFocus="document.querySelector('[start-focus-chat21-conversation-component]').focus()" -->
+<div id="chat21-conversation-component" 
+    #afConversationComponent
+    tabindex="1500" 
+    aria-modal="true">
+
+    <!-- HEADER -->
+    <chat-conversation-header
+        [idConversation]= "conversationWith"
+        [senderId]="senderId"
+        [soundEnabled]="g?.soundEnabled"
+        [isTrascriptDownloadEnabled]="isTrascriptDownloadEnabled"
+        [hideHeaderCloseButton]="g?.hideHeaderCloseButton"
+        [hideHeaderBackButton]="g?.singleConversation"
+        [hideCloseConversationOptionMenu]="(isConversationArchived || g?.hideCloseConversationOptionMenu)"
+        [hideRestartConversationOptionsMenu]="(isConversationArchived || (!g?.singleConversation && !hideTextAreaContent) || g?.hideRestartConversationOptionsMenu)"
+        [hideHeaderConversationOptionsMenu]="g?.hideHeaderConversationOptionsMenu"
+        [hideSignOutOptionMenu]="(!g?.singleConversation || !g?.showLogoutOption)"
+        [hideChatDetailOptionMenu]="(!g?.isDevMode)"
+        [stylesMap]="stylesMap"
+        [translationMap]="translationMapHeader"
+        [widgetTitle]="g?.project?.widgetTitle"
+        [build_version]="g?.singleConversation? g?.BUILD_VERSION: null"
+        [windowContext]="g?.windowContext"
+        [isMenuShow]="isMenuShow"
+        [isTypings]="isTypings"
+        [nameUserTypingNow]="nameUserTypingNow"
+        [typingLocation]="g?.typingLocation"
+        (onBack)="onBackHomeFN()"
+        (onCloseWidget)="onCloseWidgetFN()"
+        (onMenuOptionClick)="onMenuOptionClick($event)"
+        (onMenuOptionShow)="onMenuOption($event)">
+    </chat-conversation-header>
+
+    <div id="dropZone_container" *ngIf="isHovering"
+        [class.hideTextReply]="hideFooterTextReply && g?.poweredBy">
+        <div class="drop">
+            <!-- drop zone -->
+        </div>
+    </div>
+    
+    <!-- CONTENT -->
+    <chat-conversation-content
+        [class.hideTextReply]="hideFooterTextReply && g?.poweredBy"
+        [messages]="messages"
+        [senderId]="senderId"
+        [baseLocation]="g?.windowContext['tiledesk']?.getBaseLocation()"
+        [isConversationArchived]="isConversationArchived"
+        [isTypings]="isTypings"
+        [idUserTypingNow]="idUserTypingNow"
+        [nameUserTypingNow]="nameUserTypingNow"
+        [typingLocation]="g?.typingLocation"
+        [fullscreenMode]="g?.fullscreenMode"
+        [translationMap]="translationMapContent"
+        [stylesMap]="stylesMap"
+        (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
+        (onAfterMessageRender)="onAfterMessageRenderFN($event)"
+        (onAttachmentButtonClicked)="onAttachmentButtonClicked($event)"
+        (onScrollContent)="onScrollContent($event)"
+        (onMenuOptionShow)="onMenuOption($event)"
+        (onEmojiiPickerShow)="onEmojiiPickerShow($event)"
+        (drop)="drop($event)"
+        (dragover)="allowDrop($event)" 
+        (dragleave)="drag($event)" >
+    </chat-conversation-content>
+
+    
+
+    <!-- INTERNAL FRAME FOR SELF ACTION LINK BUTTONS-->
+    <chat-internal-frame *ngIf="isButtonUrl"
+        [button]="buttonClicked"
+        [openExternalLinkButton]="g?.openExternalLinkButton"
+        [translationMap]="translationMapHeader"
+        [stylesMap]="stylesMap"
+        (onOpenExternal)="onOpenExternalFrame($event)"
+        (onClose)="onCloseInternalFrame($event)">
+    </chat-internal-frame>
+
+
+    <!-- PREVIEW ATTACHMENT BUTTON-->
+    <chat-conversation-attachment-preview *ngIf="isOpenAttachmentPreview"
+        [textInputTextArea]="textInputTextArea"
+        [attachments]="attachments"
+        [baseLocation]="g?.baseLocation"
+        [translationMap]="translationMapPreview"
+        [stylesMap]="stylesMap"
+        (onSendAttachment)="onSendAttachment($event)"
+        (onCloseModalPreview)="onCloseModalPreview()">
+    </chat-conversation-attachment-preview>
+
+
+    <dialog #mydialog>
+        <chat-confirm-close
+            [conversationId]="conversationId"
+            [translationMap]="translationMapCloseChatDialog"
+            [stylesMap]="stylesMap"
+            (onDiaglogClosed)="onCloseDialog($event)">
+        </chat-confirm-close>
+    </dialog>
+
+    <!-- FOOTER -->
+    <!-- [class.maximize-width]="(g?.singleConversation && hideTextAreaContent) || (isConversationArchived && !g?.allowReopen)" -->
+    <div id="chat21-footer">
+        <div *ngIf="showBadgeScroollToBottom" id="chat21-buttonToBottom" (click)="scrollToBottom()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path opacity=".87" fill="none" d="M24 24H0V0h24v24z"/><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z"/></svg>
+            <div *ngIf="messagesBadgeCount!=0" id="chat21-divBudge" class="c21-divBudge">{{messagesBadgeCount}}</div>
+        </div>
+
+        <chat-conversation-footer
+            [conversationWith]="conversationWith"
+            [attributes]="g?.attributes"
+            [senderId]="senderId"
+            [tenant]="g?.tenant"
+            [projectid]="g?.projectid"
+            [channelType]="g?.channelType"
+            [userFullname]="g?.userFullname"
+            [userEmail]="g?.userEmail"
+            [showAttachmentFooterButton]="g?.showAttachmentFooterButton"
+            [showEmojiFooterButton]="g?.showEmojiFooterButton"
+            [showRegisterAudioFooterButton]="g?.showRegisterAudioFooterButton"
+            [hideTextAreaContent]="(g?.singleConversation && hideTextAreaContent) || (isConversationArchived && !g?.allowReopen)"
+            [isConversationArchived]="isConversationArchived"
+            [hideTextReply]="hideFooterTextReply"
+            [isMobile]="g?.isMobile"
+            [isEmojiiPickerShow]="isEmojiiPickerShow"
+            [footerMessagePlaceholder]="footerMessagePlaceholder"
+            [fileUploadAccept]="g?.fileUploadAccept"
+            [dropEvent]="dropEvent"
+            [poweredBy]="g?.poweredBy"
+            [stylesMap]="stylesMap"
+            [translationMap]="translationMapFooter"
+            (onEmojiiPickerShow)="onEmojiiPickerShow($event)"
+            (onBeforeMessageSent)="onBeforeMessangeSentFN($event)"
+            (onAfterSendMessage)="onAfterSendMessageFN($event)"
+            (onChangeTextArea)="onChangeTextArea($event)"
+            (onAttachmentFileButtonClicked)="onAttachmentFileButtonClicked($event)"
+            (onNewConversationButtonClicked)="onNewConversationButtonClickedFN($event)"
+            (onBackButton)="onBackButton($event)">
+        </chat-conversation-footer>
+
+    </div>
+
+
+</div>

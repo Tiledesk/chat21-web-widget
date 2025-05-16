@@ -1,0 +1,189 @@
+// $f21ico-schedule: image-url('f21ico-schedule.svg', false, false);
+// $f21ico-done: image-url('../assets/images/f21ico-done.svg', false, false);
+// $f21ico-done_all: image-url('../assets/images/f21ico-done_all.svg', false, false);
+// @import 'src/app/sass/variables';
+// @import '../../../sass/normalize.css';
+
+:host {
+    --themeColor: var(--bck-msg-sent);
+    --foregroundColor: var(--col-msg-sent);
+}
+
+:host chat-conversation-content.hideTextReply ::ng-deep .chat21-sheet-content,
+:host #dropZone_container.hideTextReply{
+
+    bottom: var(--chat-footer-height) !important
+}
+
+// ============= CSS #chat21-conversation-component ================= //
+#chat21-conversation-component {
+    // background-color: #ffffff;
+    // width: 100%;
+    // height: 100%;
+    // position: relative;
+    // margin: 0px;
+    // padding: 0px;
+
+    position: absolute;
+    background-color: #ffffff;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+}
+
+/* ================== CSS chat21-footer ==================== */ 
+
+#hiddenFooter{
+    .c21-powered-by {
+        height: 40px;
+        text-align: center;
+        padding: 0;
+        // margin: 5px 0;
+        // position: absolute;
+        color: var(--gray);
+        // top: 0;
+        // left: 20px; //60px;
+        // right: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &::ng-deep a {
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-block;
+            color: var(--gray);
+            font-size: 1.1em;
+            font-weight: 500;
+            line-height: 22px;
+
+            font-family: Mulish, sans-serif;
+            letter-spacing: -0.24px;
+            -webkit-font-smoothing: antialiased;
+
+            span {
+                display: inline-block;
+                position: relative;
+                top: 2px;
+            }
+
+            img {
+                width: 80px; //60px;
+                height: auto;
+                max-height: 40px;
+                position: relative;
+                vertical-align: middle;
+                object-fit: contain;
+            }
+        }
+        b{
+            font-weight: bolder;
+        }
+    }
+}
+
+#chat21-footer {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin: 0px;
+    // padding: 0;
+    
+    // box-shadow: 0 -1px 0px 0px $trasp-light-gray;
+    background: white;
+    min-height: 40px;
+
+    &.maximize-width{
+        padding: 8px 0px;
+    }
+
+    &.hideFooterReply{
+        padding: 0px;
+    }
+
+    /* button scroll to bottom page */
+    #chat21-buttonToBottom {
+        display: flex;
+        position: relative;
+        margin-right: 10px; //-25px;
+        margin-top: -40px;
+        float: right;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        z-index: 1;
+        cursor: pointer;
+        background-color: #ffffff;
+        border: 1px solid var(--trasp-light-gray);
+        // -webkit-box-shadow: 0 3px 2px $trasp-light-black;
+        // box-shadow: 0 3px 2px $trasp-light-black;
+        text-align: center;
+        svg {
+            margin: auto;
+            fill: var(--gray);
+        }
+    }
+    #chat21-buttonToBottom:hover {
+        background-color: var(--themeColor);
+        opacity: 1!important;
+        transition: all .45s ease-in-out!important;
+        -moz-transition: all .45s ease-in-out!important;
+        -webkit-transition: all .45s ease-in-out!important;
+        border: 1px solid var(--foregroundColor);
+        svg {
+            fill: var(--foregroundColor);
+        }
+    }
+
+}
+
+#dropZone_container{
+    position: absolute;
+    top: 52px;
+    bottom: calc(var(--chat-footer-logo-height) + var(--chat-footer-height));
+    left: 0;
+    right: 0;
+    background-color: rgba(240,248,255,0.6);
+    .drop{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 5px;
+        border: 2px dashed #a4acb3;
+        border-radius: 16px;
+    }
+}
+
+dialog:-internal-dialog-in-top-layer{
+    border: 0px;
+    border-radius: 16px;
+    padding: 15px 15px;
+    &::backdrop {
+        border-radius: 16px;
+    }
+}
+
+
+
+/* ==================== MOBILE VERSION ==================== */ 
+@media (max-width: 451px) {
+    #chat21-conversation-component {
+        .c21-header {
+            .c21-header-container {    
+                .c21-header-content {
+                    .c21-header-button {
+                        &.c21-close {
+                            display: flex;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,127 @@
+<!-- LOGO-->
+<div id="hiddenFooter" *ngIf="!hideTextAreaContent && poweredBy" class="fade-in-bottom" 
+    [class.hideTextReply]="hideTextReply">
+    <div tabindex="-1" class="c21-powered-by" [innerHTML]="poweredBy" (click)="managePoweredBy($event)"></div>
+</div>
+
+<!-- TEXTAREA + ICONS: conv active-->
+<div class="textarea-container" *ngIf="!hideTextAreaContent && !hideTextReply">
+    
+    <div *ngIf="!isStopRec" class="icons-container">
+        <!-- ICON ATTACHMENT -->
+        <label *ngIf="showAttachmentFooterButton" tabindex="1502" aria-label="allegati" for="chat21-file" class="chat21-textarea-button" [class.active]="!isFilePendingToUpload && !hideTextReply" id="chat21-start-upload-doc">
+            <span class="v-align-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24" viewBox="0 0 24 24" >
+                    <path d="M18.4,13.2l-2.6,4.5c-1.5,2.6-4.9,3.6-7.6,2c-2.6-1.5-3.6-4.9-2-7.6l3.9-6.7c1.1-1.9,3.6-2.6,5.5-1.5 c1.9,1.1,2.6,3.6,1.5,5.5l-3.3,5.7c-0.7,1.3-2.3,1.7-3.6,1c-1.3-0.7-1.7-2.3-1-3.6l2-3.4c0.2-0.3,0.6-0.5,1-0.3s0.5,0.6,0.3,1 l-2,3.4c-0.3,0.5-0.2,1.1,0.3,1.5c0.4,0.4,1.1,0.4,1.5,0c0.1-0.1,0.2-0.2,0.2-0.3l3.3-5.7c0.7-1.2,0.3-2.8-1-3.5 c-1.2-0.7-2.8-0.3-3.5,1l-3.9,6.7C6.4,14.9,7,17.4,9,18.5c1.9,1.1,4.4,0.5,5.6-1.5l2.6-4.5c0.2-0.3,0.6-0.5,1-0.3 C18.5,12.5,18.6,12.9,18.4,13.2L18.4,13.2z"/>
+                </svg>
+            </span>
+             <input
+                [attr.disabled] = "(isFilePendingToUpload || isConversationArchived || hideTextReply)? true : null"
+                tabindex="1503" 
+                type="file" 
+                aria-label="seleziona allegato"
+                [accept]="fileUploadAccept"
+                name="chat21-file"
+                id="chat21-file"
+                #chat21_file
+                class="inputfile" 
+                [ngStyle]="{'display': 'block', height:'1px', width:'1px', overflow: 'hidden' }"
+                (change)="detectFiles($event)"/>
+        </label>
+        <!-- ICON EMOJII -->
+        <label *ngIf="showEmojiFooterButton" tabindex="1504" aria-label="emojii" for="chat21-emojii" class="chat21-textarea-button" [class.active]="!isFilePendingToUpload && !hideTextReply" id="chat21-emoticon-picker" (click)="onEmojiiPickerClicked()">
+            <span class="v-align-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M0,0H20.57V20.57H0V0Z" fill="none"/>
+                    <circle cx="15.02" cy="9.86" r="1.29"/>
+                    <circle cx="9.02" cy="9.86" r="1.29"/>
+                    <path d="M12.02,15.43c-1.27,0-2.36-.69-2.96-1.71h-1.43c.69,1.76,2.39,3,4.39,3s3.7-1.24,4.39-3h-1.43c-.6,1.02-1.69,1.71-2.96,1.71Zm0-12C7.28,3.43,3.45,7.27,3.45,12s3.83,8.57,8.56,8.57,8.58-3.84,8.58-8.57S16.75,3.43,12.01,3.43Zm0,15.43c-3.79,0-6.86-3.07-6.86-6.86s3.07-6.86,6.86-6.86,6.86,3.07,6.86,6.86-3.07,6.86-6.86,6.86Z"/>
+                </svg>
+            </span>
+        </label>
+    </div>
+
+
+
+
+    <div *ngIf="!isStopRec" class="visible-text-area"  [class.disabled] = "( isConversationArchived || hideTextReply)? true : null">
+        <!-- isFilePendingToUpload || -->
+      <textarea 
+        [attr.disabled] = "(hideTextReply)? true : null"
+        [attr.placeholder] ="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
+        start-focus-chat21-conversation-component
+        inputTextArea
+        #textbox
+        tabindex="1501"
+        aria-labelledby="altTextArea"
+        rows="1"
+        id="chat21-main-message-context"
+        class='f21textarea c21-button-clean'
+        [(ngModel)]="textInputTextArea"
+        (ngModelChange)="onTextAreaChange()"
+        (keypress)="onkeypress($event)"
+        (keydown)="onkeydown($event)"
+        (paste)="onPaste($event)">
+      </textarea>
+    
+    </div>
+
+    <!-- ICON SEND -->
+    <div *ngIf="(textInputTextArea !== '' && !isStopRec) || !showRegisterAudioFooterButton" tabindex="-1" class="chat21-textarea-button" [class.active]="textInputTextArea && !hideTextReply" id="chat21-button-send" (click)="onSendPressed($event)">
+        <span class="v-align-center">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  height="24" width="24" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+                <path d="M1.8,18.9V1.7L22,10.3L1.8,18.9z M3.9,15.6l12.6-5.4L3.9,4.9v3.7l6.4,1.6l-6.4,1.6V15.6z M3.9,15.6V4.9v7V15.6z"/>
+            </svg>
+        </span>
+    </div>
+
+    <!-- ICON REC -->
+    <div *ngIf="showRegisterAudioFooterButton && !textInputTextArea" tabindex="-1" class="chat21-audio-button" [class.active]="isStopRec" id="chat21-button-rec">
+        <chat-audio-recorder
+            (startRecordingEvent)="onStartRecording()"
+            (deleteRecordingEvent)="onDeleteRecording()"
+            (endRecordingEvent)="onEndRecording($event)"
+            (sendRecordingEvent)="onSendRecording($event)"
+            [stylesMap]="stylesMap">
+        </chat-audio-recorder>
+    </div>
+</div>
+
+
+<!-- EMOJII PICKER-->
+<div [style.visibility]="isEmojiiPickerShow?'visible':'hidden'"  class="emoji-container"  id="emoji-mart-container" #emoji_mart_container>
+    <!-- <ng-container #emojii_container></ng-container> -->
+    <emoji-mart id="emoji-mart"
+        *ngIf="showEmojiPicker"
+        class="emoji-mart"
+        [showPreview]="emojiiOptions?.showPreview"
+        [color]="stylesMap?.get('themeColor')" 
+        [perLine]="emojiiOptions?.emojiPerLine"
+        [totalFrequentLines]="emojiiOptions?.totalFrequentLines"
+        [enableSearch]="emojiiOptions?.enableSearch"
+        [darkMode]="emojiiOptions?.darkMode"
+        [include]="emojiiOptions?.include"
+        (emojiSelect)="addEmoji($event)">
+    </emoji-mart>
+</div>
+
+<!-- NEW CONV & CONTINE buttons: conv archived-->
+<div id="floating-container" *ngIf="hideTextAreaContent" class="fade-in-bottom" start-focus-chat21-conversation-component> 
+    <button tabindex="1040" aflistconv #aflistconv  class="c21-button-primary" (click)="openNewConversation()" [ngStyle]="{'background-color': stylesMap.get('themeColor'), 'border-color': stylesMap.get('themeColor'), 'color': stylesMap?.get('foregroundColor')}">
+        <span class="v-align-center">
+          <svg [ngStyle]="{'fill': 'yellow' }" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"  [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}"/>
+          </svg>
+        </span>
+        <span class="v-align-center c21-label-button">
+          {{translationMap?.get('LABEL_START_NW_CONV')}}
+        </span>  
+        <div class="clear"></div>
+    </button>
+    <!-- <button *ngIf="showContinueConversationButton" tabindex="1040"  class="c21-button-primary" (click)="onContinueConversation()" [ngStyle]="{'background-color': stylesMap.get('themeColor'), 'border-color': stylesMap.get('themeColor'), 'color': stylesMap?.get('foregroundColor')}">
+        <span class="v-align-center c21-label-button">
+          {{translationMap?.get('CONTINUE')}}
+        </span>  
+        <div class="clear"></div>
+    </button> -->
+</div>

@@ -1,0 +1,35 @@
+#buttons-in-message {
+    text-align: right;
+    display: block;
+    margin-right: 16px; //align attachment-buttons to bubble sent message
+    height: auto;
+    // width: 85%;
+    max-width: 95%;
+    float: right;
+
+    .buttons-wrapper {
+        margin-top: 0px;
+        display: flex;
+        flex-wrap: wrap;
+        -webkit-box-pack: end;
+        justify-content: flex-end;
+        width: 100%;
+        border: none;
+    }
+
+    .div-button {
+        // display: inline-block;
+        // overflow: hidden;
+        // text-overflow: ellipsis;
+        // min-width: inherit;
+        .button-in-msg {
+            padding: 8px 16px!important;
+        }
+    }
+
+    &.align-left{
+        text-align: left;
+        margin: 4px 50px;
+    }
+    
+}

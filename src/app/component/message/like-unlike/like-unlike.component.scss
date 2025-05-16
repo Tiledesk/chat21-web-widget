@@ -1,0 +1,21 @@
+// @import 'src/app/sass/variables';
+
+:host{
+    // --borderRadius: #{$border-radius-bubble-message};
+    --borderRadius: 25px;
+}
+
+.like-container{
+    background-color: #f6f7fb;
+    border-radius: var( --borderRadius);
+}
+
+.menu{
+    display: flex;
+    padding: 8px 12px;
+    border-radius: 16px;
+}
+
+.c21-like, .c21-unlike{
+    padding: 2px;
+}

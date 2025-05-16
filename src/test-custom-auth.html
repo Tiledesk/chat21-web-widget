@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="application/javascript"> 
+      // Handler for .ready() called.
+      window.tiledeskSettings = 
+      {
+          // PRE:   
+          projectid: "6013ec749b32000045be650e",
+          // PROD: 
+          // projectid: "5ebf9cc892befe00190552d6",
+          persistence: 'session',
+          isLogEnabled: true,
+          autoStart: false
+          // startFromHome: true
+      };
+
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); 
+        js.id = id; //js.async=!0;
+        // PRE
+        js.src = "./launch.js"; //
+        // js.src = "https://widget-pre.tiledesk.com/v2/launch.js"; 
+        // PROD
+        // js.src = "https://widget.tiledesk.com/v4/launch.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'tiledesk-jssdk'));
+      
+     
+      window.tileDeskAsyncInit = function() {
+       
+        window.tiledesk.on('onLoadParams', function(event_data) {
+          setTimeout(function() {
+            // token PRE
+            window.tiledesk.signInWithCustomToken("JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDEzZWM3NDliMzIwMDAwNDViZTY1MGVfMTIzNDU2NzgiLCJmaXJzdG5hbWUiOiJBbmRyZWEiLCJsYXN0bmFtZSI6IkxlbyIsImVtYWlsIjoiYW5kcmVhLmxlb0BlbWFpbC5jb20iLCJjdXN0b21BdHRyIjoiYzEiLCJzdWIiOiJ1c2VyZXh0ZXJuYWwiLCJhdWQiOiJodHRwczovL3RpbGVkZXNrLmNvbS9wcm9qZWN0cy82MDEzZWM3NDliMzIwMDAwNDViZTY1MGUifQ.eJ7oV9xVmEHIFDviQHFJm0hjkgqC2uHqnWqVKWhqt9I");
+            // token PROD
+            // window.tiledesk.signInWithCustomToken("JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIxMjMiLCJmaXJzdG5hbWUiOiJhbmRyZWFjdXN0b20iLCJsYXN0bmFtZSI6Imxlb2N1c3RvbSIsImVtYWlsIjoiZW1haWwyQGVtYWlsLmNvbSIsImN1c3RvbUF0dHIiOiJjMSIsInN1YiI6InVzZXJleHRlcm5hbCIsImF1ZCI6Imh0dHBzOi8vdGlsZWRlc2suY29tL3Byb2plY3RzLzVlYmY5Y2M4OTJiZWZlMDAxOTA1NTJkNiJ9.al6ovk6KvsboENrVnWe6AdpezhDc6hW7shQHm0-tzX0");
+          }, 3000)
+        });
+      };
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

@@ -1,0 +1,2657 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> 
+
+    <title>Widget test page </title>
+    <style>
+
+        @-moz-keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* Firefox */
+        @-webkit-keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* Webkit */
+        @-ms-keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* IE */
+        @keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* Opera and prob css3 final iteration */
+
+        body{
+            --font-family-poppins: 'Poppins', 'Roboto', Arial, sans-serif;
+            --blu: #506493;
+            --gray-light-02: rgb(223, 227, 237);
+            --base-company-logo: rgb(224,106,88);
+            --header-height: 80px;
+            --footer-height: 80px;
+        }
+
+        #preloader {
+            background: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            z-index: 999999;
+            opacity: 1;
+            filter: alpha(opacity=100);
+            -webkit-transition: opacity 500ms ease;
+            transition: opacity 500ms ease, display 500ms;
+        }
+
+        #preloader .logo {
+            display: block;
+            width: 109px;
+            height: 39px;
+            background-repeat: no-repeat;
+            background-image: url(./tiledesk_widget_files/logo@2x-black.png);      
+            background-size: contain;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -20px 0 0 -55px;
+            -moz-transition:all 1s ease-in-out;
+            -webkit-transition:all 1s ease-in-out;
+            -o-transition:all 1s ease-in-out;
+            -ms-transition:all 1s ease-in-out;
+            transition:all 1s ease-in-out;
+            /* order: name, direction, duration, iteration-count, timing-function */
+            -moz-animation:blink normal 2s infinite ease-in-out; /* Firefox */
+            -webkit-animation:blink normal 2s infinite ease-in-out; /* Webkit */
+            -ms-animation:blink normal 2s infinite ease-in-out; /* IE */
+            animation:blink normal 2s infinite ease-in-out; /* Opera and prob css3 final iteration */
+        }
+
+        .loader{
+            display: block;
+            z-index: 99;
+            position: absolute;
+            top: calc( 50% - 50px);
+            left: calc( 50% - 50px);
+            width: 100px;
+            height: 100px;
+            border: 3px solid var(--base-company-logo);
+            border-radius: 50%;
+
+            animation: spin 7s ease-in-out;
+            animation-iteration-count: infinite;
+            transition-duration: 0.1s;
+        }
+
+        .loader:hover {
+            scale: 0.95;
+            /*Loader on hover effect*/
+        }
+
+        .loader:active {
+            scale: 1.2;
+            /*Loader on click effect*/
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+                border-bottom: solid 3px transparent;
+                border-top: solid 3px transparent;
+            }
+            50% {
+                transform: rotate(1800deg);
+                border: 3px solid white;
+                border-left: solid 3px transparent;
+                border-right: solid 3px transparent;
+            }
+            100% {
+                /*Reversed spinning*/
+                transform: rotate(0deg);
+                border-bottom: solid 3px transparent;
+                border-top: solid 3px transparent;
+            }
+        }
+
+        #deferred-styles {
+            display: none;
+        }
+
+        body {
+            background-color: #ffffff !important; /*#f4f5f5 !important;*/
+            font-family: Roboto, "Helvetica Neue", sans-serif;
+            font-weight: 300;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-weight: 300;
+            padding: 0;
+        }
+
+        #main h2 {
+            margin-top: 25px;
+            font-size: 14px;
+            font-weight: 300;
+            padding: 0;
+            display: block; /* Fallback for non-webkit */
+            display: -webkit-box;
+            max-height: 258px; /* Fallback for non-webkit */
+            line-height: 2.3;
+            line-clamp: 8;
+            -webkit-line-clamp: 8;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        .container{
+            display: flex;
+            align-items: center;
+            width: 100% !important;
+            justify-content: space-around;
+        }
+        #header-logo{
+            height: 45px;
+        }
+
+        .navbar{
+            display: flex;
+        }
+
+        #wrapper {
+            /* display: block!important; */
+            min-height: 100%;
+            margin-bottom: auto;
+        }
+
+        header#header {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            overflow: hidden;
+            height: var(--header-height);
+            font-family: var(--font-family-poppins);
+        }
+
+        #main {
+            padding: 20px;
+            padding-bottom:100px;
+            margin: 20px auto 20px auto;
+            /* width: 970px !important; */
+            justify-content: start;
+
+            position: absolute;
+            top: var(--header-height);
+            bottom: var(--footer-height);
+            overflow: scroll;
+            width: 100%;
+        }
+
+        .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        @media screen and (max-width: 1020px){
+            .row{
+                width: 100% !important;
+            }
+        }
+
+
+        .b_frame {
+            -webkit-box-shadow: 0px 19px 147px -41px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0px 19px 147px -41px rgba(0,0,0,0.75);
+            box-shadow: 0px 19px 147px -41px rgba(0,0,0,0.75);
+            border: 0;
+            width: 400px;
+            height: 530px;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 40px;
+        }
+        .col-md-6 {
+            margin-top: 30px;
+            padding: 0;
+        }
+
+        .col-md-7 {
+            margin-top: 30px;
+            padding: 0; 
+        }
+
+
+        .b_integrations_agent_links {
+            margin-top: 50px;
+        }
+        .b_integrations_agent_links a {
+            color: black;
+            margin-right: 30px;
+        }
+        .b_integrations_agent_links a i {
+            color: gray;
+            margin-right: 10px;
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+        }
+
+        #shareModal .modal-body {
+            text-align: center;
+        }
+
+        .modal-content{
+            width: 105%;
+        }
+
+        footer#footer {
+            background-color: white;
+            text-align: center;
+
+            /* position: relative;
+            margin-top: -100px; negative value of footer height */
+            height: var(--footer-height);
+            clear:both;
+
+            position: absolute;
+            bottom: 0px;
+            width: 100%;
+        }
+
+        .b-agent-demo_powered_by a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            text-decoration: none;
+        }
+
+        .b-agent-demo_powered_by span {
+            display: inline-block;
+            color: #B7BBC4;
+            text-transform: uppercase;
+            line-height: 20px;
+        }
+        .b-agent-demo_powered_by img {
+            display: inline-block;
+            height: 24px;
+            /* margin-left: 20px; */
+        }
+
+        input[type="radio"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+
+            border: 2px solid #999;
+            transition: 0.2s all linear;
+            margin-right: 5px;
+
+            position: relative;
+            top: 4px;
+        }
+
+        input:checked {
+            border: 6px solid black;
+        }
+
+        input[type=color] {
+            width: 50px;
+            overflow: hidden;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            padding: 0px
+        }
+
+        input[type=color]::-webkit-color-swatch {
+            -webkit-appearance: none;
+            border: none;
+            padding: 0;
+        }
+
+        input[type=color]::-webkit-color-swatch-wrapper {
+            -webkit-appearance: none;
+            border: none;
+            padding: 0;
+        }
+
+        input[type=color] > .form-group
+
+        button:hover,button:focus {
+            /* color: #999;
+            background-color: darkgrey;
+            border: 1px solid black; */
+            outline: none !important;
+        }
+
+        button {
+            padding: 5px 10px;
+            border-radius: 0;
+            border: 0;
+            font-size: 14px;
+        }
+
+        div.row.section {
+            box-shadow: 0.05rem 0.1rem 0.3rem -0.03rem rgb(0 0 0 / 45%);
+            background: rgb(237, 237, 237);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0px;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        div.row.section > div.row {
+            margin-bottom: 8px
+        }
+
+        div.section .btn {
+            background: #efefef;
+            border-radius: 15px;
+            /* padding: 15px; */
+            /* margin: 5px; */
+            font-size: 11px;
+            box-shadow: 0 5px 5px rgb(0 0 0 / 10%);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        div.section .btn:hover{
+            background: var(--base-company-logo);
+            color: #ffffff;
+        }
+
+        div.row label{
+            margin-left: 5px;
+            font-size: 12px;
+        }
+        div.row button[type=submit]{
+            margin-left: 15px;
+        }
+        .formElement {
+            display: flex;
+            align-items: center;
+            height: 30px;
+        }
+
+        div.row > .shapeElement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px
+        }
+        div.row > .shapeElement > div.col-form-label {
+            width: 100px;
+        }
+
+        div.row.testAllBtn {
+            margin: 10px;
+            text-align: right;
+        }
+
+        div.row.testAllBtn > .btn {
+            background-color: rgb(61, 61, 61);
+            color: rgb(255, 255, 255);
+            width: 200px;
+        }
+
+        div.row.testAllBtn > .btn:hover {
+            background: rgb(240,135,118);
+            color: #ffffff;
+        }
+
+        div.method_container {
+            margin-bottom: 20px;
+        }
+
+        div.method_container .btn {
+            background: #ffffff;
+            border-radius: 15px;
+            /* padding: 15px; */
+            margin: 5px;
+            font-size: 12px;
+            box-shadow: 0 5px 5px rgb(0 0 0 / 10%);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        div.method_container .btn:hover{
+            background: var(--base-company-logo);
+            color: #ffffff;
+        }
+
+        
+
+    </style>
+
+    <!-- <script type="text/javascript">
+
+        // redirect to mobile version
+
+        /**
+         * definitely not the best way to findout if there is a mobile browser
+         * @returns {any}
+         */
+        function deviceOS() {
+            var useragent = navigator.userAgent;
+            if(useragent.match(/Android/i)) {
+                return 'android';
+            } else if(useragent.match(/webOS/i)) {
+                return 'webos';
+            } else if(useragent.match(/iPhone/i)) {
+                return 'iphone';
+            } else if(useragent.match(/iPod/i)) {
+                return 'ipod';
+            } else if(useragent.match(/iPad/i)) {
+                return 'ipad';
+            } else if(useragent.match(/Windows Phone/i)) {
+                return 'windows phone';
+            } else if(useragent.match(/SymbianOS/i)) {
+                return 'symbian';
+            } else if(useragent.match(/RIM/i) || useragent.match(/BB/i)) {
+                return 'blackberry';
+            } else {
+                return false;
+            }
+        }
+
+        if (deviceOS()) {
+            var frameEl = document.getElementById('frame');
+            location.href = "";
+        }
+    </script> -->
+
+    <meta property="og:title" content="Try Tiledesk now!" />
+    <meta property="og:description" content="Qualify your leads to increase your sales faster. It's really easy to do it with the Tiledesk conversational form builder" />
+    <meta property="og:image" content="https://tiledesk.com/wp-content/uploads/2022/12/6029654-02-min.png" />
+    <meta property="og:locale" content="en">
+    
+    <link rel="icon" type="image/png" href="./tiledesk_widget_files/logo-short.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="./tiledesk_widget_files/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./tiledesk_widget_files/website-poly.min.css" rel="stylesheet" type="text/css">
+    <script defer="" src="./tiledesk_widget_files/jquery.min.js"></script>
+    <script defer="" src="./tiledesk_widget_files/bootstrap.min.js"></script>
+
+    <script type="application/javascript">
+        window.tiledeskSettings = {
+            marginX: "100px",
+            marginY: "50px",
+            // calloutTimer: 1,
+        };
+
+        (function(d, s, id) {
+            var w=window; var d=document;
+            var i=function() {                 //crea una function
+                i.c(arguments);
+            };
+            i.q=[];                   //q->queue
+            i.c=function(args){       //c-> call
+                i.q.push(args);
+            };
+            w.Tiledesk=i;
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); 
+            js.id = id; js.async = true; js.src = "../../launch.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'tiledesk-jssdk'));
+
+        window.Tiledesk('onLoadParams', function(event_data) {
+            console.log("onLoadParams Tiledesk FN", event_data);
+            // window.tiledesk.open();
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onLoadParams --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+
+            document.getElementById("project_id").value = '"' + tiledesk_projectid + '"';
+            document.getElementById("project_name").value = project_name;
+        });
+
+        window.Tiledesk('onBeforeInit', function(event_data) {
+            console.log("onBeforeInit Tiledesk FN", event_data); 
+
+            var brandSrc = event_data.detail.appConfigs.brandSrc? getBrandResources(event_data.detail.appConfigs.brandSrc) : null;
+
+            setTimeout(() => {
+                if(event_data && event_data.detail && event_data.detail.appConfigs){
+                    
+                    var enbedJs = event_data.detail.appConfigs.enbedJs? event_data.detail.appConfigs.enbedJs : false;
+                    document.getElementById("enbed").style.display = enbedJs? "inline-block": "none";
+                    document.getElementById("base_url").value = enbedJs ? window.tiledesk.getBaseLocation() + '/launch.js': null;
+                    
+                    baseUrlConsole = event_data.detail.appConfigs.dashboardUrl? event_data.detail.appConfigs.dashboardUrl : baseUrlConsole;
+                }
+
+            }, 1000);
+
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onBeforeInit --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+        
+        window.Tiledesk('onInit', function(event_data) {
+            console.log("onInit Tiledesk FN", event_data); 
+            setTimeout(() => {
+                initLang();
+                initDefaultSettings();
+                document.getElementById("preloader").style.display = "none";
+                document.getElementById('events').value += 'onInit --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }, 1000);
+            //open widget after 3s if is closed
+            // setTimeout(() => {
+            //     if(event_data && event_data.detail && event_data.detail.global && !event_data.detail.global.isOpen){
+            //         window.Tiledesk('open')
+            //     }
+            // }, 3000);
+        });
+        
+        window.Tiledesk('onAuthStateChanged', function(event_data) {
+            console.log("onAuthStateChanged Tiledesk FN", event_data); 
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onAuthStateChanged --> FIRED! ' + event_data.detail.event + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+        window.Tiledesk('onNewConversationComponentInit', function(event_data) {
+            console.log("onNewConversationComponentInit Tiledesk FN", event_data); 
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onNewConversationComponentInit --> FIRED! ' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+        window.Tiledesk('onBeforeMessageSend', function(event_data) {
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onBeforeMessageSend --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+        window.Tiledesk('onAfterMessageSend', function(event_data) {
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onAfterMessageSend --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+        window.Tiledesk('onMessageCreated', function(event_data) {
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onMessageCreated --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+        window.Tiledesk('onOpen', function(event_data) {
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onOpen --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+        window.Tiledesk('onClose', function(event_data) {
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onClose --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+        window.Tiledesk('onOpenEyeCatcher', function(event_data) {
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onOpenEyeCatcher --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+        window.Tiledesk('onClosedEyeCatcher', function(event_data) {
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onClosedEyeCatcher --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+        window.Tiledesk('onNewConversation', function(event_data) {
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onNewConversation --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+        window.Tiledesk('onConversationUpdated', function(event_data) {
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onConversationUpdated --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+        window.Tiledesk('onCloseMessagePreview', function(event_data) {
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onCloseMessagePreview --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+        window.Tiledesk('onBeforeDepartmentsFormRender', function(event_data) {
+            if(document.getElementById('events')){
+                document.getElementById('events').value +=  'onBeforeDepartmentsFormRender --> FIRED!' + '\n' 
+                document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
+            }
+        });
+
+    </script>
+
+    <script type="application/javascript">
+        var baseUrlConsole = "https://console.tiledesk.com/v2/dashboard/";
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var urlToConsole = urlParams.get('goToConsole');
+        
+        var textAreaEvents = document.getElementById('events')
+        if(urlToConsole){
+            baseUrlConsole = urlToConsole;
+        }
+  
+        var currentUrl = window.location.href
+        var baseUrl = window.location.origin
+        function shareOnFacebook() {
+            var fbShareUrl = "https://www.facebook.com/sharer.php?u=" + encodeURIComponent(currentUrl);
+            window.open(
+                fbShareUrl,
+                '_blank' 
+            );
+        }
+
+        function shareOnTwitter() {
+            var TwShareUrl = "https://twitter.com/share?url=" + encodeURIComponent(currentUrl);
+            window.open(
+                TwShareUrl,
+                '_blank' 
+            );
+         }
+
+        function shareOnLinkedin() {
+            var LinkedinShareUrl = "https://www.linkedin.com/shareArticle?mini=true&url=" + encodeURIComponent(currentUrl);
+            window.open(
+                LinkedinShareUrl,
+                '_blank' 
+            );
+         }
+
+        function shareOnTelegram() {                                    
+            var TelegramShareUrl = "tg://msg_url?url=" + encodeURIComponent(currentUrl) ;
+            // console.log('TelegramShareUrl ', TelegramShareUrl ) 
+            window.open(
+                TelegramShareUrl,
+                '_blank' 
+            );
+        }
+
+        function shareOnWhatsapp() {            
+            var WhatsappShareUrl = "whatsapp://send?text=" + currentUrl;
+            window.open(
+                WhatsappShareUrl,
+                '_blank' 
+            );
+        }
+
+        function goToConsole(){
+            var url = new URL(currentUrl);
+            var tiledesk_projectid = url.searchParams.get("tiledesk_projectid");
+            var project_name = url.searchParams.get("project_name");
+           
+            var urlConsole = baseUrlConsole + "#/project/"+tiledesk_projectid+"/home";
+            //var urlConsole = "dashboard/#/project/"+tiledesk_projectid+"/home";
+            window.open(
+                urlConsole,
+                '_blank' 
+            );
+        }
+
+        function getBrandResources(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    var brandJson = JSON.parse(xhr.response)
+                    if(brandJson){
+                        /** TITLE AND FAVICON **/
+                        brandJson['WIDGET'].META_TITLE? document.body.title = brandJson['WIDGET'].META_TITLE : null;
+                        brandJson['WIDGET'].FAVICON_URL?  document.querySelector("link[rel~='icon']").setAttribute('href', brandJson['WIDGET'].FAVICON_URL) : null;
+                        /** FOOTER-LOGO **/    
+                        brandJson['COMMON'].COMPANY_LOGO? document.getElementById('footer-logo').src = brandJson['COMMON'].COMPANY_LOGO : null;
+                        brandJson['COMMON'].COMPANY_SITE_NAME? document.getElementById('footer-logo').alt = brandJson['COMMON'].COMPANY_SITE_NAME : null;
+                        brandJson['COMMON'].COMPANY_SITE_URL? document.getElementById('footer-link').href = brandJson['COMMON'].COMPANY_SITE_URL : null;
+                        /** HEADER-LOGO **/                 
+                        brandJson['COMMON'].BASE_LOGO_WHITE? document.getElementById('header-logo').src = brandJson['COMMON'].BASE_LOGO_WHITE : null;
+                        /** HEADER-DOCS RESOURCES **/    
+                        brandJson['COMMON'].DOCS? null: document.getElementById('share').style.display = 'none';
+                        if(brandJson['COMMON'].DOCS === false){ 
+                            var el = document.getElementsByClassName('docs')
+                            for (var i = 0; i < el.length; i++) {
+                                document.getElementsByClassName('docs').item(i).style.display = 'none'
+                            }
+                        }
+                        /** IFRAME TITLE**/
+                        brandJson['COMMON'].COMPANY_LOGO? document.getElementById('tiledeskiframe').title = brandJson['COMMON'].COMPANY_NAME + ' Widget' : null;
+                    }
+                }
+            }
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+            xhr.send();
+        }
+
+
+        function onClickTestButton(event){
+            console.log('onClickTestButton: event-->',event)
+            if(event ==='hide'){
+                window.tiledesk.hide()
+            }else{
+                window.Tiledesk(event);
+            }
+            window.Tiledesk('setParameter', {key: 'poweredBy', value: ''})
+        }
+
+        function onClickSignInAnonymous(){
+            console.log('onClickSignInAnonymous: event-->')
+            window.Tiledesk('signInAnonymous')
+        }
+
+        function onClickCustomToken(){
+            let jwt = document.getElementById('jwt').value
+            console.log('onClickCustomToken: event-->',jwt)
+            window.Tiledesk('signInWithCustomToken', jwt)
+        }
+
+        function onClickCustomPreChatForm(){
+            let preChatForm = document.getElementById('preChatForm').value
+            console.log('onClickCustomPreChatForm: event-->',preChatForm)
+            if(preChatForm !== '' && isJsonString(preChatForm)=== true){
+                document.getElementById('preChatForm').style.color= '#555'
+                window.tiledeskSettings['preChatForm'] = true
+                window.Tiledesk('setAttributeParameter',({key: 'userFullname', value: null}))
+                window.Tiledesk('setAttributeParameter',({key: 'userEmail', value: null}))
+                window.Tiledesk('setPreChatFormJson', JSON.parse(preChatForm))
+                // window.Tiledesk('restart')
+            }else{
+                document.getElementById('preChatForm').style.color = 'red'
+            }
+            
+        }
+
+        function onClickGetPreChatForm(){
+            let preChatFormTextArea = document.getElementById('preChatFormGet')
+            let preChatFormJSON = window.Tiledesk('getPreChatFormJson')
+            preChatFormTextArea.value = JSON.stringify(preChatFormJSON, null, 4)
+        }
+
+        function onClickOpenConversationById(){
+            let request_id = document.getElementById('request_id').value
+            window.Tiledesk('openConversationById', request_id)
+        }
+
+        // function onClickParameter(elementName){
+        //     console.log('onClickParameter: ',elementName)
+        //     const radios = document.getElementsByName(elementName)
+        //     let radioValue;
+        //     for (var i = 0, length = radios.length; i < length; i++) {
+        //         if (radios[i].checked) {
+        //             // do whatever you want with the checked radio
+        //             radioValue = radios[i].value;
+        //             console.log('valueeeee', elementName, radioValue)
+        //             window.tiledeskSettings[elementName] = radioValue
+        //             console.log('settingss', window.tiledeskSettings)
+        //             window.Tiledesk('restart')
+        //             // only one radio can be logically checked, don't check the rest
+        //             break;
+        //         }
+        //     }
+        // }
+        stringToBoolean =  function(string){
+            switch(string.toLowerCase().trim()){
+                case "true": case "yes": case "1": return true;
+                case "false": case "no": case "0": case null: return false;
+                default: return string;
+            }
+        }
+
+        isJsonString = function(str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        }
+
+        function onClickDisconnectTime(){
+            let status = document.querySelector('input[name="disconnetTime"]:checked');
+            let value;
+            status? value = status.value : '';
+            if(!value){
+                value = document.getElementById('disconnetTimeText').value;
+            }
+            !value? value = -1 : '';
+            window.tiledeskSettings['disconnetTime'] = +value
+            console.log('onClickDisconnectTime: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+    
+        function onClickStartFromHome(){
+            let status = document.querySelector('input[name="startFromHome"]:checked').value
+            window.tiledeskSettings['startFromHome'] = stringToBoolean(status)
+            console.log('onClickStartFromHome: status-->',window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickOpen(){
+            let status = document.querySelector('input[name="open"]:checked').value
+            window.tiledeskSettings['open'] = stringToBoolean(status)
+            console.log('onClickOpen: status-->',window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickPreChatForm(){
+            let status = document.querySelector('input[name="preChatForm"]:checked').value
+            window.tiledeskSettings['preChatForm'] = stringToBoolean(status)
+            console.log('onClickPreChatForm: status-->',window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickAlign(){
+            let status = document.querySelector('input[name="align"]:checked').value
+            window.tiledeskSettings['align'] = status
+            console.log('onClickAlign: status-->',window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickCalloutTimer(){
+            let status = document.querySelector('input[name="calloutTimer"]:checked');
+            let value;
+            status? value = status.value : '';
+            if(!value){
+                value = document.getElementById('calloutTimerText').value;
+            }
+            !value? value = -1 : '';
+            window.tiledeskSettings['calloutTimer'] = +value
+            console.log('onClickCalloutTimer: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickCalloutTitle(){
+            let title = document.getElementById('calloutTitle').value
+            window.tiledeskSettings['calloutTitle'] = title
+            console.log('onClickCalloutTitle: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickCalloutMsg(){
+            let msg = document.getElementById('calloutMsg').value
+            window.tiledeskSettings['calloutMsg'] = msg
+            console.log('onClickCalloutMsg: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickWelcomeTitle(){
+            let title = document.getElementById('welcomeTitle').value
+            window.tiledeskSettings['welcomeTitle'] = title
+            console.log('onClickWelcomeTitle: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickWelcomeMsg(){
+            let msg = document.getElementById('welcomeMsg').value
+            window.tiledeskSettings['welcomeMsg'] = msg
+            console.log('onClickWelcomeMsg: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickWidgetTitle(){
+            let title = document.getElementById('widgetTitle').value
+            window.tiledeskSettings['widgetTitle'] = title
+            console.log('onClickWidgetTitle: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickLogoChat(){
+            let url = document.getElementById('logoChat').value
+            window.tiledeskSettings['logoChat'] = url
+            console.log('onClickLogoChat: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickLang(){
+            let lang = document.getElementById('lang').value
+            // if lang is not pre-translated, use English
+            const selectedLanguage = JSON.parse(lang)
+            selectedLanguage.type === '--- Needs own translation ---'? lang = 'en': lang= selectedLanguage.code
+            window.tiledeskSettings['lang'] = lang
+            console.log('onClickLang: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickSingleConversation(){
+            let status = document.querySelector('input[name="singleConversation"]:checked').value
+            window.tiledeskSettings['singleConversation'] = stringToBoolean(status)
+            console.log('onClickSingleConversation: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickRestartConversation(){
+            let status = document.querySelector('input[name="restartConversation"]:checked').value
+            window.tiledeskSettings['restart'] = stringToBoolean(status)
+            console.log('onClickRestartConversation: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickHideSettings(){
+            let status = document.querySelector('input[name="hideSettings"]:checked').value
+            window.tiledeskSettings['hideSettings'] = stringToBoolean(status)
+            console.log('onClickHideSettings: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickFullScreenMode(){
+            let status = document.querySelector('input[name="fullscreenMode"]:checked').value
+            window.tiledeskSettings['fullscreenMode'] = stringToBoolean(status)
+            console.log('onClickFullScreenMode: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickThemeColor(){
+            let color = document.getElementById('themeColor').value
+            document.getElementById('themeColorText').value = color
+            window.tiledeskSettings['themeColor'] = color
+            console.log('onClickThemeColor: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onChangeThemeColor(){
+            let color = document.getElementById('themeColor').value
+            document.getElementById('themeColorText').value = color
+        }
+
+        function onChangeThemeColorText(){
+            let color = document.getElementById('themeColorText').value
+            document.getElementById('themeColor').value = color
+        }
+
+        function onClickThemeColorOpacity(){
+            let text = document.getElementById('themeColorOpacity').value
+            text === ""? text= 50 : text //set default value if user not write a value
+            window.tiledeskSettings['themeColorOpacity'] = +text 
+            console.log('onClickThemeColorOpacity:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onChangeThemeColorOpacity(){
+            let value = document.getElementById('themeColorOpacity').value
+            document.getElementById('themeColorOpacityText').innerText = value + ' %'
+        }
+
+        function onChangeThemeForegroundColor(){
+            let color = document.getElementById('themeForegroundColor').value
+            document.getElementById('themeForegroundColorText').value = color
+        }
+
+        function onChangeThemeForegroundColorText(){
+            let color = document.getElementById('themeForegroundColorText').value
+            document.getElementById('themeForegroundColor').value = color
+        }
+
+        function onClickThemeForegroundColor(){
+            let color = document.getElementById('themeForegroundColor').value
+            document.getElementById('themeForegroundColorText').value = color
+            window.tiledeskSettings['themeForegroundColor'] = color
+            console.log('onClickThemeForegroundColor:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onChangeColor(parameter){
+            let color = document.getElementById(parameter).value
+            document.getElementById(parameter+'Text').value = color
+        }
+
+        function onChangeColorText(parameter){
+            let color = document.getElementById(parameter+'Text').value
+            document.getElementById(parameter).value = color
+        }
+
+        function onClickColor(parameter){
+            let color = document.getElementById(parameter).value
+            document.getElementById(parameter).value = color
+            window.tiledeskSettings[parameter] = color
+            console.log('onClickColor:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickDepartmentId(){
+            let text = document.getElementById('departmentID').value
+            window.tiledeskSettings['departmentID'] = text
+            console.log('onClickDepartmentId:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickMarginX(){
+            let text = document.getElementById('marginX').value
+            text === ""? text= '100px': text
+            window.tiledeskSettings['marginX'] = text
+            console.log('onClickMarginX:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickMarginY(){
+            let text = document.getElementById('marginY').value
+            text === ""? text= '50px' : text //set default value if user not write a value
+            window.tiledeskSettings['marginY'] = text
+            console.log('onClickMarginY:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickMobileMarginX(){
+            let text = document.getElementById('mobileMarginX').value
+            text === ""? text= '100px': text
+            window.tiledeskSettings['mobileMarginX'] = text
+            console.log('onClickMobileMarginX:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickMobileMarginY(){
+            let text = document.getElementById('mobileMarginY').value
+            text === ""? text= '50px' : text //set default value if user not write a value
+            window.tiledeskSettings['mobileMarginY'] = text
+            console.log('onClickMobileMarginY:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickAutoStart(){
+            let status = document.querySelector('input[name="autoStart"]:checked').value
+            window.tiledeskSettings['autoStart'] = stringToBoolean(status)
+            console.log('onClickAutoStart:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickStartHidden(){
+            let status = document.querySelector('input[name="startHidden"]:checked').value
+            window.tiledeskSettings['startHidden'] = stringToBoolean(status)
+            console.log('onClickStartHidden:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickPersistence(){
+            let status = document.querySelector('input[name="persistence"]:checked').value
+            window.tiledeskSettings['persistence'] = status
+            console.log('onClickPersistence:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickShowWaitTime(){
+            let status = document.querySelector('input[name="showWaitTime"]:checked').value
+            window.tiledeskSettings['showWaitTime'] = stringToBoolean(status)
+            console.log('onClickShowWaitTime:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickShowAvailableAgents(){
+            let status = document.querySelector('input[name="showAvailableAgents"]:checked').value
+            window.tiledeskSettings['showAvailableAgents'] = stringToBoolean(status)
+            console.log('onClickShowAvailableAgents', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickShowAllConversations(){
+            let status = document.querySelector('input[name="showAllConversations"]:checked').value
+            window.tiledeskSettings['showAllConversations'] = stringToBoolean(status)
+            console.log('onClickShowAllConversations:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickLauncherWidth(){
+            let text = document.getElementById('launcherWidth').value
+            text === ""? text= 60 : text //set default value if user not write a value
+            window.tiledeskSettings['launcherWidth'] = text + 'px'
+            console.log('onClickLauncherWidth:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onChangeLauncherWidth(){
+            let value = document.getElementById('launcherWidth').value
+            document.getElementById('launcherWidthText').innerText = value + ' px'
+        }
+
+        function onChangeLauncherHeight(){
+            let value = document.getElementById('launcherHeight').value
+            document.getElementById('launcherHeightText').innerText = value + ' px'
+        }
+
+        function onClickLauncherHeight(){
+            let text = document.getElementById('launcherHeight').value
+            text === ""? text= 60 : text //set default value if user not write a value
+            window.tiledeskSettings['launcherHeight'] = text + 'px'
+            console.log('onClickLauncherHeight', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickBaloonImage(){
+            let url = document.getElementById('baloonImage').value
+            window.tiledeskSettings['baloonImage'] = url
+            console.log('onClickMarginY', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickBaloonShape(){
+            let top = document.getElementById('top').value
+            let bottom = document.getElementById('bottom').value
+            let left = document.getElementById('left').value
+            let right = document.getElementById('right').value
+            let percentage = document.getElementById('percentage').value
+            let value = '50%'
+            if(top || bottom || left || right){
+                top? top : top='0px';
+                bottom? bottom : bottom='0px';
+                left? left : left='0px';
+                right? right : right='0px';
+                value = top+' ' + bottom+' '+left+' '+right
+            } else if (percentage){
+                value = percentage
+            }
+            window.tiledeskSettings['baloonShape'] = value
+            console.log('onClickBaloonShape', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onBallonShapeInput(){
+            const top = document.getElementById('top')
+            const bottom = document.getElementById('bottom')
+            const left = document.getElementById('left')
+            const right = document.getElementById('right')
+            const percentage = document.getElementById('percentage')
+            if(top.value || bottom.value || left.value || right.value){
+                percentage.disabled = true
+            } else if (percentage.value){
+                top.disabled = true
+                bottom.disabled = true
+                left.disabled = true
+                right.disabled = true
+            }else {
+                percentage.disabled = false
+                top.disabled = false
+                bottom.disabled = false
+                left.disabled = false
+                right.disabled = false
+            }
+        }
+
+        function onClickDynamicWaitTimeReply(){
+            let status = document.querySelector('input[name="dynamicWaitTimeReply"]:checked').value
+            window.tiledeskSettings['dynamicWaitTimeReply'] = stringToBoolean(status)
+            console.log('onClickDynamicWaitTimeReply:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickOpenExternalLinkButton(){
+            let status = document.querySelector('input[name="openExternalLinkButton"]:checked').value
+            window.tiledeskSettings['openExternalLinkButton'] = stringToBoolean(status)
+            console.log('onClickOpenExternalLinkButton:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickIsLogEnabled(){
+            let status = document.querySelector('input[name="isLogEnabled"]:checked').value
+            window.tiledeskSettings['isLogEnabled'] = stringToBoolean(status)
+            console.log('onClickIsLogEnabled:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickLogLevel(){
+            let status = document.getElementById('logLevel').value
+            window.tiledeskSettings['logLevel'] = status
+            console.log('onClickLogLevel:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickNativeRating(){
+            let status = document.querySelector('input[name="nativeRating"]:checked').value
+            window.tiledeskSettings['nativeRating'] = stringToBoolean(status)
+            console.log('onClickNativeRating:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickWhatsappNumber(){
+            let status = document.getElementById('whatsappNumber').value
+            window.tiledeskSettings['whatsappNumber'] = status
+            console.log('onClickWhatsappNumber:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickMessangerPageTitle(){
+            let status = document.getElementById('messangerPageTitle').value
+            window.tiledeskSettings['messangerPageTitle'] = status
+            console.log('onClickMessangerPageTitle:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickTelegramUsername(){
+            let status = document.getElementById('telegramUsername').value
+            window.tiledeskSettings['telegramUsername'] = status
+            console.log('onClickTelegramUsername:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+        
+        function onClickHideHeaderCloseButton(){
+            let status = document.querySelector('input[name="hideHeaderCloseButton"]:checked').value
+            window.tiledeskSettings['hideHeaderCloseButton'] = stringToBoolean(status)
+            console.log('onClickHideHeaderCloseButton: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickHideHeaderConversationOptionsMenu(){
+            let status = document.querySelector('input[name="hideHeaderConversationOptionsMenu"]:checked').value
+            window.tiledeskSettings['hideHeaderConversationOptionsMenu'] = stringToBoolean(status)
+            console.log('onClickHideHeaderConversationOptionsMenu:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickHideCloseConversationOptionMenu(){
+            let status = document.querySelector('input[name="hideCloseConversationOptionMenu"]:checked').value
+            window.tiledeskSettings['hideCloseConversationOptionMenu'] = stringToBoolean(status)
+            console.log('onClickHideCloseConversationOptionMenu:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickHideRestartConversationOptionsMenu(){
+            let status = document.querySelector('input[name="hideRestartConversationOptionsMenu"]:checked').value
+            window.tiledeskSettings['hideRestartConversationOptionsMenu'] = stringToBoolean(status)
+            console.log('onClickHideRestartConversationOptionsMenu:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickAllowTranscriptDownload(){
+            let status = document.querySelector('input[name="allowTranscriptDownload"]:checked').value
+            window.tiledeskSettings['allowTranscriptDownload'] = stringToBoolean(status)
+            console.log('onClickAllowTranscriptDownload:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickAllowReopen(){
+            let status = document.querySelector('input[name="allowReopen"]:checked').value
+            window.tiledeskSettings['allowReopen'] = stringToBoolean(status)
+            console.log('onClickAllowReopen:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        // function onClickContinueConversationBeforeTime(){
+        //     let text = document.getElementById('continueConversationBeforeTime').value
+        //     window.tiledeskSettings['continueConversationBeforeTime'] = text
+        //     console.log('onClickContinueConversationBeforeTime:',window.tiledeskSettings);
+        //     window.Tiledesk('restart')
+        // }
+
+        function onClickRecipientId(){
+            let text = document.getElementById('recipientId').value
+            window.tiledeskSettings['recipientId'] = text
+            console.log('onClickRecipientId:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickSoundEnabled(){
+            let status = document.querySelector('input[name="soundEnabled"]:checked').value
+            window.tiledeskSettings['soundEnabled'] = stringToBoolean(status)
+            console.log('onClickSoundEnabled:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickTypingLocation(){
+            let status = document.querySelector('input[name="typingLocation"]:checked').value
+            window.tiledeskSettings['typingLocation'] = status
+            console.log('onClickTypingLocation:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickCustomAttributes(){
+            let text = document.getElementById('customAttributes').value
+            window.tiledeskSettings['customAttributes'] = JSON.parse(text)
+            console.log('onClickCustomAttributes:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickShowInfoMessage(){
+            let text = document.getElementById('showInfoMessage').value
+            window.tiledeskSettings['showInfoMessage'] = text
+            console.log('onClickShowInfoMessage:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickParticipants(){
+            let text = document.getElementById('participants').value
+            window.tiledeskSettings['participants'] = text
+            console.log('onClickParticipants:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickFileUploadAccept(){
+            let text = document.getElementById('fileUploadAccept').value
+            window.tiledeskSettings['fileUploadAccept'] = text
+            console.log('onClickFileUploadAccept:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickShowAttachmentFooterButton(){
+            let status = document.querySelector('input[name="showAttachmentFooterButton"]:checked').value
+            window.tiledeskSettings['showAttachmentFooterButton'] = stringToBoolean(status)
+            console.log('onClickShowAttachmentFooterButton:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+        
+        function onClickShowEmojiFooterButton(){
+            let status = document.querySelector('input[name="showEmojiFooterButton"]:checked').value
+            window.tiledeskSettings['showEmojiFooterButton'] = stringToBoolean(status)
+            console.log('onClickShowEmojiFooterButton:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickShowRegisterAudioFooterButton(){
+            let status = document.querySelector('input[name="showRegisterAudioFooterButton"]:checked').value
+            window.tiledeskSettings['showRegisterAudioFooterButton'] = stringToBoolean(status)
+            console.log('onClickShowRegisterAudioFooterButton:', window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+
+
+
+        function onClickFontSize(){
+            let text = document.getElementById('fontSize').value
+            text === ""? text= '1.4em': text
+            window.tiledeskSettings['fontSize'] = text
+            console.log('onClickFontSize:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+
+        function onClickButtonFontSize(){
+            let text = document.getElementById('buttonFontSize').value
+            text === ""? text= '15px': text
+            window.tiledeskSettings['buttonFontSize'] = text
+            console.log('onClickButtonFontSize:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+       
+
+        
+
+       
+
+        
+
+        
+
+        
+
+
+        function onClickTestAll(){
+            inputs = document.getElementsByTagName('input');
+            for (index = 0; index < inputs.length; ++index) {
+                // deal with inputs[index] element.
+                const elementType = inputs[index].type
+                const elementName = inputs[index].name
+                if(elementType === 'radio'){
+                    let element =  document.querySelector('input[name="'+elementName+ '"]:checked');
+                    if (element){
+                        window.tiledeskSettings[elementName] = stringToBoolean(element.value)
+                    }
+                } else if(elementType === 'text'){
+                    let element = document.getElementById(elementName)
+                    if(element && element.value && elementName !== 'baloonShape'){
+                        window.tiledeskSettings[elementName] = element.value
+                    } else if (elementName === 'baloonShape') {
+                        let top = document.getElementById('top').value
+                        let bottom = document.getElementById('bottom').value
+                        let left = document.getElementById('left').value
+                        let right = document.getElementById('right').value
+                        let percentage = document.getElementById('percentage').value
+                        let value = '50%'
+                        if(top || bottom || left || right){
+                            top? top : top='0px';
+                            bottom? bottom : bottom='0px';
+                            left? left : left='0px';
+                            right? right : right='0px';
+                            value = top+' ' + bottom+' '+left+' '+right
+                        } else if (percentage) {
+                            value = percentage
+                        }
+                        window.tiledeskSettings[elementName] = value
+                    }else if(elementName === 'calloutTimer'){
+                        let element = document.getElementById('calloutTimerText')
+                        window.tiledeskSettings[elementName] = element.value
+                    }
+                    
+                } else if (elementType === 'range'){
+                    let element = document.getElementById(elementName)
+                    window.tiledeskSettings[elementName] = element.value + 'px'
+                }
+            }
+            inputs = document.getElementsByClassName('select');
+            for(index = 0; index < inputs.length; ++index){
+                const elementName = inputs[index].name
+                const element = document.getElementById(elementName)
+                window.tiledeskSettings[elementName] = element.value
+            }
+            window.Tiledesk('restart')
+        }
+
+        function onClickClearHistory(){
+            document.getElementById('events').value = ""
+        }
+
+
+                        
+        var url = new URL(currentUrl);
+        var tiledesk_projectid = url.searchParams.get("tiledesk_projectid");
+        var project_name = url.searchParams.get("project_name");
+        var urlConsole = baseUrlConsole + "#/projects/"+tiledesk_projectid+"/home";
+        // console.log('tiledesk_projectid: ', tiledesk_projectid);
+        // console.log('project_name: ', project_name);
+        
+        // window.onload = function() {
+        //     document.getElementById("project_id").value = '"' + tiledesk_projectid + '"';
+        //     document.getElementById("project_name").value = project_name;
+        // }
+
+
+        function getQueryVariable(variable)     {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i=0;i<vars.length;i++) {
+                    var pair = vars[i].split("=");
+                    if(pair[0] == variable){return pair[1];}
+            }
+            return(false);
+        }
+
+        function initLang(){
+            var languages = [
+                { code: 'ar', name: 'Arabic', type: '--- Pre-translated ---' },
+                { code: 'az', name: 'Azerbaijani', type: '--- Pre-translated ---' },
+                { code: 'en', name: 'English', type: '--- Pre-translated ---' },
+                { code: 'fr', name: 'French', type: '--- Pre-translated ---' },
+                { code: 'de', name: 'German', type: '--- Pre-translated ---' },
+                { code: 'it', name: 'Italian', type: '--- Pre-translated ---' },
+                { code: 'kk', name: 'Kazakh', type: '--- Pre-translated ---' },
+                { code: 'pt', name: 'Portuguese', type: '--- Pre-translated ---' },
+                { code: 'ru', name: 'Russian', type: '--- Pre-translated ---' },
+                { code: 'es', name: 'Spanish, Castilian', type: '--- Pre-translated ---' },
+                { code: 'sr', name: 'Serbian', type: '--- Pre-translated ---' },
+                { code: 'sv', name: 'Swedish', type: '--- Pre-translated ---' },
+                { code: 'tr', name: 'Turkish', type: '--- Pre-translated ---' },
+                { code: 'uk', name: 'Ukrainian', type: '--- Pre-translated ---' },
+                { code: 'uz', name: 'Uzbek', type: '--- Pre-translated ---' },
+                { code: 'ab', name: 'Abkhazian', type: '--- Needs own translation ---' },
+                { code: 'aa', name: 'Afar', type: '--- Needs own translation ---' },
+                { code: 'af', name: 'Afrikaans', type: '--- Needs own translation ---' },
+                { code: 'ak', name: 'Akan', type: '--- Needs own translation ---' },
+                { code: 'sq', name: 'Albanian', type: '--- Needs own translation ---' },
+                { code: 'am', name: 'Amharic', type: '--- Needs own translation ---' },
+                { code: 'an', name: 'Aragonese', type: '--- Needs own translation ---' },
+                { code: 'hy', name: 'Armenian', type: '--- Needs own translation ---' },
+                { code: 'as', name: 'Assamese', type: '--- Needs own translation ---' },
+                { code: 'av', name: 'Avaric', type: '--- Needs own translation ---' },
+                { code: 'ae', name: 'Avestan', type: '--- Needs own translation ---' },
+                { code: 'ay', name: 'Aymara', type: '--- Needs own translation ---' },
+                { code: 'bm', name: 'Bambara', type: '--- Needs own translation ---' },
+                { code: 'ba', name: 'Bashkir', type: '--- Needs own translation ---' },
+                { code: 'eu', name: 'Basque', type: '--- Needs own translation ---' },
+                { code: 'be', name: 'Belarusian', type: '--- Needs own translation ---' },
+                { code: 'bn', name: 'Bengali', type: '--- Needs own translation ---' },
+                { code: 'bh', name: 'Bihari languages', type: '--- Needs own translation ---' },
+                { code: 'bi', name: 'Bislama', type: '--- Needs own translation ---' },
+                { code: 'bs', name: 'Bosnian', type: '--- Needs own translation ---' },
+                { code: 'br', name: 'Breton', type: '--- Needs own translation ---' },
+                { code: 'bg', name: 'Bulgarian', type: '--- Needs own translation ---' },
+                { code: 'my', name: 'Burmese', type: '--- Needs own translation ---' },
+                { code: 'ca', name: 'Catalan, Valencian', type: '--- Needs own translation ---' },
+                { code: 'km', name: 'Central Khmer', type: '--- Needs own translation ---' },
+                { code: 'ch', name: 'Chamorro', type: '--- Needs own translation ---' },
+                { code: 'ce', name: 'Chechen', type: '--- Needs own translation ---' },
+                { code: 'ny', name: 'Chichewa, Chewa, Nyanja', type: '--- Needs own translation ---' },
+                { code: 'zh', name: 'Chinese', type: '--- Needs own translation ---' },
+                { code: 'cu', name: 'Church Slavonic, Old Bulgarian, Old Church Slavonic', type: '--- Needs own translation ---' },
+                { code: 'cv', name: 'Chuvash', type: '--- Needs own translation ---' },
+                { code: 'kw', name: 'Cornish', type: '--- Needs own translation ---' },
+                { code: 'co', name: 'Corsican', type: '--- Needs own translation ---' },
+                { code: 'cr', name: 'Cree', type: '--- Needs own translation ---' },
+                { code: 'hr', name: 'Croatian', type: '--- Needs own translation ---' },
+                { code: 'cs', name: 'Czech', type: '--- Needs own translation ---' },
+                { code: 'da', name: 'Danish', type: '--- Needs own translation ---' },
+                { code: 'dv', name: 'Divehi, Dhivehi, Maldivian', type: '--- Needs own translation ---' },
+                { code: 'nl', name: 'Dutch, Flemish', type: '--- Needs own translation ---' },
+                { code: 'dz', name: 'Dzongkha', type: '--- Needs own translation ---' },
+                { code: 'eo', name: 'Esperanto', type: '--- Needs own translation ---' },
+                { code: 'et', name: 'Estonian', type: '--- Needs own translation ---' },
+                { code: 'ee', name: 'Ewe', type: '--- Needs own translation ---' },
+                { code: 'fo', name: 'Faroese', type: '--- Needs own translation ---' },
+                { code: 'fj', name: 'Fijian', type: '--- Needs own translation ---' },
+                { code: 'fi', name: 'Finnish', type: '--- Needs own translation ---' },
+                { code: 'ff', name: 'Fulah', type: '--- Needs own translation ---' },
+                { code: 'gd', name: 'Gaelic, Scottish Gaelic', type: '--- Needs own translation ---' },
+                { code: 'gl', name: 'Galician', type: '--- Needs own translation ---' },
+                { code: 'lg', name: 'Ganda', type: '--- Needs own translation ---' },
+                { code: 'ka', name: 'Georgian', type: '--- Needs own translation ---' },
+                { code: 'ki', name: 'Gikuyu, Kikuyu', type: '--- Needs own translation ---' },
+                { code: 'el', name: 'Greek (Modern)', type: '--- Needs own translation ---' },
+                { code: 'kl', name: 'Greenlandic, Kalaallisut', type: '--- Needs own translation ---' },
+                { code: 'gn', name: 'Guarani', type: '--- Needs own translation ---' },
+                { code: 'gu', name: 'Gujarati', type: '--- Needs own translation ---' },
+                { code: 'ht', name: 'Haitian, Haitian Creole', type: '--- Needs own translation ---' },
+                { code: 'ha', name: 'Hausa', type: '--- Needs own translation ---' },
+                { code: 'he', name: 'Hebrew', type: '--- Needs own translation ---' },
+                { code: 'hz', name: 'Herero', type: '--- Needs own translation ---' },
+                { code: 'hi', name: 'Hindi', type: '--- Needs own translation ---' },
+                { code: 'ho', name: 'Hiri Motu', type: '--- Needs own translation ---' },
+                { code: 'hu', name: 'Hungarian', type: '--- Needs own translation ---' },
+                { code: 'is', name: 'Icelandic', type: '--- Needs own translation ---' },
+                { code: 'io', name: 'Ido', type: '--- Needs own translation ---' },
+                { code: 'ig', name: 'Igbo', type: '--- Needs own translation ---' },
+                { code: 'id', name: 'Indonesian', type: '--- Needs own translation ---' },
+                { code: 'ia', name: 'Interlingua (International Auxiliary Language Association)', type: '--- Needs own translation ---' },
+                { code: 'ie', name: 'Interlingue', type: '--- Needs own translation ---' },
+                { code: 'iu', name: 'Inuktitut', type: '--- Needs own translation ---' },
+                { code: 'ik', name: 'Inupiaq', type: '--- Needs own translation ---' },
+                { code: 'ga', name: 'Irish', type: '--- Needs own translation ---' },
+                { code: 'ja', name: 'Japanese', type: '--- Needs own translation ---' },
+                { code: 'jv', name: 'Javanese', type: '--- Needs own translation ---' },
+                { code: 'kn', name: 'Kannada', type: '--- Needs own translation ---' },
+                { code: 'kr', name: 'Kanuri', type: '--- Needs own translation ---' },
+                { code: 'ks', name: 'Kashmiri', type: '--- Needs own translation ---' },
+                { code: 'rw', name: 'Kinyarwanda', type: '--- Needs own translation ---' },
+                { code: 'kv', name: 'Komi', type: '--- Needs own translation ---' },
+                { code: 'kg', name: 'Kongo', type: '--- Needs own translation ---' },
+                { code: 'ko', name: 'Korean', type: '--- Needs own translation ---' },
+                { code: 'kj', name: 'Kwanyama, Kuanyama', type: '--- Needs own translation ---' },
+                { code: 'ku', name: 'Kurdish', type: '--- Needs own translation ---' },
+                { code: 'ky', name: 'Kyrgyz', type: '--- Needs own translation ---' },
+                { code: 'lo', name: 'Lao', type: '--- Needs own translation ---' },
+                { code: 'la', name: 'Latin', type: '--- Needs own translation ---' },
+                { code: 'lv', name: 'Latvian', type: '--- Needs own translation ---' },
+                { code: 'lb', name: 'Letzeburgesch, Luxembourgish', type: '--- Needs own translation ---' },
+                { code: 'li', name: 'Limburgish, Limburgan, Limburger', type: '--- Needs own translation ---' },
+                { code: 'ln', name: 'Lingala', type: '--- Needs own translation ---' },
+                { code: 'lt', name: 'Lithuanian', type: '--- Needs own translation ---' },
+                { code: 'lu', name: 'Luba-Katanga', type: '--- Needs own translation ---' },
+                { code: 'mk', name: 'Macedonian', type: '--- Needs own translation ---' },
+                { code: 'mg', name: 'Malagasy', type: '--- Needs own translation ---' },
+                { code: 'ms', name: 'Malay', type: '--- Needs own translation ---' },
+                { code: 'ml', name: 'Malayalam', type: '--- Needs own translation ---' },
+                { code: 'mt', name: 'Maltese', type: '--- Needs own translation ---' },
+                { code: 'gv', name: 'Manx', type: '--- Needs own translation ---' },
+                { code: 'mi', name: 'Maori', type: '--- Needs own translation ---' },
+                { code: 'mr', name: 'Marathi', type: '--- Needs own translation ---' },
+                { code: 'mh', name: 'Marshallese', type: '--- Needs own translation ---' },
+                { code: 'ro', name: 'Moldovan, Moldavian, Romanian', type: '--- Needs own translation ---' },
+                { code: 'mn', name: 'Mongolian', type: '--- Needs own translation ---' },
+                { code: 'na', name: 'Nauru', type: '--- Needs own translation ---' },
+                { code: 'nv', name: 'Navajo, Navaho', type: '--- Needs own translation ---' },
+                { code: 'nd', name: 'Northern Ndebele', type: '--- Needs own translation ---' },
+                { code: 'ng', name: 'Ndonga', type: '--- Needs own translation ---' },
+                { code: 'ne', name: 'Nepali', type: '--- Needs own translation ---' },
+                { code: 'se', name: 'Northern Sami', type: '--- Needs own translation ---' },
+                { code: 'no', name: 'Norwegian', type: '--- Needs own translation ---' },
+                { code: 'nb', name: 'Norwegian Bokmål', type: '--- Needs own translation ---' },
+                { code: 'nn', name: 'Norwegian Nynorsk', type: '--- Needs own translation ---' },
+                { code: 'ii', name: 'Nuosu, Sichuan Yi', type: '--- Needs own translation ---' },
+                { code: 'oc', name: 'Occitan (post 1500)', type: '--- Needs own translation ---' },
+                { code: 'oj', name: 'Ojibwa', type: '--- Needs own translation ---' },
+                { code: 'or', name: 'Oriya', type: '--- Needs own translation ---' },
+                { code: 'om', name: 'Oromo', type: '--- Needs own translation ---' },
+                { code: 'os', name: 'Ossetian, Ossetic', type: '--- Needs own translation ---' },
+                { code: 'pi', name: 'Pali', type: '--- Needs own translation ---' },
+                { code: 'pa', name: 'Panjabi, Punjabi', type: '--- Needs own translation ---' },
+                { code: 'ps', name: 'Pashto, Pushto', type: '--- Needs own translation ---' },
+                { code: 'fa', name: 'Persian', type: '--- Needs own translation ---' },
+                { code: 'pl', name: 'Polish', type: '--- Needs own translation ---' },
+                { code: 'qu', name: 'Quechua', type: '--- Needs own translation ---' },
+                { code: 'rm', name: 'Romansh', type: '--- Needs own translation ---' },
+                { code: 'rn', name: 'Rundi', type: '--- Needs own translation ---' },
+                { code: 'sm', name: 'Samoan', type: '--- Needs own translation ---' },
+                { code: 'sg', name: 'Sango', type: '--- Needs own translation ---' },
+                { code: 'sa', name: 'Sanskrit', type: '--- Needs own translation ---' },
+                { code: 'sc', name: 'Sardinian', type: '--- Needs own translation ---' },
+                { code: 'sn', name: 'Shona', type: '--- Needs own translation ---' },
+                { code: 'sd', name: 'Sindhi', type: '--- Needs own translation ---' },
+                { code: 'si', name: 'Sinhala, Sinhalese', type: '--- Needs own translation ---' },
+                { code: 'sk', name: 'Slovak', type: '--- Needs own translation ---' },
+                { code: 'sl', name: 'Slovenian', type: '--- Needs own translation ---' },
+                { code: 'so', name: 'Somali', type: '--- Needs own translation ---' },
+                { code: 'st', name: 'Sotho, Southern', type: '--- Needs own translation ---' },
+                { code: 'nr', name: 'South Ndebele', type: '--- Needs own translation ---' },
+                { code: 'su', name: 'Sundanese', type: '--- Needs own translation ---' },
+                { code: 'sw', name: 'Swahili', type: '--- Needs own translation ---' },
+                { code: 'ss', name: 'Swati', type: '--- Needs own translation ---' },
+                { code: 'tl', name: 'Tagalog', type: '--- Needs own translation ---' },
+                { code: 'ty', name: 'Tahitian', type: '--- Needs own translation ---' },
+                { code: 'tg', name: 'Tajik', type: '--- Needs own translation ---' },
+                { code: 'ta', name: 'Tamil', type: '--- Needs own translation ---' },
+                { code: 'tt', name: 'Tatar', type: '--- Needs own translation ---' },
+                { code: 'te', name: 'Telugu', type: '--- Needs own translation ---' },
+                { code: 'th', name: 'Thai', type: '--- Needs own translation ---' },
+                { code: 'bo', name: 'Tibetan', type: '--- Needs own translation ---' },
+                { code: 'ti', name: 'Tigrinya', type: '--- Needs own translation ---' },
+                { code: 'to', name: 'Tonga (Tonga Islands)', type: '--- Needs own translation ---' },
+                { code: 'ts', name: 'Tsonga', type: '--- Needs own translation ---' },
+                { code: 'tn', name: 'Tswana', type: '--- Needs own translation ---' },
+                { code: 'tk', name: 'Turkmen', type: '--- Needs own translation ---' },
+                { code: 'tw', name: 'Twi', type: '--- Needs own translation ---' },
+                { code: 'ug', name: 'Uighur, Uyghur', type: '--- Needs own translation ---' },
+                { code: 'ur', name: 'Urdu', type: '--- Needs own translation ---' },
+                { code: 've', name: 'Venda', type: '--- Needs own translation ---' },
+                { code: 'vi', name: 'Vietnamese', type: '--- Needs own translation ---' },
+                { code: 'vo', name: 'Volap_k', type: '--- Needs own translation ---' },
+                { code: 'wa', name: 'Walloon', type: '--- Needs own translation ---' },
+                { code: 'cy', name: 'Welsh', type: '--- Needs own translation ---' },
+                { code: 'fy', name: 'Western Frisian', type: '--- Needs own translation ---' },
+                { code: 'wo', name: 'Wolof', type: '--- Needs own translation ---' },
+                { code: 'xh', name: 'Xhosa', type: '--- Needs own translation ---' },
+                { code: 'yi', name: 'Yiddish', type: '--- Needs own translation ---' },
+                { code: 'yo', name: 'Yoruba', type: '--- Needs own translation ---' },
+                { code: 'za', name: 'Zhuang, Chuang', type: '--- Needs own translation ---' },
+                { code: 'zu', name: 'Zulu', type: '--- Needs own translation--'}
+            ]  
+            let optionList = document.getElementById('lang')
+            languages.forEach(option => {
+                optionList.add(
+                    new Option(option.name, JSON.stringify({code: option.code, type: option.type}), option.selected)
+                )
+            });
+        }
+
+
+        function initDefaultSettings(){
+            let defaultPreChatForm = [{name: "userFullname", type:"text", mandatory:true, label:{ en:"User fullname", it:"Nome utente"}},{name:"userEmail", type:"text", mandatory:true, regex:"/^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/", label:{ en:"Email", it: "Indirizzo email"},"errorLabel":{ en:"Invalid email address", it:"Indirizzo email non valido"}}]
+            let preChatFormTextArea = document.getElementById('preChatForm')
+            preChatFormTextArea.value= JSON.stringify(defaultPreChatForm, null, 4)
+        }
+
+    </script>
+    
+</head>
+
+<body class="website white" >
+    <!-- <div id="preloader">
+        <div class="logo"></div>
+    </div> -->
+
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+
+    <div id="wrapper">
+        <header id="header">
+            <nav class="navbar navbar-inverse" role="navigation">
+                <div class="container">
+                    <div class="navbar-header">
+
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <img src="tiledesk_widget_files/logo.png" id="header-logo">
+                    </div>
+
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav docs">
+                            <li><a href="https://developer.tiledesk.com/widget/web-sdk" target="_blank">WEB SDK &amp; Docs<span></span></a></li>
+                            <li><a href="https://www.tiledesk.com/pricing-cloud/" target="_blank">Pricing<span></span></a></li>
+                            <li><a href="https://www.tiledesk.com/blog/" target="_blank">Blog<span></span></a></li>
+                        </ul>
+
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="sign-up"><a onclick="goToConsole()" href="#">GO TO CONSOLE</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <div id="main">
+            <div class="row" style="width: 70%;">
+                    <h1 style="min-height: 39px;">TEST ACTIONS</h1>
+                    <h3 id="project_name" style="min-height: 39px;"></h3>
+                    <div class="row method_container">
+                        <button class="btn btn-light" onclick="onClickTestButton('open')">Open <em class="fa-arrow-up fa"></em></button>
+                        <button class="btn btn-light" onclick="onClickTestButton('close')">Close <em class="fa fa-arrow-down"></em></button>
+                        <button class="btn btn-light" onclick="onClickTestButton('hide')">Hide <em class="fa fa-eye-slash"></em></button>
+                        <button class="btn btn-light" onclick="onClickTestButton('show')">Show <em class="fa fa-eye"></em></button>
+                        <button class="btn btn-light" onclick="onClickTestButton('startConversation')">Start Conversation <em class="fa fa-play"></em></button>
+                        <button class="btn btn-light" onclick="onClickTestButton('clearStorage')">Clear data <em class="fa fa-trash"></em></button>
+                        <button class="btn btn-light" onclick="onClickTestButton('dispose')">Dispose</button>
+                        <button class="btn btn-light" onclick="onClickTestButton('showCallout')">Show callout</button>
+                        <button class="btn btn-light" onclick="onClickTestButton('reInit')">ReInit <em class="fa fa-rotate-right"></em></button>
+                        <button class="btn btn-light" onclick="onClickTestButton('restart')">ReStart <em class="fa fa-rotate-right"></em></button>
+                        <button class="btn btn-light" onclick="onClickTestButton('logout')">LogOut</button>
+                    </div>
+                    <div class="row section">
+                        <div><h3 style="line-height: 0.3;">MANAGE <em><strong>Authentication</strong></em></h3></div>
+
+                        <div>Insert a custon <em><strong>JWT Token</strong></em> here </div>
+                        <div class="row" style="margin: 0">
+                            <textarea class="form-control" id="jwt" placeholder="JWT ..." rows="4" cols="60"></textarea>
+                        </div>
+                        <div class="row" style="text-align: right; margin:5px 0px">
+                            <button class="btn btn-light" onclick="onClickCustomToken()">Try authentication <i class="fa fa-sign-in" aria-hidden="true"></i></button>
+                        </div>
+
+                        <div>Sign in with <em><strong>anonymous user </strong></em> here </div>
+                        <div class="row" style="margin:5px 0px">
+                            <button class="btn btn-light" onclick="onClickSignInAnonymous()">SingIn Anonymous <i class="fa fa-sign-in" aria-hidden="true"></i></button>
+                        </div>
+                        
+                    </div>
+                    <div class="row section">
+                        <div><h3 style="line-height: 0.3;">MANAGE <em><strong>Pre-Chat Form</strong></em></h3></div>
+
+                        <div>Customize <em><strong>Pre-Chat Form JSON</strong></em> here </div>
+                        <div class="row" style="margin: 0">
+                            <textarea class="form-control" id="preChatForm" placeholder="Set preChatForm ..." rows="6" cols="60"></textarea>
+                        </div>
+                        <div class="row" style="text-align: right; margin:5px 0px">
+                            <button class="btn btn-light" onclick="onClickCustomPreChatForm()">Test it! <i class="fa fa-sign-in" aria-hidden="true"></i></button>
+                        </div>
+
+                        <div>Get <em><strong>Pre-Chat Form JSON</strong></em> value </div>
+                        <div class="row" style="margin: 0">
+                            <textarea class="form-control" id="preChatFormGet" placeholder="Get preChatForm JSON..." rows="6" cols="60"></textarea>
+                        </div>
+                        <div class="row" style="text-align: right; margin:5px 0px">
+                            <button class="btn btn-light" onclick="onClickGetPreChatForm()">Get Form <i class="fa-regular fa-sticky-note" aria-hidden="true"></i></button>
+                        </div>
+
+                    </div>
+                    <div class="row section">
+                        <div><h3 style="line-height: 0.3;">OPEN <em><strong>conversation</strong></em></h3></div>
+
+                        <div>Insert an <em><strong>existing</strong></em> request ID </div>
+                        <div class="row" style="margin: 0">
+                            <textarea class="form-control" id="request_id" placeholder="support-group-UUID" rows="1" cols="60"></textarea>
+                        </div>
+                        <div class="row" style="text-align: right; margin:5px 0px">
+                            <button class="btn btn-light" onclick="onClickOpenConversationById()">Open conversation <i class="fa-regular fa-comment" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                    <div class="row section c21-parameters">
+                        <div><h3 style="line-height: 0.3;">MANAGE <em><strong>widget settings</strong></em></h3></div>
+                        <div class="docs">Select an option for Tiledesk settings parameter</div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>disconnectTime</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="disconnectTime" value="-1"><label class="form-check-label" for="preChatForm">-1(disabled)</label>
+                                <div class="formElement" >
+                                    <div class="col-form-label" style="width: 90px">Time (s):</div>
+                                    <input class="form-control col-sm-2" type="text" id="disconnectTimeText" name="disconnectTime" placeholder="Ex. 10">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickDisconnectTime()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>startFromHome</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="startFromHome" value="true" checked><label class="form-check-label" for="startFromHome">True</label>
+                                <input class="form-check-input" type="radio" name="startFromHome" value="false"><label class="form-check-label" for="startFromHome">False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickStartFromHome()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>open</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="open" value="true"><label class="form-check-label" for="open">True</label>
+                                <input class="form-check-input" type="radio" name="open" value="false"checked><label class="form-check-label" for="open">False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickOpen()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>prechatForm</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="preChatForm" value="true"><label class="form-check-label" for="preChatForm">True</label>
+                                <input class="form-check-input" type="radio" name="preChatForm" value="false"checked><label class="form-check-label" for="preChatForm">False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickPreChatForm()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>align</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="align" value="left"><label class="form-check-label" for="preChatForm">Left</label>
+                                <input class="form-check-input" type="radio" name="align" value="right" checked><label class="form-check-label" for="preChatForm">Right</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickAlign()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>calloutTimer</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="calloutTimer" value="-1"><label class="form-check-label" for="preChatForm">-1(disabled)</label>
+                                <input class="form-check-input" type="radio" name="calloutTimer" value="0"><label class="form-check-label" for="preChatForm">0(Immediatly)</label>
+                                <div class="formElement" >
+                                    <div class="col-form-label" style="width: 90px">Time (s):</div>
+                                    <input class="form-control col-sm-2" type="text" id="calloutTimerText" name="calloutTimer" placeholder="Ex. 10">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickCalloutTimer()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>calloutTitle</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-control" type="text" id="calloutTitle" name="calloutTitle">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickCalloutTitle()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>calloutMsg</strong></em></span></div>
+                            <div class="col-md-5 ">
+                                <input class="form-control" type="text" id="calloutMsg" name="calloutMsg">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickCalloutMsg()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>welcomeTitle</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-control" type="text" id="welcomeTitle" name="welcomeTitle">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickWelcomeTitle()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>welcomeMsg</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-control" type="text" id="welcomeMsg" name="welcomeMsg">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickWelcomeMsg()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>widgetTitle</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-control" type="text" id="widgetTitle" name="widgetTitle">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickWidgetTitle()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>logoChat</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-control" type="text" id="logoChat" name="logoChat">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickLogoChat()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>lang</strong></em></span></div>
+                            <div class="col-md-5">
+                                <select class="form-control select" id="lang" name="lang"></select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickLang()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>singleConversation</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="singleConversation" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="singleConversation" value="false" checked><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickSingleConversation()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>restartConversation</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="restartConversation" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="restartConversation" value="false" checked><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickRestartConversation()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        
+                       
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>hideSettings</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="hideSettings" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="hideSettings" value="false" checked><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickHideSettings()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>fullscreenMode</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="fullscreenMode" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="fullscreenMode" value="false" checked ><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickFullScreenMode()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>themeColor</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control" type="color" id="themeColor" name="themeColor" value="#2a6ac1" oninput="onChangeThemeColor()">
+                                <input class="form-control" type="text" id="themeColorText" name="themeColor" value="#2a6ac1" oninput="onChangeThemeColorText()">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickThemeColor()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>themeColorOpacity</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-range" type="range" id="themeColorOpacity" name="themeColorOpacity" min="0" max="100" value="100" style="width: 80%;" oninput="onChangeThemeColorOpacity()"><label class="col-form-label" id="themeColorOpacityText">100 %</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickThemeColorOpacity()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>themeForegroundColor</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control" type="color" id="themeForegroundColor" name="themeForegroundColor" value="#000000" oninput="onChangeThemeForegroundColor()">
+                                <input class="form-control" type="text" id="themeForegroundColorText" name="themeForegroundColor" value="#000000" oninput="onChangeThemeForegroundColorText()">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickThemeForegroundColor()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>departmentID</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-control" type="text" id="departmentID" name="departmentID">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickDepartmentId()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>marginX</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control col-sm-2" type="text" id="marginX" name="marginX" placeholder="Ex. 100px, 1em">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickMarginX()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>marginY</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control col-sm-2" type="text" id="marginY" name="marginY" placeholder="Ex. 100px, 1em">
+                            </div>
+                            <div class="col-md-2 ">
+                                <button class="btn btn-light" onclick="onClickMarginY()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>mobileMarginX</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control col-sm-2" type="text" id="mobileMarginX" name="mobileMarginX" placeholder="Ex. 100px, 1em">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickMobileMarginX()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>mobileMarginY</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control col-sm-2" type="text" id="mobileMarginY" name="mobileMarginY" placeholder="Ex. 100px, 1em">
+                            </div>
+                            <div class="col-md-2 ">
+                                <button class="btn btn-light" onclick="onClickMobileMarginY()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>autoStart</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="autoStart" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio" name="autoStart" value="false"><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickAutoStart()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>startHidden</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="startHidden" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="startHidden" value="false" checked><label >False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickStartHidden()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>persistence</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="persistence" value="local" checked><label>Local</label>
+                                <input class="form-check-input" type="radio" name="persistence" value="session"><label>Session</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickPersistence()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>showWaitTime</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio"  name="showWaitTime" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio"  name="showWaitTime" value="false"><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickShowWaitTime()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>showAvailableAgents</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="showAvailableAgents" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio" name="showAvailableAgents" value="false"><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickShowAvailableAgents()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>showAllConversations</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="showAllConversations" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio" name="showAllConversations" value="false"><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickShowAllConversations()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>launcherWidth</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-range" type="range" id="launcherWidth" name="launcherWidth" min="0" max="80" value="60" style="width: 80%;" oninput="onChangeLauncherWidth()"><label class="col-form-label" id=launcherWidthText>60 px</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickLauncherWidth()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>launcherHeight</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-range" type="range" type="text" id="launcherHeight" name="launcherHeight" min="0" max="80" value="60" style="width: 80%;" oninput="onChangeLauncherHeight()"><label class="col-form-label" id=launcherHeightText>60 px</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickLauncherHeight()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>baloonImage</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-control" type="text" id="baloonImage" name="baloonImage">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickBaloonImage()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-5 formElement"><span><em><strong>baloonShape</strong></em></span></div>
+                            <div class="col-md-5" >
+                                <div class="row ">
+                                    <div class="col-md shapeElement">
+                                        <div class="col-form-label">Top:</div>
+                                        <input class="form-control col-sm-2" type="text" id="top" name="baloonShape" style="width: 150px" oninput="onBallonShapeInput()" placeholder="Ex. 12px, 0.12em">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md shapeElement">
+                                        <div class="col-form-label">Bottom:</div>
+                                        <input class="form-control col-sm-2" type="text" id="bottom" name="baloonShape" style="width: 150px" oninput="onBallonShapeInput()" placeholder="Ex. 12px, 0.12em">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md shapeElement">
+                                        <div class="col-form-label">Left:</div>
+                                        <input class="form-control col-sm-2" type="text" id="left" name="baloonShape" style="width: 150px" oninput="onBallonShapeInput()" placeholder="Ex. 12px, 0.12em">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md shapeElement">
+                                        <div class="col-form-label">Right:</div>
+                                        <input class="form-control col-sm-2" type="text" id="right" name="baloonShape" style="width: 150px" oninput="onBallonShapeInput()" placeholder="Ex. 12px, 0.12em">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md shapeElement">
+                                        <div class="col-form-label">Percentage:</div>
+                                        <input class="form-control col-sm-2" type="text" id="percentage" name="baloonShape" style="width: 150px" oninput="onBallonShapeInput()" placeholder="Ex. 50%">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickBaloonShape()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>dynamicWaitTimeReply</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="dynamicWaitTimeReply" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio" name="dynamicWaitTimeReply" value="false"><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickDynamicWaitTimeReply()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>openExternalLinkButton</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="openExternalLinkButton" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio" name="openExternalLinkButton" value="false"><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickOpenExternalLinkButton()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>isLogEnabled</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="isLogEnabled" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="isLogEnabled" value="false" checked><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickIsLogEnabled()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>logLevel</strong></em></span></div>
+                            <div class="col-md-5">
+                                <select class="form-control select" id="logLevel" name="logLevel">
+                                    <option value="ERROR">Error</option>
+                                    <option value="WARN">Warn</option>
+                                    <option value=INFO>Info</option>
+                                    <option value="DEBUG">Debug</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickLogLevel()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>nativeRating</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="nativeRating" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio" name="nativeRating" value="false"><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickNativeRating()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+
+                        <div><h3 style="line-height: 0.3;">MANAGE <em><strong>SOCIAL CHANNELS</strong></em></h3></div>
+                        <div class="docs"> (parameter accepted only in window.tiledeskSettings object)</div>
+
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>whatsappNumber</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-control" type="text" id="whatsappNumber" name="whatsappNumber">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickWhatsappNumber()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>messangerPageTitle</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-control" type="text" id="messangerPageTitle" name="messangerPageTitle">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickMessangerPageTitle()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>telegramUsername</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-control" type="text" id="telegramUsername" name="telegramUsername">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickTelegramUsername()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        
+
+                        <div><h3 style="line-height: 0.3;">MANAGE <em><strong>CONVERSATION DETAIL</strong></em></h3></div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>hideHeaderCloseButton</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="hideHeaderCloseButton" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="hideHeaderCloseButton" value="false" checked><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickHideHeaderCloseButton()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>hideHeaderConversationOptionsMenu</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="hideHeaderConversationOptionsMenu" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="hideHeaderConversationOptionsMenu" value="false" checked><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickHideHeaderConversationOptionsMenu()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>hideCloseConversationOptionMenu</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="hideCloseConversationOptionMenu" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="hideCloseConversationOptionMenu" value="false" checked><label >False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickHideCloseConversationOptionMenu()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>hideRestartConversationOptionsMenu</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="hideRestartConversationOptionsMenu" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="hideRestartConversationOptionsMenu" value="false" checked><label >False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickHideRestartConversationOptionsMenu()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>allowTranscriptDownload</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="allowTranscriptDownload" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="allowTranscriptDownload" value="false" checked><label >False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickAllowTranscriptDownload()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>allowReopen</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="allowReopen" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="allowReopen" value="false" checked><label >False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickAllowReopen()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <!-- <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>continueConversationBeforeTime</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <div class="col-form-label" style="width: 90px">Time (h):</div>
+                                <input class="form-control" type="number" id="continueConversationBeforeTime" name="continueConversationBeforeTime" placeholder="(in hours)">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickContinueConversationBeforeTime()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div> -->
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>recipientId</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-control" type="text" id="recipientId" name="departmentID">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickRecipientId()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>soundEnabled</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="soundEnabled" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio" name="soundEnabled" value="false"><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickSoundEnabled()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>typingLocation</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="typingLocation" value="content" checked><label>content</label>
+                                <input class="form-check-input" type="radio" name="typingLocation" value="header"><label>header</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickTypingLocation()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>customAttributes</strong></em></span></div>
+                            <div class="col-md-5">
+                                <textarea class="form-control" id="customAttributes" placeholder="Set a key-value object.." rows="6" cols="30"></textarea>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickCustomAttributes()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>showInfoMessage</strong></em></span></div>
+                            <div class="col-md-5">
+                                <textarea class="form-control" id="showInfoMessage" placeholder="Set a comma separated string..." rows="6" cols="30"></textarea>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickShowInfoMessage()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>participants</strong></em></span></div>
+                            <div class="col-md-5">
+                                <textarea class="form-control" id="participants" placeholder="Set a comma separated string..." rows="6" cols="30"></textarea>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickParticipants()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><em><strong>fileUploadAccept</strong></em><span class="docs">(more<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept#unique_file_type_specifiers"> here</a>)</span></div>
+                            <div class="col-md-5">
+                                <input class="form-control" type="text" id="fileUploadAccept" name="fileUploadAccept" placeholder="Set a comma separated string...">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickFileUploadAccept()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>showAttachmentFooterButton</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="showAttachmentFooterButton" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio" name="showAttachmentFooterButton" value="false"><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickShowAttachmentFooterButton()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>showEmojiFooterButton</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="showEmojiFooterButton" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio" name="showEmojiFooterButton" value="false"><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickShowEmojiFooterButton()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>showRegisterAudioFooterButton</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="showRegisterAudioFooterButton" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio" name="showRegisterAudioFooterButton" value="false"><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickShowRegisterAudioFooterButton()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+
+
+                        <div><h3 style="line-height: 0.3;">MANAGE <em><strong>BUBBLE MESSAGE STYLES</strong></em></h3></div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>bubbleSentBackground</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control" type="color" id="bubbleSentBackground" name="bubbleSentBackground" value="#2a6ac1" oninput="onChangeColor('bubbleSentBackground')">
+                                <input class="form-control" type="text" id="bubbleSentBackgroundText" name="bubbleSentBackground" value="#2a6ac1" oninput="onChangeColorText('bubbleSentBackground')">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickColor('bubbleSentBackground')">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>bubbleSentTextColor</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control" type="color" id="bubbleSentTextColor" name="bubbleSentTextColor" value="#ffffff" oninput="onChangeColor('bubbleSentTextColor')">
+                                <input class="form-control" type="text" id="bubbleSentTextColorText" name="bubbleSentTextColor" value="#ffffff" oninput="onChangeColorText('bubbleSentTextColor')">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickColor('bubbleSentTextColor')">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>bubbleReceivedBackground</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control" type="color" id="bubbleReceivedBackground" name="bubbleReceivedBackground" value="#f7f7f7" oninput="onChangeColor('bubbleReceivedBackground')">
+                                <input class="form-control" type="text" id="bubbleReceivedBackgroundText" name="bubbleReceivedBackground" value="#f7f7f7" oninput="onChangeText('bubbleReceivedBackground')">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickColor('bubbleReceivedBackground')">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>bubbleReceivedTextColor</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control" type="color" id="bubbleReceivedTextColor" name="bubbleReceivedTextColor" value="#1a1a1a" oninput="onChangeColor('bubbleReceivedTextColor')">
+                                <input class="form-control" type="text" id="bubbleReceivedTextColorText" name="bubbleReceivedTextColor" value="#1a1a1a" oninput="onChangeColorText('bubbleReceivedTextColor')">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickColor('bubbleReceivedTextColor')">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>fontSize</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control col-sm-2" type="text" id="fontSize" name="fontSize" placeholder="Ex. 22px, 1.4em">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickFontSize()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+        
+
+                        <div><h3 style="line-height: 0.3;">MANAGE <em><strong>BUTTON STYLES</strong></em></h3></div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>buttonBackgroundColor</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control" type="color" id="buttonBackgroundColor" name="buttonBackgroundColor" value="#ffffff" oninput="onChangeColor('buttonBackgroundColor')">
+                                <input class="form-control" type="text" id="buttonBackgroundColorText" name="buttonBackgroundColor" value="#ffffff" oninput="onChangeColorText('buttonBackgroundColor')">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickColor('buttonBackgroundColor')">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>buttonTextColor</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control" type="color" id="buttonTextColor" name="buttonTextColor" value="#2a6ac1" oninput="onChangeColor('buttonTextColor')">
+                                <input class="form-control" type="text" id="buttonTextColorText" name="buttonTextColor" value="#2a6ac1" oninput="onChangeColorText('buttonTextColor')">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickColor('buttonTextColor')">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>buttonHoverBackgroundColor</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control" type="color" id="buttonHoverBackgroundColor" name="buttonHoverBackgroundColor" value="#2a6ac1" oninput="onChangeColor('buttonHoverBackgroundColor')">
+                                <input class="form-control" type="text" id="buttonHoverBackgroundColorText" name="buttonHoverBackgroundColor" value="#2a6ac1" oninput="onChangeText('buttonHoverBackgroundColor')">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickColor('buttonHoverBackgroundColor')">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>buttonHoverTextColor</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control" type="color" id="buttonHoverTextColor" name="buttonHoverTextColor" value="#ffffff" oninput="onChangeColor('buttonHoverTextColor')">
+                                <input class="form-control" type="text" id="buttonHoverTextColorText" name="buttonHoverTextColor" value="#ffffff" oninput="onChangeColorText('buttonHoverTextColor')">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickColor('buttonHoverTextColor')">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>buttonFontSize</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control col-sm-2" type="text" id="buttonFontSize" name="buttonFontSize" placeholder="Ex. 15px, 1em">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickButtonFontSize()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="row testAllBtn">
+                                <button class="btn btn-light" onclick="onClickTestAll()">TEST ALL</button>
+                        </div>
+                    </div>
+                    <div class="row section">
+                        <div><h3 style="line-height: 0.3;">WIDGET EVENTS <em><strong>history</strong></em></h3></div>
+                        <div>
+                            <textarea class="form-control" id="events" placeholder="Events history here" rows="4" cols="60"></textarea>
+                        </div>
+                        <div class="row" style="text-align: right; margin:5px 0px">
+                            <button class="btn btn-light" onclick="onClickClearHistory()">Clear <i class="fa fa-trash" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="row" style="width: 100%;">
+                        <h1 id="project_name" style="min-height: 39px;"></h1>
+                        <h2></h2>
+                        <div class="b_integrations_agent_links">
+                            <a href="" data-toggle="modal" data-target="#embedModal" id="enbed" style="display: none;"><i class="fa-code fa"></i>Embed</a>
+                            <!-- <a href="mailto:?subject=Tiledesk%20widget%20test%20page"><i class="fa-envelope-o fa" target="_blank"></i>Email</a> -->
+                            <a href="" data-toggle="modal" data-target="#shareModal" id="share"><i class="fa-reply fa"></i>Share</a>
+                        </div>
+                    </div>
+
+            </div>
+            
+            
+            
+
+            <div class="modal fade" tabindex="-1" id="embedModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <h4 class="modal-title">Use following code to integrate the widget into your site:</h4>
+                        </div>
+                        <div class="modal-body" style="font-family: monospace;font-size: 12px;">
+                            <span style="margin-bottom: 0px; border:none !important">
+                                &lt;script type=&quot;application/javascript&quot;&gt; <br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;window.tiledeskSettings = <br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;projectid: </span> 
+                                <span id="project_id"> </span> 
+                                <span style="border:none !important">
+                                <br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}; <br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(function(d, s, id) { <br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var w=window; var d=document; var i=function() { i.c(arguments); };<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i.q=[]; i.c=function(args){ i.q.push(args); }; w.Tiledesk=i;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var js, fjs=d.getElementsByTagName(s)[0];<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (d.getElementById(id)) return;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;js=d.createElement(s); js.id=id; js.async=true;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;js.src="<span id="base_url"></span>";<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fjs.parentNode.insertBefore(js, fjs);<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}(document, &#39;script&#39;, &#39;tiledesk-jssdk&#39;));<br>
+                                &lt;/script&gt;
+                            </span>
+                            <!-- <pre id="preid"> </pre> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" tabindex="-1" id="shareModal" role="dialog" style="display: none;">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <h4 class="modal-title">Share this page via social networks:</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <a onclick="shareOnFacebook()" style="cursor: pointer;text-decoration: none;">    
+                                
+                                <img src="./tiledesk_widget_files/facebook.png" alt="Facebook">
+                            </a>
+
+                            <!-- Twitter -->
+                            <a onclick="shareOnTwitter()" style="cursor: pointer;text-decoration: none;">     
+                                <img src="./tiledesk_widget_files/twitter.png" alt="Twitter">
+                            </a>
+
+                            <!-- LinkedIn -->
+                            <a onclick="shareOnLinkedin()" style="cursor: pointer;text-decoration: none;">
+                                <img src="./tiledesk_widget_files/linkedin.png" alt="LinkedIn">
+                            </a>
+
+                            <!-- telegram -->
+                            <a onclick="shareOnTelegram()" style="cursor: pointer;text-decoration: none;">
+                                <img src="./tiledesk_widget_files/telegram.png" alt="Telegram">
+                            </a>
+
+                            <!-- whatsapp -->
+                            <!-- <a onclick="shareOnWhatsapp()" style="cursor: pointer">
+                                <img src="./tiledesk_widget_files/whatsapp.png" alt="Whatsapp">
+                            </a> -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="footer">
+        <div class="b-agent-demo_powered_by">
+            <a href="https://console.tiledesk.com/" target="_blank" style="cursor: pointer;text-decoration: none;" id="footer-link">
+                <span style="position: relative; top: 2px;">Powered by</span>
+                <img src="./tiledesk_widget_files/logo@2x-black.png" id="footer-logo">
+            </a>
+        </div>
+    </footer>
+
+
+<!-- <script>
+    // non-blocking CSS delivery
+    var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        console.log('addStylesNode ', addStylesNode)
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement);
+        addStylesNode.parentElement.removeChild(addStylesNode);
+    };
+    var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+            window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+    if (raf) {
+        raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+    } else {
+        window.addEventListener('load', loadDeferredStyles);
+    }
+</script> -->
+
+<!-- Google Analytics -->
+</body>
+</html>

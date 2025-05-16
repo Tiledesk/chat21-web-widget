@@ -1,0 +1,178 @@
+// @import 'src/app/sass/variables';
+// @import '../../../sass/normalize.css';
+
+
+#chat21-selection-department {
+
+    --backgroundColor: #{var(--light-white)};
+    --textColor: #{var(--blue)};
+    --hoverBackgroundColor: #{var(--blue)};
+    --hoverTextColor: #{var(--light-white)};
+
+    background-color: #ffffff;
+    width: 100%;
+    height: 100%;
+
+    .c21-header {
+        overflow: hidden;
+        width: 100%;
+        height: 52px;
+        .c21-header-button {
+            .c21-close-button.c21-small {
+                width: 31px;
+                height: 31px;
+                .c21-close-button-body{
+                    width: 31px;
+                    height: 31px;
+                    -webkit-appearance: initial;
+                    border: none;
+                }
+            }
+        }
+        .c21-header-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+            .c21-header-content {
+                width: 100%;
+                height: auto;
+                padding: 0 40px;
+                .c21-title {
+                    display: inline-block;
+                    width: 100%;
+                    height: auto;
+                    padding: 0;
+                    text-align: center;
+                    font-size: 1.8em;
+                    line-height: normal;
+                }
+            }
+        }
+    }
+    .c21-body {
+        .c21-body-container{
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            flex-direction: column;
+            padding-left: 16px;
+            padding-right: 16px;
+            gap: 10px;
+        }
+        .c21-body-header{
+            position: relative;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 30px 0px 30px;
+            .c21-message-field {
+                padding: 0;
+                margin: 0;
+                line-height: 1.2em;
+                color: var(--gray);
+                font-size: 1.6em;
+                text-align: center;
+                word-wrap: break-word;
+            }
+        }
+        .c21-body-content  {
+            padding: 0px 0px 40px 0px;
+            position: relative;
+            width: 100%;
+            
+        }
+    }
+}
+
+
+.chat21-content-modal-select {
+    margin: 0 0 2em 0;
+    list-style-type: none;
+    padding: 0;
+    height: auto;
+    overflow-y: auto;
+
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+    gap: 12px;
+    /* width: 15em; */
+}
+.chat21-content-modal-select > li {
+    cursor: pointer;
+    position: relative;
+    margin: 0px;//7px 14px;
+    padding: 20px 16px; //7px 4px; 
+    font-size: 1.4em;
+    text-align: left;
+    color: var(--textColor);
+    border: 1px solid var(--textColor);
+    line-height: normal;
+    display: block;
+    border-radius: 10px;
+
+    .c21-button-department{
+        width: 100%;
+        text-align: left;
+        display: flex;
+        gap: 12px
+    }
+}
+.chat21-content-modal-select > li:hover {
+    background-color: var(--hoverBackgroundColor);
+    border-radius: 10px;
+    .chat21-name-list{
+        color: var(--hoverTextColor);
+    }
+
+    .chat21-badge{
+        color: var(--hoverBackgroundColor);
+        background-color: var(--hoverTextColor);
+    }
+}
+.chat21-content-modal-select li.selected:hover {
+    /* background-color: #BBD8DC !important;
+    color: white; */
+}
+
+.chat21-content-modal-select .text {
+    position: relative;
+}
+.chat21-content-modal-select .chat21-badge {
+    -webkit-box-sizing: initial;
+    box-sizing: initial;
+    display: flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+    font-size: 12px;
+    padding: 0px;
+    line-height: 24px;
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    margin: 0 10px 0 0;
+    text-align: center;
+    font-weight: 500;
+
+    color: var(--backgroundColor);
+    background-color: var(--textColor);
+
+}
+.chat21-content-modal-select .chat21-name-list {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 24px;
+    color: #7d87a4
+}
+
+.chat21-content-modal-select .chat21-title{
+        margin-left: 10px;
+        font-weight: initial;
+        line-height: normal;
+}

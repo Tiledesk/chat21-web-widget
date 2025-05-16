@@ -1,0 +1,159 @@
+<!-- 'background-color': stylesMap.get('backgroundColor'), 'color': stylesMap.get('foregroundColor'), 'background-image': stylesMap.get('themeColor')+','+ convertColorToRGBA(stylesMap.get('themeColor'), 50)+')' -->
+<div class="c21-header"  [ngStyle]="{'background-image': stylesMap?.get('colorGradient') }">
+
+  <div class="c21-header-container">
+
+    <!-- CONTENT HEADER -->
+    <div class="c21-header-content">
+
+        <!-- ICON CLOSE CHAT -->
+        <button [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-close c21-button-clean" [ngStyle]="{'display': (hideHeaderCloseButton)?'none':'flex'}" (click)="closeWidget()">
+            <!-- <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
+                width="24px" height="24px" viewBox="0 0 24 24">
+                <path fill="none" d="M0 0h24v24H0V0z" />
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                <title id="altIconTitle">{{ translationMap?.get('BUTTON_CLOSE_TO_ICON') }}</title>
+            </svg> -->
+            <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
+                width="24px" height="24px" viewBox="0 0 24 24">
+                <path d="M19.35,9.21c.2-.2.2-.51,0-.71l-.71-.71c-.2-.2-.51-.2-.71,0l-5.94,5.94-5.94-5.94c-.2-.2-.51-.2-.71,0l-.71.71c-.2.2-.2.51,0,.71l7,7c.2.2.51.2.71,0l7-7Z"/>
+                <title id="altIconTitle">{{ translationMap?.get('BUTTON_CLOSE_TO_ICON') }}</title>
+            </svg>
+        </button>
+
+        <!-- ICON MENU OPTION -->
+        <button [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-button-clean" [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}" (click)="toggleMenu()" >
+            <svg aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
+                width="24" height="24" viewBox="0 0 24 24">
+                <path fill="none" d="M0 0h24v24H0V0z" />
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                <title id="altIconTitle">{{ translationMap?.get('OPTIONS') }}</title>
+            </svg>
+        </button>
+
+        <!-- ICON BACK -->
+        <button [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="1530" aria-label=" indietro " class="c21-header-button c21-left c21-button-clean" [ngStyle]="{'display': (hideHeaderBackButton)?'none':'flex'}" (click)="returnHome()">
+            <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
+                width="24px" height="24px" viewBox="0 0 24 24">
+                <path fill="none" d="M0 0h24v24H0V0z" />
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z" />
+                <title id="altIconTitle">{{ translationMap?.get('PREV_CONVERSATIONS') }}</title>
+            </svg>
+        </button>
+
+        <!-- TITLE HEADER -->
+        <div class="c21-title" [ngStyle]="{'color': stylesMap?.get('foregroundColor') }">
+            <div class="titleText">{{widgetTitle}}</div>
+        </div>
+        
+        <user-typing *ngIf="isTypings && typingLocation==='header'"
+            [color]="stylesMap?.get('foregroundColor')"
+            [translationMap]="translationMap"
+            [nameUserTypingNow]="nameUserTypingNow"
+            [typingLocation]="typingLocation">
+        </user-typing>
+    </div>
+
+  </div>
+
+</div>
+
+<div *ngIf="isMenuShow" id="c21-options-menu">
+    <!-- ICON VOLUME -->
+    <div class="c21-header-button c21-right" (click)="toggleSound()">
+        <svg *ngIf="!soundEnabled" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+            <path fill="none" d="M0 0h24v24H0V0z" />
+            <path d="M4.34 2.93L2.93 4.34 7.29 8.7 7 9H3v6h4l5 5v-6.59l4.18 4.18c-.65.49-1.38.88-2.18 1.11v2.06c1.34-.3 2.57-.92 3.61-1.75l2.05 2.05 1.41-1.41L4.34 2.93zM10 15.17L7.83 13H5v-2h2.83l.88-.88L10 11.41v3.76zM19 12c0 .82-.15 1.61-.41 2.34l1.53 1.53c.56-1.17.88-2.48.88-3.87 0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zm-7-8l-1.88 1.88L12 7.76zm4.5 8c0-1.77-1.02-3.29-2.5-4.03v1.79l2.48 2.48c.01-.08.02-.16.02-.24z" />
+            <title id="altIconTitle">{{ translationMap?.get('SOUND_OFF') }}</title>
+        </svg>
+        <svg *ngIf="soundEnabled" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+            <path fill="none" d="M0 0h24v24H0V0z" />
+            <path d="M3 9v6h4l5 5V4L7 9H3zm7-.17v6.34L7.83 13H5v-2h2.83L10 8.83zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77z" />
+            <title id="altIconTitle">{{ translationMap?.get('SOUND_ON') }}</title>
+        </svg>
+        <span *ngIf="!soundEnabled" class="label-menu-item"> {{ translationMap?.get('SOUND_OFF') }}</span>
+        <span *ngIf="soundEnabled" class="label-menu-item"> {{ translationMap?.get('SOUND_ON')}}</span>
+    </div>
+
+    <!-- ICON TRANSCRIPT -->
+    <div class="c21-header-button c21-right" *ngIf="isTrascriptDownloadEnabled" (click)="dowloadTranscript()">
+        <svg role="img" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24">
+            <path fill="none" d="M0 0h24v24H0V0z" />
+            <path d="M16 13h-3V3h-2v10H8l4 4 4-4zM4 19v2h16v-2H4z" />
+            <title id="altIconTitle">{{ translationMap?.get('DOWNLOAD_TRANSCRIPT') }}</title>
+        </svg>
+        <span class="label-menu-item">{{ translationMap?.get('DOWNLOAD_TRANSCRIPT') }}</span>
+    </div>
+
+    <!-- ICON CLOSE CHAT -->
+    <div class="c21-header-button c21-right"  *ngIf="!hideCloseConversationOptionMenu" (click)="closeChat()">
+        <svg role="img" id="archive" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg"  
+            width="20px" height="20px" viewBox="0 0 512 512">
+            <path d="M80 152v256a40.12 40.12 0 0040 40h272a40.12 40.12 0 0040-40V152" stroke-linecap="round" stroke-linejoin="round" stroke-width="50px" fill="none"></path>
+            <rect x="48" y="64" width="416" height="80" rx="28" ry="28" stroke-linejoin="round" stroke-width="50px" fill="none" ></rect>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M320 304l-64 64-64-64M256 345.89V224" stroke-width="50px" fill="none"></path>
+            <title id="altIconTitle">{{ translationMap?.get('CLOSE_CHAT') }}</title>
+        </svg>
+        <span class="label-menu-item">{{ translationMap?.get('CLOSE_CHAT') }}</span>
+    </div>
+
+    <!-- ICON OPEN CHAT DETAIL -->
+    <!-- <div class="c21-header-button c21-right" *ngIf="!hideChatDetailOptionMenu"(click)="openDetail()">
+        <svg role="img" id="archive" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg"  
+            width="20px" height="20px" viewBox="0 0 18.17 18.12">
+            <path d="M13.1,15.54H2.03c-.92,0-1.66-.74-1.66-1.66V2.81c0-.92.74-1.66,1.66-1.66h6.09v1.11H2.03c-.31,0-.55.25-.55.55v11.07c0,.3.25.55.55.55h11.07c.31,0,.55-.25.55-.55v-6.09h1.11v6.09c0,.92-.74,1.66-1.66,1.66"/>
+            <rect stroke-width="0" x="9.55" y="0" width="6.13" height="1.75"/>
+            <rect stroke-width="0" x="11.82" y="2.19" width="6.13" height="1.75" transform="translate(11.82 17.94) rotate(-90)"/>
+            <rect stroke-width="0" x="4.69" y="4.06" width="11.52" height="1.75" transform="translate(-.43 8.83) rotate(-45)"/>
+            <title id="altIconTitle">{{ translationMap?.get('OPEN_DETAIL') }}</title>
+        </svg>
+        <span class="label-menu-item">{{ translationMap?.get('OPEN_DETAIL') }}</span>
+    </div> -->
+
+
+    <!-- ICON RESTART CONVERSATION -->
+    <div class="c21-header-button c21-right"  *ngIf="!hideRestartConversationOptionsMenu" (click)="restartChat()">
+        <svg role="img" id="refresh" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg" 
+            width="20px" height="20px" viewBox="0 0 20 20">
+            <path d="M9.6,18.2c0.6,0,1-0.7,1-1.5s-0.5-1.5-1-1.5H6c-0.6,0-1-0.7-1-1.5V7.8h1c0.4,0,0.8-0.4,1-0.9c0.2-0.6,0.1-1.2-0.2-1.6  l-2.1-3c-0.4-0.6-1.1-0.6-1.5,0l-2.1,3C0.9,5.7,0.8,6.3,1,6.9s0.5,0.9,1,0.9h1v5.9c0,2.5,1.4,4.4,3.1,4.4H9.6z"/>
+            <path d="M10.5,1.8c-0.5,0-1,0.7-1,1.5s0.4,1.5,1,1.5h3.5c0.5,0,1,0.7,1,1.5v5.9h-1c-0.4,0-0.8,0.4-0.9,0.9s-0.1,1.2,0.2,1.6l2,3  c0.4,0.6,1,0.6,1.4,0l2-3c0.3-0.4,0.4-1.1,0.2-1.6c-0.2-0.6-0.5-0.9-0.9-0.9h-1V6.3c0-2.5-1.3-4.4-3-4.4H10.5z"/>
+            <title id="altIconTitle">{{ translationMap?.get('RESTART') }}</title>
+        </svg>
+        <span class="label-menu-item">{{ translationMap?.get('RESTART') }}</span>
+    </div>
+    
+    <!-- ICON MAXIMIZE -->
+    <!-- <div class="c21-header-button c21-right" *ngIf="heightStatus==='min'" (click)="maximizeMinimize('max')">
+        <svg role="img" aria-labelledby="altIconTitle" [class="icon-menu" xmlns="http://www.w3.org/2000/svg" 
+            width="17" height="17" viewBox="0 0 62 62">
+            <path d="M61,2H33a1,1,0,0,0-1,1V9a1,1,0,0,0,1,1H48.344L2.293,56.051a1,1,0,0,0,0,1.414l4.243,4.242a1,1,0,0,0,1.414,0L54,15.656V31a1,1,0,0,0,1,1h6a1,1,0,0,0,1-1V3A1,1,0,0,0,61,2Z"></path>
+            <title id="altIconTitle">{{ translationMap?.get('MAXIMIZE') }}</title>
+        </svg>
+        <span class="label-menu-item">{{ translationMap?.get('MAXIMIZE') }}</span>
+    </div> -->
+    <!-- ICON MINIMIZE -->
+    <!-- <div class="c21-header-button c21-right" *ngIf="heightStatus==='max'" (click)="maximizeMinimize('min')">
+        <svg role="img" aria-labelledby="altIconTitle" class="icon-menu" transform="rotate(180)" xmlns="http://www.w3.org/2000/svg" 
+            width="17" height="17" viewBox="0 0 62 62">
+            <path d="M61,2H33a1,1,0,0,0-1,1V9a1,1,0,0,0,1,1H48.344L2.293,56.051a1,1,0,0,0,0,1.414l4.243,4.242a1,1,0,0,0,1.414,0L54,15.656V31a1,1,0,0,0,1,1h6a1,1,0,0,0,1-1V3A1,1,0,0,0,61,2Z"></path>
+            <title id="altIconTitle">{{ translationMap?.get('MINIMIZE') }}</title>
+        </svg>
+        <span class="label-menu-item">{{ translationMap?.get('MINIMIZE') }}</span>
+    </div> -->
+
+    <!-- ICON LOGOUT -->
+    <div class="c21-header-button c21-right"  *ngIf="!hideSignOutOptionMenu" (click)="signOut()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" aria-labelledby="altIconTitle" class="icon-menu">
+            <path fill="none" d="M0 0h24v24H0V0z"/>
+            <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+            <title id="altIconTitle">{{ translationMap?.get('LOGOUT') }}</title>
+        </svg>
+        <span class="label-menu-item">{{ translationMap?.get('LOGOUT') }}</span>
+    </div>
+
+    <!-- BUILD VERSION -->
+    <div class="c21-button build_version_menu" *ngIf="build_version">
+        <span class="label-menu-item">{{build_version}}</span>
+    </div>
+
+</div>

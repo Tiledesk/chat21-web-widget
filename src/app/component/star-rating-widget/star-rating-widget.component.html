@@ -1,0 +1,228 @@
+<style>
+.star.active{
+    fill:#FFD700;
+}
+svg.star{
+    fill: #efefef;
+}
+svg.star:hover{
+    fill: #FFD700;
+}
+</style>
+<div id="chat21-star-rating-widget">
+    <!-- HEADER -->
+    <div class="c21-header" [ngStyle]="{ 'color': g.themeForegroundColor, 'background-image': g.colorGradient180 }">
+        <div class="c21-header-container">
+            <!-- ICON CLOSE CHAT -->
+            <!-- <div class="c21-header-button">
+                <div class="c21-close-button c21-small"  aria-label="Close" aria-hidden="true" role="button">
+                    <div class="c21-close-button-body" (click)="returnClosePage()">
+                        <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': g.themeForegroundColor }"
+                            xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24">
+                            <path fill="none" d="M0 0h24v24H0V0z" />
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                        </svg>
+                    </div>
+                </div>
+            </div> -->
+            
+            <!-- CONTENT HEADER -->
+            <div class="c21-header-content">
+                <!-- ICON BACK -->
+                <button *ngIf="(step > 0 && step != 2)" tabindex="1417" aria-label=" indietro " class="c21-header-button c21-left c21-button-clean" (click)="prevStep()">
+                    <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
+                        width="24px" height="24px" viewBox="0 0 24 24">
+                        <!-- <path fill="none" d="M0 0h24v24H0V0z"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM7.07 18.28c.43-.9 3.05-1.78 4.93-1.78s4.51.88 4.93 1.78C15.57 19.36 13.86 20 12 20s-3.57-.64-4.93-1.72zm11.29-1.45c-1.43-1.74-4.9-2.33-6.36-2.33s-4.93.59-6.36 2.33C4.62 15.49 4 13.82 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8c0 1.82-.62 3.49-1.64 4.83zM12 6c-1.94 0-3.5 1.56-3.5 3.5S10.06 13 12 13s3.5-1.56 3.5-3.5S13.94 6 12 6zm0 5c-.83 0-1.5-.67-1.5-1.5S11.17 8 12 8s1.5.67 1.5 1.5S12.83 11 12 11z"/> -->
+                        <path fill="none" d="M0 0h24v24H0V0z" />
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z" />
+                        <title id="altIconTitle">{{ g['BACK'] }}</title>
+                    </svg>
+                </button>
+                <!-- TITLE HEADER -->
+                <div class="c21-title" [ngStyle]="{'color': g.themeForegroundColor}">
+                    <span>{{ g.CUSTOMER_SATISFACTION }}</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- CONTENT -->
+    <div class="c21-body">
+
+        <div class="c21-body-container">
+
+            <div class="c21-body-content">
+
+                <!-- ***************  STEP 0 : BEGIN ***************** -->
+                <div *ngIf="step==0" class="step-rate">
+                    <div *ngIf="g.allowTranscriptDownload" class="c21-modal-content" style="text-align: right; margin: 0px 20px 30px 10px;">
+                        <div class="c21-link" (click)="dowloadTranscript()" >
+                            <span [ngStyle]="{'color': stylesMap?.get('themeColor')}">{{ g.DOWNLOAD_TRANSCRIPT }}</span>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                   
+                    <!-- CONTENT -->
+                    <div class="c21-modal-content">
+                        <div class="default-text">{{ g.YOUR_OPINION_ON_OUR_CUSTOMER_SERVICE }}</div>
+                        <fieldset class="chat21-rating" [attr.disabled]="!g.isOpenStartRating? '' : null">
+                            <input class="c21-input-star" type="radio" id="star1" name="rating" value="1" />
+                            <label (mouseover)="mouseOverRate(1)" (mouseleave)="mouseOverRate(0)" (click)="openRate(1)" class="full c21-button" for="star1" title="scarso - 1 star">
+                                <svg class="star" [class.active]="mouseRate>=1" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
+                            </label>
+                            <input class="c21-input-star" type="radio" id="star2" name="rating" value="2" />
+                            <label (mouseover)="mouseOverRate(2)" (mouseleave)="mouseOverRate(0)" (click)="openRate(2)" class="full c21-button" for="star2" title="sufficiente - 2 stars">
+                                <svg class="star" [class.active]="mouseRate>=2" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
+                            </label>
+                            <input class="c21-input-star" type="radio" id="star3" name="rating" value="3" />
+                            <label (mouseover)="mouseOverRate(3)" (mouseleave)="mouseOverRate(0)" (click)="openRate(3)" class="full c21-button" for="star3" title="buono - 3 stars">
+                                <svg class="star" [class.active]="mouseRate>=3" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
+                            </label>
+                            <input class="c21-input-star" type="radio" id="star4" name="rating" value="4" />
+                            <label (mouseover)="mouseOverRate(4)" (mouseleave)="mouseOverRate(0)" (click)="openRate(4)" class="full c21-button" for="star4" title="ottimo - 4 stars">
+                                <svg class="star" [class.active]="mouseRate>=4" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
+                            </label>
+                            <input class="c21-input-star" type="radio" id="star5" name="rating" value="5" />
+                            <label (mouseover)="mouseOverRate(5)" (mouseleave)="mouseOverRate(0)" (click)="openRate(5)" class="full c21-button" for="star5" title="eccellente - 5 stars">
+                                <svg class="star" [class.active]="mouseRate>=5" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
+                            </label>
+                        </fieldset>
+                    </div>
+                    <div class="clear"></div>
+                    <!-- <button [attr.disabled]="!g.isOpenStartRating? '' : null" *ngIf="g.allowTranscriptDownload !== true" class="c21-button-primary" [ngStyle]="{'background-color': g.themeColor, 'border-color': g.themeColor}"
+                        (click)="dowloadTranscript()">
+                        <span [ngStyle]="{'color': g.themeForegroundColor}">{{ g.DOWNLOAD_TRANSCRIPT }}</span>
+                    </button> -->
+                    <!-- <button class="c21-button-link" (click)="returnClosePage()">
+                        <span>{{ g.CLOSE }}</span>
+                    </button> -->
+
+                     <!-- ICON CLOSE -->
+                    <button tabindex="1414"  class="c21-button-primary" (click)="returnClosePage()" [ngStyle]="{'background-color': stylesMap?.get('themeColor'), 'border-color': stylesMap?.get('themeColor'), 'color': stylesMap?.get('foregroundColor') }">
+                        <span class="v-align-center">
+                            <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}" xmlns="http://www.w3.org/2000/svg"
+                                width="18" height="18" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                                <title id="altIconTitle">{{ g.CLOSE }}</title>    
+                            </svg>
+                        </span>
+                        <span class="v-align-center c21-label-button">
+                            {{ g.CLOSE }}
+                          <!-- {{translationMap?.get('LABEL_START_NW_CONV')}} -->
+                        </span>  
+                        <div class="clear"></div>
+                    </button>
+                </div>
+                <!-- ***************  STEP 0 : END ***************** -->
+
+                <!-- ***************  STEP 1 : BEGIN ***************** -->
+                <div *ngIf="step==1" class="step-rate">
+                    <!-- CONTENT -->
+                    <!-- <div *ngIf="g.allowTranscriptDownload" class="c21-modal-content" style="text-align: right; margin: 0px 20px 30px 10px;">
+                        <div class="c21-link" (click)="dowloadTranscript()" >
+                            <span [ngStyle]="{'color': g.themeColor}">{{ g.DOWNLOAD_TRANSCRIPT }}</span>
+                        </div>
+                    </div> -->
+                    <div class="clear"></div>
+                    <div class="c21-step-content">
+                        <!-- il tuo voto: -->
+                        
+                        <!-- <div class="chat21-stars">
+                            <span *ngIf="rate>0" class="fa fa-star checked"></span>
+                            <span *ngIf="rate>1" class="fa fa-star checked"></span>
+                            <span *ngIf="rate>2" class="fa fa-star checked"></span>
+                            <span *ngIf="rate>3" class="fa fa-star checked"></span>
+                            <span *ngIf="rate>4" class="fa fa-star checked"></span>
+                        </div> -->
+                        <!-- <div class="default-text">{{ g.YOUR_RATING }}</div> -->
+                        
+
+                        <!-- Scrivi la tua opinione...(opzionale) -->
+                        <textarea #textbox rows="1" id="chat21-message-rate-context" class='textarea-rate'
+                            placeholder="{{ g.WRITE_YOUR_OPINION }}">{{message}}</textarea>
+                        <div class="clear"></div>
+
+                        <!-- ICON CLOSE -->
+                        <button tabindex="1415"  class="c21-button-primary" (click)="returnClosePage()" [ngStyle]="{'background-color': stylesMap?.get('themeColor'), 'border-color': stylesMap?.get('themeColor'), 'color': stylesMap?.get('foregroundColor') }">
+                            <span class="v-align-center">
+                                <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}" xmlns="http://www.w3.org/2000/svg"
+                                    width="18" height="18" viewBox="0 0 24 24">
+                                    <path fill="none" d="M0 0h24v24H0V0z" />
+                                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                                    <title id="altIconTitle">{{ g.CLOSE }}</title>    
+                                </svg>
+                            </span>
+                            <span class="v-align-center c21-label-button">
+                                {{ g.CLOSE }}
+                              <!-- {{translationMap?.get('LABEL_START_NW_CONV')}} -->
+                            </span>  
+                            <div class="clear"></div>
+                        </button>
+
+                        <!-- ICON SUBMIT -->
+                        <button tabindex="1416"  class="c21-button-primary" (click)="sendRate()" [ngStyle]="{'background-color': stylesMap?.get('themeColor'), 'border-color': stylesMap?.get('themeColor'), 'color': stylesMap?.get('foregroundColor') }">
+                            <span class="v-align-center">
+                                <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}" xmlns="http://www.w3.org/2000/svg"
+                                    width="18" height="18" viewBox="0 0 24 24">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                    <path d="M0 0h24v24H0z" fill="none"/>
+                                    <title id="altIconTitle">{{ g.SUBMIT }}</title>    
+                                </svg>
+                            </span>
+                            <span class="v-align-center c21-label-button">
+                                {{ g.SUBMIT }}
+                              <!-- {{translationMap?.get('LABEL_START_NW_CONV')}} -->
+                            </span>  
+                            <div class="clear"></div>
+                        </button>
+
+                    </div>
+
+                </div>
+                <!-- ***************  STEP 1 : END ***************** -->
+
+                <!-- ***************  STEP 2 : BEGIN ***************** -->
+                <div *ngIf="step==2" class="step-rate">
+                    <div *ngIf="g.allowTranscriptDownload" class="c21-modal-content" style="text-align: right; margin: 0px 20px 30px 10px;">
+                        <div class="c21-link" (click)="dowloadTranscript()" >
+                            <span [ngStyle]="{'color': stylesMap?.get('themeColor')}">{{ g.DOWNLOAD_TRANSCRIPT }}</span>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                
+                    <!-- CONTENT -->
+                    <div class="c21-step-content">
+                        <div class="default-title">{{ g.THANK_YOU_FOR_YOUR_EVALUATION }}</div>
+                        <div class="default-text">{{ g.YOUR_RATING_HAS_BEEN_RECEIVED }}</div>
+                    </div>
+
+                    <!-- ICON CLOSE -->
+                    <button tabindex="1415"  class="c21-button-primary" (click)="returnClosePage()" [ngStyle]="{'background-color': stylesMap?.get('themeColor'), 'border-color': stylesMap?.get('themeColor'), 'color': stylesMap?.get('foregroundColor') }">
+                        <span class="v-align-center">
+                            <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}" xmlns="http://www.w3.org/2000/svg"
+                                width="18" height="18" viewBox="0 0 24 24">
+                                <path fill="none" d="M0 0h24v24H0V0z" />
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                                <title id="altIconTitle">{{ g.CLOSE }}</title>    
+                            </svg>
+                        </span>
+                        <span class="v-align-center c21-label-button">
+                            {{ g.CLOSE }}
+                          <!-- {{translationMap?.get('LABEL_START_NW_CONV')}} -->
+                        </span>  
+                        <div class="clear"></div>
+                    </button>
+                </div>
+                <!-- ***************  STEP 2 : END ***************** -->
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

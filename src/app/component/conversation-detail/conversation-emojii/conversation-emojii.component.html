@@ -1,0 +1,11 @@
+<emoji-mart id="emoji-mart"
+    class="emoji-mart"
+    [showPreview]="emojiiOptions?.showPreview"
+    [color]="stylesMap?.get('themeColor')" 
+    [perLine]="emojiiOptions?.emojiPerLine"
+    [totalFrequentLines]="emojiiOptions?.totalFrequentLines"
+    [enableSearch]="emojiiOptions?.enableSearch"
+    [darkMode]="emojiiOptions?.darkMode"
+    [include]="emojiiOptions?.include"
+    (emojiSelect)="addEmojiFN($event)">
+</emoji-mart>

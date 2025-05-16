@@ -1,0 +1,143 @@
+
+<div id="tiledesk-container" [class.active]="g.isShown" tabindex="9999"> 
+
+  <div id="chat21-conversations"
+    [ngClass]="{ 'swing-in-bottom-fwd' : g.isOpen === true, 'full-screen-mode' : g.fullscreenMode === true, 'c21-align-left' : g.align === 'left', 'c21-align-right' : g.align !== 'left'}"
+    [ngStyle]="{ 'display': (g.isOpen == true)?'block':'none', 'bottom': g.marginY+'px', 'left':(g.align==='left')?g.marginX+'px':'', 'right':(g.align==='right')?g.marginX+'px':'' }">
+      
+    <div *ngIf="isOpenHome && g.senderId" class="modal-page active">
+      <chat-home 
+        [listConversations]="listConversations"
+        [archivedConversations]="archivedConversations"
+        [hideSettings]="g.hideSettings"
+        [stylesMap]="styleMapConversation"
+        (onNewConversation)="onNewConversation()" 
+        (onConversationSelected)="onSelectedConversation($event)"
+        (onOpenAllConvesations)="onOpenAllConversation()"
+        (onCloseWidget)="onCloseWidget()" 
+        (onSignOut)="onSignOut()"
+        (onImageLoaded)="onImageLoaded($event)"
+        (onConversationLoaded)="onConversationLoaded($event)">
+      </chat-home>
+    </div>
+
+    <div *ngIf="isOpenAllConversation && g.senderId" class="modal-page active">
+      <chat-list-all-conversations
+        [listConversations]="listConversations"
+        [archivedConversations]="archivedConversations"
+        [stylesMap]="styleMapConversation"
+        (onCloseWidget)="onCloseAllConversation()" 
+        (onConversationSelected)="onSelectedConversation($event)">
+      </chat-list-all-conversations>
+    </div>
+
+    <div *ngIf="isOpenConversation && g.senderId" class="modal-page active" >
+      <!-- [class.active]="true" isOpenConversation &&  [class.modal-slide-in-right]="isOpenConversation && !g?.singleConversation &&  [class.modal-slide-out-right]="!isOpenConversation"-->
+      <!-- [conversation]="conversationSelected" -->
+      <chat-conversation 
+        [senderId]="g.senderId"
+        [conversationId]="g.recipientId"
+        [isOpen]="g.isOpen"
+        [isConversationArchived]="isConversationArchived"
+        [stylesMap]="styleMapConversation"
+        (onBackHome)="onBackConversation()" 
+        (onCloseWidget)="onCloseWidget()"
+        (onSoundChange)="onSoundChange($event)"
+        (onConversationClosed)="onConversationClosed($event)"
+        (onSignOut)="onMenuOptionSignOut()"
+        (onNewConversationButtonClicked)="onNewConversationButtonClicked($event)"
+        (onBeforeMessageSent)="triggerHandler.triggerBeforeSendMessageEvent($event)"
+        (onAfterSendMessage)="triggerHandler.triggerAfterSendMessageEvent($event)"
+        (onNewMessageCreated)="triggerHandler.triggerOnMessageCreated($event)"
+        (onNewConversationInit)="triggerHandler.triggerOnNewConversationInit($event)"
+        (onBeforeMessageRender)="triggerHandler.triggerBeforeMessageRender($event)"
+        (onAfterMessageRender)="triggerHandler.triggerAfterMessageRender($event)">
+      </chat-conversation>
+    </div>
+
+    <!-- 
+    ****************************************
+    ******* MODALE SELECT DEPARTMENT *******
+    *************** STEP 1 *****************
+     -->
+    <div *ngIf="isOpenSelectionDepartment" class="modal-page selection-department active">
+      <chat-selection-department
+        (onBeforeDepartmentsFormRender)="triggerHandler.triggerOnbeforeDepartmentsFormRender($event)" 
+        (onClose)="onCloseModalDepartment()"
+        (onDepartmentSelected)="onDepartmentSelected($event)">
+      </chat-selection-department>
+    </div>   
+
+    <!-- 
+    *******************************************
+    *********** MODALE PRECHAT FORM ***********
+    **************** STEP 2 *******************
+    -->
+    <div *ngIf="g.isOpenPrechatForm && g.senderId" class="modal-page prechat-form active">
+      <chat-prechat-form
+        [stylesMap]="styleMapConversation"
+        (onClosePage)="onCloseModalPrechatForm()" 
+        (onCloseForm)="onPrechatFormComplete()">
+      </chat-prechat-form>
+    </div>
+
+    <!-- 
+    ****************************************
+    *********** MODALE RATE CHAT ***********
+    ****************************************
+    -->
+    <div *ngIf="g.isOpenStartRating" class="modal-page star-rating-widget active">
+      <chat-star-rating-widget
+        [recipientId]="g.recipientId"
+        [stylesMap]="styleMapConversation"
+        (onClosePage)="onCloseModalRateChat()" 
+        (onCloseRate)="onRateChatComplete()">
+      </chat-star-rating-widget>
+
+    </div>
+
+
+    <!-- 
+    ****************************************
+    ******* MODALE OFFLINE NETWORK *********
+    ****************************************
+    -->
+    <div *ngIf="g.isOpen && !isOnline" class="modal-page star-rating-widget active">
+      <chat-network-offline></chat-network-offline>
+    </div>
+
+  </div>
+  
+
+  <!-- 
+  *******************************************
+  ******* EYE-CATCHER (aka CALLOUT) *********
+  *******************************************
+  tabindex -> 20 -->
+  <chat-eyeeye-catcher-card *ngIf="g.senderId && !g.isOpenNewMessage"
+    (onOpenChat)="onOpenCloseWidget($event)"
+    (onCloseEyeCatcherCard)="onCloseEyeCatcherCard($event)">
+  </chat-eyeeye-catcher-card> 
+
+  <!-- 
+  *******************************************    
+  ********** PREVIEW NEW MESSAGE ************
+  ******************************************* 
+  -->
+  <div *ngIf="!g.isOpen">
+    <chat-last-message
+      [conversation]="lastConversation"
+      [baseLocation]="g?.windowContext['tiledesk']?.getBaseLocation()"
+      [stylesMap]="styleMapConversation"
+      (onCloseMessagePreview)="triggerHandler.triggerOnCloseMessagePreview()"
+      (onSelectedConversation)="onSelectedConversation($event)">
+    </chat-last-message>
+  </div>
+
+  <!-- ****** LAUNCHER BUTTON ****** -->
+  <!-- tabindex -> 10 -->
+  <chat-launcher-button *ngIf="isInitialized" 
+    (onButtonClicked)="onOpenCloseWidget($event)">
+  </chat-launcher-button>
+  
+</div>

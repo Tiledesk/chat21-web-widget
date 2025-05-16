@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> 
+
+    <title>Widget test page </title>
+    <style>
+
+        @-moz-keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* Firefox */
+        @-webkit-keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* Webkit */
+        @-ms-keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* IE */
+        @keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* Opera and prob css3 final iteration */
+
+        body{
+            --font-family-poppins: 'Poppins', 'Roboto', Arial, sans-serif;
+            --blu: #506493;
+            --gray-light-02: rgb(223, 227, 237);
+            --base-company-logo: rgb(224,106,88);
+            --header-height: 60px;
+
+        }
+
+        #preloader {
+            background: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            z-index: 999999;
+            opacity: 1;
+            filter: alpha(opacity=100);
+            -webkit-transition: opacity 500ms ease;
+            transition: opacity 500ms ease, display 500ms;
+        }
+
+        #preloader .logo {
+            display: block;
+            width: 109px;
+            height: 39px;
+            background-repeat: no-repeat;
+            background-image: url(./tiledesk_widget_files/logo@2x-black.png);      
+            background-size: contain;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -20px 0 0 -55px;
+            -moz-transition:all 1s ease-in-out;
+            -webkit-transition:all 1s ease-in-out;
+            -o-transition:all 1s ease-in-out;
+            -ms-transition:all 1s ease-in-out;
+            transition:all 1s ease-in-out;
+            /* order: name, direction, duration, iteration-count, timing-function */
+            -moz-animation:blink normal 2s infinite ease-in-out; /* Firefox */
+            -webkit-animation:blink normal 2s infinite ease-in-out; /* Webkit */
+            -ms-animation:blink normal 2s infinite ease-in-out; /* IE */
+            animation:blink normal 2s infinite ease-in-out; /* Opera and prob css3 final iteration */
+        }
+
+        .loader{
+            display: block;
+            z-index: 99;
+            position: absolute;
+            top: calc( 50% - 50px);
+            left: calc( 50% - 50px);
+            width: 100px;
+            height: 100px;
+            border: 3px solid rgb(224, 106, 88);
+            border-radius: 50%;
+
+            animation: spin 7s ease-in-out;
+            animation-iteration-count: infinite;
+            transition-duration: 0.1s;
+        }
+
+        .loader:hover {
+            scale: 0.95;
+            /*Loader on hover effect*/
+        }
+
+        .loader:active {
+            scale: 1.2;
+            /*Loader on click effect*/
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+                border-bottom: solid 3px transparent;
+                border-top: solid 3px transparent;
+            }
+            50% {
+                transform: rotate(1800deg);
+                border: 3px solid white;
+                border-left: solid 3px transparent;
+                border-right: solid 3px transparent;
+            }
+            100% {
+                /*Reversed spinning*/
+                transform: rotate(0deg);
+                border-bottom: solid 3px transparent;
+                border-top: solid 3px transparent;
+            }
+        }
+
+        #deferred-styles {
+            display: none;
+        }
+
+        body {
+            background-color: #ffffff !important; /*#f4f5f5 !important;*/
+            font-family: Roboto, "Helvetica Neue", sans-serif;
+            font-weight: 300;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-weight: 300;
+            padding: 0;
+        }
+
+        #main h2 {
+            margin-top: 25px;
+            font-size: 14px;
+            font-weight: 300;
+            padding: 0;
+            display: block; /* Fallback for non-webkit */
+            display: -webkit-box;
+            max-height: 258px; /* Fallback for non-webkit */
+            line-height: 2.3;
+            -webkit-line-clamp: 8;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        #wrapper {
+            /* display: block!important; */
+            min-height: 100%;
+            margin-bottom: auto;
+        }
+
+        #main {
+            padding-bottom:100px;
+            margin: 20px auto 0 auto;
+
+            
+        }
+
+        .mockup{
+            background-repeat: no-repeat;
+            background-image: url(../images/website_mockup.jpg);      
+            background-size: calc(100% - 40px);
+            /* background-position-x: 50px; */
+            /* background-position-y: 100px; */
+            background-position: inherit;
+            background-attachment: fixed;
+            background-size: cover;
+            opacity: 0.4;
+        }
+
+        .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .b_frame {
+            -webkit-box-shadow: 0px 19px 147px -41px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0px 19px 147px -41px rgba(0,0,0,0.75);
+            box-shadow: 0px 19px 147px -41px rgba(0,0,0,0.75);
+            border: 0;
+            width: 400px;
+            height: 530px;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 40px;
+        }
+        .col-md-6 {
+            margin-top: 30px;
+            padding: 0;
+        }
+
+
+        .b_integrations_agent_links {
+            margin-top: 50px;
+
+        }
+
+        .b_integrations_agent_links a {
+            color: black;
+            margin-right: 30px;
+        }
+        .b_integrations_agent_links a i {
+            color: gray;
+            margin-right: 10px;
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+        }
+
+        .b_integrations_agent_links em{
+            margin-right: 10px;
+        }
+
+        #shareModal .modal-body {
+            text-align: center;
+        }
+
+        header#header{
+            z-index: 2;
+            position: absolute;
+            cursor: pointer;
+            font-size: 21px;
+            height: var(--header-height);
+            font-family: var(--font-family-poppins);
+            color: var(--blu);
+            background: white;
+            border-bottom: 1px solid var(--gray-light-02);
+            display: flex;
+            width: 100%;
+            
+        }
+
+        .header-left{
+            max-width: var(--header-height);
+            width: 100%;
+            transition: 0.3s;
+            border-right: 1px solid transparent;
+            /* border-right: 1px solid var(--gray-light-02); */
+            padding: 10px;
+        }
+
+        .header-left div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: rgba(17, 49, 96, 0.16) 0px 8px 16px 0px, rgba(17, 49, 96, 0.06) 0px 0px 0px 1px;        ;
+        }
+
+        .header-left div .logo {
+            opacity: 1;
+            width: 25px;
+            position: absolute;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            width: 100%;
+            padding: 0px 10px;
+            box-sizing: border-box;
+        }
+
+        .header-right .header-go-back {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .header-right .header-go-back .cds-text {
+            font-weight: 700;
+            color: var(--base-company-logo);
+        }
+
+        .header-right .header-title{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-weight: 300;
+            width: 80%;
+
+        }
+
+        .share-btn{
+            transition: color 0.15s ease 0s, opacity 0.15s ease 0s, box-shadow 0.15s ease 0s, background-color 0.15s ease 0s;
+            height: 41px;
+            box-sizing: border-box;
+            color: rgb(19, 33, 68);
+            font-weight: 600;
+            line-height: 22px;
+            background-size: 1px 41px;
+            padding: 10px 19px;
+            border-radius: 10px;
+            border: 1px solid rgb(255, 255, 255);
+            background-color: rgb(231, 240, 242);
+            box-shadow: rgb(204, 211, 228) 0px 0px 0px 1px;
+        }
+
+        .share-btn:hover{
+            opacity: 0.8;
+        }
+
+        footer#footer {
+            background-color: white;
+            text-align: center;
+
+            /* position: relative;
+            margin-top: -100px; negative value of footer height */
+            height: 80px;
+            clear:both;
+
+            position: absolute;
+            bottom: 0px;
+            width: 100%;
+        }
+
+        .b-agent-demo_powered_by a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            text-decoration: none;
+        }
+
+        .b-agent-demo_powered_by span {
+            display: inline-block;
+            color: #B7BBC4;
+            text-transform: uppercase;
+            line-height: 20px;
+        }
+        .b-agent-demo_powered_by img {
+            display: inline-block;
+            height: 40px;
+        }
+
+        /* The snackbar - position it at the bottom and in the middle of the screen */
+        #snackbar {
+            visibility: hidden; /* Hidden by default. Visible on click */
+            min-width: 250px; /* Set a default minimum width */
+            margin-left: -125px; /* Divide value of min-width by 2 */
+            background-color: #504a4a; /* Black background color */
+            color: #fff; /* White text color */
+            text-align: center; /* Centered text */
+            border-radius: 10px; /* Rounded borders */
+            padding: 16px; /* Padding */
+            position: fixed; /* Sit on top of the screen */
+            z-index: 1; /* Add a z-index if needed */
+            left: 50%; /* Center the snackbar */
+            bottom: 30px; /* 30px from the bottom */
+            font-size: medium;
+        }
+
+        /* Show the snackbar when clicking on a button (class added with JavaScript) */
+        #snackbar.show {
+            visibility: visible; /* Show the snackbar */
+            /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+            However, delay the fade out process for 2.5 seconds */
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        /* Animations to fade the snackbar in and out */
+        @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        @media (max-width: 451px) {
+            .cds-text{
+                display: none;
+            }
+        }
+
+    </style>
+
+    <!-- <script type="text/javascript">
+
+        // redirect to mobile version
+
+        /**
+         * definitely not the best way to findout if there is a mobile browser
+         * @returns {any}
+         */
+        function deviceOS() {
+            var useragent = navigator.userAgent;
+            if(useragent.match(/Android/i)) {
+                return 'android';
+            } else if(useragent.match(/webOS/i)) {
+                return 'webos';
+            } else if(useragent.match(/iPhone/i)) {
+                return 'iphone';
+            } else if(useragent.match(/iPod/i)) {
+                return 'ipod';
+            } else if(useragent.match(/iPad/i)) {
+                return 'ipad';
+            } else if(useragent.match(/Windows Phone/i)) {
+                return 'windows phone';
+            } else if(useragent.match(/SymbianOS/i)) {
+                return 'symbian';
+            } else if(useragent.match(/RIM/i) || useragent.match(/BB/i)) {
+                return 'blackberry';
+            } else {
+                return false;
+            }
+        }
+
+        if (deviceOS()) {
+            var frameEl = document.getElementById('frame');
+            location.href = "";
+        }
+    </script> -->
+
+
+    <meta property="og:title" content="Try Tiledesk now!" />
+    <meta property="og:description" content="Qualify your leads to increase your sales faster. It's really easy to do it with the Tiledesk conversational form builder" />
+    <meta property="og:image" content="https://tiledesk.com/wp-content/uploads/2022/12/6029654-02-min.png" />
+    <meta property="og:locale" content="en">
+    
+    <link rel="icon" type="image/png" href="./tiledesk_widget_files/logo-short.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="./tiledesk_widget_files/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./tiledesk_widget_files/website-poly.min.css" rel="stylesheet" type="text/css">
+    <script defer="" src="./tiledesk_widget_files/jquery.min.js"></script>
+    <script defer="" src="./tiledesk_widget_files/bootstrap.min.js"></script>
+  
+    <!-- <script type="application/javascript">
+        window.tiledeskSettings = {
+            marginX: "100px",
+            marginY: "50px"
+        };
+        (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id; //js.async=!0;
+        js.src = "../../launch.js"; 
+        fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'tiledesk-jssdk'));
+
+    </script> -->
+    <script type="application/javascript">
+        window.tiledeskSettings = {
+            marginX: "100px",
+            marginY: "50px",
+            // calloutTimer: 1,
+            singleConversation: true,
+            restartConversation: true,
+            hideHeaderCloseButton: true,
+            hideCloseConversationOptionMenu: true,
+            isLogEnabled:true,
+            customAttributes: { sound: false }
+            // autostart: false
+
+        };
+
+        (function(d, s, id) {
+            var w=window; var d=document;
+            var i=function() { 
+                i.c(arguments);
+            };
+            i.q=[];
+            i.c=function(args){ 
+                i.q.push(args);
+            };
+            w.Tiledesk=i;
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); 
+            js.id = id; js.async = true; js.src = "../../launch.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'tiledesk-jssdk'));
+        
+        window.addEventListener('load', (event)=> {
+            document.dispatchEvent(new Event('mousemove'))
+        })
+
+        window.Tiledesk('onLoadParams', function(event_data) {
+            console.log("onLoadParams Tiledesk FN", event_data);
+            // window.Tiledesk('signInWithCustomToken', 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDliOGVmYTg3MzJlYjAwMTQxNzYzZDlfNWU0ZWNiOThiNzhlZTQwMDE3NDA2MTEwIiwiZmlyc3RuYW1lIjoiS2VsbHkiLCJsYXN0bmFtZSI6IkdyYWNlIiwiZW1haWwiOiJncmFjZUBlbWFpbG5hLmNvIiwic3ViIjoidXNlcmV4dGVybmFsIiwiYXVkIjoiaHR0cHM6Ly90aWxlZGVzay5jb20vcHJvamVjdHMvNjA5YjhlZmE4NzMyZWIwMDE0MTc2M2Q5IiwiaWF0IjoxNjQxODAzODk0fQ.p0reTwd25p93CsDTyQa8tkihgFxThAI4DXloNc6vbXw')
+            //                 .then(response => console.log('signInWithCustomToken: user_logged -> ', response))
+            //                 .catch((error)=> console.error('signInWithCustomToken: error', error))
+        });
+        
+        window.Tiledesk('onBeforeInit', function(event_data) {
+            // console.log("onBeforeInit Tiledesk FN", event_data);
+            var brandSrc = event_data.detail.appConfigs.brandSrc? getBrandResources(event_data.detail.appConfigs.brandSrc) : null;
+
+            setTimeout(() => {
+                document.getElementById("preloader").style.display = "none";
+                if(event_data && event_data.detail && event_data.detail.appConfigs){
+                    baseUrlConsole = event_data.detail.appConfigs.dashboardUrl? event_data.detail.appConfigs.dashboardUrl : baseUrlConsole;
+                }
+            }, 1000);
+
+            //open widget after 3s if is closed
+            setTimeout(() => {
+                if(event_data && event_data.detail && event_data.detail.global && !event_data.detail.global.isOpen){
+                    window.Tiledesk('open')
+                }
+            }, 1000);
+            
+        });
+        
+        window.Tiledesk('onInit', function(event_data) {
+            // console.log("onInit Tiledesk FN", event_data); 
+            window.Tiledesk('setParameter', {key: 'poweredBy', value: ''})
+            // setTimeout(() => {
+            //     document.getElementById("preloader").style.display = "none";
+            // }, 1000);
+            //open widget after 3s if is closed
+            // setTimeout(() => {
+            //     if(event_data && event_data.detail && event_data.detail.global && !event_data.detail.global.isOpen){
+            //         window.Tiledesk('open')
+            //     }
+            // }, 3000);
+        });
+
+        window.Tiledesk('onAuthStateChanged', function(event_data) {
+        	// console.log("AUTHENTICATED!", event_data);
+       		// if(event_data.detail.isLogged){
+            // 	console.log("isLogged!!!!", event_data);
+            // 	window.Tiledesk('show')
+            // }
+        });
+
+        window.Tiledesk('onMessageCreated', function(event_data) {
+        	// console.log("onMessageCreated!", event_data);
+            window.parent.postMessage(event_data.detail, '*')
+       		// if(event_data.detail.isLogged){
+            // 	console.log("isLogged!!!!", event_data);
+            // 	window.Tiledesk('show')
+            // }
+        });
+
+        window.addEventListener('message', (event_data)=> {
+            if(event_data && event_data.data && event_data.data.action === 'restart'){
+                window.Tiledesk('startConversation', event_data.data.intentName)
+            }
+        })
+
+    </script>
+
+    <script type="application/javascript">
+        var baseUrlConsole = "https://console.tiledesk.com/v2/dashboard/";
+        var baseUrlTestPage ="https://widget.tiledesk.com/v5/assets/twp/"
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var urlToConsole = urlParams.get('goToConsole');
+        if(urlToConsole){
+            baseUrlConsole = urlToConsole;
+        }
+
+        var currentUrl = window.location.href
+        var baseUrl = window.location.origin
+
+                        
+        var url = new URL(currentUrl);
+        var tiledesk_projectid = url.searchParams.get("tiledesk_projectid");
+        var tiledesk_widgetTitle = url.searchParams.get("tiledesk_widgetTitle");
+        var project_name = url.searchParams.get("project_name");
+        var role = url.searchParams.get("role")
+        var urlConsole = baseUrlConsole + "#/projects/"+tiledesk_projectid+"/home";
+        // console.log('tiledesk_projectid: ', tiledesk_projectid);
+        // console.log('project_name: ', project_name);
+
+        function getQueryVariable(variable)     {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i=0;i<vars.length;i++) {
+                    var pair = vars[i].split("=");
+                    if(pair[0] == variable){return pair[1];}
+            }
+            return(false);
+        }
+
+        window.onload = function() {
+            document.getElementById("tiledesk_widgetTitle").value = tiledesk_widgetTitle;
+        }
+
+
+        function getBrandResources(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    var brandJson = JSON.parse(xhr.response)
+                    if(brandJson){
+                        /** TITLE AND FAVICON **/
+                        brandJson['WIDGET'].META_TITLE? document.body.title = brandJson['WIDGET'].META_TITLE : null;
+                        brandJson['WIDGET'].FAVICON_URL?  document.querySelector("link[rel~='icon']").setAttribute('href', brandJson['WIDGET'].FAVICON_URL) : null;
+                        /** FOOTER-LOGO **/
+                        brandJson['COMMON'].COMPANY_LOGO? document.getElementById('footer-logo').src = brandJson['COMMON'].COMPANY_LOGO : null;
+                        brandJson['COMMON'].COMPANY_SITE_NAME? document.getElementById('footer-logo').alt = brandJson['COMMON'].COMPANY_SITE_NAME : null;
+                        brandJson['COMMON'].COMPANY_SITE_URL? document.getElementById('footer-link').href = brandJson['COMMON'].COMPANY_SITE_URL : null;
+                        /** HEADER-LOGO **/  
+                        brandJson['COMMON'].BASE_LOGO_NO_TEXT? document.getElementById('header-logo').src = brandJson['COMMON'].BASE_LOGO_NO_TEXT: null;
+                        brandJson['COMMON'].BRAND_PRIMARY_COLOR? document.body.style.setProperty('--base-company-logo', brandJson['COMMON'].BRAND_PRIMARY_COLOR): null;
+                        /** IFRAME TITLE**/
+                        brandJson['COMMON'].COMPANY_NAME? document.getElementById('tiledeskiframe').title = brandJson['COMMON'].COMPANY_NAME + ' Widget' : null;
+                    }
+                }
+                    
+            }
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+            xhr.send();
+        }
+
+        
+
+    </script>
+    
+</head>
+
+<body class="website white" >
+
+    <!-- <div id="preloader">
+        <div class="logo"></div>
+    </div> -->
+
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+
+    <header id="header">
+        <!-- <ul class="nav navbar-nav navbar-left">
+            <li class="sign-up"><button class="share-btn" onclick="copyLink()">SHARE THIS PROTOTYPE</button></li>
+        </ul> -->
+        <div class="header-left">
+            <div>
+                <img id="header-logo" class="logo" src="./tiledesk_widget_files/logo-short.png">
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="header-go-back">
+                <!-- <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#006cff">
+                    <path d="M0 0h24v24H0z" fill="none"/><path d="M11.67 3.87L9.9 2.1 0 12l9.9 9.9 1.77-1.77L3.54 12z"/>
+                </svg> -->
+                <span class="cds-text">
+                    Design Studio
+                </span>
+                
+            </div>
+            <div class="header-title ellips" id="tiledesk_widgetTitle"></div>
+        </div>
+
+    </header>
+    <!-- The actual snackbar -->
+    <div id="snackbar">Copied to clipboard...</div>
+
+    <!-- <div id="wrapper" class="mockup"> -->
+    </div>
+
+    <footer id="footer">
+        <div class="b-agent-demo_powered_by">
+            <a href="https://console.tiledesk.com/" target="_blank" style="cursor: pointer;text-decoration: none;" id="footer-link">
+                <span style="position: relative; top: 2px;">Powered by</span>
+                <img src="./tiledesk_widget_files/logo@2x-black.png" id="footer-logo">
+            </a>
+        </div>
+    </footer>
+
+
+<script>
+    // non-blocking CSS delivery
+    // var loadDeferredStyles = function() {
+    //     var addStylesNode = document.getElementById("deferred-styles");
+    //     console.log('addStylesNode ', addStylesNode)
+    //     var replacement = document.createElement("div");
+    //     replacement.innerHTML = addStylesNode.textContent;
+    //     document.body.appendChild(replacement);
+    //     addStylesNode.parentElement.removeChild(addStylesNode);
+    // };
+    // var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+    //         window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+    // if (raf) {
+    //     raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+    // } else {
+    //     window.addEventListener('load', loadDeferredStyles);
+    // }
+    function copyLink(){
+        let url = window.location.href
+        navigator.clipboard.writeText(url)
+
+        // Get the snackbar DIV
+        var toast = document.getElementById("snackbar");
+
+        // Add the "show" class to DIV
+        toast.className = "show";
+
+        // After 3 seconds, remove the show class from DIV
+        setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+
+    }
+</script>
+
+<!-- Google Analytics -->
+</body>
+</html>
