@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc1
+- **added**: angular v17
+
 # 5.0.94-rc7
 - **added**: touchstart and touchend events for mobile mic footer button
 
