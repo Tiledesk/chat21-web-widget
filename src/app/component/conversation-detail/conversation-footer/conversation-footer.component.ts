@@ -11,6 +11,7 @@ import { ChatManager } from 'src/chat21-core/providers/chat-manager';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { TYPE_MSG_FILE, TYPE_MSG_IMAGE, TYPE_MSG_TEXT } from 'src/chat21-core/utils/constants';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
+import { isImage } from 'src/chat21-core/utils/utils-message';
 
 @Component({
   selector: 'chat-conversation-footer',
@@ -29,7 +30,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   @Input() userEmail: string;
   @Input() showAttachmentFooterButton: boolean;
   @Input() showEmojiFooterButton: boolean
-  @Input() showRegisterAudioFooterButton: boolean
+  @Input() showAudioRecorderFooterButton: boolean
   // @Input() showContinueConversationButton: boolean;
   @Input() isConversationArchived: boolean;
   @Input() hideTextAreaContent: boolean;
@@ -66,6 +67,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   isStopRec: boolean = false;
   textInputTextArea: string;
   conversationHandlerService: ConversationHandlerService
+
+  isImage = isImage
 
   showEmojiPicker: boolean = false; //To show/hide emoji picker
   loadPickerModule: boolean = true;
@@ -278,16 +281,21 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
         // let message = 'File: ' + metadata.src;
         let message = `[${metadata.name}](${metadata.src})`
         if (metadata.type.startsWith('image') && !metadata.type.includes('svg')) {
-            type_message = TYPE_MSG_IMAGE;
-            // message = '';
-            message = messageText 
-        } else if ((metadata.type.startsWith('image') && metadata.type.includes('svg')) || !metadata.type.startsWith('image')){
-            type_message = TYPE_MSG_FILE
-            // type_message = metadata.type
-            message = message + '\n' + messageText
-        } else if (!metadata.type.startsWith('image')){
+          /** CASE IMAGE */
+          type_message = TYPE_MSG_IMAGE;
+          // message = '';
+          message = messageText 
+        } else if(metadata.type.startsWith('audio')){
+          /** CASE AUDIO */
           type_message = TYPE_MSG_FILE
-          // type_message = metadata.type
+          message = ''
+        }else if ((metadata.type.startsWith('image') && metadata.type.includes('svg')) || !metadata.type.startsWith('image')){
+          /** CASE FILE */  
+          type_message = TYPE_MSG_FILE
+          message = message + '\n' + messageText
+        } else if (!metadata.type.startsWith('image')){
+          /** CASE FILE */  
+          type_message = TYPE_MSG_FILE
           message = message + '\n' + messageText
         }
         that.sendMessage(message, type_message, metadata);

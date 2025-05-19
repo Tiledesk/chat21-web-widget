@@ -468,7 +468,10 @@
             hideHeaderCloseButton: true,
             hideCloseConversationOptionMenu: true,
             isLogEnabled:true,
-            customAttributes: { sound: false }
+            customAttributes: { sound: false },
+            displayOnDesktop: true,
+            displayOnMobile: true,
+            soundEnabled: false
             // autostart: false
 
         };
@@ -545,11 +548,16 @@
 
         window.Tiledesk('onMessageCreated', function(event_data) {
         	// console.log("onMessageCreated!", event_data);
-            window.parent.postMessage(event_data.detail, '*')
+            window.parent.postMessage({ source: 'widget', event: 'onMessageCreated', data: event_data.detail}, '*')
        		// if(event_data.detail.isLogged){
             // 	console.log("isLogged!!!!", event_data);
             // 	window.Tiledesk('show')
             // }
+        });
+
+        window.Tiledesk('onNewConversation', function(event_data) {
+        	// console.log("onNewConversation!", event_data);
+            window.parent.postMessage({ source: 'widget', event: 'onNewConversation', data: { conversation_id: event_data.detail.newConvId } }, '*')
         });
 
         window.addEventListener('message', (event_data)=> {

@@ -512,8 +512,8 @@ export class GlobalSettingsService {
                     if (variables.hasOwnProperty('showAttachmentFooterButton')) {
                         globals['showAttachmentFooterButton'] = variables['showAttachmentFooterButton'];
                     }
-                    if (variables.hasOwnProperty('showRegisterAudioFooterButton')) {
-                        globals['showRegisterAudioFooterButton'] = variables['showRegisterAudioFooterButton'];
+                    if (variables.hasOwnProperty('showAudioRecorderFooterButton')) {
+                        globals['showAudioRecorderFooterButton'] = variables['showAudioRecorderFooterButton'];
                     }
                     
                 }
@@ -1056,10 +1056,10 @@ export class GlobalSettingsService {
         if (TEMP !== undefined) {
             globals.showEmojiFooterButton = (TEMP === true) ? true : false;
         } 
-        TEMP = tiledeskSettings['showRegisterAudioFooterButton'];
+        TEMP = tiledeskSettings['showAudioRecorderFooterButton'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showEmojiFooterButton:: ', TEMP]);
         if (TEMP !== undefined) {
-            globals.showRegisterAudioFooterButton = (TEMP === true) ? true : false;
+            globals.showAudioRecorderFooterButton = (TEMP === true) ? true : false;
         } 
     }
 
@@ -1335,9 +1335,9 @@ export class GlobalSettingsService {
         if (TEMP !== null) {
             this.globals.showEmojiFooterButton = (TEMP === true) ? true : false;
         }
-        TEMP = el.nativeElement.getAttribute('showRegisterAudioFooterButton');
+        TEMP = el.nativeElement.getAttribute('showAudioRecorderFooterButton');
         if (TEMP !== null) {
-            this.globals.showRegisterAudioFooterButton = (TEMP === true) ? true : false;
+            this.globals.showAudioRecorderFooterButton = (TEMP === true) ? true : false;
         }
         
         

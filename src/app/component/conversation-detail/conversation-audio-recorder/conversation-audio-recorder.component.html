@@ -6,12 +6,12 @@
         </span>
       </button>
 
-      <chat-audio-track  *ngIf="audioBlob && audioUrl"
+      <chat-audio  class="test" *ngIf="audioBlob && audioUrl"
         [audioBlob] = "audioBlob"
-        [color]="stylesMap.get('themeColor')"
+        [color]="'var(--chat-footer-color)'"
         [fontSize]="stylesMap.get('fontSize')"
         [stylesMap]="stylesMap">
-      </chat-audio-track>
+      </chat-audio>
      
     <button *ngIf="!audioUrl" class="mic-button" (mousedown)="startRecording()" (mouseup)="stopRecording()">
       <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">

@@ -20,14 +20,31 @@
     gap: 8px
 }
 
-chat-audio-track {
+::ng-deep chat-audio.test {
   display: flex;
   width: 80%;
   margin: 8px 0;
   pointer-events: auto;
   border-radius: var(--chat-footer-border-radius);
   background-color: var(--chat-footer-background-color);
+
+  // --hoverBackgroundColor: var(--textColor);
+  // --hoverTextColor:var(--backgroundColor);
+
+    button.play-pause{
+      svg{
+        fill: var(--chat-footer-color) !important;
+      }
+      &:hover{
+        color: var(--chat-footer-background-color) !important;
+        background-color: var(--chat-footer-color) !important;
+        svg{
+          fill: var(--chat-footer-background-color) !important;
+        }
+      }
+    }
 }
+
 
 button {
     font-size: 16px;
