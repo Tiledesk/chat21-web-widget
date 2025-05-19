@@ -28,7 +28,7 @@ export class Rules {
 
 
     initRules(context: Window, tiledeskToken: string, currentUser: UserModel, request_id: string, rules:Rule[]){
-        this.logger.info('[RULES] initRules',context, currentUser, rules)
+        this.logger.debug('[RULES] initRules',context, currentUser, rules)
         this.windowContext = context
         this.tiledeskToken = tiledeskToken
         this.currentUser = currentUser
@@ -52,7 +52,7 @@ export class Rules {
     }
 
     private doAction(action: Rule['do']){
-        this.logger.info('[RULES] doAction', this.request_id, this.currentUser, action)
+        this.logger.debug('[RULES] doAction', this.request_id, this.currentUser, action)
         let message = action.filter(obj => Object.keys(obj).includes('message'))
         if(message && message.length>0){
             message[0]['message'].attributes = { ...this.g.attributes, ...message[0]['message'].attributes}

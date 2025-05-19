@@ -3,11 +3,11 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 
 @Component({
-  selector: 'chat-audio-track',
-  templateUrl: './audio-track.component.html',
-  styleUrls: ['./audio-track.component.scss']
+  selector: 'chat-audio',
+  templateUrl: './audio.component.html',
+  styleUrls: ['./audio.component.scss']
 })
-export class AudioTrackComponent implements AfterViewInit {
+export class AudioComponent implements AfterViewInit {
 
   @ViewChild('audioElement', { static: true }) audioElement!: ElementRef<HTMLAudioElement>;
   @ViewChild('canvasElement', { static: true }) waveformCanvas!: ElementRef<HTMLCanvasElement>;
@@ -26,7 +26,10 @@ export class AudioTrackComponent implements AfterViewInit {
   currentTime: number = 0;
   isPlaying: boolean = false;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(
+    private sanitizer: DomSanitizer,
+    private elementRef: ElementRef
+  ) {}
 
   ngAfterViewInit() {
     console.log('stylesssss', this.stylesMap)
@@ -39,6 +42,11 @@ export class AudioTrackComponent implements AfterViewInit {
       this.audioUrl = this.sanitizer.bypassSecurityTrustUrl(this.rawAudioUrl);
       this.setupAudioContext();
     }
+
+    if(this.stylesMap.get('bubbleSentBackground')) this.elementRef.nativeElement.querySelector('.audio-container').style.setProperty('--backgroundColor', this.extractFirstColor(this.stylesMap.get('bubbleSentBackground')));
+    if(this.stylesMap.get('bubbleSentTextColor')) this.elementRef.nativeElement.querySelector('.audio-container').style.setProperty('--textColor', this.stylesMap.get('bubbleSentTextColor'));
+    if(this.stylesMap.get('bubbleSentBackground')) this.elementRef.nativeElement.querySelector('.audio-container').style.setProperty('--hoverBackgroundColor', this.stylesMap.get('bubbleSentTextColor'));
+    if(this.stylesMap.get('bubbleSentTextColor')) this.elementRef.nativeElement.querySelector('.audio-container').style.setProperty('--hoverTextColor', this.extractFirstColor(this.stylesMap.get('bubbleSentBackground')));
   }
 
   async setupAudioContext() {
@@ -60,7 +68,7 @@ export class AudioTrackComponent implements AfterViewInit {
     const height = canvas.height;
     const rawData = audioBuffer.getChannelData(0);
 
-    const samples = 60;
+    const samples = 40;
     const blockSize = Math.floor(rawData.length / samples);
     const waveform = new Float32Array(samples);
   
@@ -73,7 +81,7 @@ export class AudioTrackComponent implements AfterViewInit {
     }
 
     canvasCtx.clearRect(0, 0, width, height);
-    const padding = 1;
+    const padding = 2;
     const barWidth = (width / samples) - padding * 2;
     const audio = this.audioElement.nativeElement;
     const playedPercent = audio.currentTime / this.audioDuration;
@@ -144,4 +152,11 @@ export class AudioTrackComponent implements AfterViewInit {
       }
     });
   }
+
+  extractFirstColor(gradient: string): string | null {
+    const colorRegex = /rgba?\((\d+,\s*\d+,\s*\d+(,\s*\d+(\.\d+)?)?)\)/;
+    const match = gradient.match(colorRegex);
+    return match ? match[0] : null;
+  }
+
 }

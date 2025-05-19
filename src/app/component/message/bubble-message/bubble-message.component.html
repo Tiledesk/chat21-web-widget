@@ -58,12 +58,12 @@
         (onElementRendered)="onElementRenderedFN($event)">
       </chat-audio> -->
 
-      <chat-audio-track  *ngIf="isAudio(message)"
+      <chat-audio  *ngIf="isAudio(message)"
         [metadata]="message.metadata"
         [color]="fontColor"
         [fontSize]="fontSize"
         [stylesMap]="stylesMap">
-      </chat-audio-track>
+      </chat-audio>
 
 
       <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"

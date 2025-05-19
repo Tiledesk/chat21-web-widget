@@ -268,6 +268,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     return;
                 }
 
+                //set status (open /close)
+                if(this.g.isMobile && this.g.onPageChangeVisibilityMobile !== 'last'){
+                    let isOpen = this.g.onPageChangeVisibilityMobile === 'open'? true: false
+                    this.g.setIsOpen(isOpen)
+                    this.appStorageService.setItem('isOpen', isOpen)
+                }
+                if(!this.g.isMobile && this.g.onPageChangeVisibilityDesktop !== 'last'){
+                    let isOpen = this.g.onPageChangeVisibilityDesktop === 'open'? true: false
+                    this.g.setIsOpen(isOpen)
+                    this.appStorageService.setItem('isOpen', isOpen)
+                }
+                
                 
                 /**CHECK IF JWT IS IN URL PARAMETERS */
                 this.logger.debug('[APP-COMP] check if token is passed throw url: ', this.g.jwt);
@@ -423,18 +435,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     that.listenToWidgetClick()
                 }
 
-
-                //set status (open /close)
-                if(this.g.isMobile && this.g.onPageChangeVisibilityMobile !== 'last'){
-                    let isOpen = this.g.onPageChangeVisibilityMobile === 'open'? true: false
-                    this.g.setIsOpen(isOpen)
-                    this.appStorageService.setItem('isOpen', isOpen)
-                }
-                if(!this.g.isMobile && this.g.onPageChangeVisibilityDesktop !== 'last'){
-                    let isOpen = this.g.onPageChangeVisibilityDesktop === 'open'? true: false
-                    this.g.setIsOpen(isOpen)
-                    this.appStorageService.setItem('isOpen', isOpen)
-                }
 
 
             } else if (state && state === AUTH_STATE_OFFLINE && !this.forceDisconnect) {
@@ -728,8 +728,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         /** allow to start conversation with an hidden message (without publishing 'new_conversation' event) */
         this.logger.debug('[APP-COMP] AppComponent::startNewConversation hiddenMessage',this.g.hiddenMessage );
         if(this.g.hiddenMessage){
-            this.onNewConversationWithMessage(this.g.hiddenMessage)
-            return;
+            this.onNewConversationWithMessage(newConvId, this.g.hiddenMessage)
         }
 
         this.triggerNewConversationEvent(newConvId);
@@ -1792,24 +1791,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
 
-    onNewConversationWithMessage(text: string, subType: string = 'info'){
+    onNewConversationWithMessage(recipientId: string, text: string, subType: string = 'info'){
         this.logger.log('[APP-COMP] onNewConversationWithMessage in APP COMPONENT', text);
-
-        const newConvId = this.generateNewUidConversation();
-        this.g.setParameter('recipientId', newConvId);
-        this.appStorageService.setItem('recipientId', newConvId)
 
         let message: any = {}
         message.attributes = { subtype: subType, ...this.g.attributes}
         message.userAgent = this.g.attributes['client']
-        message.request_id = newConvId
+        message.request_id = recipientId
         message.sourcePage = this.g.attributes['sourcePage']
         message.language = this.g.lang
         message.text = '/'+ text
         message.participants = this.g.participants
         message.departmentid = this.g.attributes.departmentId
         // this.sendMessage(message)
-        this.tiledeskRequestsService.sendMessageToRequest(newConvId, this.g.tiledeskToken, message)
+        this.tiledeskRequestsService.sendMessageToRequest(recipientId, this.g.tiledeskToken, message)
         return;
     }
 
