@@ -43,7 +43,7 @@ testem.log
 Thumbs.db
 test_widget.php
 
-src/environments
+
 src/environments/real_data
 src/environments_dati_reali
 src/widget-config-docker.json
