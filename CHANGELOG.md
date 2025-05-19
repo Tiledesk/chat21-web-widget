@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.94-rc7
+- **added**: touchstart and touchend events for mobile mic footer button
+
 # 5.0.94-rc6
 - **bug-fixed**: logoChat is not rendered if contains special characters (ex. "(" or ")" ) in the name of the resource
 
