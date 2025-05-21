@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.94
+
 # 5.0.94-rc7
 - **added**: touchstart and touchend events for mobile mic footer button
 
