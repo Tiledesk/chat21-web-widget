@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.96
+
 # 5.0.95
 - **bug-fixed**: first message is fired twice ( from /event and from /messages with hiddenMesage)
 
