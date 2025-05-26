@@ -154,9 +154,9 @@ function loadIframe(tiledeskScriptBaseLocation) {
     window.tiledesk.on('onNewConversation', function(event_data) {
         // console.log("test-custom-auth.html onNewConversation >>>",event_data);
         const tiledeskToken = window.tiledesk.angularcomponent.component.g.tiledeskToken;
-        const hiddenMessage = window.tiledesk.angularcomponent.component.g.hiddenMessage;
         
         // if hiddenMessage is present, do not call /events endpoint because conversation is created by /messages endpoint
+        const hiddenMessage = window.tiledesk.angularcomponent.component.g.hiddenMessage;
         if(hiddenMessage){
           return;
         }
