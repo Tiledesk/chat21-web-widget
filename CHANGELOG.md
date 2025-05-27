@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc.2
+- **added**: angular 17
+
 # 5.0.96
 
 # 5.0.95
