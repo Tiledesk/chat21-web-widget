@@ -29,8 +29,12 @@ export class ConversationAudioRecorderComponent {
   constructor(private sanitizer: DomSanitizer) {}
 
 
-  startRecording() {
+  startRecording(event: Event) {
     // console.log('startRecording');
+    if (event.type === 'touchstart') {
+      event.preventDefault(); // Blocca il successivo mousedown
+    }
+
     this.startTime = Date.now();
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(stream => {
@@ -55,7 +59,12 @@ export class ConversationAudioRecorderComponent {
       });
   }
 
-  stopRecording() {
+  stopRecording(event: Event) {
+
+    if (event.type === 'touchend') {
+      event.preventDefault(); // Previene il mouseup successivo
+    }
+
     let endTime = Date.now();
     let time = endTime - this.startTime;
     if(time > 500){
