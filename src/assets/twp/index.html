@@ -257,6 +257,8 @@
         window.tiledeskSettings = {
             marginX: "100px",
             marginY: "50px",
+            displayOnDesktop: true,
+            displayOnMobile: true
             // calloutTimer: 1
             // autostart: false
 
@@ -300,7 +302,7 @@
                     
                     var enbedJs = event_data.detail.appConfigs.enbedJs? event_data.detail.appConfigs.enbedJs : false;
                     document.getElementById("enbed").style.display = enbedJs? "inline-block": "none";
-                    document.getElementById("base_url").value = enbedJs ? window.tiledesk.getBaseLocation() + '/launch.js': null;
+                    document.getElementById("base_url").innerText = enbedJs ? window.tiledesk.getBaseLocation() + '/launch.js': null;
                     
                     baseUrlConsole = event_data.detail.appConfigs.dashboardUrl? event_data.detail.appConfigs.dashboardUrl : baseUrlConsole;
                 }
@@ -383,8 +385,6 @@
 
         function goToConsole(){
             var url = new URL(currentUrl);
-            var tiledesk_projectid = url.searchParams.get("tiledesk_projectid");
-            var project_name = url.searchParams.get("project_name");
             var urlConsole = baseUrlConsole + "#/project/"+tiledesk_projectid+"/home";
             //var urlConsole = "dashboard/#/project/"+tiledesk_projectid+"/home";
             window.open(
@@ -439,8 +439,8 @@
         // console.log('project_name: ', project_name);
 
         window.onload = function() {
-            document.getElementById("project_id").value = '"' + tiledesk_projectid + '"';
-            document.getElementById("project_name").value = project_name;
+            document.getElementById("project_id").innerText = '"' + tiledesk_projectid + '"';
+            document.getElementById("project_name").innerText = project_name;
             
             if(role !== 'agent'){
                 document.getElementById("testPageButton").style.display = 'block'
@@ -540,7 +540,7 @@
                                 &nbsp;&nbsp;&nbsp;&nbsp;window.tiledeskSettings = <br>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;projectid: </span> 
-                                <span id="project_id"> </span> 
+                                <span id="project_id"></span> 
                                 <span style="border:none !important">
                                 <br>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}; <br>

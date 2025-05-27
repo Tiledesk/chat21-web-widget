@@ -15,7 +15,7 @@ import { ConversationModel } from 'src/chat21-core/models/conversation';
 // utils
 import { v4 as uuidv4 } from 'uuid';
 import { HEADER_MENU_OPTION, UID_SUPPORT_GROUP_MESSAGES } from 'src/app/utils/constants';
-import { CHANNEL_TYPE, INFO_MESSAGE_TYPE, TYPE_MSG_TEXT } from 'src/chat21-core/utils/constants';
+import { CHANNEL_TYPE, INFO_MESSAGE_TYPE, MSG_STATUS_SENT, TYPE_MSG_TEXT } from 'src/chat21-core/utils/constants';
 import { getDateDifference } from 'src/chat21-core/utils/utils';
 import { isJustRecived, isUserBanned } from 'src/chat21-core/utils/utils-message';
 
@@ -743,9 +743,13 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
         this.logger.debug('[CONV-COMP] ***** DETAIL messageAdded *****', msg);
         if (msg) {
           that.newMessageAdded(msg);
-          this.onNewMessageCreated.emit(msg)
           this.checkMessagesLegntForTranscriptDownloadMenuOption();
           this.resetTimeout();
+          
+          /** publish onMessageCreated only if status is >= 100 */
+          if(msg.status >= MSG_STATUS_SENT){
+            this.onNewMessageCreated.emit(msg)
+          }
           // this.updateLeadInfo(msg);
         }
       });

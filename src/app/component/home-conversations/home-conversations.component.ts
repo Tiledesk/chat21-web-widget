@@ -67,7 +67,7 @@ export class HomeConversationsComponent implements OnInit, OnDestroy {
   availableAgents: Array<UserAgent> = [];
   // ========= end:: variabili del componente ======== //
 
-  waitingTime: number;
+  waitingTime: Number;
   langService: HumanizeDurationLanguage = new HumanizeDurationLanguage();
   humanizer: HumanizeDuration;
   humanWaitingTime: string;

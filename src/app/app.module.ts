@@ -24,7 +24,7 @@ import { ImageComponent } from './component/message/image/image.component';
 import { InfoMessageComponent } from './component/message/info-message/info-message.component';
 import { HtmlComponent } from './component/message/html/html.component';
 import { FrameComponent } from './component/message/frame/frame.component';
-import { AudioTrackComponent } from './component/message/audio-track/audio-track.component';
+import { AudioComponent } from './component/message/audio/audio.component';
 import { UserTypingComponent } from './../chat21-core/utils/user-typing/user-typing.component';
 /** MESSAGE ATTACHMENTS COMPONENTS */
 import { MessageAttachmentComponent } from './component/message-attachment/message-attachment.component';
@@ -290,7 +290,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     ActionButtonComponent,
     LinkButtonComponent,
     TextButtonComponent,
-    AudioTrackComponent,
+    AudioComponent,
     UserTypingComponent,
     /**DIRECTIVES */
     HtmlEntitiesEncodePipe,

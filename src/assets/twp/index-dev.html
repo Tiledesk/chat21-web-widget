@@ -479,6 +479,8 @@
         window.tiledeskSettings = {
             marginX: "100px",
             marginY: "50px",
+            displayOnDesktop: true,
+            displayOnMobile: true
             // calloutTimer: 1,
         };
 
@@ -507,8 +509,8 @@
                 document.getElementById('events').scrollTop = document.getElementById('events').scrollHeight
             }
 
-            document.getElementById("project_id").value = '"' + tiledesk_projectid + '"';
-            document.getElementById("project_name").value = project_name;
+            document.getElementById("project_id").innerText = '"' + tiledesk_projectid + '"';
+            document.getElementById("project_name").innerText = project_name;
         });
 
         window.Tiledesk('onBeforeInit', function(event_data) {
@@ -521,7 +523,7 @@
                     
                     var enbedJs = event_data.detail.appConfigs.enbedJs? event_data.detail.appConfigs.enbedJs : false;
                     document.getElementById("enbed").style.display = enbedJs? "inline-block": "none";
-                    document.getElementById("base_url").value = enbedJs ? window.tiledesk.getBaseLocation() + '/launch.js': null;
+                    document.getElementById("base_url").innerText = enbedJs ? window.tiledesk.getBaseLocation() + '/launch.js': null;
                     
                     baseUrlConsole = event_data.detail.appConfigs.dashboardUrl? event_data.detail.appConfigs.dashboardUrl : baseUrlConsole;
                 }
@@ -702,9 +704,6 @@
 
         function goToConsole(){
             var url = new URL(currentUrl);
-            var tiledesk_projectid = url.searchParams.get("tiledesk_projectid");
-            var project_name = url.searchParams.get("project_name");
-           
             var urlConsole = baseUrlConsole + "#/project/"+tiledesk_projectid+"/home";
             //var urlConsole = "dashboard/#/project/"+tiledesk_projectid+"/home";
             window.open(
@@ -1355,10 +1354,10 @@
             window.Tiledesk('restart')
         }
 
-        function onClickShowRegisterAudioFooterButton(){
-            let status = document.querySelector('input[name="showRegisterAudioFooterButton"]:checked').value
-            window.tiledeskSettings['showRegisterAudioFooterButton'] = stringToBoolean(status)
-            console.log('onClickShowRegisterAudioFooterButton:', window.tiledeskSettings)
+        function onClickshowAudioRecorderFooterButton(){
+            let status = document.querySelector('input[name="showAudioRecorderFooterButton"]:checked').value
+            window.tiledeskSettings['showAudioRecorderFooterButton'] = stringToBoolean(status)
+            console.log('onClickshowAudioRecorderFooterButton:', window.tiledeskSettings)
             window.Tiledesk('restart')
         }
 
@@ -2405,13 +2404,13 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-5 formElement"><span><em><strong>showRegisterAudioFooterButton</strong></em></span></div>
+                            <div class="col-md-5 formElement"><span><em><strong>showAudioRecorderFooterButton</strong></em></span></div>
                             <div class="col-md-5">
-                                <input class="form-check-input" type="radio" name="showRegisterAudioFooterButton" value="true" checked><label>True</label>
-                                <input class="form-check-input" type="radio" name="showRegisterAudioFooterButton" value="false"><label>False</label>
+                                <input class="form-check-input" type="radio" name="showAudioRecorderFooterButton" value="true" checked><label>True</label>
+                                <input class="form-check-input" type="radio" name="showAudioRecorderFooterButton" value="false"><label>False</label>
                             </div>
                             <div class="col-md-2">
-                                <button class="btn btn-light" onclick="onClickShowRegisterAudioFooterButton()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                                <button class="btn btn-light" onclick="onClickshowAudioRecorderFooterButton()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
                             </div>
                         </div>
 
