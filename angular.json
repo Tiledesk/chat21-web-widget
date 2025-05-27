@@ -39,7 +39,8 @@
               "src/environments/real_data/widget-config-mqtt.json",
               "src/environments/real_data/widget-config-docker.json",
               "src/environments/real_data/widget-config-native-mqtt.json",
-              "src/environments/real_data/widget-config-native-prod.json"
+              "src/environments/real_data/widget-config-native-prod.json",
+              "src/environments/real_data/widget-config-aws-stage.json"
             ],
             "styles": [
               "src/app/sass/styles.scss"
