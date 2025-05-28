@@ -3,20 +3,19 @@ import { Globals } from '../utils/globals';
 import { TestBed, inject } from '@angular/core/testing';
 
 import { StarRatingWidgetService } from './star-rating-widget.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('StarRatingWidgetService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientModule
-      ],
-      providers: [
+    imports: [],
+    providers: [
         StarRatingWidgetService,
         Globals,
-        AppConfigService
-      ]
-    });
+        AppConfigService,
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+});
   });
 
   it('should be created', inject([StarRatingWidgetService], (service: StarRatingWidgetService) => {

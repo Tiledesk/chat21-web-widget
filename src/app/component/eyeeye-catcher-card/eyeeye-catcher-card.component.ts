@@ -96,7 +96,6 @@ export class EyeeyeCatcherCardComponent implements OnInit {
       title = this.g.calloutTitle.trim();
     }
     this.title = title;
-    const emojiRegex = require('emoji-regex');
     const regex = emojiRegex();
     let match: any;
     // this.logger.debug('[EYEEYE-CATCHER-CARD]-->regex, emojiRegex', regex, emojiRegex)
@@ -162,4 +161,9 @@ export class EyeeyeCatcherCardComponent implements OnInit {
   //     this.displayEyeCatcherCard = 'none';
   //     this.displayEyeCatcherCardCloseBtnIsMobileWrapper = 'none';
   // }
+}
+
+
+export default function emojiRegex(): RegExp {
+  return /(?:\uD83C[\uDFFB-\uDFFF])|(?:[\u2700-\u27BF])|(?:\u24C2)|(?:[\u1F680-\u1F6FF])/g;
 }
