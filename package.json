@@ -32,7 +32,6 @@
     "@ctrl/ngx-emoji-mart": "^9.2.0",
     "@ngx-translate/core": "^16.0.4",
     "@ngx-translate/http-loader": "^16.0.1",
-    "@popperjs/core": "^2.11.8",
     "@types/marked": "^4.0.3",
     "accept-language-parser": "^1.5.0",
     "bootstrap": "^5.1.3",

@@ -51,7 +51,6 @@
             ],
             "scripts": [
               "src/assets/js/mqtt/4.2.6/mqtt.min.js",
-              "node_modules/@popperjs/core/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
             ],
             "extractLicenses": false,
