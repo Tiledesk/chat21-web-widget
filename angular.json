@@ -15,13 +15,17 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist",
+            "outputPath": {
+              "base": "dist"
+            },
             "baseHref":"/",
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts",
+              "@angular/localize/init",
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/assets",
@@ -39,19 +43,18 @@
               "src/environments/real_data/widget-config-mqtt.json",
               "src/environments/real_data/widget-config-docker.json",
               "src/environments/real_data/widget-config-native-mqtt.json",
-              "src/environments/real_data/widget-config-native-prod.json"
+              "src/environments/real_data/widget-config-native-prod.json",
+              "src/environments/real_data/widget-config-aws-stage.json"
             ],
             "styles": [
               "src/app/sass/styles.scss"
             ],
             "scripts": [
               "src/assets/js/mqtt/4.2.6/mqtt.min.js",
+              "node_modules/@popperjs/core/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
-              "node_modules/popper.js/dist/umd/popper.min.js"
             ],
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "allowedCommonJsDependencies": [
               "rxjs-compat",
               "idb",
@@ -61,7 +64,13 @@
             ],
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "browser": "src/main.ts",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "."
+              ]
+            }
           },
           "configurations": {
             "prod": {
@@ -77,8 +86,6 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -104,8 +111,6 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -124,13 +129,13 @@
           },
           "configurations": {
             "prod": {
-              "browserTarget": "widget:build:prod"
+              "buildTarget": "widget:build:prod"
             },
             "pre": {
-              "browserTarget": "widget:build:pre"
+              "buildTarget": "widget:build:pre"
             },
             "development": {
-              "browserTarget": "widget:build:development"
+              "buildTarget": "widget:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -138,7 +143,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "widget:build"
+            "buildTarget": "widget:build"
           }
         },
         "test": {

@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { GlobalSettingsService } from './providers/global-settings.service';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { AppStorageService } from 'src/chat21-core/providers/abstract/app-storage.service';
 import { TranslatorService } from './providers/translator.service';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,6 +23,7 @@ import { ChatManager } from 'src/chat21-core/providers/chat-manager';
 import { NGXLogger } from 'ngx-logger';
 import { CustomLogger } from 'src/chat21-core/providers/logger/customLogger';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
  
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -32,12 +33,12 @@ describe('AppComponent', () => {
   
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule,
-        HttpClientTestingModule,
-        TranslateModule.forRoot(),
-      ],
-      providers:[
+    declarations: [
+        AppComponent
+    ],
+    imports: [RouterTestingModule,
+        TranslateModule.forRoot()],
+    providers: [
         Triggerhandler,
         GlobalSettingsService,
         AppStorageService,
@@ -54,12 +55,11 @@ describe('AppComponent', () => {
         ImageRepoService,
         TypingService,
         PresenceService,
-        UploadService
-      ],
-      declarations: [
-        AppComponent
-      ],
-    }).compileComponents();
+        UploadService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+}).compileComponents();
   }));
 
   beforeEach(() => {

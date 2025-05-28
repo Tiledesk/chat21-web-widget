@@ -1,6 +1,6 @@
 import { CustomTranslateService } from './../../../chat21-core/providers/custom-translate.service';
 import { TranslatorService } from './../../providers/translator.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AppConfigService } from './../../providers/app-config.service';
 import { WaitingService } from './../../providers/waiting.service';
 import { ChatManager } from './../../../chat21-core/providers/chat-manager';
@@ -25,12 +25,10 @@ describe('HomeConversationsComponent', () => {
   
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ HomeConversationsComponent ],
-      imports: [
-        HttpClientModule,
-        TranslateModule.forRoot()
-      ],
-      providers: [
+    declarations: [HomeConversationsComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [TranslateModule.forRoot()],
+    providers: [
         Globals,
         ImageRepoService,
         ChatManager,
@@ -39,10 +37,10 @@ describe('HomeConversationsComponent', () => {
         WaitingService,
         AppConfigService,
         TranslatorService,
-        CustomTranslateService
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
-    })
+        CustomTranslateService,
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+})
     .compileComponents();
   }));
 

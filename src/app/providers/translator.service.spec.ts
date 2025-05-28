@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AppConfigService } from './app-config.service';
 import { Globals } from './../utils/globals';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -9,16 +9,14 @@ import { TranslatorService } from './translator.service';
 describe('TranslatorService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientModule,
-        TranslateModule.forRoot(),
-      ],
-      providers: [
+    imports: [TranslateModule.forRoot()],
+    providers: [
         TranslatorService,
         Globals,
-        AppConfigService
-      ]
-    });
+        AppConfigService,
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+});
   });
 
   it('should be created', inject([TranslatorService], (service: TranslatorService) => {

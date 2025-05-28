@@ -1,27 +1,26 @@
 import { AppConfigService } from './../../providers/app-config.service';
 import { StarRatingWidgetService } from './../../providers/star-rating-widget.service';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StarRatingWidgetComponent } from './star-rating-widget.component';
 import { Globals } from '../../utils/globals';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('StarRatingWidgetComponent', () => {
   let component: StarRatingWidgetComponent;
   let fixture: ComponentFixture<StarRatingWidgetComponent>;
 
-  beforeEach(async(() => {
+  beforeEach((() => {
     TestBed.configureTestingModule({
-      declarations: [ StarRatingWidgetComponent ],
-      imports: [
-        HttpClientModule
-      ],
-      providers: [
+    declarations: [StarRatingWidgetComponent],
+    imports: [],
+    providers: [
         Globals,
         AppConfigService,
-        StarRatingWidgetService
-      ]
-    })
+        StarRatingWidgetService,
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+})
     .compileComponents();
   }));
 

@@ -118,7 +118,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
 
   // devo inserirle nel globals
   subscriptions: Array<any> = [];
-  private unsubscribe$: Subject<any> = new Subject<any>();
+  private unsubscribe$: Subject<void> = new Subject<void>();
   showMessageWelcome: boolean;
 
   // ========= begin::agent availability

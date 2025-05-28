@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { AppStorageService } from '../abstract/app-storage.service';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TiledeskAuthService } from './tiledesk-auth.service';
 import { NGXLogger } from 'ngx-logger';
 import { CustomLogger } from '../logger/customLogger';
@@ -17,13 +17,14 @@ describe('TiledeskAuthService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
+    imports: [],
+    providers: [
         TiledeskAuthService,
         AppStorageService,
-        // {provide: HttpClient, useValue: httpClientMock}
-      ],
-      imports: [HttpClientTestingModule]
-    })
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ]
+})
 
     // httpClientMock = jasmine.createSpyObj(['getAllObjects']);
     httpMock = TestBed.inject(HttpTestingController);
