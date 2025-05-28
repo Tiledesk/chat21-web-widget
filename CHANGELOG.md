@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc.4
+- **bug-fixed**: Dockerfile for angular 18
+
 # 5.1.0-rc.3
 - **added**: angular 18
 
