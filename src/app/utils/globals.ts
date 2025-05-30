@@ -163,7 +163,6 @@ export class Globals {
   openExternalLinkButton: boolean;
   hideHeaderConversationOptionsMenu: boolean;
   hideCloseConversationOptionMenu: boolean;
-  hideRestartConversationOptionsMenu: boolean;
   hideSettings: boolean;
   filterByRequester: boolean;
   persistence;
@@ -336,8 +335,6 @@ export class Globals {
     this.hideHeaderConversationOptionsMenu = false;
     /** enable to close a conversation from upper-right header menu  */
     this.hideCloseConversationOptionMenu = false;
-    /** enable to hide/show options menu in conversation detail header */
-    this.hideRestartConversationOptionsMenu = false;
     /** enable to hide/show options menu in conversation detail header */
     this.hideSettings = false;
     /** enable to hide/show options menu in home component */
@@ -528,7 +525,7 @@ export class Globals {
       'fullscreenMode': this.fullscreenMode,
       'filterByRequester': this.filterByRequester,
       'hideHeaderConversationOptionsMenu': this.hideHeaderConversationOptionsMenu, 'hideHeaderCloseButton': this.hideHeaderCloseButton,
-      'hideCloseConversationOptionMenu': this.hideCloseConversationOptionMenu, 'hideRestartConversationOptionsMenu': this.hideRestartConversationOptionsMenu,
+      'hideCloseConversationOptionMenu': this.hideCloseConversationOptionMenu,
       'hideSettings': this.hideSettings,
       'isLogEnabled': this.isLogEnabled,
       'isOpen': this.isOpen, 'isShown': this.isShown,
