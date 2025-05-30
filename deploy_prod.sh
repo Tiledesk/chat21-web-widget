@@ -1,8 +1,8 @@
-# npm version patch
+# npm version prerelease --preid=beta
 version=`node -e 'console.log(require("./package.json").version)'`
-ECHO "____________WIDGET-V5______________"
+echo "version $version"
+echo "____________WIDGET-V5______________"
 echo "CREATING TAG ON GIT FOR version: $version"
-# echo "version $version"
 
 # Get curent branch name
 current_branch=$(git rev-parse --abbrev-ref HEAD)

@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc.6
+- **removed**: hideRestartConversationOptionsMenu
+
+# 5.1.0-rc.5
 # 5.1.0-rc.4
 - **bug-fixed**: Dockerfile for angular 18
 
