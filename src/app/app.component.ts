@@ -203,7 +203,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                         if(conversation.is_new && conversation.sender !== this.g.senderId && !isInfo(conversation)){
                             that.lastConversation = conversation;
                             that.g.isOpenNewMessage = true;
-                            that.logger.debug('[APP-COMP] lastconversationnn', that.lastConversation)
+                            that.logger.debug('[APP-COMP] lastConversation', that.lastConversation)
                         }
                         
 
