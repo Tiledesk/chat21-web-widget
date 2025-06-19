@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.98
+- **bug-fixed**: meta info not rendered correctly
+
 # 5.0.97
 
 # 5.0.96
