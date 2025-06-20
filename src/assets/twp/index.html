@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> 
 
-    <title>Widget test page </title>
+    <title>Widget test page</title>
     <style>
 
         @-moz-keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* Firefox */
@@ -295,7 +295,10 @@
         window.Tiledesk('onBeforeInit', function(event_data) {
             console.log("onBeforeInit Tiledesk FN", event_data);
 
-            var brandSrc = event_data.detail.appConfigs.brandSrc? getBrandResources(event_data.detail.appConfigs.brandSrc) : null;
+            if(event_data.detail.appConfigs.brandSrc){
+                getBrandResources(event_data.detail.appConfigs.brandSrc)
+            }
+            // var brandSrc = event_data.detail.appConfigs.brandSrc?  : null;
 
             setTimeout(() => {
                 if(event_data && event_data.detail && event_data.detail.appConfigs){
@@ -408,7 +411,7 @@
                     var brandJson = JSON.parse(xhr.response)
                     if(brandJson){
                         /** TITLE AND FAVICON **/
-                        brandJson['WIDGET'].META_TITLE? document.body.title = brandJson['WIDGET'].META_TITLE : null;
+                        brandJson['WIDGET'].META_TITLE? document.title = brandJson['WIDGET'].META_TITLE : null;
                         brandJson['WIDGET'].FAVICON_URL?  document.querySelector("link[rel~='icon']").setAttribute('href', brandJson['WIDGET'].FAVICON_URL) : null;
                         /** FOOTER-LOGO **/    
                         brandJson['COMMON'].COMPANY_LOGO? document.getElementById('footer-logo').src = brandJson['COMMON'].COMPANY_LOGO : null;
@@ -421,6 +424,13 @@
                         brandJson['COMMON'].DOCS? null: document.getElementById('share').style.display = 'none'
                         /** IFRAME TITLE**/
                         brandJson['COMMON'].COMPANY_LOGO? document.getElementById('tiledeskiframe').title = brandJson['COMMON'].COMPANY_NAME + ' Widget' : null;
+                        /** META sharing ELEMENTS */
+                        if(brandJson['WIDGET'].META_SHARE_INFO && Object.keys(brandJson['WIDGET'].META_SHARE_INFO).length > 0){
+                            Object.keys(brandJson['WIDGET'].META_SHARE_INFO).forEach(key => {
+                                var meta = document.querySelector("meta[property^='og:"+key.toLowerCase()+"']");
+                                meta.setAttribute('content', brandJson['WIDGET'].META_SHARE_INFO[key])
+                            })
+                        }
                     }
                     
                 }
