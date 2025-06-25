@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.99
+
 # 5.0.99-rc1
 - **bug-fixed**: audio duration not showed in mobile browser
 
