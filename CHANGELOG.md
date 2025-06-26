@@ -6,6 +6,66 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc.5
+# 5.1.0-rc.4
+- **bug-fixed**: Dockerfile for angular 18
+
+# 5.1.0-rc.3
+- **added**: angular 18
+
+# 5.1.0-rc.2
+- **added**: angular 17
+
+# 5.0.96
+
+# 5.0.95
+- **bug-fixed**: first message is fired twice ( from /event and from /messages with hiddenMesage)
+
+# 5.0.94
+
+# 5.0.94-rc7
+- **added**: touchstart and touchend events for mobile mic footer button
+
+# 5.0.94-rc6
+- **bug-fixed**: logoChat is not rendered if contains special characters (ex. "(" or ")" ) in the name of the resource
+
+# 5.0.94-rc5
+- **bug-fixed**: onNewConversationWithMessage create new conv and not use che current one just created
+
+# 5.0.94-rc4
+- **added**: publish onMessageCreated only if status is >= 100
+
+# 5.0.94-rc3
+- **bug-fixed**: if hiddenMessage exist, onNewConversation event is not fired
+
+# 5.0.94-rc2
+- **added**: onNewConversation event in chatbot-panel.html page for logs 
+
+# 5.0.94-rc1
+- **changed**: postMessage to cds for current intentMessage
+
+# 5.0.93
+- **changed**: disabled sound on chatbot-panel.html
+
+# 5.0.92
+- **added**: displayOnDesktop and displayOnMobile parameters in test mode with true value
+
+# 5.0.91
+
+# 5.0.91-rc4
+- **changed**: audio-track to audio component renamed
+
+# 5.0.91-rc3
+- **added**: showAudioRecorderFooterButton property variable
+
+# 5.0.91-rc2
+- **changed**: colors for chat-audio-track component managed
+
+# 5.0.91-rc1
+- **changed**: enabled showRegisterAudioFooterButton button 
+
+# 5.0.90 in PROD
+
 # 5.0.90-rc.4
 - **added**: ability to manage footer audioRecord button
 
