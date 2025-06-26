@@ -24,7 +24,8 @@ export class ProjectModel {
         public color?: string,
         public welcomeTitle?: string,
         public welcomeMsg?: string,
-        public attributes?: IRules
+        public attributes?: IRules,
+        public settings?:{ [key: string]: any },
     ) { }
 
     initialize (
@@ -43,6 +44,7 @@ export class ProjectModel {
         trialDaysLeft?: number,
         trialExpired?: boolean,
         updatedAt?: string,
+        settings?: { [key: string]: any },
         versions?: string,
     ) {
         this.id = id;
@@ -60,6 +62,7 @@ export class ProjectModel {
         this.trialDaysLeft = trialDaysLeft;
         this.trialExpired = trialExpired;
         this.updatedAt = updatedAt;
+        this.settings = settings;
         this.versions = versions;
     }
 
