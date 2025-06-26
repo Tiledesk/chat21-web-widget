@@ -613,7 +613,7 @@
                     var brandJson = JSON.parse(xhr.response)
                     if(brandJson){
                         /** TITLE AND FAVICON **/
-                        brandJson['WIDGET'].META_TITLE? document.body.title = brandJson['WIDGET'].META_TITLE : null;
+                        brandJson['WIDGET'].META_TITLE? document.title = brandJson['WIDGET'].META_TITLE : null;
                         brandJson['WIDGET'].FAVICON_URL?  document.querySelector("link[rel~='icon']").setAttribute('href', brandJson['WIDGET'].FAVICON_URL) : null;
                         /** FOOTER-LOGO **/
                         brandJson['COMMON'].COMPANY_LOGO? document.getElementById('footer-logo').src = brandJson['COMMON'].COMPANY_LOGO : null;
@@ -624,6 +624,13 @@
                         brandJson['COMMON'].BRAND_PRIMARY_COLOR? document.body.style.setProperty('--base-company-logo', brandJson['COMMON'].BRAND_PRIMARY_COLOR): null;
                         /** IFRAME TITLE**/
                         brandJson['COMMON'].COMPANY_NAME? document.getElementById('tiledeskiframe').title = brandJson['COMMON'].COMPANY_NAME + ' Widget' : null;
+                        /** META sharing ELEMENTS */
+                        if(brandJson['WIDGET'].META_SHARE_INFO && Object.keys(brandJson['WIDGET'].META_SHARE_INFO).length > 0){
+                            Object.keys(brandJson['WIDGET'].META_SHARE_INFO).forEach(key => {
+                                var meta = document.querySelector("meta[property^='og:"+key.toLowerCase()+"']");
+                                meta.setAttribute('content', brandJson['WIDGET'].META_SHARE_INFO[key])
+                            })
+                        }
                     }
                 }
                     

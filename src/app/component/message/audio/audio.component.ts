@@ -1,5 +1,7 @@
 import { Component, ElementRef, AfterViewInit, Input, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
+import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 
 @Component({
@@ -26,13 +28,13 @@ export class AudioComponent implements AfterViewInit {
   currentTime: number = 0;
   isPlaying: boolean = false;
 
+  private logger: LoggerService = LoggerInstance.getInstance();
   constructor(
     private sanitizer: DomSanitizer,
     private elementRef: ElementRef
   ) {}
 
   ngAfterViewInit() {
-    console.log('stylesssss', this.stylesMap)
     if (this.audioBlob) {
       this.rawAudioUrl = URL.createObjectURL(this.audioBlob);
       this.audioUrl = this.sanitizer.bypassSecurityTrustUrl(this.rawAudioUrl);
@@ -136,21 +138,33 @@ export class AudioComponent implements AfterViewInit {
     return `${minutes}:${sec < 10 ? '0' + sec : sec}`;
   }
 
-  getAudioDuration() {
-    const audio = new Audio();
-    audio.src = this.rawAudioUrl!;
-    audio.addEventListener('loadedmetadata', () => {
-      if (audio.duration === Infinity) {
-        audio.currentTime = Number.MAX_SAFE_INTEGER;
-        audio.ontimeupdate = () => {
-          audio.ontimeupdate = null; 
-          audio.currentTime = 0;
-          this.audioDuration = audio.duration;
-        };
-      } else {
-        this.audioDuration = audio.duration;
-      }
-    });
+  async getAudioDuration() {
+    // const audio = new Audio();
+    // audio.src = this.rawAudioUrl!;
+    // audio.addEventListener('loadedmetadata', () => {
+    //   if (audio.duration === Infinity) {
+    //     audio.currentTime = Number.MAX_SAFE_INTEGER;
+    //     audio.ontimeupdate = () => {
+    //       audio.ontimeupdate = null; 
+    //       audio.currentTime = 0;
+    //       this.audioDuration = audio.duration;
+    //     };
+    //   } else {
+    //     this.audioDuration = audio.duration;
+    //   }
+    // });
+
+    const response = await fetch(this.rawAudioUrl!);
+    this.logger.debug('getAudioDuration: response ---> ', response)
+    const arrayBuffer = await response.arrayBuffer();
+    this.logger.debug('getAudioDuration: arrayBuffer ---> ', arrayBuffer)
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    this.logger.debug('getAudioDuration: audioContext ---> ', audioContext)
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    this.logger.debug('getAudioDuration: audioBuffer ---> ', audioBuffer)
+    this.audioDuration = audioBuffer.duration;
+    this.logger.debug('getAudioDuration: audioDuration ---> ', this.audioDuration)
+
   }
 
   extractFirstColor(gradient: string): string | null {
