@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc.7
+- **added**: ability to allows emoji after message is sent
+
 # 5.1.0-rc.6
 - **removed**: hideRestartConversationOptionsMenu
 
