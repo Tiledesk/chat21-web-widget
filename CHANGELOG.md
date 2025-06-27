@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.100
+- **bug-fixed**: if conversation is deleted and user came back, widget shows the same stored conversation as opened (only if singleConversation mode is active)
+
 # 5.0.99
 
 # 5.0.99-rc1
