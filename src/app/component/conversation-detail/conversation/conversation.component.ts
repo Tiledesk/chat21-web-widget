@@ -407,6 +407,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
             // duration.hours < this.g.continueConversationBeforeTime? this.showContinueConversationButton = true: this.showContinueConversationButton = false
             callback(this.isConversationArchived)
           }else if(!conv) {
+            this.isConversationArchived = true
             callback(null);
           }
         })
