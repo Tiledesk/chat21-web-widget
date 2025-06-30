@@ -93,6 +93,7 @@ export class GlobalSettingsService {
                     project['trialDaysLeft'],
                     project['trialExpired'],
                     project['updatedAt'],
+                    project['settings'],
                     project['versions']
                 );
             }
