@@ -1,7 +1,23 @@
-<!-- LOGO-->
-<div id="hiddenFooter" *ngIf="!hideTextAreaContent && poweredBy" class="fade-in-bottom" 
-    [class.hideTextReply]="hideTextReply">
-    <div tabindex="-1" class="c21-powered-by" [innerHTML]="poweredBy" (click)="managePoweredBy($event)"></div>
+<div class="footerContainerAlert">
+    <!-- LOGO-->
+    <div id="hiddenFooter" *ngIf="!hideTextAreaContent && poweredBy" class="fade-in-bottom" [class.hideTextReply]="hideTextReply">
+        <div tabindex="-1" class="c21-powered-by" [innerHTML]="poweredBy" (click)="managePoweredBy($event)"></div>
+    </div>
+
+    <!-- ALERT EMOJI & URLS -->
+    <div id="textAlert" *ngIf="!hideTextAreaContent && showAlertEmoji" class="fade-in-bottom" [class.hideTextReply]="hideTextReply">
+        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" version="1.1" viewBox="0 0 110 135">
+            <path d="M55,25.8c-23,0-41.7,18.7-41.7,41.7s18.7,41.7,41.7,41.7,41.7-18.7,41.7-41.7-18.7-41.7-41.7-41.7ZM55,91.5c-3.4,0-6.2-2.8-6.2-6.2s2.8-6.2,6.2-6.2,6.2,2.8,6.2,6.2-2.8,6.2-6.2,6.2ZM60.3,70.1c-.2,2.8-2.5,4.9-5.3,4.9s-5.1-2.2-5.3-4.9l-1.6-22.3c-.3-4,2.9-7.4,6.9-7.4s7.2,3.4,6.9,7.4l-1.6,22.3Z"/>
+          </svg>
+        <div tabindex="-1" class="alertText">{{translationMap.get('EMOJI_NOT_ELLOWED')}}</div>
+    </div>
+
+    <div id="textAlert" *ngIf="!hideTextAreaContent && showAlertUrl" class="fade-in-bottom" [class.hideTextReply]="hideTextReply">
+        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" version="1.1" viewBox="0 0 110 135">
+            <path d="M55,25.8c-23,0-41.7,18.7-41.7,41.7s18.7,41.7,41.7,41.7,41.7-18.7,41.7-41.7-18.7-41.7-41.7-41.7ZM55,91.5c-3.4,0-6.2-2.8-6.2-6.2s2.8-6.2,6.2-6.2,6.2,2.8,6.2,6.2-2.8,6.2-6.2,6.2ZM60.3,70.1c-.2,2.8-2.5,4.9-5.3,4.9s-5.1-2.2-5.3-4.9l-1.6-22.3c-.3-4,2.9-7.4,6.9-7.4s7.2,3.4,6.9,7.4l-1.6,22.3Z"/>
+          </svg>
+        <div tabindex="-1" class="alertText">{{translationMap.get('DOMAIN_NOT_ALLOWED')}}</div>
+    </div>
 </div>
 
 <!-- TEXTAREA + ICONS: conv active-->
@@ -44,7 +60,7 @@
 
 
 
-    <div *ngIf="!isStopRec" class="visible-text-area"  [class.disabled] = "( isConversationArchived || hideTextReply)? true : null">
+    <div *ngIf="!isStopRec" class="visible-text-area" [class.hasError]="showAlertEmoji || showAlertUrl" [class.disabled] = "( isConversationArchived || hideTextReply)? true : null">
         <!-- isFilePendingToUpload || -->
       <textarea 
         [attr.disabled] = "(hideTextReply)? true : null"
@@ -67,7 +83,7 @@
     </div>
 
     <!-- ICON SEND -->
-    <div *ngIf="(textInputTextArea !== '' && !isStopRec) || !showAudioRecorderFooterButton" tabindex="-1" class="chat21-textarea-button" [class.active]="textInputTextArea && !hideTextReply" id="chat21-button-send" (click)="onSendPressed($event)">
+    <div *ngIf="(textInputTextArea !== '' && !isStopRec) || !showAudioRecorderFooterButton" tabindex="-1" class="chat21-textarea-button" [class.disabled]="showAlertEmoji || showAlertUrl" [class.active]="textInputTextArea && !hideTextReply" id="chat21-button-send" (click)="onSendPressed($event)">
         <span class="v-align-center">
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  height="24" width="24" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
                 <path d="M1.8,18.9V1.7L22,10.3L1.8,18.9z M3.9,15.6l12.6-5.4L3.9,4.9v3.7l6.4,1.6l-6.4,1.6V15.6z M3.9,15.6V4.9v7V15.6z"/>
