@@ -1,6 +1,6 @@
 import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
 import { Globals } from 'src/app/utils/globals';
-import { checkAcceptedFile } from 'src/app/utils/utils';
+import { checkAcceptedFile, isEmoji } from 'src/app/utils/utils';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { UploadModel } from 'src/chat21-core/models/upload';
 import { ConversationHandlerService } from 'src/chat21-core/providers/abstract/conversation-handler.service';
@@ -81,6 +81,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     enableSearch: false,
     include: [ 'recent', 'people', 'nature', 'activity', 'flags']
   }
+
+  showAlert: boolean = false
 
   convertColorToRGBA = convertColorToRGBA;
   private logger: LoggerService = LoggerInstance.getInstance()
@@ -321,7 +323,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     this.onEmojiiPickerShow.emit(false)
     this.logger.log('[CONV-FOOTER] SEND MESSAGE: ', msg, type, metadata, additional_attributes);
 
-    msg = this.checkForEmojii(msg)
+
     if (msg && msg.trim() !== '' || type === TYPE_MSG_IMAGE || type === TYPE_MSG_FILE ) {
 
       // msg = htmlEntities(msg);
@@ -519,9 +521,14 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   checkForEmojii(text){
     //remove emojii only if "emojii" exist and is set to false
     if(this.project && this.project.settings?.allow_send_emoji === false){
-      return findAndRemoveEmoji(text)
+      this.showAlert = isEmoji(text);
+      console.log('show alerttt--->', this.showAlert)
+      if(this.showAlert){
+        return false
+      }
+      return true
     }
-    return text
+    return true
   }
 
   
@@ -529,6 +536,12 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   onTextAreaChange(){
     this.resizeInputField()
     this.setWritingMessages(this.textInputTextArea)
+
+    let check = this.checkForEmojii(this.textInputTextArea)
+    if(!check){
+      return;
+    }
+
   }
 
   onSendPressed(event) {
@@ -597,6 +610,13 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   addEmoji(event){
     this.onEmojiiPickerShow.emit(false); //de-activate emojii picker on select
+
+    let check = this.checkForEmojii(this.textInputTextArea)
+    console.log('chekkkkkkk', check)
+    if(!check){
+      return;
+    }
+
     this.textInputTextArea = this.textInputTextArea.trimStart() + event.emoji.native + " "
     this.setFocusOnId('chat21-main-message-context')
   }

@@ -39,6 +39,9 @@
     &.disabled {
         background-color: rgb(232, 233, 237);
     }
+    &.hasError{
+        box-shadow: 0 0 0 1px var(--chat-footer-border-color-error) inset;
+    }
 }
 
 .chat21-textarea-button {
@@ -51,6 +54,12 @@
     &.active {
         opacity: 1;
         cursor: pointer;
+    }
+    &.disabled{
+        opacity: 0.3 !important;
+        pointer-events: none !important;
+        cursor: not-allowed !important;
+
     }
 }
 
@@ -273,16 +282,18 @@ textarea:active{
 
 }
 
+.footerContainerAlert{
+    position: relative;
+}
 
 #hiddenFooter{
-    // position: absolute;
+    position: absolute;
     bottom: 100%;
     width: 100%;
     height: var(--chat-footer-logo-height);
     display: flex;
     align-items: center;
     justify-content: center;
-    // position: absolute;
     // box-shadow: inset 0px -22px 16px -15px rgba(0,0,0,0.1);
     &.hideTextReply{
         height: var(--chat-footer-height);
@@ -341,6 +352,37 @@ textarea:active{
         b{
             font-weight: bolder;
         }
+    }
+}
+
+#textAlert{
+    bottom: 100%;
+    width: 100%;
+    height: var(--chat-footer-logo-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--content-background-color);
+    position: absolute;
+    svg{
+        fill: var(--chat-footer-border-color-error);
+    }
+    // box-shadow: inset 0px -22px 16px -15px rgba(0,0,0,0.1);
+    div.alertText{
+        color: var(--dark-gray);
+        font-size: 1.2em;
+        font-weight: 500;
+        line-height: 22px;
+        font-family: Mulish, sans-serif;
+        letter-spacing: 0.24px;
+        -webkit-font-smoothing: antialiased;
+        padding: 4px 12px;
+        color: var(--chat-footer-border-color-error);
+    }
+    &.hideTextReply{
+        height: var(--chat-footer-height);
+        position: unset;
+        box-shadow: none;
     }
 }
 
