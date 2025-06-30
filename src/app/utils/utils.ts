@@ -210,6 +210,44 @@ export function isEmoji(str: string) {
   }
 }
 
+export function isAllowedUrlInText(text: string, allowedUrls: string[]): boolean {
+  // Regex per trovare URL o domini nudi nel testo
+  const urlRegex = /https?:\/\/[^\s]+|www\.[^\s]+|(?:\b[\w-]+\.)+[a-z]{2,}(\/[^\s]*)?/gi;
+  const foundUrls = text.match(urlRegex);
+
+  if (!foundUrls) {
+    return true; // Nessun URL => testo ammesso
+  }
+
+  // Normalizza dominio: rimuove schema, www., slash finali
+  const normalize = (url: string) =>
+    url
+      .replace(/^https?:\/\//i, '')
+      .replace(/^www\./i, '')
+      .replace(/\/$/, '')
+      .toLowerCase();
+
+  // Normalizza tutti gli allowed pattern per confronto
+  const normalizedAllowedPatterns = allowedUrls.map(pattern =>
+    pattern
+      .replace(/^https?:\/\//i, '')
+      .replace(/^www\./i, '')
+      .replace(/\/$/, '')
+      .toLowerCase()
+      .replace(/\./g, '\\.')
+      .replace(/\//g, '\\/')
+      .replace(/\*/g, '.*')
+  );
+
+  return foundUrls.every(rawUrl => {
+    const url = normalize(rawUrl);
+    return normalizedAllowedPatterns.some(pattern => {
+      const regex = new RegExp(`^${pattern}$`, 'i');
+      return regex.test(url);
+    });
+  });
+}
+  
 export function setColorFromString(str: string) {
   const arrayBckColor = ['#fba76f', '#80d066', '#73cdd0', '#ecd074', '#6fb1e4', '#f98bae'];
   let num = 0;

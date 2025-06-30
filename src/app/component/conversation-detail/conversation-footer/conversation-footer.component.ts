@@ -1,6 +1,6 @@
 import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
 import { Globals } from 'src/app/utils/globals';
-import { checkAcceptedFile, isEmoji } from 'src/app/utils/utils';
+import { checkAcceptedFile, isEmoji, isAllowedUrlInText } from 'src/app/utils/utils';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { UploadModel } from 'src/chat21-core/models/upload';
 import { ConversationHandlerService } from 'src/chat21-core/providers/abstract/conversation-handler.service';
@@ -82,7 +82,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     include: [ 'recent', 'people', 'nature', 'activity', 'flags']
   }
 
-  showAlert: boolean = false
+  showAlertEmoji: boolean = false
+  showAlertUrl: boolean = false;
 
   convertColorToRGBA = convertColorToRGBA;
   private logger: LoggerService = LoggerInstance.getInstance()
@@ -521,14 +522,31 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   checkForEmojii(text){
     //remove emojii only if "emojii" exist and is set to false
     if(this.project && this.project.settings?.allow_send_emoji === false){
-      this.showAlert = isEmoji(text);
-      console.log('show alerttt--->', this.showAlert)
-      if(this.showAlert){
+      this.showAlertEmoji = isEmoji(text);
+      if(this.showAlertEmoji){
         return false
       }
+      this.showAlertEmoji = false;
       return true
     }
+    this.showAlertEmoji = false;
     return true
+  }
+
+  checkForUrlDomain(text){
+    if(this.project && this.project.settings?.allowed_urls === true){
+      this.showAlertUrl = !isAllowedUrlInText(text, this.project.settings?.allowed_urls_list);
+      console.log('is allowe domainn --->', isAllowedUrlInText(text, this.project.settings?.allowed_urls_list))
+      if(this.showAlertUrl){
+        return false
+      }
+      this.showAlertUrl = false
+      return true
+    }
+    this.showAlertUrl = false
+    return true
+
+
   }
 
   
@@ -540,6 +558,11 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     let check = this.checkForEmojii(this.textInputTextArea)
     if(!check){
       return;
+    }
+
+    let checkUrlDomain = this.checkForUrlDomain(this.textInputTextArea)
+    if(!checkUrlDomain){
+      return
     }
 
   }
