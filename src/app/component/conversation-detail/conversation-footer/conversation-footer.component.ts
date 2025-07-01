@@ -1,6 +1,6 @@
 import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
 import { Globals } from 'src/app/utils/globals';
-import { checkAcceptedFile, isEmoji, isAllowedUrlInText } from 'src/app/utils/utils';
+import { checkAcceptedFile } from 'src/app/utils/utils';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { UploadModel } from 'src/chat21-core/models/upload';
 import { ConversationHandlerService } from 'src/chat21-core/providers/abstract/conversation-handler.service';
@@ -10,7 +10,7 @@ import { UploadService } from 'src/chat21-core/providers/abstract/upload.service
 import { ChatManager } from 'src/chat21-core/providers/chat-manager';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { TYPE_MSG_FILE, TYPE_MSG_IMAGE, TYPE_MSG_TEXT } from 'src/chat21-core/utils/constants';
-import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
+import { convertColorToRGBA, isAllowedUrlInText, isEmoji } from 'src/chat21-core/utils/utils';
 import { findAndRemoveEmoji, isImage } from 'src/chat21-core/utils/utils-message';
 import { ProjectModel } from 'src/models/project';
 
@@ -325,6 +325,11 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     this.logger.log('[CONV-FOOTER] SEND MESSAGE: ', msg, type, metadata, additional_attributes);
 
 
+    let checkUrlDomain = this.checkForUrlDomain(this.textInputTextArea)
+    if(!checkUrlDomain){
+      return
+    }
+
     if (msg && msg.trim() !== '' || type === TYPE_MSG_IMAGE || type === TYPE_MSG_FILE ) {
 
       // msg = htmlEntities(msg);
@@ -554,16 +559,13 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     this.resizeInputField()
     this.setWritingMessages(this.textInputTextArea)
 
+    //reset alert to defalt values before checking again
+    this.showAlertEmoji= false;
+    this.showAlertUrl = false;
     let check = this.checkForEmojii(this.textInputTextArea)
     if(!check){
       return;
     }
-
-    let checkUrlDomain = this.checkForUrlDomain(this.textInputTextArea)
-    if(!checkUrlDomain){
-      return
-    }
-
   }
 
   onSendPressed(event) {
@@ -634,7 +636,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     this.onEmojiiPickerShow.emit(false); //de-activate emojii picker on select
 
     let check = this.checkForEmojii(this.textInputTextArea)
-    console.log('chekkkkkkk', check)
     if(!check){
       return;
     }
