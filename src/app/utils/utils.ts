@@ -210,42 +210,80 @@ export function isEmoji(str: string) {
   }
 }
 
-export function isAllowedUrlInText(text: string, allowedUrls: string[]): boolean {
-  // Regex per trovare URL o domini nudi nel testo
-  const urlRegex = /https?:\/\/[^\s]+|www\.[^\s]+|(?:\b[\w-]+\.)+[a-z]{2,}(\/[^\s]*)?/gi;
-  const foundUrls = text.match(urlRegex);
+// export function isAllowedUrlInText(text: string, allowedUrls: string[]): boolean {
+//   // Regex per trovare URL o domini nudi nel testo
+//   const urlRegex = /https?:\/\/[^\s]+|www\.[^\s]+|(?:\b[\w-]+\.)+[a-z]{2,}(\/[^\s]*)?/gi;
+//   const foundUrls = text.match(urlRegex);
 
-  if (!foundUrls) {
-    return true; // Nessun URL => testo ammesso
-  }
+//   if (!foundUrls) {
+//     return true; // Nessun URL => testo ammesso
+//   }
 
-  // Normalizza dominio: rimuove schema, www., slash finali
-  const normalize = (url: string) =>
-    url
-      .replace(/^https?:\/\//i, '')
-      .replace(/^www\./i, '')
-      .replace(/\/$/, '')
-      .toLowerCase();
+//   // Normalizza dominio: rimuove schema, www., slash finali
+//   const normalize = (url: string) =>
+//     url
+//       .replace(/^https?:\/\//i, '')
+//       .replace(/^www\./i, '')
+//       .replace(/\/$/, '')
+//       .toLowerCase();
 
-  // Normalizza tutti gli allowed pattern per confronto
-  const normalizedAllowedPatterns = allowedUrls.map(pattern =>
-    pattern
-      .replace(/^https?:\/\//i, '')
-      .replace(/^www\./i, '')
-      .replace(/\/$/, '')
-      .toLowerCase()
-      .replace(/\./g, '\\.')
-      .replace(/\//g, '\\/')
-      .replace(/\*/g, '.*')
-  );
+//   // Normalizza tutti gli allowed pattern per confronto
+//   const normalizedAllowedPatterns = allowedUrls.map(pattern =>
+//     pattern
+//       .replace(/^https?:\/\//i, '')
+//       .replace(/^www\./i, '')
+//       .replace(/\/$/, '')
+//       .toLowerCase()
+//       .replace(/\./g, '\\.')
+//       .replace(/\//g, '\\/')
+//       .replace(/\*/g, '.*')
+//   );
 
-  return foundUrls.every(rawUrl => {
-    const url = normalize(rawUrl);
-    return normalizedAllowedPatterns.some(pattern => {
-      const regex = new RegExp(`^${pattern}$`, 'i');
-      return regex.test(url);
-    });
+//   return foundUrls.every(rawUrl => {
+//     const url = normalize(rawUrl);
+//     return normalizedAllowedPatterns.some(pattern => {
+//       const regex = new RegExp(`^${pattern}$`, 'i');
+//       return regex.test(url);
+//     });
+//   });
+// }
+
+export function isAllowedUrlInText(text: string, allowedUrls: string[]){
+  const urlsInMessage = extractUrls(text);
+  console.log('urlsInMessage ++++ :', urlsInMessage);
+
+  // Normalize the list of allowed domains by extracting only the hostnames
+  const allowedHostnames = allowedUrls.map(url => {
+    try {
+      return new URL(url).hostname.toLowerCase();
+    } catch {
+      // Se è un dominio "nudo", come 'tiledesk.com'
+      return url.toLowerCase();
+    }
   });
+
+  const nonWhitelistedDomains = urlsInMessage.filter((url) => {
+    try {
+      const domain = new URL(url).hostname.toLowerCase();
+      return !allowedHostnames.includes(domain);
+    } catch (e) {
+      // Ignore invalid URLs
+      return true;
+    }
+  });
+
+  if (nonWhitelistedDomains.length > 0) {
+    console.warn('Message blocked: Non-whitelisted domain(s):', nonWhitelistedDomains);
+    // this.domainWarning = true; // <-- display a warning
+    return false;
+  }
+  return true
+
+}
+
+function extractUrls(text: string): string[] {
+  const urlRegex = /https?:\/\/[^\s]+/g;
+  return text.match(urlRegex) || [];
 }
   
 export function setColorFromString(str: string) {
