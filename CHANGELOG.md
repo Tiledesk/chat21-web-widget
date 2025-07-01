@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc.9
+- **bug-fixed**: minor fix allowed urls
+
 # 5.1.0-rc.8
 - **added**: ability to filter on urls attached to message textarea 
 
