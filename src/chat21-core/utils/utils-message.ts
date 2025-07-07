@@ -7,7 +7,8 @@ import {
   MESSAGE_TYPE_OTHERS,
   MAX_WIDTH_IMAGES,
   INFO_MESSAGE_TYPE,
-  CHANNEL_TYPE
+  CHANNEL_TYPE,
+  MESSAGE_TYPE_PRIVATE
 } from '../../chat21-core/utils/constants';
 /** */
 export function isCarousel(message: any) {
@@ -103,10 +104,20 @@ export function isFirstMessage(messages, senderId, index):boolean{
   return false;
 }
 
+export function isPrivate(message: any) {
+  if (message && message.attributes && message.attributes.subtype === 'private') {
+    return true;
+  }
+  return false;
+}
+
 
 /** */
 export function messageType(msgType: string, message: any) {
 
+    if (msgType === MESSAGE_TYPE_PRIVATE) {
+      return isPrivate(message);
+    }
     if (msgType === MESSAGE_TYPE_INFO) {
       return isInfo(message);
     }

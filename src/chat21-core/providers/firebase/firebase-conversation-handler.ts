@@ -15,7 +15,7 @@ import { LoggerService } from '../abstract/logger.service';
 import { LoggerInstance } from '../logger/loggerInstance';
 
 // utils
-import { MSG_STATUS_RECEIVED, TYPE_DIRECT, MESSAGE_TYPE_INFO, INFO_MESSAGE_TYPE } from '../../utils/constants';
+import { MSG_STATUS_RECEIVED, TYPE_DIRECT, MESSAGE_TYPE_INFO, INFO_MESSAGE_TYPE, MESSAGE_TYPE_PRIVATE } from '../../utils/constants';
 import { compareValues, searchIndexInArrayForUid, conversationMessagesRef } from '../../utils/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { messageType, checkIfIsMemberJoinedGroup, hideInfoMessage, isJustRecived, isSender, infoMessageType } from '../../utils/utils-message';
@@ -230,6 +230,12 @@ export class FirebaseConversationHandler extends ConversationHandlerService {
     private addedNew(message:MessageModel){
         const msg = this.messageCommandGenerate(message);
         if(this.isValidMessage(msg)){
+
+            // do not add 'private' msg in widget array messages
+            let isPrivateMessage = messageType(MESSAGE_TYPE_PRIVATE, msg)
+            if(isPrivateMessage){
+                return;
+            }
             // msg.attributes && msg.attributes['subtype'] === 'info'
             let isInfoMessage = messageType(MESSAGE_TYPE_INFO, msg)
             if(isInfoMessage){

@@ -15,7 +15,7 @@ import { UserModel } from '../../models/user';
 import { ConversationHandlerService } from '../abstract/conversation-handler.service';
 
 // utils
-import { MSG_STATUS_RECEIVED, TYPE_DIRECT, MESSAGE_TYPE_INFO, INFO_MESSAGE_TYPE } from '../../utils/constants';
+import { MSG_STATUS_RECEIVED, TYPE_DIRECT, MESSAGE_TYPE_INFO, INFO_MESSAGE_TYPE, MESSAGE_TYPE_PRIVATE } from '../../utils/constants';
 import { compareValues, searchIndexInArrayForUid } from '../../utils/utils';
 import { messageType, checkIfIsMemberJoinedGroup, hideInfoMessage, isJustRecived, isSender, infoMessageType } from '../../utils/utils-message';
 import { v4 as uuidv4 } from 'uuid';
@@ -262,6 +262,13 @@ export class MQTTConversationHandler extends ConversationHandlerService {
     /** */
     private addedMessage(messageSnapshot: MessageModel): Promise<boolean> {
         const msg = this.messageGenerate(messageSnapshot);
+
+        // do not add 'private' msg in widget array messages
+        let isPrivateMessage = messageType(MESSAGE_TYPE_PRIVATE, msg)
+        if(isPrivateMessage){
+            return;
+        }
+
         let isInfoMessage = messageType(MESSAGE_TYPE_INFO, msg)
         if(isInfoMessage){
             this.messageInfo.next(msg)
