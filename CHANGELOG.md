@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc11
+- **bug-fixed**: removed private note msgs
+
 # 5.1.0-rc10
 - **bug-fixed**: minor fix allowed urls
 
