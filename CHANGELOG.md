@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.101
+- **bug-fixed**: removed private note msgs
+
 # 5.0.99
 
 # 5.0.99-rc1
