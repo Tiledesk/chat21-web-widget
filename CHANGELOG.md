@@ -30,6 +30,15 @@
 
 # 5.1.0-rc2
 - **added**: angular 17
+# 5.0.99
+
+# 5.0.99-rc1
+- **bug-fixed**: audio duration not showed in mobile browser
+
+# 5.0.98
+- **bug-fixed**: meta info not rendered correctly
+
+# 5.0.97
 
 # 5.0.96
 
