@@ -71,7 +71,7 @@ export class TiledeskRequestsService {
 
   public getMyRequests(): Promise<{ requests: Array<any>}> {
     this.tiledeskToken = this.appStorage.getItem('tiledeskToken')
-    const url = this.URL_TILEDESK_REQUEST + '/me'
+    const url = this.URL_TILEDESK_REQUEST + '/me?preflight=true'
     this.logger.log('[TILEDESK-SERVICE] - GET REQUEST url ', url);
     const httpOptions = {
       headers: new HttpHeaders({
