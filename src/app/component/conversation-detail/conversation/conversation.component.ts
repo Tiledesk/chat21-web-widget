@@ -363,13 +363,20 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     // this.logger.debug('[CONV-COMP] ------ 5: updateConversationbage ------ ');
     // this.updateConversationBadge();
 
-    this.logger.debug('[CONV-COMP] ------ 6: getConversationDetail ------ ', this.conversationId);
-    this.getConversationDetail((isConversationArchived) => {
-      this.logger.debug('[CONV-COMP] ------ 6: updateConversationbage ------ ');
-      this.updateConversationBadge();
-      return;
-    }) //check if conv is archived or not
+    
+    // this.getConversationDetail((isConversationArchived) => {
+    //   this.logger.debug('[CONV-COMP] ------ 6: updateConversationbage ------ ');
+    //   this.updateConversationBadge();
+    //   return;
+    // }) //check if conv is archived or not
     // this.checkListMessages();
+
+    this.logger.debug('[CONV-COMP] ------ 5: getConversationDetail ------ ', this.conversationId);
+    await this.getConversationDetail();
+    
+    
+    this.logger.debug('[CONV-COMP] ------ 6: updateConversationBadge ------ ');
+    this.updateConversationBadge();
 
     if(this.g.customAttributes){
       this.updateUserInfo(this.g.customAttributes)
@@ -384,7 +391,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
    * @param callback
    * @returns isConversationArchived (status conversation archived: boolean) 
    */
-  getConversationDetail(callback:(isConversationArchived: boolean)=>void){
+  getConversationDetail_old(callback:(isConversationArchived: boolean)=>void){
     // if(!this.isConversationArchived){ 
     //get conversation from 'conversations' firebase node
     this.logger.debug('[CONV-COMP] getConversationDetail: isConversationArchived???', this.isConversationArchived, this.conversationWith)
@@ -414,39 +421,61 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
         })
       }
     });
-    // } else { //get conversation from 'conversations' firebase node
-    //   this.archivedConversationsHandlerService.getConversationDetail(this.conversationId, (conv)=>{
-    //     this.logger.debug('[CONV-COMP] archivedConversationsHandlerService getConversationDetail', this.conversationId, conv, this.isConversationArchived)
-    //     if(conv){
-    //       this.conversation = conv;
-    //       this.isConversationArchived = true;
-    //       callback(this.isConversationArchived) 
-    //     }
-    //     if(!conv){
-    //       this.conversationsHandlerService.getConversationDetail(this.conversationId, (conv)=>{
-    //         this.logger.debug('[CONV-COMP] conversationsHandlerService getConversationDetail', this.conversationId, conv, this.isConversationArchived)
-    //         conv? this.isConversationArchived = false : null  
-    //         this.conversation = conv;
-    //         callback(this.isConversationArchived) 
-    //       })
-    //     }
-    //   })
-    // }
-    
-    // if(!this.isConversationArchived){ //get conversation from 'conversations' firebase node
-    //   this.conversationsHandlerService.getConversationDetail(this.conversationId, (conv)=>{
-    //     this.logger.debug('[CONV-COMP] conversationsHandlerService getConversationDetail', this.conversationId, conv)
-    //     this.conversation = conv;
-    //     callback(this.isConversationArchived)    
-    //   })
-    // }else { //get conversation from 'conversations' firebase node
-    //   this.archivedConversationsHandlerService.getConversationDetail(this.conversationId, (conv)=>{
-    //     this.logger.debug('[CONV-COMP] archivedConversationsHandlerService getConversationDetail', this.conversationId, conv)
-    //     this.conversation = conv;   
-    //     callback(this.isConversationArchived)   
-    //   })
-    // }
-    // this.updateConversationBadge()
+  }
+
+  /**
+   * @description get detail of conversation by uid and then return callback with conversation status
+   * @param callback
+   * @returns isConversationArchived (status conversation archived: boolean) 
+   */
+  async getConversationDetail(): Promise<boolean | null> {
+    this.logger.debug('[CONV-COMP] getConversationDetail: isConversationArchived???', this.isConversationArchived, this.conversationWith);
+  
+    const conv = await new Promise<any>((resolve) => {
+      this.conversationsHandlerService.getConversationDetail(this.conversationWith, resolve);
+    });
+
+    if (conv) {
+      this.logger.debug('[CONV-COMP] getConversationDetail: conversationsHandlerService ', this.conversationWith, conv, this.isConversationArchived);
+      this.conversation = conv;
+      this.isConversationArchived = false;
+      return this.isConversationArchived;
+    }
+  
+    this.logger.debug('[CONV-COMP] getConversationDetail: conv not exist --> search in archived list', this.isConversationArchived, this.conversationWith);
+  
+    const archivedConv = await new Promise<any>((resolve) => {
+      this.archivedConversationsHandlerService.getConversationDetail(this.conversationWith, resolve);
+    });
+  
+    if (archivedConv) {
+      this.logger.debug('[CONV-COMP] getConversationDetail: archivedConversationsHandlerService', this.conversationWith, archivedConv, this.isConversationArchived);
+      this.conversation = archivedConv;
+      this.isConversationArchived = true;
+      return this.isConversationArchived;
+    }
+
+    //FALLBACK TO TILEDESK
+    const requests_list = await this.tiledeskRequestService.getMyRequests().catch(err => {
+        this.logger.error('[CONV-COMP] getConversationDetail: error getting request from Tiledesk', err);
+        this.isConversationArchived=true
+        return { requests: [] }
+    });
+    if (requests_list && requests_list.requests.length > 0) {
+      this.logger.debug('[CONV-COMP] getConversationDetail: request exist on Tiledesk', requests_list);
+      let conversation = requests_list.requests.find((request)=> request._id === this.conversationId)
+      if(conversation){
+        this.isConversationArchived = false
+        return this.isConversationArchived
+      }
+      this.logger.debug('[CONV-COMP] getConversationDetail: request NOT EXIST on Tiledesk', requests_list);
+      this.isConversationArchived = true
+      return this.isConversationArchived
+    }
+
+
+    this.isConversationArchived = true;
+    return null;
   }
 
   /**
@@ -596,6 +625,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
           that.showMessageWelcome = true;
           // that.sendFirstMessage()
           that.logger.debug('[CONV-COMP] setTimeout ***', that.showMessageWelcome);
+          // this.isConversationArchived= true
+          // this.conversationContent.isTypings = true;
         }
       }, 8000);
 
@@ -744,6 +775,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       subscribtion = this.conversationHandlerService.messageAdded.pipe(takeUntil(this.unsubscribe$)).subscribe((msg: MessageModel) => {
         this.logger.debug('[CONV-COMP] ***** DETAIL messageAdded *****', msg);
         if (msg) {
+
           that.newMessageAdded(msg);
           this.checkMessagesLegntForTranscriptDownloadMenuOption();
           this.resetTimeout();
