@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc12
+- **added**: ability to get all my request from Tiledesk API
+
 # 5.1.0-rc11
 - **bug-fixed**: removed private note msgs
 
