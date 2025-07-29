@@ -218,6 +218,8 @@ export class Globals {
   showEmojiFooterButton: boolean // *******  new ********
   showAttachmentFooterButton: boolean // *******  new ********
   showAudioRecorderFooterButton: boolean // *******  new ********
+
+  allowedLoadingDomain: Array<string> // *******  new ********
   constructor(
   ) { }
 
@@ -417,6 +419,8 @@ export class Globals {
     this.showAttachmentFooterButton = true;
     /** show/hide rec audio option in footer chat-detail page */
     this.showAudioRecorderFooterButton = true;
+    /** set a list of allowed domain to be loaded */
+    this.allowedLoadingDomain = ["*"];
 
     // ============ END: SET EXTERNAL PARAMETERS ==============//
 

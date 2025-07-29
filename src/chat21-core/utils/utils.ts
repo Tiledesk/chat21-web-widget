@@ -634,6 +634,9 @@ export function isAllowedUrlInText(text: string, allowedUrls: string[]) {
 
   const matchesAllowed = (domain: string) => {
     return allowedPatterns.some((pattern) => {
+      if (pattern === '*') {
+        return true; //accept all
+      }
       if (pattern.startsWith('*.')) {
         const base = pattern.replace(/^\*\./, '');
         return domain === base || domain.endsWith('.' + base);

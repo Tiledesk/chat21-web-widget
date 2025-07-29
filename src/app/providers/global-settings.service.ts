@@ -10,7 +10,7 @@ import { TemplateBindingParseResult } from '@angular/compiler';
 import { AppStorageService } from '../../chat21-core/providers/abstract/app-storage.service';
 import { LoggerService } from '../../chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from '../../chat21-core/providers/logger/loggerInstance';
-import { invertColor, isJsonArray } from '../../chat21-core/utils/utils';
+import { invertColor, isAllowedUrlInText, isJsonArray } from '../../chat21-core/utils/utils';
 import { AppConfigService } from './app-config.service';
 
 
@@ -515,6 +515,9 @@ export class GlobalSettingsService {
                     }
                     if (variables.hasOwnProperty('showAudioRecorderFooterButton')) {
                         globals['showAudioRecorderFooterButton'] = variables['showAudioRecorderFooterButton'];
+                    }
+                    if (variables.hasOwnProperty('allowedLoadingDomain')) {
+                        globals['allowedLoadingDomain'] = variables['allowedLoadingDomain'];
                     }
                     
                 }
@@ -1968,6 +1971,14 @@ export class GlobalSettingsService {
             headers.append('Content-Type', 'application/json');
             return this.http.get<any[]>(url, { headers })
         }
+    }
+
+    manageLoadingDomains(): boolean {
+        if(!this.globals.allowedLoadingDomain){
+            return true
+        }
+        let isAllowedToLoad = isAllowedUrlInText(this.globals.windowContext.location.origin, this.globals.allowedLoadingDomain)
+        return isAllowedToLoad
     }
 
 }
