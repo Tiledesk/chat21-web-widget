@@ -24,7 +24,7 @@
             "index": "src/index.html",
             "polyfills": [
               "src/polyfills.ts",
-              "@angular/localize/init",
+              "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
@@ -51,7 +51,7 @@
             ],
             "scripts": [
               "src/assets/js/mqtt/4.2.6/mqtt.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ],
             "extractLicenses": false,
             "allowedCommonJsDependencies": [
