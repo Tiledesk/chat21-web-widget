@@ -484,15 +484,13 @@
     <script type="application/javascript" id="check_embed">
         document.addEventListener('DOMContentLoaded', function () {
           const isEmbedded = window.self !== window.top;
-            console.log('isssssssss', isEmbedded)
-          if (isEmbedded) {
 
+          if (isEmbedded) {
             //HIDE header and footer elements
             const header = document.querySelector('header');
             const footer = document.querySelector('footer');
             if (header) header.style.display = 'none';
             if (footer) footer.style.display = 'none';
-
           }
         });
     </script>
