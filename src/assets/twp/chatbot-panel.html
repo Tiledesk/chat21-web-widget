@@ -108,6 +108,27 @@
             }
         }
 
+        .loading-text {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: sans-serif;
+            font-size: 18px;
+            color: rgb(224, 106, 88);;
+            animation: blinkText 1.5s infinite ease-in-out;
+            }
+
+            /* Animazione lampeggiante */
+            @keyframes blinkText {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+
         #deferred-styles {
             display: none;
         }
@@ -458,6 +479,25 @@
         }(document, 'script', 'tiledesk-jssdk'));
 
     </script> -->
+
+
+    <script type="application/javascript" id="check_embed">
+        document.addEventListener('DOMContentLoaded', function () {
+          const isEmbedded = window.self !== window.top;
+            console.log('isssssssss', isEmbedded)
+          if (isEmbedded) {
+
+            //HIDE header and footer elements
+            const header = document.querySelector('header');
+            const footer = document.querySelector('footer');
+            if (header) header.style.display = 'none';
+            if (footer) footer.style.display = 'none';
+
+          }
+        });
+    </script>
+
+
     <script type="application/javascript">
         window.tiledeskSettings = {
             marginX: "100px",
@@ -654,6 +694,7 @@
 
     <div id="preloader">
         <div class="loader"></div>
+        <!-- <div class="loading-text">Loading . . .</div> -->
     </div>
 
     <header id="header">
