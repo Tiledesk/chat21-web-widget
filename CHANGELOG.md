@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.102
+- **bug-fixed**: cannot add message if array is empty
+
 # 5.0.101
 - **bug-fixed**: removed private note msgs
 
