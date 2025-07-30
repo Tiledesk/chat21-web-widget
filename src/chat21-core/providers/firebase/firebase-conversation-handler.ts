@@ -470,6 +470,7 @@ export class FirebaseConversationHandler extends ConversationHandlerService {
         const that = this;
         const commands = msg.attributes.commands;
         let i=0;
+        if(commands.length === 0) return;
         return new Promise((resolve, reject)=>{
             function execute(command){
                 if(command.type === "message"){
