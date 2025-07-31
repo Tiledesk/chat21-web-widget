@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc14
+- **added**: ability to hide widget on selected domains based on hideOnSpecificDomainList variable
+
 # 5.1.0-rc13
 - **added**: ability to manage embedded chatbot-panel.html page into an iframe and hide some elements
 
