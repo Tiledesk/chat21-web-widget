@@ -516,6 +516,9 @@ export class GlobalSettingsService {
                     if (variables.hasOwnProperty('showAudioRecorderFooterButton')) {
                         globals['showAudioRecorderFooterButton'] = variables['showAudioRecorderFooterButton'];
                     }
+                    if (variables.hasOwnProperty('hideOnSpecificDomain')) {
+                        globals['hideOnSpecificDomain'] = variables['hideOnSpecificDomain'];
+                    }
                     if (variables.hasOwnProperty('hideOnSpecificDomainList')) {
                         globals['hideOnSpecificDomainList'] = variables['hideOnSpecificDomainList'];
                     }
@@ -1974,7 +1977,7 @@ export class GlobalSettingsService {
     }
 
     manageLoadingDomains(): boolean {
-        if(!this.globals.hideOnSpecificDomainList){
+        if(!this.globals.hideOnSpecificDomainList || !this.globals.hideOnSpecificDomain){
             return true
         }
         let isAllowedToLoad = !isAllowedUrlInText(this.globals.windowContext.location.origin, this.globals.hideOnSpecificDomainList)
