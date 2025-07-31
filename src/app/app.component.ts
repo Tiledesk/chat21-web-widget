@@ -265,7 +265,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 //check if allowed to load
                 let canLoad = this.globalSettingsService.manageLoadingDomains();
                 if(!canLoad){
-                    this.logger.error('[Check canLoad] Widget is not able to load on this domain!!!')
+                    console.error('[Check canLoad] Widget is not able to load on this domain!!!')
                     this.hideWidget()
                     this.disposeWidget();
                 }
