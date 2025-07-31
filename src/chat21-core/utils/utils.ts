@@ -619,7 +619,6 @@ function componentFromStr(numStr, percent) {
 
 export function isAllowedUrlInText(text: string, allowedUrls: string[]) {
   const urlsInMessage = extractUrls(text);
-  console.log('urlsInMessage ++++ :', urlsInMessage);
 
   const allowedPatterns = allowedUrls.map((url) => {
     try {

@@ -219,7 +219,7 @@ export class Globals {
   showAttachmentFooterButton: boolean // *******  new ********
   showAudioRecorderFooterButton: boolean // *******  new ********
 
-  allowedLoadingDomain: Array<string> // *******  new ********
+  hideOnSpecificDomainList: Array<string> // *******  new ********
   constructor(
   ) { }
 
@@ -419,8 +419,8 @@ export class Globals {
     this.showAttachmentFooterButton = true;
     /** show/hide rec audio option in footer chat-detail page */
     this.showAudioRecorderFooterButton = true;
-    /** set a list of allowed domain to be loaded */
-    this.allowedLoadingDomain = ["*"];
+    /** set a list of domain not able to load the widget */
+    this.hideOnSpecificDomainList = [];
 
     // ============ END: SET EXTERNAL PARAMETERS ==============//
 
