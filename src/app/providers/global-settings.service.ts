@@ -1977,7 +1977,7 @@ export class GlobalSettingsService {
         if(!this.globals.hideOnSpecificDomainList){
             return true
         }
-        let isAllowedToLoad = !isAllowedUrlInText(this.globals.windowContext.location.origin, [])
+        let isAllowedToLoad = !isAllowedUrlInText(this.globals.windowContext.location.origin, this.globals.hideOnSpecificDomainList)
         return isAllowedToLoad
     }
 
