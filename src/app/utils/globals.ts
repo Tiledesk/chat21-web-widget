@@ -163,7 +163,6 @@ export class Globals {
   openExternalLinkButton: boolean;
   hideHeaderConversationOptionsMenu: boolean;
   hideCloseConversationOptionMenu: boolean;
-  hideRestartConversationOptionsMenu: boolean;
   hideSettings: boolean;
   filterByRequester: boolean;
   persistence;
@@ -219,6 +218,9 @@ export class Globals {
   showEmojiFooterButton: boolean // *******  new ********
   showAttachmentFooterButton: boolean // *******  new ********
   showAudioRecorderFooterButton: boolean // *******  new ********
+
+  hideOnSpecificDomain: boolean // *******  new ********
+  hideOnSpecificDomainList: Array<string> // *******  new ********
   constructor(
   ) { }
 
@@ -337,8 +339,6 @@ export class Globals {
     /** enable to close a conversation from upper-right header menu  */
     this.hideCloseConversationOptionMenu = false;
     /** enable to hide/show options menu in conversation detail header */
-    this.hideRestartConversationOptionsMenu = false;
-    /** enable to hide/show options menu in conversation detail header */
     this.hideSettings = false;
     /** enable to hide/show options menu in home component */
     this.filterByRequester = false;
@@ -420,6 +420,10 @@ export class Globals {
     this.showAttachmentFooterButton = true;
     /** show/hide rec audio option in footer chat-detail page */
     this.showAudioRecorderFooterButton = true;
+    /** enabled to set a list of domain not able to load the widget **/
+    this.hideOnSpecificDomain = false
+    /** set a list of domain not able to load the widget */
+    this.hideOnSpecificDomainList = [];
 
     // ============ END: SET EXTERNAL PARAMETERS ==============//
 
@@ -528,7 +532,7 @@ export class Globals {
       'fullscreenMode': this.fullscreenMode,
       'filterByRequester': this.filterByRequester,
       'hideHeaderConversationOptionsMenu': this.hideHeaderConversationOptionsMenu, 'hideHeaderCloseButton': this.hideHeaderCloseButton,
-      'hideCloseConversationOptionMenu': this.hideCloseConversationOptionMenu, 'hideRestartConversationOptionsMenu': this.hideRestartConversationOptionsMenu,
+      'hideCloseConversationOptionMenu': this.hideCloseConversationOptionMenu,
       'hideSettings': this.hideSettings,
       'isLogEnabled': this.isLogEnabled,
       'isOpen': this.isOpen, 'isShown': this.isShown,

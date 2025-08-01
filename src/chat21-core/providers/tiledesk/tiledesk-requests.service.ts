@@ -68,4 +68,18 @@ export class TiledeskRequestsService {
       return res
     })
   }
+
+  public getMyRequests(): Promise<{ requests: Array<any>}> {
+    this.tiledeskToken = this.appStorage.getItem('tiledeskToken')
+    const url = this.URL_TILEDESK_REQUEST + '/me?preflight=true'
+    this.logger.log('[TILEDESK-SERVICE] - GET REQUEST url ', url);
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: this.tiledeskToken
+      })
+    }
+    
+    return this.http.get<{ requests: Array<any>}>(url, httpOptions).toPromise()
+  }
 }

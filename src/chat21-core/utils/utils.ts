@@ -1,5 +1,5 @@
-import * as dayjs from 'dayjs'
-import * as duration from 'dayjs/plugin/duration'
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration'
 dayjs.extend(duration)
 // tslint:disable-next-line:max-line-length
 
@@ -575,6 +575,91 @@ function componentFromStr(numStr, percent) {
   var num = Math.max(0, parseInt(numStr, 10));
   return percent ?
       Math.floor(255 * Math.min(100, num) / 100) : Math.min(255, num);
+}
+
+
+
+// export function isAllowedUrlInText(text: string, allowedUrls: string[]): boolean {
+//   // Regex per trovare URL o domini nudi nel testo
+//   const urlRegex = /https?:\/\/[^\s]+|www\.[^\s]+|(?:\b[\w-]+\.)+[a-z]{2,}(\/[^\s]*)?/gi;
+//   const foundUrls = text.match(urlRegex);
+
+//   if (!foundUrls) {
+//     return true; // Nessun URL => testo ammesso
+//   }
+
+//   // Normalizza dominio: rimuove schema, www., slash finali
+//   const normalize = (url: string) =>
+//     url
+//       .replace(/^https?:\/\//i, '')
+//       .replace(/^www\./i, '')
+//       .replace(/\/$/, '')
+//       .toLowerCase();
+
+//   // Normalizza tutti gli allowed pattern per confronto
+//   const normalizedAllowedPatterns = allowedUrls.map(pattern =>
+//     pattern
+//       .replace(/^https?:\/\//i, '')
+//       .replace(/^www\./i, '')
+//       .replace(/\/$/, '')
+//       .toLowerCase()
+//       .replace(/\./g, '\\.')
+//       .replace(/\//g, '\\/')
+//       .replace(/\*/g, '.*')
+//   );
+
+//   return foundUrls.every(rawUrl => {
+//     const url = normalize(rawUrl);
+//     return normalizedAllowedPatterns.some(pattern => {
+//       const regex = new RegExp(`^${pattern}$`, 'i');
+//       return regex.test(url);
+//     });
+//   });
+// }
+
+export function isAllowedUrlInText(text: string, allowedUrls: string[]) {
+  const urlsInMessage = extractUrls(text);
+
+  const allowedPatterns = allowedUrls.map((url) => {
+    try {
+      // Prova a estrarre il dominio da una URL completa
+      const hostname = new URL(url).hostname.toLowerCase();
+      return hostname;
+    } catch {
+      // Lascia il dominio nudo (es: "*.tiledesk.com" o "tiledesk.com")
+      return url.toLowerCase();
+    }
+  });
+
+  const matchesAllowed = (domain: string) => {
+    return allowedPatterns.some((pattern) => {
+      if (pattern === '*') {
+        return true; //accept all
+      }
+      if (pattern.startsWith('*.')) {
+        const base = pattern.replace(/^\*\./, '');
+        return domain === base || domain.endsWith('.' + base);
+      } else {
+        return domain === pattern;
+      }
+    });
+  };
+
+  const nonWhitelistedDomains = urlsInMessage.filter((url) => {
+    try {
+      const domain = new URL(url).hostname.toLowerCase();
+      return !matchesAllowed(domain);
+    } catch (e) {
+      return true; // Considera URL non valido come non ammesso
+    }
+  });
+
+  return nonWhitelistedDomains.length === 0;
+}
+
+function extractUrls(text: string): string[] {
+  const urlRegex = /https?:\/\/[^\s]+/g;
+  return text.match(urlRegex) || [];
 }
 
 

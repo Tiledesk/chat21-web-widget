@@ -10,7 +10,7 @@ import { TemplateBindingParseResult } from '@angular/compiler';
 import { AppStorageService } from '../../chat21-core/providers/abstract/app-storage.service';
 import { LoggerService } from '../../chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from '../../chat21-core/providers/logger/loggerInstance';
-import { invertColor, isJsonArray } from '../../chat21-core/utils/utils';
+import { invertColor, isAllowedUrlInText, isJsonArray } from '../../chat21-core/utils/utils';
 import { AppConfigService } from './app-config.service';
 
 
@@ -93,6 +93,7 @@ export class GlobalSettingsService {
                     project['trialDaysLeft'],
                     project['trialExpired'],
                     project['updatedAt'],
+                    project['settings'],
                     project['versions']
                 );
             }
@@ -515,6 +516,12 @@ export class GlobalSettingsService {
                     if (variables.hasOwnProperty('showAudioRecorderFooterButton')) {
                         globals['showAudioRecorderFooterButton'] = variables['showAudioRecorderFooterButton'];
                     }
+                    if (variables.hasOwnProperty('hideOnSpecificDomain')) {
+                        globals['hideOnSpecificDomain'] = variables['hideOnSpecificDomain'];
+                    }
+                    if (variables.hasOwnProperty('hideOnSpecificDomainList')) {
+                        globals['hideOnSpecificDomainList'] = variables['hideOnSpecificDomainList'];
+                    }
                     
                 }
             }
@@ -864,11 +871,6 @@ export class GlobalSettingsService {
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > hideHeaderConversationOptionsMenu:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.hideCloseConversationOptionMenu = (TEMP === true) ? true : false;;
-        }
-        TEMP = tiledeskSettings['hideRestartConversationOptionsMenu'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > hideHeaderConversationOptionsMenu:: ', TEMP]);
-        if (TEMP !== undefined) {
-            globals.hideRestartConversationOptionsMenu = (TEMP === true) ? true : false;;
         }
         TEMP = tiledeskSettings['hideHeaderConversationOptionsMenu'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > hideHeaderConversationOptionsMenu:: ', TEMP]);
@@ -1239,10 +1241,6 @@ export class GlobalSettingsService {
         TEMP = el.nativeElement.getAttribute('hideCloseConversationOptionMenu');
         if (TEMP !== null) {
             this.globals.hideCloseConversationOptionMenu = TEMP;
-        }
-        TEMP = el.nativeElement.getAttribute('hideRestartConversationOptionsMenu');
-        if (TEMP !== null) {
-            this.globals.hideRestartConversationOptionsMenu = TEMP;
         }
         TEMP = el.nativeElement.getAttribute('hideSettings');
         if (TEMP !== null) {
@@ -1637,11 +1635,6 @@ export class GlobalSettingsService {
             globals.hideCloseConversationOptionMenu = stringToBoolean(TEMP); 
         }
 
-        TEMP = getParameterByName(windowContext, 'tiledesk_hideRestartConversationOptionsMenu');
-        if (TEMP) {
-            globals.hideRestartConversationOptionsMenu = stringToBoolean(TEMP); 
-        }
-
         TEMP = getParameterByName(windowContext, 'tiledesk_hideSettings');
         if (TEMP) {
             globals.hideSettings = stringToBoolean(TEMP); 
@@ -1981,6 +1974,14 @@ export class GlobalSettingsService {
             headers.append('Content-Type', 'application/json');
             return this.http.get<any[]>(url, { headers })
         }
+    }
+
+    manageLoadingDomains(): boolean {
+        if(!this.globals.hideOnSpecificDomainList || !this.globals.hideOnSpecificDomain){
+            return true
+        }
+        let isAllowedToLoad = !isAllowedUrlInText(this.globals.windowContext.location.origin, this.globals.hideOnSpecificDomainList)
+        return isAllowedToLoad
     }
 
 }

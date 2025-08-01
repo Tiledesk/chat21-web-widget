@@ -1270,13 +1270,6 @@
             window.Tiledesk('restart')
         }
 
-        function onClickHideRestartConversationOptionsMenu(){
-            let status = document.querySelector('input[name="hideRestartConversationOptionsMenu"]:checked').value
-            window.tiledeskSettings['hideRestartConversationOptionsMenu'] = stringToBoolean(status)
-            console.log('onClickHideRestartConversationOptionsMenu:', window.tiledeskSettings)
-            window.Tiledesk('restart')
-        }
-
         function onClickAllowTranscriptDownload(){
             let status = document.querySelector('input[name="allowTranscriptDownload"]:checked').value
             window.tiledeskSettings['allowTranscriptDownload'] = stringToBoolean(status)
@@ -2282,16 +2275,6 @@
                             </div>
                             <div class="col-md-2">
                                 <button class="btn btn-light" onclick="onClickHideCloseConversationOptionMenu()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5 formElement"><span><em><strong>hideRestartConversationOptionsMenu</strong></em></span></div>
-                            <div class="col-md-5">
-                                <input class="form-check-input" type="radio" name="hideRestartConversationOptionsMenu" value="true"><label>True</label>
-                                <input class="form-check-input" type="radio" name="hideRestartConversationOptionsMenu" value="false" checked><label >False</label>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-light" onclick="onClickHideRestartConversationOptionsMenu()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
                             </div>
                         </div>
                         <div class="row">

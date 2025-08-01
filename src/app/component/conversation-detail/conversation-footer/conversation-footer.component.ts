@@ -10,8 +10,9 @@ import { UploadService } from 'src/chat21-core/providers/abstract/upload.service
 import { ChatManager } from 'src/chat21-core/providers/chat-manager';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { TYPE_MSG_FILE, TYPE_MSG_IMAGE, TYPE_MSG_TEXT } from 'src/chat21-core/utils/constants';
-import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
-import { isImage } from 'src/chat21-core/utils/utils-message';
+import { convertColorToRGBA, isAllowedUrlInText, isEmoji } from 'src/chat21-core/utils/utils';
+import { findAndRemoveEmoji, isImage } from 'src/chat21-core/utils/utils-message';
+import { ProjectModel } from 'src/models/project';
 
 @Component({
   selector: 'chat-conversation-footer',
@@ -24,7 +25,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   @Input() attributes: string;
   @Input() senderId: string;
   @Input() tenant: string;
-  @Input() projectid: string;
+  @Input() project: ProjectModel;
   @Input() channelType: string;
   @Input() userFullname: string;
   @Input() userEmail: string;
@@ -81,10 +82,12 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     include: [ 'recent', 'people', 'nature', 'activity', 'flags']
   }
 
+  showAlertEmoji: boolean = false
+  showAlertUrl: boolean = false;
+
   convertColorToRGBA = convertColorToRGBA;
   private logger: LoggerService = LoggerInstance.getInstance()
-  constructor(public g: Globals,
-              private chatManager: ChatManager,
+  constructor(private chatManager: ChatManager,
               private typingService: TypingService,
               private uploadService: UploadService) { }
 
@@ -253,7 +256,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       //     return snapshot.ref.getDownloadURL();   // Will return a promise with the download link
       // }).then(downloadURL => {
       //     that.logger.log('[CONV-FOOTER] AppComponent::uploadSingle:: downloadURL', downloadURL]);
-      //     that.g.wdLog([`Successfully uploaded file and got download link - ${downloadURL}`]);
 
       //     metadata.src = downloadURL;
       //     let type_message = TYPE_MSG_TEXT;
@@ -321,6 +323,13 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     (metadata) ? metadata = metadata : metadata = '';
     this.onEmojiiPickerShow.emit(false)
     this.logger.log('[CONV-FOOTER] SEND MESSAGE: ', msg, type, metadata, additional_attributes);
+
+
+    let checkUrlDomain = this.checkForUrlDomain(this.textInputTextArea)
+    if(!checkUrlDomain){
+      return
+    }
+
     if (msg && msg.trim() !== '' || type === TYPE_MSG_IMAGE || type === TYPE_MSG_FILE ) {
 
       // msg = htmlEntities(msg);
@@ -345,7 +354,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
         // fine-sponziello
       // this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith)
       const senderId = this.senderId;
-      const projectid = this.projectid;
+      const projectid = this.project.id;
       const channelType = this.channelType;
       const userFullname = this.userFullname;
       const userEmail = this.userEmail;
@@ -514,11 +523,49 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     //}, false);
   }
 
+
+  checkForEmojii(text){
+    //remove emojii only if "emojii" exist and is set to false
+    if(this.project && this.project.settings?.allow_send_emoji === false){
+      this.showAlertEmoji = isEmoji(text);
+      if(this.showAlertEmoji){
+        return false
+      }
+      this.showAlertEmoji = false;
+      return true
+    }
+    this.showAlertEmoji = false;
+    return true
+  }
+
+  checkForUrlDomain(text){
+    if(this.project && this.project.settings?.allowed_urls === true && this.project.settings?.allowed_urls_list){
+      this.showAlertUrl = !isAllowedUrlInText(text, this.project.settings?.allowed_urls_list);
+      if(this.showAlertUrl){
+        return false
+      }
+      this.showAlertUrl = false
+      return true
+    }
+    this.showAlertUrl = false
+    return true
+
+
+  }
+
   
 
   onTextAreaChange(){
     this.resizeInputField()
     this.setWritingMessages(this.textInputTextArea)
+
+    //reset alert to defalt values before checking again
+    this.showAlertEmoji= false;
+    this.showAlertUrl = false;
+    let check = this.checkForEmojii(this.textInputTextArea)
+    if(!check){
+      return;
+    }
   }
 
   onSendPressed(event) {
@@ -587,6 +634,12 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   addEmoji(event){
     this.onEmojiiPickerShow.emit(false); //de-activate emojii picker on select
+
+    let check = this.checkForEmojii(this.textInputTextArea)
+    if(!check){
+      return;
+    }
+
     this.textInputTextArea = this.textInputTextArea.trimStart() + event.emoji.native + " "
     this.setFocusOnId('chat21-main-message-context')
   }
@@ -632,7 +685,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
    * @param str
    */
   setWritingMessages(str) {
-    //this.messagingService.setWritingMessages(str, this.g.channelType);
     this.typingService.setTyping(this.conversationWith, str, this.senderId, this.userFullname )
   }
 

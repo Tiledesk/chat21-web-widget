@@ -12,6 +12,43 @@
 # 5.0.101
 - **bug-fixed**: removed private note msgs
 
+# 5.1.0-rc15
+# 5.1.0-rc14
+- **added**: ability to hide widget on selected domains based on hideOnSpecificDomainList variable
+
+# 5.1.0-rc13
+- **added**: ability to manage embedded chatbot-panel.html page into an iframe and hide some elements
+
+# 5.1.0-rc12
+- **added**: ability to get all my request from Tiledesk API
+
+# 5.1.0-rc11
+- **bug-fixed**: removed private note msgs
+
+# 5.1.0-rc10
+- **bug-fixed**: minor fix allowed urls
+
+# 5.1.0-rc9
+- **bug-fixed**: minor fix allowed urls
+
+# 5.1.0-rc8
+- **added**: ability to filter on urls attached to message textarea 
+
+# 5.1.0-rc7
+- **added**: ability to allows emoji after message is sent
+
+# 5.1.0-rc6
+- **removed**: hideRestartConversationOptionsMenu
+
+# 5.1.0-rc5
+# 5.1.0-rc4
+- **bug-fixed**: Dockerfile for angular 18
+
+# 5.1.0-rc3
+- **added**: angular 18
+
+# 5.1.0-rc2
+- **added**: angular 17
 # 5.0.99
 
 # 5.0.99-rc1

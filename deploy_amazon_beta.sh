@@ -2,7 +2,7 @@
 version=`node -e 'console.log(require("./package.json").version)'`
 echo "version $version"
 
-ng build --configuration="pre" --aot=true --base-href --build-optimizer=true
+ng build --configuration="pre" --aot=true --base-href
 
 
 # ########## --->>>> NATIVE-MQTT folder START <<<<<------ ########## #

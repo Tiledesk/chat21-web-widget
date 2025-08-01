@@ -31,8 +31,13 @@
     --chat-footer-border-radius: 16px;
     --chat-footer-background-color: #f6f7fb;
     --chat-footer-color: #1a1a1a;
+    --chat-footer-border-color-error: #aa0404;
 
-    --icon-fill-color: #5f6368
+    --icon-fill-color: #5f6368;
+
+
+    --content-background-color: #fff;
+    --content-text-color: var(--black);
 }
 
 $trasp-black:rgba(0,0,0,0.8);

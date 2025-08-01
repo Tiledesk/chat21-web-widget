@@ -23,7 +23,6 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
   @Input() typingLocation: string;
   @Input() isTrascriptDownloadEnabled: boolean;
   @Input() hideCloseConversationOptionMenu: boolean;
-  @Input() hideRestartConversationOptionsMenu: boolean;
   @Input() hideHeaderCloseButton: boolean;
   @Input() hideHeaderBackButton: boolean;
   @Input() hideHeaderConversationOptionsMenu: boolean;
