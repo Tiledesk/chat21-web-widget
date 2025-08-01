@@ -539,7 +539,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   }
 
   checkForUrlDomain(text){
-    if(this.project && this.project.settings?.allowed_urls === true){
+    if(this.project && this.project.settings?.allowed_urls === true && this.project.settings?.allowed_urls_list){
       this.showAlertUrl = !isAllowedUrlInText(text, this.project.settings?.allowed_urls_list);
       if(this.showAlertUrl){
         return false
