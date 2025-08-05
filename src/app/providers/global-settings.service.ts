@@ -516,11 +516,11 @@ export class GlobalSettingsService {
                     if (variables.hasOwnProperty('showAudioRecorderFooterButton')) {
                         globals['showAudioRecorderFooterButton'] = variables['showAudioRecorderFooterButton'];
                     }
-                    if (variables.hasOwnProperty('hideOnSpecificDomain')) {
-                        globals['hideOnSpecificDomain'] = variables['hideOnSpecificDomain'];
+                    if (variables.hasOwnProperty('hideOnSpecificUrl')) {
+                        globals['hideOnSpecificUrl'] = variables['hideOnSpecificUrl'];
                     }
-                    if (variables.hasOwnProperty('hideOnSpecificDomainList')) {
-                        globals['hideOnSpecificDomainList'] = variables['hideOnSpecificDomainList'];
+                    if (variables.hasOwnProperty('hideOnSpecificUrlList')) {
+                        globals['hideOnSpecificUrlList'] = variables['hideOnSpecificUrlList'];
                     }
                     
                 }
@@ -1977,11 +1977,28 @@ export class GlobalSettingsService {
     }
 
     manageLoadingDomains(): boolean {
-        if(!this.globals.hideOnSpecificDomainList || !this.globals.hideOnSpecificDomain){
+
+        if(!this.globals.hideOnSpecificUrlList || !this.globals.hideOnSpecificUrl){
+            console.log('No hideOnSpecificUrlList or hideOnSpecificUrl');
             return true
         }
-        let isAllowedToLoad = !isAllowedUrlInText(this.globals.windowContext.location.origin, this.globals.hideOnSpecificDomainList)
-        return isAllowedToLoad
+
+        function wildcardToRegex(pattern: string): RegExp {
+            // Escape caratteri speciali della regex, tranne * che poi sostituiremo
+            const escaped = pattern.replace(/[-/\\^+?.()|[\]{}]/g, '\\$&');
+            // Sostituisci * con .*
+            const regexPattern = '^' + escaped.replace(/\*/g, '.*') + '$';
+            return new RegExp(regexPattern);
+        }
+        
+        const currentUrl = this.globals.windowContext.location.href;
+        const shouldHide = this.globals.hideOnSpecificUrlList.some(pattern => {
+            const regex = wildcardToRegex(pattern);
+            return regex.test(currentUrl);
+        });
+        
+        // let isAllowedToLoad = !isAllowedUrlInText(this.globals.windowContext.location.origin, this.globals.hideOnSpecificDomainList)
+        return !shouldHide
     }
 
 }
