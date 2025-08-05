@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc16
+- **added**: hideOnSpecificUrlList replaced in favour of hideOnSpecificDomainList
+
 # 5.1.0-rc15
 # 5.1.0-rc14
 - **added**: ability to hide widget on selected domains based on hideOnSpecificDomainList variable
