@@ -426,7 +426,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
    * @param callback
    * @returns isConversationArchived (status conversation archived: boolean) 
    */
-  async getConversationDetail(): Promise<boolean | null> {
+  async getConversationDetail(): Promise<boolean> {
     this.logger.debug('[CONV-COMP] getConversationDetail: isConversationArchived???', this.isConversationArchived, this.conversationWith);
   
     const conv = await new Promise<any>((resolve) => {
@@ -472,7 +472,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     this.isConversationArchived = true;
-    return null;
+    return this.isConversationArchived;
   }
 
   /**
