@@ -455,13 +455,13 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
 
     //FALLBACK TO TILEDESK
     const requests_list = await this.tiledeskRequestService.getMyRequests().catch(err => {
-        this.logger.error('[CONV-COMP] getConversationDetail: error getting request from Tiledesk', err);
-        this.isConversationArchived=true
-        return { requests: [] }
+      this.logger.error('[CONV-COMP] getConversationDetail: error getting request from Tiledesk', err);
+      this.isConversationArchived=true
+      return { requests: [] }
     });
     if (requests_list && requests_list.requests.length > 0) {
       this.logger.debug('[CONV-COMP] getConversationDetail: request exist on Tiledesk', requests_list);
-      let conversation = requests_list.requests.find((request)=> request._id === this.conversationId)
+      let conversation = requests_list.requests.find((request)=> request.request_id === this.conversationId)
       if(conversation){
         this.isConversationArchived = false
         return this.isConversationArchived
@@ -470,7 +470,6 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       this.isConversationArchived = true
       return this.isConversationArchived
     }
-
 
     this.isConversationArchived = true;
     return null;
@@ -623,8 +622,6 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
           that.showMessageWelcome = true;
           // that.sendFirstMessage()
           that.logger.debug('[CONV-COMP] setTimeout ***', that.showMessageWelcome);
-          // this.isConversationArchived= true
-          // this.conversationContent.isTypings = true;
         }
       }, 8000);
 
