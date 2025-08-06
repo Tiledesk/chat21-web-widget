@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.0.103
+- **added**: new /me tiledesk api to get all my requests
+- **changed**: removed header and footer for chatbot-panel.html page in case widget is embedded 
+
 # 5.0.102
 - **bug-fixed**: cannot add message if array is empty
 
