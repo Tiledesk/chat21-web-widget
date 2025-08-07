@@ -1977,8 +1977,13 @@ export class GlobalSettingsService {
     }
 
     manageLoadingDomains(): boolean {
+        const { allowedOnSpecificUrl, allowedOnSpecificUrlList } = this.globals;
+        
+        if(!allowedOnSpecificUrl){
+            return true
+        }
 
-        if(this.globals.allowedOnSpecificUrl && (!this.globals.allowedOnSpecificUrlList || this.globals.allowedOnSpecificUrlList.length === 0) ){
+        if (!Array.isArray(allowedOnSpecificUrlList) || allowedOnSpecificUrlList.length === 0) {
             console.log('allowedOnSpecificUrl is true and allowedOnSpecificUrlList is empty or not set');
             return true
         }
@@ -1992,7 +1997,7 @@ export class GlobalSettingsService {
         }
         
         const currentUrl = this.globals.windowContext.location.href;
-        const shouldShow = this.globals.allowedOnSpecificUrlList.some(pattern => {
+        const shouldShow = allowedOnSpecificUrlList.some(pattern => {
             const regex = wildcardToRegex(pattern);
             return regex.test(currentUrl);
         });
