@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc17
+- **added**: allowedOnSpecificUrl and allowedOnSpecificUrlList to manage list of pattern url to allow to load the widget
+
 # 5.1.0-rc16
 - **added**: hideOnSpecificUrlList replaced in favour of hideOnSpecificDomainList
 
