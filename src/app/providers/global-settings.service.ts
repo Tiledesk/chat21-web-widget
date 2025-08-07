@@ -516,11 +516,11 @@ export class GlobalSettingsService {
                     if (variables.hasOwnProperty('showAudioRecorderFooterButton')) {
                         globals['showAudioRecorderFooterButton'] = variables['showAudioRecorderFooterButton'];
                     }
-                    if (variables.hasOwnProperty('hideOnSpecificUrl')) {
-                        globals['hideOnSpecificUrl'] = variables['hideOnSpecificUrl'];
+                    if (variables.hasOwnProperty('allowedOnSpecificUrl')) {
+                        globals['allowedOnSpecificUrl'] = variables['allowedOnSpecificUrl'];
                     }
-                    if (variables.hasOwnProperty('hideOnSpecificUrlList')) {
-                        globals['hideOnSpecificUrlList'] = variables['hideOnSpecificUrlList'];
+                    if (variables.hasOwnProperty('allowedOnSpecificUrlList')) {
+                        globals['allowedOnSpecificUrlList'] = variables['allowedOnSpecificUrlList'];
                     }
                     
                 }
@@ -1978,8 +1978,8 @@ export class GlobalSettingsService {
 
     manageLoadingDomains(): boolean {
 
-        if(!this.globals.hideOnSpecificUrlList || !this.globals.hideOnSpecificUrl){
-            console.log('No hideOnSpecificUrlList or hideOnSpecificUrl');
+        if(this.globals.allowedOnSpecificUrl && (!this.globals.allowedOnSpecificUrlList || this.globals.allowedOnSpecificUrlList.length === 0) ){
+            console.log('allowedOnSpecificUrl is true and allowedOnSpecificUrlList is empty or not set');
             return true
         }
 
@@ -1992,13 +1992,13 @@ export class GlobalSettingsService {
         }
         
         const currentUrl = this.globals.windowContext.location.href;
-        const shouldHide = this.globals.hideOnSpecificUrlList.some(pattern => {
+        const shouldShow = this.globals.allowedOnSpecificUrlList.some(pattern => {
             const regex = wildcardToRegex(pattern);
             return regex.test(currentUrl);
         });
         
         // let isAllowedToLoad = !isAllowedUrlInText(this.globals.windowContext.location.origin, this.globals.hideOnSpecificDomainList)
-        return !shouldHide
+        return shouldShow
     }
 
 }
