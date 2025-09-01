@@ -22,6 +22,7 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
   @Input() nameUserTypingNow: string;
   @Input() typingLocation: string;
   @Input() isTrascriptDownloadEnabled: boolean;
+  @Input() fullscreenMode: boolean;
   @Input() hideCloseConversationOptionMenu: boolean;
   @Input() hideHeaderCloseButton: boolean;
   @Input() hideHeaderBackButton: boolean;
@@ -105,10 +106,11 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
   /**
    * @param status : string 'max' || 'min'
    */
-  maximizeMinimize(status){
+  onChangeSize(status){
     this.heightStatus = status
     if(status === 'min') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.MINIMIZE)
     if(status === 'max') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.MAXIMIZE)
+    if(status === 'full') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.FULLSCREEN)
     this.onMenuOptionShow.emit(false)
   }
   toggleSound() {

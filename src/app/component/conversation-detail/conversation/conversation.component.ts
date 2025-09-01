@@ -1066,12 +1066,24 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     // this.hideTextAreaContent = true
   }
   /** CALLED BY: conv-header component */
-  onWidgetHeightChange(mode){
+  onWidgetSizeChange(mode){
     var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
     if(mode==='max'){
-      tiledeskDiv.style.maxHeight = 'unset'
+      tiledeskDiv.classList.add('increaseSize')
+      tiledeskDiv.classList.remove('decreaseSize')
+      tiledeskDiv.classList.remove('fullscreen')
+      this.g.fullscreenMode = false
     }else if(mode==='min'){
-      tiledeskDiv.style.maxHeight = '620px'
+      tiledeskDiv.classList.add('decreaseSize')
+      tiledeskDiv.classList.remove('increaseSize')
+      tiledeskDiv.classList.remove('fullscreen')
+      this.g.fullscreenMode = false
+    }else if(mode=== 'fullscreen'){
+      tiledeskDiv.classList.add('fullscreen')
+      tiledeskDiv.classList.remove('increaseSize')
+      tiledeskDiv.classList.remove('decreaseSize')
+      this.g.fullscreenMode = true
+
     }
     this.isMenuShow = false;
   }
@@ -1108,10 +1120,13 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
         this.onRestartChat()
         break;
       case HEADER_MENU_OPTION.MAXIMIZE:
-        this.onWidgetHeightChange('max')
+        this.onWidgetSizeChange('max')
         break;
       case HEADER_MENU_OPTION.MINIMIZE:
-        this.onWidgetHeightChange('min')
+        this.onWidgetSizeChange('min')
+        break;
+      case HEADER_MENU_OPTION.FULLSCREEN:
+        this.onWidgetSizeChange('fullscreen')
         break;
     }
   }
@@ -1238,19 +1253,6 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   onNewConversationButtonClickedFN(event){
     this.logger.debug('[CONV-COMP] floating onNewConversationButtonClicked')
     this.onNewConversationButtonClicked.emit()
-  }
-  /** CALLED BY: conv-footer floating-button component */
-  onBackButton(event: boolean){
-    this.hideTextAreaContent = event;
-    try{
-      const tiledeskDiv = document.getElementById('chat21-footer')
-      tiledeskDiv.classList.remove('maximize-width')
-      // tiledeskDiv.style.width = '376px'
-      // tiledeskDiv.style.maxHeight = '620px'
-    }catch(e){
-      this.logger.error('[CONV-COMP] onBackButton > Error :' + e);
-    }
-
   }
   // =========== END: event emitter function ====== //
 

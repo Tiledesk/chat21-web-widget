@@ -1,5 +1,10 @@
 :root{
     --messagePreviewHeight: 100px;
+    --iframeMinWidth: 400px; /*376px*/;
+    --iframeMinHeight: 704px; /*696px;*/
+    --iframeMaxWidth: 688px;
+    --iframeMaxHeight: 786px;
+
 }
 
 #tiledesk-container {
@@ -17,11 +22,11 @@
     max-width: 420px;
     min-width: 416px;
     max-height: 640px; */
-    width: 376px;
-    height: calc(100% - 40px);
-    max-width: 696px;  /*376px;*/
-    min-width: 376px;
-    max-height: 620px;
+    width: var(--iframeMinWidth);
+    height: var(--iframeMinHeight);
+    /* min-width: var(--iframeMinWidth); 
+    max-width: var(--iframeMaxWidth);  376px;
+    max-height: 620px; */
     right: 0px;
     bottom: 0px;
     display: block;
@@ -32,20 +37,32 @@
 #tiledeskdiv.decreaseSize {
     /* transition: width 1s, height 1s; */
     transition: all 1s ease-out;
-    width: 376px;
-    max-height: 620px;
+    width: var(--iframeMinWidth);
+    height: var(--iframeMinHeight);
     /* animation: right-animate 1s ease infinite alternate; */
 
 }
 
 #tiledeskdiv.increaseSize {
     /* transition: width 1s, height 1s; */
-    transition: all 1s ease-in;
-    width: 696px;
-    max-height: 712px;
+    transition: all 3s ease-in;
+    width: var(--iframeMaxWidth);
+    height: var(--iframeMaxHeight);
     /* animation: right-animate 1s ease infinite alternate; */
 
 }
+
+#tiledeskdiv.fullscreen {
+    /* transition: width 1s, height 1s; */
+    transition: all 3s ease-in;
+    right: 0px;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    width: 100%;
+    height: 100%;  
+}
+ 
 
 @keyframes right-animate {
     0% {
