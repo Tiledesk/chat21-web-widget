@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc18
+- **added**: ability to maximize, minimize and fullscreen the widget window
+- **added**: variable for font-family attribute css value
+
 # 5.0.102
 - **bug-fixed**: cannot add message if array is empty
 
