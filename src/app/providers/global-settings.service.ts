@@ -516,11 +516,11 @@ export class GlobalSettingsService {
                     if (variables.hasOwnProperty('showAudioRecorderFooterButton')) {
                         globals['showAudioRecorderFooterButton'] = variables['showAudioRecorderFooterButton'];
                     }
-                    if (variables.hasOwnProperty('hideOnSpecificDomain')) {
-                        globals['hideOnSpecificDomain'] = variables['hideOnSpecificDomain'];
+                    if (variables.hasOwnProperty('allowedOnSpecificUrl')) {
+                        globals['allowedOnSpecificUrl'] = variables['allowedOnSpecificUrl'];
                     }
-                    if (variables.hasOwnProperty('hideOnSpecificDomainList')) {
-                        globals['hideOnSpecificDomainList'] = variables['hideOnSpecificDomainList'];
+                    if (variables.hasOwnProperty('allowedOnSpecificUrlList')) {
+                        globals['allowedOnSpecificUrlList'] = variables['allowedOnSpecificUrlList'];
                     }
                     
                 }
@@ -1977,11 +1977,33 @@ export class GlobalSettingsService {
     }
 
     manageLoadingDomains(): boolean {
-        if(!this.globals.hideOnSpecificDomainList || !this.globals.hideOnSpecificDomain){
+        const { allowedOnSpecificUrl, allowedOnSpecificUrlList } = this.globals;
+        
+        if(!allowedOnSpecificUrl){
             return true
         }
-        let isAllowedToLoad = !isAllowedUrlInText(this.globals.windowContext.location.origin, this.globals.hideOnSpecificDomainList)
-        return isAllowedToLoad
+
+        if (!Array.isArray(allowedOnSpecificUrlList) || allowedOnSpecificUrlList.length === 0) {
+            console.log('allowedOnSpecificUrl is true and allowedOnSpecificUrlList is empty or not set');
+            return true
+        }
+
+        function wildcardToRegex(pattern: string): RegExp {
+            // Escape caratteri speciali della regex, tranne * che poi sostituiremo
+            const escaped = pattern.replace(/[-/\\^+?.()|[\]{}]/g, '\\$&');
+            // Sostituisci * con .*
+            const regexPattern = '^' + escaped.replace(/\*/g, '.*') + '$';
+            return new RegExp(regexPattern);
+        }
+        
+        const currentUrl = this.globals.windowContext.location.href;
+        const shouldShow = allowedOnSpecificUrlList.some(pattern => {
+            const regex = wildcardToRegex(pattern);
+            return regex.test(currentUrl);
+        });
+        
+        // let isAllowedToLoad = !isAllowedUrlInText(this.globals.windowContext.location.origin, this.globals.hideOnSpecificDomainList)
+        return shouldShow
     }
 
 }
