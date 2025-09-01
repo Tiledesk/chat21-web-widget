@@ -20,7 +20,7 @@
         margin: 3px;
         background: transparent;
         overflow: hidden;
-        font-family: 'Muli', sans-serif !important;
+        font-family: var(--font-family) !important;
         font-size: var(--buttonFontSize) !important;
         -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
