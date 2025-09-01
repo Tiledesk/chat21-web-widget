@@ -221,6 +221,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'CLOSE',
       'MAXIMIZE',
       'MINIMIZE',
+      'FULLSCREEN',
       'CLOSE_CHAT',
       'RESTART',
       'LOGOUT',
