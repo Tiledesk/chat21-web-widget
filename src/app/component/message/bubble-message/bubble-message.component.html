@@ -61,7 +61,6 @@
       <chat-audio  *ngIf="isAudio(message)"
         [metadata]="message.metadata"
         [color]="fontColor"
-        [fontSize]="fontSize"
         [stylesMap]="stylesMap">
       </chat-audio>
 
@@ -82,8 +81,6 @@
         <chat-text *ngIf="message?.type !=='html'"
           [text]="message?.text"
           [color]="fontColor"
-          [fontSize]="fontSize"
-          [fontFamily]="fontFamily"
           (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
           (onAfterMessageRender)="onAfterMessageRenderFN($event)">
         </chat-text>
