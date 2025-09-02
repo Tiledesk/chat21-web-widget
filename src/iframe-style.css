@@ -36,7 +36,7 @@
 
 #tiledeskdiv.decreaseSize {
     /* transition: width 1s, height 1s; */
-    transition: all 1s ease-out;
+    transition: all 1s ease-out !important;
     width: var(--iframeMinWidth);
     height: var(--iframeMinHeight);
     /* animation: right-animate 1s ease infinite alternate; */
@@ -45,7 +45,7 @@
 
 #tiledeskdiv.increaseSize {
     /* transition: width 1s, height 1s; */
-    transition: all 3s ease-in;
+    transition: all 1s ease-in !important;
     width: var(--iframeMaxWidth);
     height: var(--iframeMaxHeight);
     /* animation: right-animate 1s ease infinite alternate; */
@@ -54,7 +54,7 @@
 
 #tiledeskdiv.fullscreen {
     /* transition: width 1s, height 1s; */
-    transition: all 3s ease-in;
+    transition: all 1s ease-in !important;
     right: 0px;
     left: 0px;
     top: 0px;

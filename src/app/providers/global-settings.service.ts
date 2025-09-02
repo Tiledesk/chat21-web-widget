@@ -387,20 +387,20 @@ export class GlobalSettingsService {
         }
     }
     loadFont(family: string, href: string,) {
-        // controlla se già esiste
-        if (document.querySelector(`link[data-font='${family}']`)) {
-          return;
+        const mainFont = family.split(",")[0].replace(/['"]/g, "").trim(); // es. "Montserrat"
+
+        if (document.querySelector(`link[data-font='${mainFont}']`)) {
+            return;
         }
-    
+
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = href;
-        link.setAttribute('data-font', family); // marker per non duplicare
+        link.setAttribute('data-font', mainFont); // marker pulito
         document.head.appendChild(link);
-    
-        // aggiorna la variabile CSS
-        document.documentElement.style.setProperty('--font-family', `'${family}', sans-serif`);
-      }
+
+        document.documentElement.style.setProperty('--font-family', family);
+    }
     /**
      * A: setVariablesFromService
      */
