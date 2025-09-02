@@ -1,5 +1,3 @@
-@import 'src/app/sass/variables';
-
 :host {
     --backgroundColor: #{var(--blue)};
     --textColor: #{var(--bck-msg-sent)};
@@ -7,7 +5,7 @@
     --hoverTextColor: #{var(--blue)};
     --buttonFontSize: #{var(--button-in-msg-font-size)};
     --max-width: #{var(--button-in-msg-max-width)};
-    --font-family: #{var(--font-family)};
+    --fontFamily: #{var(--font-family)};
 }
 
 .button-in-msg {
@@ -21,7 +19,7 @@
     margin: 3px;
     background: var(--backgroundColor);
     overflow: hidden;
-    font-family: var(--font-family);
+    font-family: var(--fontFamily);
     font-size: var(--buttonFontSize);
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
