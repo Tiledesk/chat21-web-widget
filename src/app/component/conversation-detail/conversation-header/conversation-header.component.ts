@@ -58,8 +58,8 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
   private API_URL: string;
   private logger: LoggerService = LoggerInstance.getInstance()
   constructor(
-    public g: Globals,
-    public appConfigService: AppConfigService,) {
+    public appConfigService: AppConfigService
+  ) {
       this.API_URL = this.appConfigService.getConfig().apiUrl;
   }
 
