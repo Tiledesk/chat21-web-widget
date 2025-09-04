@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc21
+- **bug-fixed**: shadow is visible while decrease widget size
+
 # 5.1.0-rc20
 - **added**: fontFamilySource settings variable
 - **added**: --font-family-bubble-message as variable to manage custom font
