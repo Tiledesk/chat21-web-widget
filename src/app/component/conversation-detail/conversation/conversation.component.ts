@@ -1018,6 +1018,12 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   /** CALLED BY: conv-header component */
   onCloseWidgetFN() {
     //this.g.setParameter('activeConversation', null, false);
+    /** remove Min/Max/fullscreen css classes */
+    var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
+    tiledeskDiv.classList.remove('increaseSize')
+    tiledeskDiv.classList.remove('decreaseSize')
+    tiledeskDiv.classList.remove('fullscreen')
+
     this.onCloseWidget.emit();
   }
   /** CALLED BY: conv-header component */
