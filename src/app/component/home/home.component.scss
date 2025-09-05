@@ -1,8 +1,3 @@
-// @import 'src/app/sass/variables';
-// @import '../../../sass/normalize.css';
-
-
-
 #chat21-home-component {
     position: absolute;
     width: 100%;
@@ -89,7 +84,6 @@
                 }
 
                 .c21-text {
-                    font-family: 'Google Sans';
                     .c21-text-welcome {
                         overflow: hidden;
                         line-height: 1.2em;
@@ -130,7 +124,6 @@
                     }
                 }
                 .c21-text {
-                    font-family: 'Roboto';
                     margin: 0 0 0 15px;
 
                     .c21-text-welcome {
@@ -308,7 +301,7 @@
                 font-weight: 500;
                 line-height: 22px;
 
-                font-family: Mulish, sans-serif;
+                font-family: var(--font-family-powered-by);
                 letter-spacing: 0.24px;
                 -webkit-font-smoothing: antialiased;
     

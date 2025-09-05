@@ -18,8 +18,6 @@ export class BubbleMessageComponent implements OnInit {
   @Input() message: MessageModel;
   @Input() isSameSender: boolean;
   @Input() fontColor: string;
-  @Input() fontSize: string;
-  @Input() fontFamily: string;
   @Input() stylesMap: Map<string, string>;
   @Output() onBeforeMessageRender = new EventEmitter();
   @Output() onAfterMessageRender = new EventEmitter();

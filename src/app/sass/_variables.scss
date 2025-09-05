@@ -20,6 +20,7 @@
 
     --border-radius-bubble-message: 20px;
     --button-in-msg-font-size: 15px;
+    --button-in-msg-font-family: 'Roboto','Google Sans', Helvetica, Arial, sans-serif;
     --button-in-msg-max-width: 280px;
     --button-in-msg-padding: 8px 16px;
 
@@ -39,6 +40,16 @@
 
     --content-background-color: #fff;
     --content-text-color: var(--black);
+
+
+
+    --font-family: 'Roboto','Google Sans', Helvetica, Arial, sans-serif; //Mulish, sans-serif;
+    --font-family-bubble-message: 'Roboto','Google Sans', Helvetica, Arial, sans-serif;
+    --font-family-callout: 'Helvetica Neue', 'Apple Color Emoji', Helvetica, Arial, sans-serif; 
+    --font-family-powered-by: Mulish, sans-serif;
+
+    --font-size-bubble-message: 1.4em
+
 }
 
 $trasp-black:rgba(0,0,0,0.8);

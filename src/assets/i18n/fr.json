@@ -53,8 +53,9 @@
     "WAITING_TIME_NOT_FOUND": "Nous vous répondrons dans les plus brefs délais",
     "CLOSED": "Fermé",
     "CLOSE_CHAT": "Fermer la discussion",
-    "MINIMIZE":"Minimiser",
-    "MAXIMIZE":"Maximiser",
+    "MINIMIZE":"Réduire la fenêtre",
+    "MAXIMIZE":"Agrandir la fenêtre",
+    "FULLSCREEN":"Plein écran",
     "CONFIRM_CLOSE_CHAT":"Etes-vous sûr de vouloir fermer cette discussion?",
 
     "INFO_SUPPORT_USER_ADDED_SUBJECT":"tu",

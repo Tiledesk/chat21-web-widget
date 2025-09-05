@@ -1361,9 +1361,6 @@
             window.Tiledesk('restart')
         }
 
-
-
-
         function onClickFontSize(){
             let text = document.getElementById('fontSize').value
             text === ""? text= '1.4em': text
@@ -1372,6 +1369,17 @@
             window.Tiledesk('restart')
         }
 
+        function onClickFontFamily(){
+            let text = document.getElementById('fontFamily').value
+            window.tiledeskSettings['fontFamily'] = text
+
+            let source = document.getElementById('fontFamilySource').value
+            // text === ""? text= '1.4em': text
+            window.tiledeskSettings['fontFamilySource'] = source
+
+            console.log('onClickFontFamily:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
 
         function onClickButtonFontSize(){
             let text = document.getElementById('buttonFontSize').value
@@ -1382,16 +1390,6 @@
         }
 
        
-
-        
-
-       
-
-        
-
-        
-
-        
 
 
         function onClickTestAll(){
@@ -2453,6 +2451,16 @@
                             </div>
                             <div class="col-md-2">
                                 <button class="btn btn-light" onclick="onClickFontSize()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>fontFamily</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control col-sm-2" type="text" id="fontFamily" name="fontFamily" placeholder="Family">
+                                <input class="form-control col-sm-2" type="text" id="fontFamilySource" name="fontFamilySource" placeholder="Source">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickFontFamily()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
                             </div>
                         </div>
         

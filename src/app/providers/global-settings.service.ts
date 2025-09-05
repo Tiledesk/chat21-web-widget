@@ -331,6 +331,8 @@ export class GlobalSettingsService {
         this.globals.setColorWithGradient();
         /** set css iframe from parameters */
         this.setCssIframe();
+        /** set main style */
+        this.setStyle();
 
         this.logger.debug('[GLOBAL-SET] ***** END SET PARAMETERS *****');
         this.obsSettingsService.next(true);
@@ -365,15 +367,39 @@ export class GlobalSettingsService {
         }
         // console.log('this.globals.fullscreenMode' + this.globals.fullscreenMode);
         if (this.globals.fullscreenMode === true) {
-            divTiledeskiframe.style.left = 0;
-            divTiledeskiframe.style.right = 0;
-            divTiledeskiframe.style.top = 0;
-            divTiledeskiframe.style.bottom = 0;
-            divTiledeskiframe.style.width = '100%';
-            divTiledeskiframe.style.height = '100%';
-            divTiledeskiframe.style.maxHeight = 'none';
-            divTiledeskiframe.style.maxWidth = 'none';
+            // divTiledeskiframe.style.left = 0;
+            // divTiledeskiframe.style.right = 0;
+            // divTiledeskiframe.style.top = 0;
+            // divTiledeskiframe.style.bottom = 0;
+            // divTiledeskiframe.style.width = '100%';
+            // divTiledeskiframe.style.height = '100%';
+            // divTiledeskiframe.style.maxHeight = 'none';
+            // divTiledeskiframe.style.maxWidth = 'none';
+            divTiledeskiframe.classList.add('fullscreen')
         }
+    }
+
+    setStyle(){
+
+        /** load custom FONT */
+        if(this.globals.fontFamily && this.globals.fontFamilySource){
+            this.loadFont(this.globals.fontFamily, this.globals.fontFamilySource)
+        }
+    }
+    loadFont(family: string, href: string,) {
+        const mainFont = family.split(",")[0].replace(/['"]/g, "").trim(); // es. "Montserrat"
+
+        if (document.querySelector(`link[data-font='${mainFont}']`)) {
+            return;
+        }
+
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        link.setAttribute('data-font', mainFont); // marker pulito
+        document.head.appendChild(link);
+
+        document.documentElement.style.setProperty('--font-family', family);
     }
     /**
      * A: setVariablesFromService
@@ -929,7 +955,12 @@ export class GlobalSettingsService {
         TEMP = tiledeskSettings['fontFamily'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > fontFamily:: ', TEMP]);
         if (TEMP !== undefined) {
-            globals.fontFamily = TEMP;
+            globals.fontFamily = TEMP + ',' + globals.fontFamily;
+        }
+        TEMP = tiledeskSettings['fontFamilySource'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > fontFamily:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.fontFamilySource = TEMP;
         }
         TEMP = tiledeskSettings['buttonFontSize'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > buttonFontSize:: ', TEMP]);
@@ -1260,7 +1291,11 @@ export class GlobalSettingsService {
         }
         TEMP = el.nativeElement.getAttribute('fontFamily');
         if (TEMP !== null) {
-            this.globals.fontFamily = TEMP;
+            this.globals.fontFamily = TEMP + ',' + this.globals.fontFamily;
+        }
+        TEMP = el.nativeElement.getAttribute('fontFamilySource');
+        if (TEMP !== null) {
+            this.globals.fontFamilySource = TEMP;
         }
         TEMP = el.nativeElement.getAttribute('buttonFontSize');
         if (TEMP !== null) {
