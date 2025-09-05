@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc22
+- **changed**: footer UI if fullscreenMode is enabled
+- **changed**: buttons alignment if fullscreenMode is enabled
+
 # 5.1.0-rc21
 - **bug-fixed**: shadow is visible while decrease widget size
 
