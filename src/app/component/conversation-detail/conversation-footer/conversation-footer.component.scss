@@ -7,9 +7,8 @@
     display: flex;
     // width: 100%;
     align-items: center;
-    gap: 8px;
     justify-content: space-between;
-    margin: 0px 8px;
+    gap: 8px;
 
     //if attachment icon OR emoji icon is not in DOM -> increment textarea width
     &:has(:not(#chat21-start-upload-doc), :not(#chat21-emoticon-picker)) .visible-text-area {
@@ -24,7 +23,7 @@
 
 .icons-container{
     display: flex;
-    align-self: flex-end;
+    // align-self: flex-end;
     // margin-left: 8px;
     // margin-right: 8px;
     gap: 8px;
@@ -32,7 +31,7 @@
 
 .visible-text-area {
     width: 70%;
-    margin: 8px 0px;
+    // margin: 12px 0px;
     pointer-events: auto;
     border-radius: var(--chat-footer-border-radius);
     background-color: var(--chat-footer-background-color);
@@ -45,9 +44,10 @@
 }
 
 .chat21-textarea-button {
-    fill: var(--icon-fill-color);
+    // fill: var(--icon-fill-color);
+    color: var(--icon-fill-color);
     pointer-events: auto;
-    height: var(--chat-footer-height);
+    // height: var(--chat-footer-height);
     bottom: 22px;
     opacity: 0.3;
     cursor: initial;
@@ -207,7 +207,7 @@ textarea:active{
 
 #chat21-button-send {
     display: flex;
-    align-self: flex-end;
+    // align-self: flex-end;
     // margin: 0 8px;
     width: 34px;
     text-align: center;
@@ -219,7 +219,7 @@ textarea:active{
     width: 34px;
     text-align: center;
     justify-content: center;
-    height: var(--chat-footer-height);
+    // height: var(--chat-footer-height);
     &.active{
         width: 100%;
     }
