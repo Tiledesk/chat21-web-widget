@@ -1022,7 +1022,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
     tiledeskDiv.classList.remove('increaseSize')
     tiledeskDiv.classList.remove('decreaseSize')
-    tiledeskDiv.classList.remove('fullscreen')
+    tiledeskDiv.classList.remove('top')
 
     this.onCloseWidget.emit();
   }
@@ -1078,18 +1078,15 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     if(mode==='max'){
       tiledeskDiv.classList.add('increaseSize')
       tiledeskDiv.classList.remove('decreaseSize')
-      tiledeskDiv.classList.remove('fullscreen')
-      this.g.fullscreenMode = false
+      tiledeskDiv.classList.remove('top')
     }else if(mode==='min'){
       tiledeskDiv.classList.add('decreaseSize')
       tiledeskDiv.classList.remove('increaseSize')
-      tiledeskDiv.classList.remove('fullscreen')
-      this.g.fullscreenMode = false
-    }else if(mode=== 'fullscreen'){
-      tiledeskDiv.classList.add('fullscreen')
+      tiledeskDiv.classList.remove('top')
+    }else if(mode=== 'top'){
+      tiledeskDiv.classList.add('top')
       tiledeskDiv.classList.remove('increaseSize')
       tiledeskDiv.classList.remove('decreaseSize')
-      this.g.fullscreenMode = true
 
     }
     this.isMenuShow = false;
@@ -1132,8 +1129,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       case HEADER_MENU_OPTION.MINIMIZE:
         this.onWidgetSizeChange('min')
         break;
-      case HEADER_MENU_OPTION.FULLSCREEN:
-        this.onWidgetSizeChange('fullscreen')
+      case HEADER_MENU_OPTION.TOP:
+        this.onWidgetSizeChange('top')
         break;
     }
   }

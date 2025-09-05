@@ -110,7 +110,7 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
     this.heightStatus = status
     if(status === 'min') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.MINIMIZE)
     if(status === 'max') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.MAXIMIZE)
-    if(status === 'full') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.FULLSCREEN)
+    if(status === 'top') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.TOP)
     this.onMenuOptionShow.emit(false)
   }
   toggleSound() {

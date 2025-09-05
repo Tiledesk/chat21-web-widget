@@ -74,6 +74,6 @@ export const HEADER_MENU_OPTION = {
     RESTART     :   'restart',
     MAXIMIZE    :   'maximize',
     MINIMIZE    :   'minimize',
-    FULLSCREEN  :   'fullscreen'
+    TOP  :          'top'
 }
 
