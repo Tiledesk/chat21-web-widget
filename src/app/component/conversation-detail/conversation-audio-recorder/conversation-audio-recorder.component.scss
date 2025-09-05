@@ -3,7 +3,8 @@
     margin: 0px;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    // justify-content: center;
+    justify-content: space-between;
     height: 100%;
     width: 100%;
     float: left;
@@ -12,7 +13,7 @@
 
 ::ng-deep chat-audio.test {
   display: flex;
-  width: 80%;
+  width: 90%;
   // margin: 8px 0;
   pointer-events: auto;
   border-radius: var(--chat-footer-border-radius);
@@ -64,6 +65,7 @@ button {
     justify-content: center;
     align-items: center;
     padding: 0px;
+    z-index: 0;
   }
   
   .mic-button svg {

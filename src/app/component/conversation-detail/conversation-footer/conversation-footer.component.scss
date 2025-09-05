@@ -393,20 +393,20 @@ textarea:active{
 
 
 .emoji-container {
-    height: 312px;
+    height: 319px;
     position: absolute;
     overflow: hidden;
-    width: 89%;
+    width: 338px;
     bottom: 100%;
     z-index: 10;
     left: 10px;
-    box-shadow: 0px -15px 20px -13px rgba(0, 0, 0 , 0.38);
-    -webkit-box-shadow: 0px -15px 20px -13px rgba(0, 0, 0 , 0.38);
+    box-shadow: 0 -4px 14px -13px rgba(0, 0, 0 , 0.38);
+    -webkit-box-shadow: 0 -4px 14px -13px rgba(0, 0, 0 , 0.38);
 }
 .emoji-mart {
     position: absolute;
     // bottom: 40px;
     // left: 10px;
     border: none;
-    margin: -2px -2px 0px;
+    // margin: -2px -2px 0px;
 }

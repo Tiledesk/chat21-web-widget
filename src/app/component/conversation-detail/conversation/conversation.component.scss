@@ -15,6 +15,38 @@
     bottom: var(--chat-footer-height) !important
 }
 
+:host-context(#chat21-conversations.full-screen-mode){
+    --button-in-msg-padding: 10px 16px;
+    #chat21-footer{
+        left: 20%;
+        right: 20%;
+    }
+
+    chat-conversation-content ::ng-deep{
+        .attachment_container,
+        .buttons-wrapper {
+            justify-content: flex-start;
+        }
+
+        .button-in-message{
+            padding: 14px 22px !important
+        }
+
+    }
+
+    chat-conversation-footer ::ng-deep {
+        .textarea-container {
+            padding: 8px 24px;
+            background-color: var(--chat-footer-background-color);
+            border-radius: 28px;
+        }
+        #hiddenFooter,
+        #emoji-mart-container {
+            bottom: calc(100% + 10px)
+        }
+    }
+}
+
 // ============= CSS #chat21-conversation-component ================= //
 #chat21-conversation-component {
     // background-color: #ffffff;
