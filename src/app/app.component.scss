@@ -601,16 +601,6 @@ chat-root {
             border-radius: 16px;
         }
 
-        .chat21-fullscreen {
-            width: 100%;
-            height: 100%;
-            right: 0px;
-            left: 0px;
-            bottom: 0px;
-            border-radius: 0px;
-            max-height: none;
-        }
-
 
         /***************************
         ******** PAGE MODAL ********
@@ -682,7 +672,7 @@ chat-root {
     .c21-header {
         overflow: hidden;
         width: 100%;
-        height: 52px;
+        height: var(--chat-header-height);
         position: relative;
         margin: 0;
         padding: 0;
@@ -703,7 +693,7 @@ chat-root {
 
         .c21-header-container{
             position: relative;
-            height: 52px;
+            height: 100%;
             width: 100%;
             margin: 0 auto;
 
@@ -774,7 +764,7 @@ chat-root {
     }
     .c21-body {
         position: absolute;
-        top: 52px;
+        top: var(--chat-header-height);
         bottom: 0;
         left: 0;
         right: 0;

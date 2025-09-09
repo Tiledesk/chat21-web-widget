@@ -135,7 +135,6 @@ export class Globals {
   userEmail: string;
   widgetTitle: string;
   fullscreenMode: boolean;
-  hideHeaderCloseButton: boolean;
   themeColor: string;
   themeColorOpacity: number;
   themeForegroundColor: string;
@@ -161,6 +160,8 @@ export class Globals {
   baloonShape: string;
   isLogEnabled: boolean;
   openExternalLinkButton: boolean;
+  hideHeaderConversation: boolean
+  hideHeaderCloseButton: boolean;
   hideHeaderConversationOptionsMenu: boolean;
   hideCloseConversationOptionMenu: boolean;
   hideSettings: boolean;
@@ -221,6 +222,9 @@ export class Globals {
 
   allowedOnSpecificUrl: boolean // *******  new ********
   allowedOnSpecificUrlList: Array<string> // *******  new ********
+
+
+
   constructor(
   ) { }
 
@@ -289,9 +293,6 @@ export class Globals {
      * average response time of his team (if 'dynamicWaitTimeReply' is 
      * false the WAITING_TIME_NOT_FOUND will always be displayed) 
      * is set to true for backward compatibility with old projects */
-    this.hideHeaderCloseButton = false;
-    /** Hide the close button in the widget header. Permitted values: true,
-    false. The default value is false. */
     this.fullscreenMode = false;
     /** if it is true, the chat window is open in fullscreen mode. Permitted
     values: true, false. Default value : false */
@@ -334,6 +335,12 @@ export class Globals {
     this.isLogEnabled = false;
     // this.parameters['isLogEnabled'] = false;
     this.openExternalLinkButton = true;
+    /** Hide the header conversation Permitted values: true,
+    false. The default value is false. */
+    this.hideHeaderConversation= false;
+    /** Hide the close button in the widget header. Permitted values: true,
+    false. The default value is false. */
+    this.hideHeaderCloseButton = false;
     /** enable to hide/show upper-right header conversation options menu */
     this.hideHeaderConversationOptionsMenu = false;
     /** enable to close a conversation from upper-right header menu  */
@@ -532,7 +539,7 @@ export class Globals {
       'fullscreenMode': this.fullscreenMode,
       'filterByRequester': this.filterByRequester,
       'hideHeaderConversationOptionsMenu': this.hideHeaderConversationOptionsMenu, 'hideHeaderCloseButton': this.hideHeaderCloseButton,
-      'hideCloseConversationOptionMenu': this.hideCloseConversationOptionMenu,
+      'hideCloseConversationOptionMenu': this.hideCloseConversationOptionMenu, 'hideHeaderConversation': this.hideHeaderConversation,
       'hideSettings': this.hideSettings,
       'isLogEnabled': this.isLogEnabled,
       'isOpen': this.isOpen, 'isShown': this.isShown,
