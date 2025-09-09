@@ -8,6 +8,7 @@
 
     <!-- HEADER -->
     <chat-conversation-header
+        *ngIf="!g?.hideHeaderConversation"
         [idConversation]= "conversationWith"
         [senderId]="senderId"
         [soundEnabled]="g?.soundEnabled"
