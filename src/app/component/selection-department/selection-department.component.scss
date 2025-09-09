@@ -12,7 +12,7 @@
     .c21-header {
         overflow: hidden;
         width: 100%;
-        height: 52px;
+        height: var(--chat-header-height);
         .c21-header-button {
             .c21-close-button.c21-small {
                 width: 31px;
