@@ -835,6 +835,63 @@
             return true;
         }
 
+
+        /** WIDGET POSITION SECTION : start*/
+        function onClickSize(){
+            let status = document.querySelector('input[name="size"]:checked').value
+            window.tiledeskSettings['size'] = status
+            console.log('onClickSize: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+        
+        function onClickFullScreenMode(){
+            let status = document.querySelector('input[name="fullscreenMode"]:checked').value
+            window.tiledeskSettings['fullscreenMode'] = stringToBoolean(status)
+            console.log('onClickFullScreenMode: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickAlign(){
+            let status = document.querySelector('input[name="align"]:checked').value
+            window.tiledeskSettings['align'] = status
+            console.log('onClickAlign: status-->',window.tiledeskSettings)
+            window.Tiledesk('restart')
+        }
+
+        function onClickMarginX(){
+            let text = document.getElementById('marginX').value
+            text === ""? text= '100px': text
+            window.tiledeskSettings['marginX'] = text
+            console.log('onClickMarginX:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickMarginY(){
+            let text = document.getElementById('marginY').value
+            text === ""? text= '50px' : text //set default value if user not write a value
+            window.tiledeskSettings['marginY'] = text
+            console.log('onClickMarginY:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickMobileMarginX(){
+            let text = document.getElementById('mobileMarginX').value
+            text === ""? text= '100px': text
+            window.tiledeskSettings['mobileMarginX'] = text
+            console.log('onClickMobileMarginX:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
+        function onClickMobileMarginY(){
+            let text = document.getElementById('mobileMarginY').value
+            text === ""? text= '50px' : text //set default value if user not write a value
+            window.tiledeskSettings['mobileMarginY'] = text
+            console.log('onClickMobileMarginY:',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+        /** WIDGET POSITION SECTION : end*/
+
+        /** WIDGET SETTINGS SECTION : start*/
         function onClickDisconnectTime(){
             let status = document.querySelector('input[name="disconnetTime"]:checked');
             let value;
@@ -866,13 +923,6 @@
             let status = document.querySelector('input[name="preChatForm"]:checked').value
             window.tiledeskSettings['preChatForm'] = stringToBoolean(status)
             console.log('onClickPreChatForm: status-->',window.tiledeskSettings)
-            window.Tiledesk('restart')
-        }
-
-        function onClickAlign(){
-            let status = document.querySelector('input[name="align"]:checked').value
-            window.tiledeskSettings['align'] = status
-            console.log('onClickAlign: status-->',window.tiledeskSettings)
             window.Tiledesk('restart')
         }
 
@@ -962,13 +1012,6 @@
             window.Tiledesk('restart')
         }
 
-        function onClickFullScreenMode(){
-            let status = document.querySelector('input[name="fullscreenMode"]:checked').value
-            window.tiledeskSettings['fullscreenMode'] = stringToBoolean(status)
-            console.log('onClickFullScreenMode: status-->',window.tiledeskSettings);
-            window.Tiledesk('restart')
-        }
-
         function onClickThemeColor(){
             let color = document.getElementById('themeColor').value
             document.getElementById('themeColorText').value = color
@@ -1040,38 +1083,6 @@
             let text = document.getElementById('departmentID').value
             window.tiledeskSettings['departmentID'] = text
             console.log('onClickDepartmentId:',window.tiledeskSettings);
-            window.Tiledesk('restart')
-        }
-
-        function onClickMarginX(){
-            let text = document.getElementById('marginX').value
-            text === ""? text= '100px': text
-            window.tiledeskSettings['marginX'] = text
-            console.log('onClickMarginX:',window.tiledeskSettings);
-            window.Tiledesk('restart')
-        }
-
-        function onClickMarginY(){
-            let text = document.getElementById('marginY').value
-            text === ""? text= '50px' : text //set default value if user not write a value
-            window.tiledeskSettings['marginY'] = text
-            console.log('onClickMarginY:',window.tiledeskSettings);
-            window.Tiledesk('restart')
-        }
-
-        function onClickMobileMarginX(){
-            let text = document.getElementById('mobileMarginX').value
-            text === ""? text= '100px': text
-            window.tiledeskSettings['mobileMarginX'] = text
-            console.log('onClickMobileMarginX:',window.tiledeskSettings);
-            window.Tiledesk('restart')
-        }
-
-        function onClickMobileMarginY(){
-            let text = document.getElementById('mobileMarginY').value
-            text === ""? text= '50px' : text //set default value if user not write a value
-            window.tiledeskSettings['mobileMarginY'] = text
-            console.log('onClickMobileMarginY:',window.tiledeskSettings);
             window.Tiledesk('restart')
         }
 
@@ -1227,7 +1238,9 @@
             console.log('onClickNativeRating:', window.tiledeskSettings)
             window.Tiledesk('restart')
         }
+        /** WIDGET SETTINGS SECTION : end*/
 
+        /** WIDGET SOCIAL CHANNELS SECTION : start*/
         function onClickWhatsappNumber(){
             let status = document.getElementById('whatsappNumber').value
             window.tiledeskSettings['whatsappNumber'] = status
@@ -1248,7 +1261,9 @@
             console.log('onClickTelegramUsername:', window.tiledeskSettings)
             window.Tiledesk('restart')
         }
-        
+        /** WIDGET SOCIAL CHANNELS SECTION : end*/
+
+        /** WIDGET CONVERSATION DETAIL SECTION : start*/
         function onClickHideHeaderCloseButton(){
             let status = document.querySelector('input[name="hideHeaderCloseButton"]:checked').value
             window.tiledeskSettings['hideHeaderCloseButton'] = stringToBoolean(status)
@@ -1360,7 +1375,9 @@
             console.log('onClickshowAudioRecorderFooterButton:', window.tiledeskSettings)
             window.Tiledesk('restart')
         }
+        /** WIDGET CONVERSATION DETAIL SECTION : end*/
 
+        /** WIDGET BUBBLE MESSAGE SECTION : start*/
         function onClickFontSize(){
             let text = document.getElementById('fontSize').value
             text === ""? text= '1.4em': text
@@ -1381,6 +1398,9 @@
             window.Tiledesk('restart')
         }
 
+        /** WIDGET BUBBLE MESSAGE SECTION : end*/
+       
+        /**WIDGET BUTTON STYLE SECTION : start */
         function onClickButtonFontSize(){
             let text = document.getElementById('buttonFontSize').value
             text === ""? text= '15px': text
@@ -1388,9 +1408,7 @@
             console.log('onClickButtonFontSize:',window.tiledeskSettings);
             window.Tiledesk('restart')
         }
-
-       
-
+        /**WIDGET BUTTON STYLE SECTION : end */
 
         function onClickTestAll(){
             inputs = document.getElementsByTagName('input');
@@ -1782,6 +1800,78 @@
                             <button class="btn btn-light" onclick="onClickOpenConversationById()">Open conversation <i class="fa-regular fa-comment" aria-hidden="true"></i></button>
                         </div>
                     </div>
+                    <!-- WIDGET POSITION SECTION : start-->
+                    <div class="row section">
+                        <div><h3 style="line-height: 0.3;">Widget <em><strong>POSITION</strong></em></h3></div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>size</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="size" value="min" checked><label class="form-check-label" for="size">min</label>
+                                <input class="form-check-input" type="radio" name="size" value="max"><label class="form-check-label" for="size">max</label>
+                                <input class="form-check-input" type="radio" name="size" value="top"><label class="form-check-label" for="size">top</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickSize()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>fullscreenMode</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="fullscreenMode" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="fullscreenMode" value="false" checked ><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickFullScreenMode()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>align</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="align" value="left"><label class="form-check-label" for="preChatForm">Left</label>
+                                <input class="form-check-input" type="radio" name="align" value="right" checked><label class="form-check-label" for="preChatForm">Right</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickAlign()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>marginX</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control col-sm-2" type="text" id="marginX" name="marginX" placeholder="Ex. 100px, 1em">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickMarginX()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>marginY</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control col-sm-2" type="text" id="marginY" name="marginY" placeholder="Ex. 100px, 1em">
+                            </div>
+                            <div class="col-md-2 ">
+                                <button class="btn btn-light" onclick="onClickMarginY()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>mobileMarginX</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control col-sm-2" type="text" id="mobileMarginX" name="mobileMarginX" placeholder="Ex. 100px, 1em">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickMobileMarginX()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>mobileMarginY</strong></em></span></div>
+                            <div class="col-md-5 formElement">
+                                <input class="form-control col-sm-2" type="text" id="mobileMarginY" name="mobileMarginY" placeholder="Ex. 100px, 1em">
+                            </div>
+                            <div class="col-md-2 ">
+                                <button class="btn btn-light" onclick="onClickMobileMarginY()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- WIDGET POSITION SECTION : end-->
                     <div class="row section c21-parameters">
                         <div><h3 style="line-height: 0.3;">MANAGE <em><strong>widget settings</strong></em></h3></div>
                         <div class="docs">Select an option for Tiledesk settings parameter</div>
@@ -1826,16 +1916,6 @@
                             </div>
                             <div class="col-md-2">
                                 <button class="btn btn-light" onclick="onClickPreChatForm()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5 formElement"><span><em><strong>align</strong></em></span></div>
-                            <div class="col-md-5">
-                                <input class="form-check-input" type="radio" name="align" value="left"><label class="form-check-label" for="preChatForm">Left</label>
-                                <input class="form-check-input" type="radio" name="align" value="right" checked><label class="form-check-label" for="preChatForm">Right</label>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-light" onclick="onClickAlign()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
                             </div>
                         </div>
                         <div class="row">
@@ -1935,8 +2015,6 @@
                                 <button class="btn btn-light" onclick="onClickRestartConversation()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
                             </div>
                         </div>
-                        
-                       
                         <div class="row">
                             <div class="col-md-5 formElement"><span><em><strong>hideSettings</strong></em></span></div>
                             <div class="col-md-5">
@@ -1945,17 +2023,6 @@
                             </div>
                             <div class="col-md-2">
                                 <button class="btn btn-light" onclick="onClickHideSettings()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-5 formElement"><span><em><strong>fullscreenMode</strong></em></span></div>
-                            <div class="col-md-5">
-                                <input class="form-check-input" type="radio" name="fullscreenMode" value="true"><label>True</label>
-                                <input class="form-check-input" type="radio" name="fullscreenMode" value="false" checked ><label>False</label>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-light" onclick="onClickFullScreenMode()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
                             </div>
                         </div>
                         <div class="row">
@@ -1994,42 +2061,6 @@
                             </div>
                             <div class="col-md-2">
                                 <button class="btn btn-light" onclick="onClickDepartmentId()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5 formElement"><span><em><strong>marginX</strong></em></span></div>
-                            <div class="col-md-5 formElement">
-                                <input class="form-control col-sm-2" type="text" id="marginX" name="marginX" placeholder="Ex. 100px, 1em">
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-light" onclick="onClickMarginX()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5 formElement"><span><em><strong>marginY</strong></em></span></div>
-                            <div class="col-md-5 formElement">
-                                <input class="form-control col-sm-2" type="text" id="marginY" name="marginY" placeholder="Ex. 100px, 1em">
-                            </div>
-                            <div class="col-md-2 ">
-                                <button class="btn btn-light" onclick="onClickMarginY()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5 formElement"><span><em><strong>mobileMarginX</strong></em></span></div>
-                            <div class="col-md-5 formElement">
-                                <input class="form-control col-sm-2" type="text" id="mobileMarginX" name="mobileMarginX" placeholder="Ex. 100px, 1em">
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-light" onclick="onClickMobileMarginX()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5 formElement"><span><em><strong>mobileMarginY</strong></em></span></div>
-                            <div class="col-md-5 formElement">
-                                <input class="form-control col-sm-2" type="text" id="mobileMarginY" name="mobileMarginY" placeholder="Ex. 100px, 1em">
-                            </div>
-                            <div class="col-md-2 ">
-                                <button class="btn btn-light" onclick="onClickMobileMarginY()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
                             </div>
                         </div>
                         <div class="row">

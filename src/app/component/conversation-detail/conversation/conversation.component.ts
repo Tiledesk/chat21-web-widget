@@ -1020,9 +1020,9 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     //this.g.setParameter('activeConversation', null, false);
     /** remove Min/Max/fullscreen css classes */
     var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
-    tiledeskDiv.classList.remove('increaseSize')
-    tiledeskDiv.classList.remove('decreaseSize')
-    tiledeskDiv.classList.remove('top')
+    tiledeskDiv.classList.remove('max-size')
+    tiledeskDiv.classList.remove('min-size')
+    tiledeskDiv.classList.remove('top-size')
 
     this.onCloseWidget.emit();
   }
@@ -1073,20 +1073,21 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     // this.hideTextAreaContent = true
   }
   /** CALLED BY: conv-header component */
-  onWidgetSizeChange(mode){
+  onWidgetSizeChange(mode: 'min' | 'max' | 'top'){
     var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
+    this.g.size = mode 
     if(mode==='max'){
-      tiledeskDiv.classList.add('increaseSize')
-      tiledeskDiv.classList.remove('decreaseSize')
-      tiledeskDiv.classList.remove('top')
+      tiledeskDiv.classList.add('max-size')
+      tiledeskDiv.classList.remove('min-size')
+      tiledeskDiv.classList.remove('top-size')
     }else if(mode==='min'){
-      tiledeskDiv.classList.add('decreaseSize')
-      tiledeskDiv.classList.remove('increaseSize')
-      tiledeskDiv.classList.remove('top')
+      tiledeskDiv.classList.add('min-size')
+      tiledeskDiv.classList.remove('max-size')
+      tiledeskDiv.classList.remove('top-size')
     }else if(mode=== 'top'){
-      tiledeskDiv.classList.add('top')
-      tiledeskDiv.classList.remove('increaseSize')
-      tiledeskDiv.classList.remove('decreaseSize')
+      tiledeskDiv.classList.add('top-size')
+      tiledeskDiv.classList.remove('max-size')
+      tiledeskDiv.classList.remove('min-size')
 
     }
     this.isMenuShow = false;
@@ -1307,7 +1308,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   private onIncreaseWith(){
     try{
       const tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
-      tiledeskDiv.classList.add('increaseSize')
+      tiledeskDiv.classList.add('max-size')
       const chat21conversations = document.getElementById('chat21-conversations')
       chat21conversations.style.borderRadius = '16px'
       // tiledeskDiv.style.width = '696px'
@@ -1320,8 +1321,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   private restoreDefaultWidgetSize(){
     try{
       const tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
-      tiledeskDiv.classList.remove('increaseSize')
-      tiledeskDiv.classList.remove('decreaseSize')
+      tiledeskDiv.classList.remove('max-size')
+      tiledeskDiv.classList.remove('min-size')
       // tiledeskDiv.style.width = '376px'
       // tiledeskDiv.style.maxHeight = '620px'
     }catch(e){

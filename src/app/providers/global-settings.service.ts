@@ -909,7 +909,7 @@ export class GlobalSettingsService {
             globals.hideSettings = (TEMP === true) ? true : false;;
         }
         TEMP = tiledeskSettings['isLogEnabled'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > logLevel:: ', TEMP]);
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > isLogEnabled:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.isLogEnabled = TEMP;
         }
@@ -958,7 +958,7 @@ export class GlobalSettingsService {
             globals.fontFamily = TEMP + ',' + globals.fontFamily;
         }
         TEMP = tiledeskSettings['fontFamilySource'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > fontFamily:: ', TEMP]);
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > fontFamilySource:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.fontFamilySource = TEMP;
         }
@@ -1007,7 +1007,7 @@ export class GlobalSettingsService {
             globals.nativeRating = (TEMP === true) ? true : false;
         }
         TEMP = tiledeskSettings['showInfoMessage'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showBubbleInfoMessage:: ', TEMP]);
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showInfoMessage:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.showInfoMessage = TEMP.split(',').map(key => { return key.trim()});
         }
@@ -1050,7 +1050,7 @@ export class GlobalSettingsService {
             globals.telegramUsername = TEMP;
         }
         TEMP = tiledeskSettings['fileUploadAccept'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > telegramUsername:: ', TEMP]);
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > fileUploadAccept:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.fileUploadAccept = TEMP;
         } 
@@ -1090,9 +1090,14 @@ export class GlobalSettingsService {
             globals.showEmojiFooterButton = (TEMP === true) ? true : false;
         } 
         TEMP = tiledeskSettings['showAudioRecorderFooterButton'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showEmojiFooterButton:: ', TEMP]);
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showAudioRecorderFooterButton:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.showAudioRecorderFooterButton = (TEMP === true) ? true : false;
+        }
+        TEMP = tiledeskSettings['size'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > size:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.size = TEMP;
         } 
     }
 
@@ -1829,6 +1834,11 @@ export class GlobalSettingsService {
         TEMP = getParameterByName(windowContext, 'tiledesk_showEmojiFooterButton');
         if (TEMP) {
             globals.showEmojiFooterButton = stringToBoolean(TEMP);
+        }
+
+        TEMP = getParameterByName(windowContext, 'tiledesk_size');
+        if (TEMP) {
+            globals.size = TEMP;
         }
         
     }
