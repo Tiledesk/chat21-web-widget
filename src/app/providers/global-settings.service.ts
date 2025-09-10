@@ -522,6 +522,9 @@ export class GlobalSettingsService {
                     if (variables.hasOwnProperty('allowedOnSpecificUrlList')) {
                         globals['allowedOnSpecificUrlList'] = variables['allowedOnSpecificUrlList'];
                     }
+                    if (variables.hasOwnProperty('allowedUploadExtentions')) {
+                        globals['fileUploadAccept'] = variables['allowedUploadExtentions'];
+                    }
                     
                 }
             }
