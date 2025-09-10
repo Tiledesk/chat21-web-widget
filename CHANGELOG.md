@@ -6,6 +6,14 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc23
+- **added**: hideHeaderConversation tiledeskSettings property
+
+# 5.1.0-rc22
+- **changed**: footer UI if fullscreenMode is enabled
+- **changed**: buttons alignment if fullscreenMode is enabled
+- **changed**: animation while increase/descrease widget size
+
 # 5.1.0-rc21
 - **bug-fixed**: shadow is visible while decrease widget size
 

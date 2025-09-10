@@ -1,19 +1,10 @@
-
-@font-face {
-    font-family: 'Material Icons';
-    src: url('https://fonts.googleapis.com/icon?family=Material+Icons');
-  }
-  
-  .material-icons.mic_none::before {
-    content: 'mic_none';
-  }
-
 .audio-recorder {
     text-align: center;
     margin: 0px;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    // justify-content: center;
+    justify-content: space-between;
     height: 100%;
     width: 100%;
     float: left;
@@ -22,8 +13,8 @@
 
 ::ng-deep chat-audio.test {
   display: flex;
-  width: 80%;
-  margin: 8px 0;
+  width: 90%;
+  // margin: 8px 0;
   pointer-events: auto;
   border-radius: var(--chat-footer-border-radius);
   background-color: var(--chat-footer-background-color);
@@ -52,10 +43,9 @@ button {
     background-color: transparent;
     color: var(--icon-fill-color);
     fill: var(--icon-fill-color);
-    height: var(--chat-footer-height);
+    // height: var(--chat-footer-height);
 
     display: flex;
-    align-self: flex-end;
     // margin: 0 8px;
     width: 34px;
     text-align: center;
@@ -75,6 +65,7 @@ button {
     justify-content: center;
     align-items: center;
     padding: 0px;
+    z-index: 0;
   }
   
   .mic-button svg {

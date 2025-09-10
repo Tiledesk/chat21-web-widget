@@ -5,11 +5,12 @@
     --hoverTextColor: #{var(--blue)};
     --buttonFontSize: #{var(--button-in-msg-font-size)};
     --max-width: #{var(--button-in-msg-max-width)};
+    --padding: #{var(--button-in-msg-padding)};
     --font-family: #{var(--button-in-msg-font-family)};
 }
 
 .button-in-msg {
-    padding: 8px 16px!important;
+    padding: var(--padding);
     position: relative;
     max-width: var(--max-width);
     min-width: inherit;
