@@ -221,6 +221,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'CLOSE',
       'MAXIMIZE',
       'MINIMIZE',
+      'CENTER',
       'CLOSE_CHAT',
       'RESTART',
       'LOGOUT',
@@ -1017,6 +1018,12 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   /** CALLED BY: conv-header component */
   onCloseWidgetFN() {
     //this.g.setParameter('activeConversation', null, false);
+    /** remove Min/Max/fullscreen css classes */
+    var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
+    tiledeskDiv.classList.remove('max-size')
+    tiledeskDiv.classList.remove('min-size')
+    tiledeskDiv.classList.remove('top-size')
+
     this.onCloseWidget.emit();
   }
   /** CALLED BY: conv-header component */
@@ -1066,12 +1073,22 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     // this.hideTextAreaContent = true
   }
   /** CALLED BY: conv-header component */
-  onWidgetHeightChange(mode){
+  onWidgetSizeChange(mode: 'min' | 'max' | 'top'){
     var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
+    this.g.size = mode 
     if(mode==='max'){
-      tiledeskDiv.style.maxHeight = 'unset'
+      tiledeskDiv.classList.add('max-size')
+      tiledeskDiv.classList.remove('min-size')
+      tiledeskDiv.classList.remove('top-size')
     }else if(mode==='min'){
-      tiledeskDiv.style.maxHeight = '620px'
+      tiledeskDiv.classList.add('min-size')
+      tiledeskDiv.classList.remove('max-size')
+      tiledeskDiv.classList.remove('top-size')
+    }else if(mode=== 'top'){
+      tiledeskDiv.classList.add('top-size')
+      tiledeskDiv.classList.remove('max-size')
+      tiledeskDiv.classList.remove('min-size')
+
     }
     this.isMenuShow = false;
   }
@@ -1108,10 +1125,13 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
         this.onRestartChat()
         break;
       case HEADER_MENU_OPTION.MAXIMIZE:
-        this.onWidgetHeightChange('max')
+        this.onWidgetSizeChange('max')
         break;
       case HEADER_MENU_OPTION.MINIMIZE:
-        this.onWidgetHeightChange('min')
+        this.onWidgetSizeChange('min')
+        break;
+      case HEADER_MENU_OPTION.TOP:
+        this.onWidgetSizeChange('top')
         break;
     }
   }
@@ -1239,19 +1259,6 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.logger.debug('[CONV-COMP] floating onNewConversationButtonClicked')
     this.onNewConversationButtonClicked.emit()
   }
-  /** CALLED BY: conv-footer floating-button component */
-  onBackButton(event: boolean){
-    this.hideTextAreaContent = event;
-    try{
-      const tiledeskDiv = document.getElementById('chat21-footer')
-      tiledeskDiv.classList.remove('maximize-width')
-      // tiledeskDiv.style.width = '376px'
-      // tiledeskDiv.style.maxHeight = '620px'
-    }catch(e){
-      this.logger.error('[CONV-COMP] onBackButton > Error :' + e);
-    }
-
-  }
   // =========== END: event emitter function ====== //
 
 
@@ -1301,7 +1308,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   private onIncreaseWith(){
     try{
       const tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
-      tiledeskDiv.classList.add('increaseSize')
+      tiledeskDiv.classList.add('max-size')
       const chat21conversations = document.getElementById('chat21-conversations')
       chat21conversations.style.borderRadius = '16px'
       // tiledeskDiv.style.width = '696px'
@@ -1314,8 +1321,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   private restoreDefaultWidgetSize(){
     try{
       const tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
-      tiledeskDiv.classList.remove('increaseSize')
-      tiledeskDiv.classList.remove('decreaseSize')
+      tiledeskDiv.classList.remove('max-size')
+      tiledeskDiv.classList.remove('min-size')
       // tiledeskDiv.style.width = '376px'
       // tiledeskDiv.style.maxHeight = '620px'
     }catch(e){

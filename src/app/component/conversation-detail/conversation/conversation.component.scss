@@ -1,8 +1,6 @@
 // $f21ico-schedule: image-url('f21ico-schedule.svg', false, false);
 // $f21ico-done: image-url('../assets/images/f21ico-done.svg', false, false);
 // $f21ico-done_all: image-url('../assets/images/f21ico-done_all.svg', false, false);
-// @import 'src/app/sass/variables';
-// @import '../../../sass/normalize.css';
 
 :host {
     --themeColor: var(--bck-msg-sent);
@@ -13,6 +11,40 @@
 :host #dropZone_container.hideTextReply{
 
     bottom: var(--chat-footer-height) !important
+}
+
+@media(min-width:688px){
+    :host-context(#chat21-conversations.full-screen-mode){
+        --button-in-msg-padding: 10px 16px;
+        #chat21-footer{
+            left: 20%;
+            right: 20%;
+        }
+    
+        chat-conversation-content ::ng-deep{
+            .attachment_container,
+            .buttons-wrapper {
+                justify-content: flex-start;
+            }
+    
+            .button-in-message{
+                padding: 14px 22px !important
+            }
+    
+        }
+    
+        chat-conversation-footer ::ng-deep {
+            .textarea-container {
+                padding: 8px 24px;
+                background-color: var(--chat-footer-background-color);
+                border-radius: 28px;
+            }
+            #hiddenFooter,
+            #emoji-mart-container {
+                bottom: calc(100% + 10px)
+            }
+        }
+    }
 }
 
 // ============= CSS #chat21-conversation-component ================= //
@@ -60,7 +92,7 @@
             font-weight: 500;
             line-height: 22px;
 
-            font-family: Mulish, sans-serif;
+            font-family: var(--font-family-powered-by);
             letter-spacing: -0.24px;
             -webkit-font-smoothing: antialiased;
 
@@ -91,15 +123,12 @@
     left: 0px;
     right: 0px;
     margin: 0px;
+    margin: 12px 8px;
     // padding: 0;
     
     // box-shadow: 0 -1px 0px 0px $trasp-light-gray;
     background: white;
     min-height: 40px;
-
-    &.maximize-width{
-        padding: 8px 0px;
-    }
 
     &.hideFooterReply{
         padding: 0px;

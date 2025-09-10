@@ -25,7 +25,7 @@
 
       <div *ngIf="messageType(MESSAGE_TYPE_OTHERS, message) && !isSameSender"
         [style.color]="fullnameColor"
-        [ngStyle]="{'margin': (isImage(message) || isFrame(message))? '10px 16px 8px 16px': '10px 8px 0px 8px'}" class="message_sender_fullname">
+        [ngStyle]="{'margin': (isImage(message) || isFrame(message))? '12px 16px 8px 16px': '12px 16px 0px 16px'}" class="message_sender_fullname">
         {{message?.sender_fullname}}
       </div>
       <!-- message type:: image -->
@@ -61,7 +61,6 @@
       <chat-audio  *ngIf="isAudio(message)"
         [metadata]="message.metadata"
         [color]="fontColor"
-        [fontSize]="fontSize"
         [stylesMap]="stylesMap">
       </chat-audio>
 
@@ -82,8 +81,6 @@
         <chat-text *ngIf="message?.type !=='html'"
           [text]="message?.text"
           [color]="fontColor"
-          [fontSize]="fontSize"
-          [fontFamily]="fontFamily"
           (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
           (onAfterMessageRender)="onAfterMessageRenderFN($event)">
         </chat-text>
