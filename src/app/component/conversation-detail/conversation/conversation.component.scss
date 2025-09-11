@@ -16,10 +16,7 @@
 @media(min-width:688px){
     :host-context(#chat21-conversations.full-screen-mode){
         --button-in-msg-padding: 10px 16px;
-        #chat21-footer{
-            left: 20%;
-            right: 20%;
-        }
+        
     
         chat-conversation-content ::ng-deep{
             .attachment_container,
@@ -40,6 +37,10 @@
         }
     
         
+    }
+    #chat21-footer{
+        left: 20%;
+        right: 20%;
     }
 
     chat-conversation-footer ::ng-deep {
