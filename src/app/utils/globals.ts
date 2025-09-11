@@ -609,8 +609,8 @@ export class Globals {
       this.align === 'left'?  divTiledeskWidget.style.left = this.mobileMarginX : divTiledeskWidget.style.right = this.mobileMarginX; 
     }
 
-    //customize position for 'tiledeskdiv' for desktop
-    if(isOpen && !this.isMobile && divTiledeskWidget && this.size){
+    //customize position for 'tiledeskdiv' for desktop if fullscreenMode is not active
+    if(isOpen && !this.isMobile && !this.fullscreenMode && divTiledeskWidget && this.size){
       divTiledeskWidget.classList.add(this.size + '-size')
     }
 
