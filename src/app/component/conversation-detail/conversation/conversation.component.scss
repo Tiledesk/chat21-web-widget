@@ -27,6 +27,7 @@
             .attachment_container,
             .buttons-wrapper {
                 justify-content: flex-start;
+
             }
     
             .button-in-message{
@@ -35,18 +36,21 @@
     
         }
     
-        chat-conversation-footer ::ng-deep {
-            .textarea-container {
-                padding: 8px 24px;
-                background-color: var(--chat-footer-background-color);
-                border-radius: 28px;
-            }
-            #hiddenFooter,
-            #emoji-mart-container {
-                bottom: calc(100% + 10px)
-            }
+        
+    }
+
+    chat-conversation-footer ::ng-deep {
+        .textarea-container {
+            padding: 8px 24px;
+            background-color: var(--chat-footer-background-color);
+            border-radius: 28px;
+        }
+        #hiddenFooter,
+        #emoji-mart-container {
+            bottom: calc(100% + 10px)
         }
     }
+    
 }
 
 // ============= CSS #chat21-conversation-component ================= //
