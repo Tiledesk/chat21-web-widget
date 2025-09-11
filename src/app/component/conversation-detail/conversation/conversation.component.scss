@@ -27,11 +27,16 @@
             .attachment_container,
             .buttons-wrapper {
                 justify-content: flex-start;
-
             }
     
             .button-in-message{
                 padding: 14px 22px !important
+            }
+
+            chat-message-attachment {
+                margin: auto 20px auto 10px; //0 20px 4px 10px;
+                margin-left: calc( var(--avatar-width) + 10px )
+
             }
     
         }
@@ -50,7 +55,7 @@
             bottom: calc(100% + 10px)
         }
     }
-    
+
 }
 
 // ============= CSS #chat21-conversation-component ================= //
