@@ -30,21 +30,30 @@
             .button-in-message{
                 padding: 14px 22px !important
             }
+
+            chat-message-attachment {
+                margin: auto 20px auto 10px; //0 20px 4px 10px;
+                margin-left: calc( var(--avatar-width) + 10px )
+
+            }
     
         }
     
-        chat-conversation-footer ::ng-deep {
-            .textarea-container {
-                padding: 8px 24px;
-                background-color: var(--chat-footer-background-color);
-                border-radius: 28px;
-            }
-            #hiddenFooter,
-            #emoji-mart-container {
-                bottom: calc(100% + 10px)
-            }
+        
+    }
+
+    chat-conversation-footer ::ng-deep {
+        .textarea-container {
+            padding: 8px 24px;
+            background-color: var(--chat-footer-background-color);
+            border-radius: 28px;
+        }
+        #hiddenFooter,
+        #emoji-mart-container {
+            bottom: calc(100% + 10px)
         }
     }
+
 }
 
 // ============= CSS #chat21-conversation-component ================= //
