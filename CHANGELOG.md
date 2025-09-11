@@ -6,6 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc26
+- **added**: buttons attachments aligned to bubble message
+- **changed**: enable new textarea style if width is grather than 688px
+- **bug-fixed**: fullscreenMode is not enabled (css class override fullscreen style)
+
 # 5.1.0-rc25
 - **added**: allowedUploadExtentions property from api call
 
