@@ -55,7 +55,7 @@
     "CLOSE_CHAT": "Close chat",
     "MINIMIZE":"Minimize window",
     "MAXIMIZE":"Expand window",
-    "FULLSCREEN":"Fullscreen",
+    "CENTER":"Center",
     "CONFIRM_CLOSE_CHAT":"Are you sure you want to close this chat?",
     
     "INFO_SUPPORT_USER_ADDED_SUBJECT":"you",

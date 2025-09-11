@@ -6,6 +6,12 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc25
+- **added**: allowedUploadExtentions property from api call
+
+# 5.1.0-rc24
+- **added**: size tiledeskSettings property
+
 # 5.1.0-rc23
 - **added**: hideHeaderConversation tiledeskSettings property
 
