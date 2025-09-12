@@ -367,15 +367,19 @@ export class GlobalSettingsService {
         }
         // console.log('this.globals.fullscreenMode' + this.globals.fullscreenMode);
         if (this.globals.fullscreenMode === true) {
-            // divTiledeskiframe.style.left = 0;
-            // divTiledeskiframe.style.right = 0;
-            // divTiledeskiframe.style.top = 0;
-            // divTiledeskiframe.style.bottom = 0;
-            // divTiledeskiframe.style.width = '100%';
-            // divTiledeskiframe.style.height = '100%';
-            // divTiledeskiframe.style.maxHeight = 'none';
-            // divTiledeskiframe.style.maxWidth = 'none';
-            divTiledeskiframe.classList.add('fullscreen')
+            divTiledeskiframe.style.left = 0;
+            divTiledeskiframe.style.right = 0;
+            divTiledeskiframe.style.top = 0;
+            divTiledeskiframe.style.bottom = 0;
+            divTiledeskiframe.style.width = '100%';
+            divTiledeskiframe.style.height = '100%';
+            divTiledeskiframe.style.maxHeight = 'none';
+            divTiledeskiframe.style.maxWidth = 'none';
+            // divTiledeskiframe.classList.add('fullscreen')
+            divTiledeskiframe.classList.remove('min-size')
+            divTiledeskiframe.classList.remove('max-size')
+            divTiledeskiframe.classList.remove('top-size')
+
         }
     }
 
