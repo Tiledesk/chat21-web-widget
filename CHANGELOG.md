@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc29
+- **bug-fixed**: Bug fix for vertical position of widget ball
 
 # 5.1.0-rc28
 - **changed**: added buttons to change widget size in header 
