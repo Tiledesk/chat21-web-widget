@@ -143,6 +143,39 @@
                     }
                 }
             }
+
+            .c21-size-button {
+                position: absolute;
+                width: 35px;
+                height: 35px;
+                top: 0;
+                right: 35px;
+                margin: 10px;
+                z-index: 10;
+                justify-content: center;
+                button {
+                    display: flex;
+                    cursor: pointer;
+                    width: 35px;
+                    height: 35px;
+                    border-radius: 8px;
+                    padding: 0px;
+                    margin: 0px;
+                    display: flex;
+                    align-items: center;
+                    border: none;
+                    background-color: rgba(0, 0, 0, 0);
+                    &:hover {
+                        background-color: rgba(0, 0, 0, 0.4);
+                    }
+                    svg {
+                        margin: 0 auto;
+                        fill: #ffffff;
+                    }
+                }
+                
+            }
+
         }
 
         // .c21-header-container::after{
