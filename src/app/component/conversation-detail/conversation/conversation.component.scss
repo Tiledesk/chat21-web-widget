@@ -89,6 +89,7 @@
     left: 0px;
     right: 0px;
     margin: 0px;
+    margin: 12px 8px;
     // padding: 0;
     
     // box-shadow: 0 -1px 0px 0px $trasp-light-gray;
@@ -180,4 +181,48 @@ dialog:-internal-dialog-in-top-layer{
             }
         }
     }
+}
+
+@media(min-width:688px){
+    
+    #chat21-footer{
+        left: 20%;
+        right: 20%;
+    }
+
+    :host-context(#chat21-conversations.full-screen-mode){
+        --button-in-msg-padding: 10px 16px;
+        
+        chat-conversation-content ::ng-deep{
+            .attachment_container,
+            .buttons-wrapper {
+                justify-content: flex-start;
+            }
+    
+            .button-in-message{
+                padding: 14px 22px !important
+            }
+
+            chat-message-attachment {
+                margin: auto 20px auto 10px; //0 20px 4px 10px;
+                margin-left: calc( var(--avatar-width) + 10px )
+
+            }
+    
+        }
+     
+    }
+
+    chat-conversation-footer ::ng-deep {
+        .textarea-container {
+            padding: 8px 24px;
+            background-color: var(--chat-footer-background-color);
+            border-radius: 28px;
+        }
+        #hiddenFooter,
+        #emoji-mart-container {
+            bottom: calc(100% + 10px)
+        }
+    }
+
 }

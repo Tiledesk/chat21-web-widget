@@ -63,7 +63,7 @@
                               [ngClass]="{'slide-in-left': false}"
                               [class.no-background]="(isImage(message) || isFrame(message) || isCarousel(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"  
                               [class.emoticon]="isEmojii(message?.text)"
-                              [style.margin-left]="isSameSender(message?.sender, i)? '50px': null"
+                              [style.margin-left]="isSameSender(message?.sender, i)? 'calc(var(--avatar-width) + 10px)': null"
                               [ngStyle]="{'background': stylesMap.get('bubbleReceivedBackground'), 'color': stylesMap.get('bubbleReceivedTextColor')}"
                               [isSameSender]="isSameSender(message?.sender, i)"
                               [message]="message"

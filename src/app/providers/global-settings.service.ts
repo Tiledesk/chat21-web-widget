@@ -552,6 +552,9 @@ export class GlobalSettingsService {
                     if (variables.hasOwnProperty('allowedOnSpecificUrlList')) {
                         globals['allowedOnSpecificUrlList'] = variables['allowedOnSpecificUrlList'];
                     }
+                    if (variables.hasOwnProperty('allowedUploadExtentions')) {
+                        globals['fileUploadAccept'] = variables['allowedUploadExtentions'];
+                    }
                     
                 }
             }
@@ -764,13 +767,19 @@ export class GlobalSettingsService {
         TEMP = tiledeskSettings['fullscreenMode'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > fullscreenMode:: ', TEMP);
         if (TEMP !== undefined) {
-            globals.fullscreenMode = TEMP;
+            globals.fullscreenMode = (TEMP === true) ? true : false;
             // globals.setParameter('fullscreenMode', TEMP);
         }
         TEMP = tiledeskSettings['hideHeaderCloseButton'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > hideHeaderCloseButton:: ', TEMP);
         if (TEMP !== undefined) {
-            globals.hideHeaderCloseButton = TEMP;
+            globals.hideHeaderCloseButton = (TEMP === true) ? true : false;
+            // globals.setParameter('hideHeaderCloseButton', TEMP);
+        }
+        TEMP = tiledeskSettings['hideHeaderConversation'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > hideHeaderCloseButton:: ', TEMP);
+        if (TEMP !== undefined) {
+            globals.hideHeaderConversation = (TEMP === true) ? true : false;
             // globals.setParameter('hideHeaderCloseButton', TEMP);
         }
         TEMP = tiledeskSettings['themeColor'];
@@ -1517,6 +1526,11 @@ export class GlobalSettingsService {
         TEMP = getParameterByName(windowContext, 'tiledesk_hideHeaderCloseButton');
         if (TEMP) {
             globals.hideHeaderCloseButton = stringToBoolean(TEMP);
+        }
+
+        TEMP = getParameterByName(windowContext, 'tiledesk_hideHeaderConversation');
+        if (TEMP) {
+            globals.hideHeaderConversation = stringToBoolean(TEMP);
         }
 
         TEMP = getParameterByName(windowContext, 'tiledesk_themeColor');

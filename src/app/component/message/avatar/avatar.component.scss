@@ -3,10 +3,10 @@
     position: relative;
     padding: 0;
     margin: 0;
-    height: 40px;
-    width: 40px;
-    min-height: 40px;
-    min-width: 40px;
+    height: var(--avatar-height);
+    width: var(--avatar-width);
+    min-height: var(--avatar-height);
+    min-width: var(--avatar-width);
     line-height: 40px;
     border-radius: 50%;
     overflow: hidden;

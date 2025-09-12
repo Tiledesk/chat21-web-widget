@@ -1264,6 +1264,13 @@
         /** WIDGET SOCIAL CHANNELS SECTION : end*/
 
         /** WIDGET CONVERSATION DETAIL SECTION : start*/
+        function onClickHideHeaderConversation(){
+            let status = document.querySelector('input[name="hideHeaderConversation"]:checked').value
+            window.tiledeskSettings['hideHeaderConversation'] = stringToBoolean(status)
+            console.log('onClickHideHeaderConversation: status-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+        
         function onClickHideHeaderCloseButton(){
             let status = document.querySelector('input[name="hideHeaderCloseButton"]:checked').value
             window.tiledeskSettings['hideHeaderCloseButton'] = stringToBoolean(status)
@@ -2276,6 +2283,16 @@
                         
 
                         <div><h3 style="line-height: 0.3;">MANAGE <em><strong>CONVERSATION DETAIL</strong></em></h3></div>
+                        <div class="row">
+                            <div class="col-md-5 formElement"><span><em><strong>hideHeaderConversation</strong></em></span></div>
+                            <div class="col-md-5">
+                                <input class="form-check-input" type="radio" name="hideHeaderConversation" value="true"><label>True</label>
+                                <input class="form-check-input" type="radio" name="hideHeaderConversation" value="false" checked><label>False</label>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light" onclick="onClickHideHeaderConversation()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-5 formElement"><span><em><strong>hideHeaderCloseButton</strong></em></span></div>
                             <div class="col-md-5">
