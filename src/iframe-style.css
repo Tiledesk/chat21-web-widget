@@ -71,7 +71,8 @@
     min-height: auto;
     box-shadow: none; /* NEW GAB */ 
     left: auto; /* NEW DEPA */ 
-    transform: none; /* NEW DEPA */ 
+    top:auto;
+    transform: none;
 }
 #tiledesk-container.closed #tiledeskdiv.callout {
     /* width: 400px;
