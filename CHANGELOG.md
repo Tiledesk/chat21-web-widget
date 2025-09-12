@@ -6,6 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.0-rc28
+- **changed**: added buttons to change widget size in header 
+- **bug-fixed**: fixed bug widget's balloon position when closed 
+
 # 5.1.0-rc27
 - **bug-fixed**: minor fix on avatar image and textarea style 
 
