@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc27
+- **bug-fixed**: minor fix on avatar image and textarea style 
+
 # 5.1.0-rc26
 - **added**: buttons attachments aligned to bubble message
 - **changed**: enable new textarea style if width is grather than 688px
