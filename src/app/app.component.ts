@@ -67,7 +67,6 @@ interface MessageObj {
   // providers: [AgentAvailabilityService, TranslatorService]
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
-  
 
   // ========= begin:: sottoscrizioni ======= //
   subscriptions: Subscription[] = []; /** */
@@ -132,7 +131,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     public imageRepoService: ImageRepoService,
     public typingService: TypingService,
     public presenceService: PresenceService,
-    public uploadService: UploadService 
+    public uploadService: UploadService
   ){}
 
     ngOnInit(): void {
@@ -2013,20 +2012,24 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onWidgetSizeChange(mode: 'min' | 'max' | 'top') {
-        var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
+        var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv');
         this.g.size = mode 
+        const parent = tiledeskDiv.parentElement as HTMLElement | null;
         if(mode==='max'){
             tiledeskDiv.classList.add('max-size')
             tiledeskDiv.classList.remove('min-size')
             tiledeskDiv.classList.remove('top-size')
-        }else if(mode==='min'){
+            if(parent) parent.classList.remove('overlay--popup');
+        } else if(mode==='min'){
             tiledeskDiv.classList.add('min-size')
             tiledeskDiv.classList.remove('max-size')
             tiledeskDiv.classList.remove('top-size')
-        }else if(mode=== 'top'){
+            if(parent) parent.classList.remove('overlay--popup');
+        } else if(mode=== 'top'){
             tiledeskDiv.classList.add('top-size')
             tiledeskDiv.classList.remove('max-size')
             tiledeskDiv.classList.remove('min-size')
+            if(parent) parent.classList.add('overlay--popup');
         }
     }
 

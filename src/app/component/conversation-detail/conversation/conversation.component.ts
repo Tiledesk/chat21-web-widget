@@ -1074,24 +1074,29 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
   /** CALLED BY: conv-header component */
   onWidgetSizeChange(mode: 'min' | 'max' | 'top'){
-    var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
+    var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv');
     this.g.size = mode 
+    const parent = tiledeskDiv.parentElement as HTMLElement | null;
     if(mode==='max'){
-      tiledeskDiv.classList.add('max-size')
-      tiledeskDiv.classList.remove('min-size')
-      tiledeskDiv.classList.remove('top-size')
-    }else if(mode==='min'){
-      tiledeskDiv.classList.add('min-size')
-      tiledeskDiv.classList.remove('max-size')
-      tiledeskDiv.classList.remove('top-size')
-    }else if(mode=== 'top'){
-      tiledeskDiv.classList.add('top-size')
-      tiledeskDiv.classList.remove('max-size')
-      tiledeskDiv.classList.remove('min-size')
-
+        tiledeskDiv.classList.add('max-size')
+        tiledeskDiv.classList.remove('min-size')
+        tiledeskDiv.classList.remove('top-size')
+        if(parent) parent.classList.remove('overlay--popup');
+    } else if(mode==='min'){
+        tiledeskDiv.classList.add('min-size')
+        tiledeskDiv.classList.remove('max-size')
+        tiledeskDiv.classList.remove('top-size')
+        if(parent) parent.classList.remove('overlay--popup');
+    } else if(mode=== 'top'){
+        tiledeskDiv.classList.add('top-size')
+        tiledeskDiv.classList.remove('max-size')
+        tiledeskDiv.classList.remove('min-size')
+        if(parent) parent.classList.add('overlay--popup');
     }
     this.isMenuShow = false;
   }
+
+
   /** CALLED BY: conv-header component */
   onSignOutFN(event){
     this.onSignOut.emit(true)

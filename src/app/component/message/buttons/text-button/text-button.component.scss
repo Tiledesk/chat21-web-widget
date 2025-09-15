@@ -11,10 +11,9 @@
 
 
 .button-in-msg {
-
     padding: var(--padding);
     position: relative;
-    max-width: var(--max-width);
+    // max-width: var(--max-width);
     min-width: inherit;
     cursor: pointer;
     border: 1px solid var(--textColor); //$blue

@@ -14,7 +14,13 @@
     width: auto;   
     height: auto;
     display: none;
-    z-index: 3000000000; /*999999*/;
+    z-index: 3000000000; /*999999*/; 
+}
+#tiledesk-container.overlay--popup {
+    background-color: rgba(0, 0, 0, 0.4);
+    position: absolute;
+    width: 100%;
+    height: 100vh;
 }
 #tiledeskdiv {
     /* width: 100%;
@@ -31,7 +37,7 @@
     bottom: 0px;
     display: block;
     position: fixed;
-    
+    max-height: calc(100% - 50px);
 }
 
 #tiledeskdiv.fullscreen {
@@ -48,10 +54,13 @@
     top: 0;
     bottom: 0;
     left: 50%;
-    width: calc( var(--iframeMaxWidth) + 180px);
+    /* width: calc( var(--iframeMaxWidth) + 180px); */
     height: 100%; /*var(--iframeMaxHeight);*/
     /* transform: translate(-50%, -50%);   */
     transform: translate(-50%, 0%);  
+    width: 100%;
+    max-width: 1024px;
+    max-height: 100%;
 }
  
 
