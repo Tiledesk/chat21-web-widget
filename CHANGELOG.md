@@ -6,6 +6,13 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.0-rc30
+- **changed**: left-aligned buttons with variable widths, like UIPath
+- **changed**: input text area, CSS changed, like ChatGPT style
+- **changed**: increased chatbot width in top-size view with maximum width like UIPath
+- **changed**: added dark screen in top-size view
+
 # 5.1.0-rc29
 - **bug-fixed**: Bug fix for vertical position of widget ball
 
