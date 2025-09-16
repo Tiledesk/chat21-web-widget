@@ -118,7 +118,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
 
   // devo inserirle nel globals
   subscriptions: Array<any> = [];
-  private unsubscribe$: Subject<any> = new Subject<any>();
+  private unsubscribe$: Subject<void> = new Subject<void>();
   showMessageWelcome: boolean;
 
   // ========= begin::agent availability
@@ -221,6 +221,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'CLOSE',
       'MAXIMIZE',
       'MINIMIZE',
+      'CENTER',
       'CLOSE_CHAT',
       'RESTART',
       'LOGOUT',
@@ -231,7 +232,9 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'LABEL_PLACEHOLDER',
       'GUEST_LABEL',
       'LABEL_START_NW_CONV',
-      'CONTINUE'
+      'CONTINUE',
+      'EMOJI_NOT_ELLOWED',
+      'DOMAIN_NOT_ALLOWED'
     ];
 
     const keysContent = [
@@ -361,13 +364,20 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     // this.logger.debug('[CONV-COMP] ------ 5: updateConversationbage ------ ');
     // this.updateConversationBadge();
 
-    this.logger.debug('[CONV-COMP] ------ 6: getConversationDetail ------ ', this.conversationId);
-    this.getConversationDetail((isConversationArchived) => {
-      this.logger.debug('[CONV-COMP] ------ 6: updateConversationbage ------ ');
-      this.updateConversationBadge();
-      return;
-    }) //check if conv is archived or not
+    
+    // this.getConversationDetail((isConversationArchived) => {
+    //   this.logger.debug('[CONV-COMP] ------ 6: updateConversationbage ------ ');
+    //   this.updateConversationBadge();
+    //   return;
+    // }) //check if conv is archived or not
     // this.checkListMessages();
+
+    this.logger.debug('[CONV-COMP] ------ 5: getConversationDetail ------ ', this.conversationId);
+    await this.getConversationDetail();
+    
+    
+    this.logger.debug('[CONV-COMP] ------ 6: updateConversationBadge ------ ');
+    this.updateConversationBadge();
 
     if(this.g.customAttributes){
       this.updateUserInfo(this.g.customAttributes)
@@ -382,7 +392,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
    * @param callback
    * @returns isConversationArchived (status conversation archived: boolean) 
    */
-  getConversationDetail(callback:(isConversationArchived: boolean)=>void){
+  getConversationDetail_old(callback:(isConversationArchived: boolean)=>void){
     // if(!this.isConversationArchived){ 
     //get conversation from 'conversations' firebase node
     this.logger.debug('[CONV-COMP] getConversationDetail: isConversationArchived???', this.isConversationArchived, this.conversationWith)
@@ -412,39 +422,60 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
         })
       }
     });
-    // } else { //get conversation from 'conversations' firebase node
-    //   this.archivedConversationsHandlerService.getConversationDetail(this.conversationId, (conv)=>{
-    //     this.logger.debug('[CONV-COMP] archivedConversationsHandlerService getConversationDetail', this.conversationId, conv, this.isConversationArchived)
-    //     if(conv){
-    //       this.conversation = conv;
-    //       this.isConversationArchived = true;
-    //       callback(this.isConversationArchived) 
-    //     }
-    //     if(!conv){
-    //       this.conversationsHandlerService.getConversationDetail(this.conversationId, (conv)=>{
-    //         this.logger.debug('[CONV-COMP] conversationsHandlerService getConversationDetail', this.conversationId, conv, this.isConversationArchived)
-    //         conv? this.isConversationArchived = false : null  
-    //         this.conversation = conv;
-    //         callback(this.isConversationArchived) 
-    //       })
-    //     }
-    //   })
-    // }
-    
-    // if(!this.isConversationArchived){ //get conversation from 'conversations' firebase node
-    //   this.conversationsHandlerService.getConversationDetail(this.conversationId, (conv)=>{
-    //     this.logger.debug('[CONV-COMP] conversationsHandlerService getConversationDetail', this.conversationId, conv)
-    //     this.conversation = conv;
-    //     callback(this.isConversationArchived)    
-    //   })
-    // }else { //get conversation from 'conversations' firebase node
-    //   this.archivedConversationsHandlerService.getConversationDetail(this.conversationId, (conv)=>{
-    //     this.logger.debug('[CONV-COMP] archivedConversationsHandlerService getConversationDetail', this.conversationId, conv)
-    //     this.conversation = conv;   
-    //     callback(this.isConversationArchived)   
-    //   })
-    // }
-    // this.updateConversationBadge()
+  }
+
+  /**
+   * @description get detail of conversation by uid and then return callback with conversation status
+   * @param callback
+   * @returns isConversationArchived (status conversation archived: boolean) 
+   */
+  async getConversationDetail(): Promise<boolean | null> {
+    this.logger.debug('[CONV-COMP] getConversationDetail: isConversationArchived???', this.isConversationArchived, this.conversationWith);
+  
+    const conv = await new Promise<any>((resolve) => {
+      this.conversationsHandlerService.getConversationDetail(this.conversationWith, resolve);
+    });
+
+    if (conv) {
+      this.logger.debug('[CONV-COMP] getConversationDetail: conversationsHandlerService ', this.conversationWith, conv, this.isConversationArchived);
+      this.conversation = conv;
+      this.isConversationArchived = false;
+      return this.isConversationArchived;
+    }
+  
+    this.logger.debug('[CONV-COMP] getConversationDetail: conv not exist --> search in archived list', this.isConversationArchived, this.conversationWith);
+  
+    const archivedConv = await new Promise<any>((resolve) => {
+      this.archivedConversationsHandlerService.getConversationDetail(this.conversationWith, resolve);
+    });
+  
+    if (archivedConv) {
+      this.logger.debug('[CONV-COMP] getConversationDetail: archivedConversationsHandlerService', this.conversationWith, archivedConv, this.isConversationArchived);
+      this.conversation = archivedConv;
+      this.isConversationArchived = true;
+      return this.isConversationArchived;
+    }
+
+    //FALLBACK TO TILEDESK
+    const requests_list = await this.tiledeskRequestService.getMyRequests().catch(err => {
+      this.logger.error('[CONV-COMP] getConversationDetail: error getting request from Tiledesk', err);
+      this.isConversationArchived=true
+      return { requests: [] }
+    });
+    if (requests_list && requests_list.requests.length > 0) {
+      this.logger.debug('[CONV-COMP] getConversationDetail: request exist on Tiledesk', requests_list);
+      let conversation = requests_list.requests.find((request)=> request.request_id === this.conversationId)
+      if(conversation){
+        this.isConversationArchived = false
+        return this.isConversationArchived
+      }
+      this.logger.debug('[CONV-COMP] getConversationDetail: request NOT EXIST on Tiledesk', requests_list);
+      this.isConversationArchived = true
+      return this.isConversationArchived
+    }
+
+    this.isConversationArchived = true;
+    return null;
   }
 
   /**
@@ -742,6 +773,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       subscribtion = this.conversationHandlerService.messageAdded.pipe(takeUntil(this.unsubscribe$)).subscribe((msg: MessageModel) => {
         this.logger.debug('[CONV-COMP] ***** DETAIL messageAdded *****', msg);
         if (msg) {
+
           that.newMessageAdded(msg);
           this.checkMessagesLegntForTranscriptDownloadMenuOption();
           this.resetTimeout();
@@ -986,6 +1018,12 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   /** CALLED BY: conv-header component */
   onCloseWidgetFN() {
     //this.g.setParameter('activeConversation', null, false);
+    /** remove Min/Max/fullscreen css classes */
+    var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
+    tiledeskDiv.classList.remove('max-size')
+    tiledeskDiv.classList.remove('min-size')
+    tiledeskDiv.classList.remove('top-size')
+
     this.onCloseWidget.emit();
   }
   /** CALLED BY: conv-header component */
@@ -1035,12 +1073,22 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     // this.hideTextAreaContent = true
   }
   /** CALLED BY: conv-header component */
-  onWidgetHeightChange(mode){
+  onWidgetSizeChange(mode: 'min' | 'max' | 'top'){
     var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
+    this.g.size = mode 
     if(mode==='max'){
-      tiledeskDiv.style.maxHeight = 'unset'
+      tiledeskDiv.classList.add('max-size')
+      tiledeskDiv.classList.remove('min-size')
+      tiledeskDiv.classList.remove('top-size')
     }else if(mode==='min'){
-      tiledeskDiv.style.maxHeight = '620px'
+      tiledeskDiv.classList.add('min-size')
+      tiledeskDiv.classList.remove('max-size')
+      tiledeskDiv.classList.remove('top-size')
+    }else if(mode=== 'top'){
+      tiledeskDiv.classList.add('top-size')
+      tiledeskDiv.classList.remove('max-size')
+      tiledeskDiv.classList.remove('min-size')
+
     }
     this.isMenuShow = false;
   }
@@ -1077,10 +1125,13 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
         this.onRestartChat()
         break;
       case HEADER_MENU_OPTION.MAXIMIZE:
-        this.onWidgetHeightChange('max')
+        this.onWidgetSizeChange('max')
         break;
       case HEADER_MENU_OPTION.MINIMIZE:
-        this.onWidgetHeightChange('min')
+        this.onWidgetSizeChange('min')
+        break;
+      case HEADER_MENU_OPTION.TOP:
+        this.onWidgetSizeChange('top')
         break;
     }
   }
@@ -1208,19 +1259,6 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.logger.debug('[CONV-COMP] floating onNewConversationButtonClicked')
     this.onNewConversationButtonClicked.emit()
   }
-  /** CALLED BY: conv-footer floating-button component */
-  onBackButton(event: boolean){
-    this.hideTextAreaContent = event;
-    try{
-      const tiledeskDiv = document.getElementById('chat21-footer')
-      tiledeskDiv.classList.remove('maximize-width')
-      // tiledeskDiv.style.width = '376px'
-      // tiledeskDiv.style.maxHeight = '620px'
-    }catch(e){
-      this.logger.error('[CONV-COMP] onBackButton > Error :' + e);
-    }
-
-  }
   // =========== END: event emitter function ====== //
 
 
@@ -1250,7 +1288,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   /** */
   unsubscribe() {
     this.logger.debug('[CONV-COMP] ******* unsubscribe *******');
-    this.unsubscribe$.next(null);
+    this.unsubscribe$.next();
     this.unsubscribe$.complete();
     this.chatManager.conversationsHandlerService.conversationRemoved.next(null)
     this.conversationHandlerService.messageWait.next(null)
@@ -1270,7 +1308,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   private onIncreaseWith(){
     try{
       const tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
-      tiledeskDiv.classList.add('increaseSize')
+      tiledeskDiv.classList.add('max-size')
       const chat21conversations = document.getElementById('chat21-conversations')
       chat21conversations.style.borderRadius = '16px'
       // tiledeskDiv.style.width = '696px'
@@ -1283,8 +1321,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   private restoreDefaultWidgetSize(){
     try{
       const tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv') 
-      tiledeskDiv.classList.remove('increaseSize')
-      tiledeskDiv.classList.remove('decreaseSize')
+      tiledeskDiv.classList.remove('max-size')
+      tiledeskDiv.classList.remove('min-size')
       // tiledeskDiv.style.width = '376px'
       // tiledeskDiv.style.maxHeight = '620px'
     }catch(e){
@@ -1371,9 +1409,9 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.logger.log('[CONV-COMP] ----> FILE - (dragleave) drag ev ', event)
     if (event.dataTransfer && event.dataTransfer.files) {
       const files = event.dataTransfer.files;
-      const canUploadFile = checkAcceptedFile(files[0].type, this.appConfigService.getConfig().fileUploadAccept)
+      const canUploadFile = checkAcceptedFile(files[0].type, this.g.fileUploadAccept)
       if(!canUploadFile){
-        this.logger.error('[IMAGE-UPLOAD] detectFiles: can not upload current file type--> NOT ALLOWED', this.appConfigService.getConfig().fileUploadAccept)
+        this.logger.error('[IMAGE-UPLOAD] detectFiles: can not upload current file type--> NOT ALLOWED', this.g.fileUploadAccept)
         return;
       }
     }
