@@ -36,8 +36,6 @@
           [message]="message"
           [isSameSender]="isSameSender(message?.sender, i)"
           [fontColor]="stylesMap.get('bubbleReceivedTextColor')"
-          [fontSize]="stylesMap.get('fontSize')"
-          [fontFamily]="stylesMap.get('fontFamily')"
           [stylesMap]="stylesMap"
           (onElementRendered)="onElementRenderedFN($event)">
         </chat-bubble-message>

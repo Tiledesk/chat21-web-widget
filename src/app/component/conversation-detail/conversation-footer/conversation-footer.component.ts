@@ -50,7 +50,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   @Output() onChangeTextArea = new EventEmitter<any>();
   @Output() onAttachmentFileButtonClicked = new EventEmitter<any>();
   @Output() onNewConversationButtonClicked = new EventEmitter();
-  @Output() onBackButton = new EventEmitter()
 
   @ViewChild('chat21_file') public chat21_file: ElementRef;
   // @ViewChild('emojii_container', {read: ViewContainerRef}) selector;
@@ -654,10 +653,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   //   this.onBackButton.emit(false)
   //   this.restoreTextArea()
   // }
-
-  onBackButtonFN(){
-    this.onBackButton.emit(false)
-  }
 
   setFocusOnId(id) {
     if(!this.isMobile){

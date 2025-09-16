@@ -1,5 +1,10 @@
 :root{
     --messagePreviewHeight: 100px;
+    --iframeMinWidth: 400px; /*376px*/;
+    --iframeMinHeight: 704px; /*696px;*/
+    --iframeMaxWidth: 688px;
+    --iframeMaxHeight: 786px;
+
 }
 
 #tiledesk-container {
@@ -9,7 +14,13 @@
     width: auto;   
     height: auto;
     display: none;
-    z-index: 3000000000; /*999999*/;
+    z-index: 3000000000; /*999999*/; 
+}
+#tiledesk-container.open.overlay--popup {
+    background-color: rgba(0, 0, 0, 0.4);
+    position: absolute;
+    width: 100%;
+    height: 100vh;
 }
 #tiledeskdiv {
     /* width: 100%;
@@ -17,35 +28,41 @@
     max-width: 420px;
     min-width: 416px;
     max-height: 640px; */
-    width: 376px;
-    height: calc(100% - 40px);
-    max-width: 696px;  /*376px;*/
-    min-width: 376px;
-    max-height: 620px;
+    width: var(--iframeMinWidth);
+    height: var(--iframeMinHeight);
+    /* min-width: var(--iframeMinWidth); 
+    max-width: var(--iframeMaxWidth);  376px;
+    max-height: 620px; */
     right: 0px;
     bottom: 0px;
     display: block;
     position: fixed;
-    
+    max-height: calc(100% - 50px);
 }
 
-#tiledeskdiv.decreaseSize {
-    /* transition: width 1s, height 1s; */
-    transition: all 1s ease-out;
-    width: 376px;
-    max-height: 620px;
-    /* animation: right-animate 1s ease infinite alternate; */
-
+#tiledeskdiv.fullscreen {
+    right: 0px;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    width: 100%;
+    height: 100%;  
 }
 
-#tiledeskdiv.increaseSize {
-    /* transition: width 1s, height 1s; */
-    transition: all 1s ease-in;
-    width: 696px;
-    max-height: 712px;
-    /* animation: right-animate 1s ease infinite alternate; */
-
+#tiledeskdiv.top-size {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    /* width: calc( var(--iframeMaxWidth) + 180px); */
+    height: 100%; /*var(--iframeMaxHeight);*/
+    /* transform: translate(-50%, -50%);   */
+    transform: translate(-50%, 0%);  
+    width: 100%;
+    max-width: 1024px;
+    max-height: 100%;
 }
+ 
 
 @keyframes right-animate {
     0% {
@@ -62,7 +79,9 @@
     min-width: auto;
     min-height: auto;
     box-shadow: none; /* NEW GAB */ 
-    
+    left: auto; /* NEW DEPA */ 
+    top:auto;
+    transform: none;
 }
 #tiledesk-container.closed #tiledeskdiv.callout {
     /* width: 400px;
@@ -93,30 +112,30 @@
 #tiledesk-container.open #tiledeskiframe {
     display: block;
     /*width: 376px;*/
-    /* -webkit-animation: fade-in-shadow 0.4s ease-in 0.0s both;
-    animation: fade-in-shadow 0.4s ease-in 0.0s both; */
-    /* border-radius: 16px; */
-    /* box-shadow: rgba(0, 18, 46, 0.16) 0px 8px 36px 0px; */
-    /* margin: 10px; */
 }
 #tiledesk-container.open #tiledeskdiv.shadow {
     transition: box-shadow 0.8s ease-in;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 8px 36px 0px; /*NEW GAB*/
 }
-/* @-webkit-keyframes fade-in-shadow {
-    0% { box-shadow: rgba(0, 0, 0, 0.0) 0 0 0px; }
-    100% { box-shadow: rgba(0, 0, 0, 0.1) 0 0 6px; }
-}
-@keyframes sk-bouncedelay {
-    0% { box-shadow: rgba(0, 0, 0, 0.0) 0 0 0px; }
-    100% { box-shadow: rgba(0, 0, 0, 0.1) 0 0 6px; }
-} */
+
 
 #tiledesk-container.closed #tiledeskiframe {
     display: block;
     box-shadow: none;
 }
 
+#tiledesk-container.open #tiledeskdiv.min-size {
+    transition: width 200ms, height 200ms, max-height 200ms, transform 300ms cubic-bezier(0, 1.2, 1, 1), opacity 83ms ease-out;
+    width: var(--iframeMinWidth);
+    height: var(--iframeMinHeight);
+}
+
+#tiledesk-container.open #tiledeskdiv.max-size {
+    /* transition: width 1s, height 1s; */
+    transition: width 200ms, height 200ms, max-height 200ms, transform 300ms cubic-bezier(0, 1.2, 1, 1), opacity 83ms ease-out;
+    width: var(--iframeMaxWidth);
+    height: var(--iframeMaxHeight);
+}
 
 #tiledeskiframe .full-screen-mode {
     width: 100%;

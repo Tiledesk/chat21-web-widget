@@ -6,6 +6,7 @@ import { LoggerService } from '../../../chat21-core/providers/abstract/logger.se
 import { LoggerInstance } from '../../../chat21-core/providers/logger/loggerInstance';
 import { convertColorToRGBA } from '../../../chat21-core/utils/utils';
 import { Globals } from '../../utils/globals';
+import { HEADER_MENU_OPTION } from '../../utils/constants';
 
 @Component({
   selector: 'chat-home',
@@ -23,6 +24,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @Input() hideSettings: boolean;
   @Input() hideNewConversationButton: boolean;
   @Input() stylesMap: Map<string, string>
+  @Input() size: 'min' | 'max' | 'top';
+  @Input() fullscreenMode: boolean;
+  @Input() hideHeaderConversationOptionsMenu: boolean;
+  @Input() isButtonsDisabled: boolean;
+  @Input() translationMap: Map<string, string>;
   @Output() onNewConversation = new EventEmitter<string>();
   @Output() onConversationSelected = new EventEmitter<ConversationModel>();
   @Output() onOpenAllConvesations = new EventEmitter();
@@ -30,6 +36,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @Output() onSignOut = new EventEmitter();
   @Output() onImageLoaded = new EventEmitter<ConversationModel>();
   @Output() onConversationLoaded = new EventEmitter<ConversationModel>();
+  @Output() onMenuOptionClick = new EventEmitter<string>();
+
   // ========= end:: Input/Output values ===========/
 
 
@@ -195,6 +203,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
    */
   onSignOutFN() {
     this.onSignOut.emit();
+  }
+
+  /**
+   * @param status : string 'max' || 'min' || 'top'
+   */
+  onChangeSize(status) {
+    if(status === 'min') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.MINIMIZE)
+    if(status === 'max') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.MAXIMIZE)
+    if(status === 'top') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.TOP)
   }
 
   // ========= end:: ACTIONS ============//

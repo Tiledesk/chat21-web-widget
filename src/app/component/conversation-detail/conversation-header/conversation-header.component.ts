@@ -22,6 +22,8 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
   @Input() nameUserTypingNow: string;
   @Input() typingLocation: string;
   @Input() isTrascriptDownloadEnabled: boolean;
+  @Input() fullscreenMode: boolean;
+  @Input() size: 'min' | 'max' | 'top';
   @Input() hideCloseConversationOptionMenu: boolean;
   @Input() hideHeaderCloseButton: boolean;
   @Input() hideHeaderBackButton: boolean;
@@ -57,8 +59,8 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
   private API_URL: string;
   private logger: LoggerService = LoggerInstance.getInstance()
   constructor(
-    public g: Globals,
-    public appConfigService: AppConfigService,) {
+    public appConfigService: AppConfigService
+  ) {
       this.API_URL = this.appConfigService.getConfig().apiUrl;
   }
 
@@ -103,12 +105,12 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
     this.onMenuOptionClick.emit(HEADER_MENU_OPTION.LOGOUT)
   }
   /**
-   * @param status : string 'max' || 'min'
+   * @param status : string 'max' || 'min' || 'top'
    */
-  maximizeMinimize(status){
-    this.heightStatus = status
+  onChangeSize(status){
     if(status === 'min') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.MINIMIZE)
     if(status === 'max') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.MAXIMIZE)
+    if(status === 'top') this.onMenuOptionClick.emit(HEADER_MENU_OPTION.TOP)
     this.onMenuOptionShow.emit(false)
   }
   toggleSound() {

@@ -17,7 +17,7 @@
             </svg>
             <!-- <i class="material-icons">pause</i> -->
         </button>
-        <div class="duration" [style.color]="color" [style.font-size]="fontSize" >
+        <div class="duration" [style.color]="color">
             <span *ngIf="!isPlaying">{{ audioDuration ? formatTime(audioDuration) : '00:00' }}</span>
             <span *ngIf="isPlaying">{{ formatTime(currentTime) }}</span>
         </div>

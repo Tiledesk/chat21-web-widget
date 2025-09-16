@@ -6,6 +6,59 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc32
+- **bug-fixed**: overlay--popup
+
+# 5.1.0-rc31
+- **bug-fixed**: fixed the text area css
+
+# 5.1.0-rc30
+- **changed**: left-aligned buttons with variable widths, like UIPath
+- **changed**: input text area, CSS changed, like ChatGPT style
+- **changed**: increased chatbot width in top-size view with maximum width like UIPath
+- **changed**: added dark screen in top-size view
+
+# 5.1.0-rc29
+- **bug-fixed**: Bug fix for vertical position of widget ball
+
+# 5.1.0-rc28
+- **changed**: added buttons to change widget size in header 
+- **bug-fixed**: fixed bug widget's balloon position when closed 
+
+# 5.1.0-rc27
+- **bug-fixed**: minor fix on avatar image and textarea style 
+
+# 5.1.0-rc26
+- **added**: buttons attachments aligned to bubble message
+- **changed**: enable new textarea style if width is grather than 688px
+- **bug-fixed**: fullscreenMode is not enabled (css class override fullscreen style)
+
+# 5.1.0-rc25
+- **added**: allowedUploadExtentions property from api call
+
+# 5.1.0-rc24
+- **added**: size tiledeskSettings property
+
+# 5.1.0-rc23
+- **added**: hideHeaderConversation tiledeskSettings property
+
+# 5.1.0-rc22
+- **changed**: footer UI if fullscreenMode is enabled
+- **changed**: buttons alignment if fullscreenMode is enabled
+- **changed**: animation while increase/descrease widget size
+
+# 5.1.0-rc21
+- **bug-fixed**: shadow is visible while decrease widget size
+
+# 5.1.0-rc20
+- **added**: fontFamilySource settings variable
+- **added**: --font-family-bubble-message as variable to manage custom font
+- **removed**: fontSize and fontFamily as input property in bubble-message component
+
+# 5.1.0-rc19
+- **added**: ability to maximize, minimize and fullscreen the widget window
+- **added**: variable for font-family attribute css value
+
 # 5.0.102
 - **bug-fixed**: cannot add message if array is empty
 
