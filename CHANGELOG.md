@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc31
+- **bug-fixed**: fixed the text area css
 
 # 5.1.0-rc30
 - **changed**: left-aligned buttons with variable widths, like UIPath
