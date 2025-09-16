@@ -6,10 +6,12 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0
+
 # 5.0.103
 - **added**: new /me tiledesk api to get all my requests
 - **changed**: removed header and footer for chatbot-panel.html page in case widget is embedded
- 
+
 # 5.1.0-rc21
 - **bug-fixed**: shadow is visible while decrease widget size
 
