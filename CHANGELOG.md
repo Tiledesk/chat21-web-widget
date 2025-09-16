@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc32
+- **bug-fixed**: overlay--popup
+
 # 5.1.0-rc31
 - **bug-fixed**: fixed the text area css
 
