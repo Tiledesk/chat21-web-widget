@@ -1409,9 +1409,9 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.logger.log('[CONV-COMP] ----> FILE - (dragleave) drag ev ', event)
     if (event.dataTransfer && event.dataTransfer.files) {
       const files = event.dataTransfer.files;
-      const canUploadFile = checkAcceptedFile(files[0].type, this.appConfigService.getConfig().fileUploadAccept)
+      const canUploadFile = checkAcceptedFile(files[0].type, this.g.fileUploadAccept)
       if(!canUploadFile){
-        this.logger.error('[IMAGE-UPLOAD] detectFiles: can not upload current file type--> NOT ALLOWED', this.appConfigService.getConfig().fileUploadAccept)
+        this.logger.error('[IMAGE-UPLOAD] detectFiles: can not upload current file type--> NOT ALLOWED', this.g.fileUploadAccept)
         return;
       }
     }
