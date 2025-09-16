@@ -10,8 +10,6 @@ export class TextComponent implements OnInit {
   @Input() text: string;
   @Input() htmlEnabled: boolean = false;
   @Input() color: string;
-  @Input() fontSize: string;
-  @Input() fontFamily: string;
   @Output() onBeforeMessageRender = new EventEmitter();
   @Output() onAfterMessageRender = new EventEmitter();
 

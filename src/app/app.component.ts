@@ -4,6 +4,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, 
 import { environment } from 'src/environments/environment';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { v4 as uuidv4 } from 'uuid';
+import { HEADER_MENU_OPTION } from './utils/constants';
 //COMPONENTS
 import { EyeeyeCatcherCardComponent } from './component/eyeeye-catcher-card/eyeeye-catcher-card.component';
 //MODELS
@@ -66,7 +67,6 @@ interface MessageObj {
   // providers: [AgentAvailabilityService, TranslatorService]
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
-  
 
   // ========= begin:: sottoscrizioni ======= //
   subscriptions: Subscription[] = []; /** */
@@ -100,6 +100,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   
   @ViewChild(EyeeyeCatcherCardComponent, { static: false }) eyeeyeCatcherCardComponent: EyeeyeCatcherCardComponent
   styleMapConversation: Map<string, string> = new Map();
+  translationMap: Map<string, string> = new Map();
+  isButtonsDisabled: boolean = true;
   marginBottom: number;
   
   forceDisconnect: boolean = false;
@@ -129,7 +131,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     public imageRepoService: ImageRepoService,
     public typingService: TypingService,
     public presenceService: PresenceService,
-    public uploadService: UploadService 
+    public uploadService: UploadService
   ){}
 
     ngOnInit(): void {
@@ -139,6 +141,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit(): void {
         this.logger.info('[APP-CONF]---------------- ngAfterViewInit: APP.COMPONENT ---------------- ')
+        
+        // Initialize translation map and enable buttons
+        const keys = ['MAXIMIZE', 'MINIMIZE', 'CENTER', 'BUTTON_CLOSE_TO_ICON'];
+        this.translationMap = this.translateService.translateLanguage(keys);
+        this.isButtonsDisabled = false;
+        
         this.ngZone.run(() => {
             const that = this;
             const subAddedConversation = this.conversationsHandlerService.conversationAdded.subscribe((conversation) => {
@@ -1988,6 +1996,43 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.signOut();
     }
 
+    onMenuOptionClick(event: string) {
+        this.logger.debug('[APP-COMP] onMenuOptionClick', event);
+        switch(event) {
+            case HEADER_MENU_OPTION.MAXIMIZE:
+                this.onWidgetSizeChange('max');
+                break;
+            case HEADER_MENU_OPTION.MINIMIZE:
+                this.onWidgetSizeChange('min');
+                break;
+            case HEADER_MENU_OPTION.TOP:
+                this.onWidgetSizeChange('top');
+                break;
+        }
+    }
+
+    onWidgetSizeChange(mode: 'min' | 'max' | 'top') {
+        var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv');
+        this.g.size = mode 
+        const parent = tiledeskDiv.parentElement as HTMLElement | null;
+        if(mode==='max'){
+            tiledeskDiv.classList.add('max-size')
+            tiledeskDiv.classList.remove('min-size')
+            tiledeskDiv.classList.remove('top-size')
+            if(parent) parent.classList.remove('overlay--popup');
+        } else if(mode==='min'){
+            tiledeskDiv.classList.add('min-size')
+            tiledeskDiv.classList.remove('max-size')
+            tiledeskDiv.classList.remove('top-size')
+            if(parent) parent.classList.remove('overlay--popup');
+        } else if(mode=== 'top'){
+            tiledeskDiv.classList.add('top-size')
+            tiledeskDiv.classList.remove('max-size')
+            tiledeskDiv.classList.remove('min-size')
+            if(parent) parent.classList.add('overlay--popup');
+        }
+    }
+
     /**
      * MODAL RATING WIDGET:
      * close modal page
@@ -2118,6 +2163,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.el.nativeElement.style.setProperty('--button-in-msg-background-color', this.g.bubbleSentBackground)
         this.el.nativeElement.style.setProperty('--button-in-msg-font-size', this.g.buttonFontSize)
+        this.el.nativeElement.style.setProperty('--font-size-bubble-message', this.g.fontSize)
+        this.el.nativeElement.style.setProperty('--font-family-bubble-message', this.g.fontFamily)
+        this.el.nativeElement.style.setProperty('--button-in-msg-font-family', this.g.fontFamily)
+        
+        this.el.nativeElement.style.setProperty('--chat-header-height', this.g.hideHeaderConversation? '0px': null)
     }
 
 

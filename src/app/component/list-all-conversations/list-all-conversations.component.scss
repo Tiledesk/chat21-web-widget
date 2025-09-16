@@ -1,6 +1,3 @@
-// @import 'src/app/sass/variables';
-// @import '../../../sass/normalize.css';
-
 #c21-app-list-all-conversations {
     position: relative;
     display: block;
@@ -18,7 +15,7 @@
     .c21-header {
         overflow: hidden;
         width: 100%;
-        height: 52px;
+        height: var(--chat-header-height);
         position: relative;
         margin: 0;
         padding: 0;
@@ -67,7 +64,7 @@
 
         .c21-header-container{
             position: relative;
-            height: 52px;
+            height: 100%;
             width: 100%;
             margin: 0 auto;
 
