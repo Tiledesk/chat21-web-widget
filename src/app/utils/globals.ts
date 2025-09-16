@@ -297,6 +297,7 @@ export class Globals {
     /** Hide the close button in the widget header. Permitted values: true,
     false. The default value is false. */
     this.hideHeaderCloseButton = false;
+
     /** if it is true, the chat window is open in fullscreen mode. Permitted
     values: true, false. Default value : false */
     this.fullscreenMode = false;

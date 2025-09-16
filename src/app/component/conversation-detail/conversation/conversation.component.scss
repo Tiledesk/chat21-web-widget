@@ -188,6 +188,7 @@ dialog:-internal-dialog-in-top-layer{
     #chat21-footer{
         left: 20%;
         right: 20%;
+        margin: 12px 0px 30px;
     }
 
     :host-context(#chat21-conversations.full-screen-mode){
@@ -218,11 +219,34 @@ dialog:-internal-dialog-in-top-layer{
             padding: 8px 24px;
             background-color: var(--chat-footer-background-color);
             border-radius: 28px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 0px solid #e5e7eb;
+            border-radius: 2rem;
+            background-color: #ffffff;
+            box-shadow: 0px 4px 4px 0px var(--tw-shadow-color, var(--shadow-color-1, #0000000a)), 0px 0px 1px 0px var(--tw-shadow-color, var(--shadow-color-2, #0000009e));
+            transition: border-color 0.2s 
+            ease, box-shadow 0.2s 
+            ease;
+
+            .visible-text-area {
+                background-color: #ffffff;
+            }
         }
         #hiddenFooter,
         #emoji-mart-container {
-            bottom: calc(100% + 10px)
+            bottom: calc(100% + 6px);
         }
     }
 
+
+
+    ::ng-deep .chat21-sheet-content{
+        bottom: calc(var(--chat-footer-logo-height) + var(--chat-footer-height) + 34px)!important;
+    }
+    
 }

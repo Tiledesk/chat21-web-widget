@@ -111,7 +111,8 @@
                 .attachment_container {
                     display: flex;
                     align-content: center;
-                    justify-content: flex-end;
+                    // justify-content: flex-end;
+                    justify-content: flex-start;
                 }
                 .carousel_container{
                     margin: 0px 20px; 
