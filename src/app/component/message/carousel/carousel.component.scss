@@ -54,7 +54,7 @@
     display: grid;
     align-items: start;
     grid-auto-flow: column;
-    grid-auto-columns: calc((100% / 3) - 12px);
+    // grid-auto-columns: calc((100% / 3) - 12px);
     // overflow-x: auto;
     overflow-x: hidden;
     scroll-snap-type: x mandatory;
@@ -270,12 +270,12 @@
 }
 @media screen and (max-width: 900px) {
 .wrapper .carousel {
-    grid-auto-columns: calc((100% / 2) - 9px);
+    // grid-auto-columns: calc((100% / 2) - 9px);
 }
 }
 @media screen and (max-width: 600px) {
 .wrapper .carousel {
-    grid-auto-columns: var(--cardWidth);
+    // grid-auto-columns: var(--cardWidth);
     // grid-auto-columns: 17px repeat(var(--cardWidth)) 17px;
 }
 }
