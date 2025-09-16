@@ -19,6 +19,8 @@
         [hideHeaderConversationOptionsMenu]="g?.hideHeaderConversationOptionsMenu"
         [hideSignOutOptionMenu]="(!g?.singleConversation || !g?.showLogoutOption)"
         [hideChatDetailOptionMenu]="(!g?.isDevMode)"
+        [fullscreenMode]="g?.fullscreenMode"
+        [size]="g?.size"
         [stylesMap]="stylesMap"
         [translationMap]="translationMapHeader"
         [widgetTitle]="g?.project?.widgetTitle"
@@ -136,8 +138,7 @@
             (onAfterSendMessage)="onAfterSendMessageFN($event)"
             (onChangeTextArea)="onChangeTextArea($event)"
             (onAttachmentFileButtonClicked)="onAttachmentFileButtonClicked($event)"
-            (onNewConversationButtonClicked)="onNewConversationButtonClickedFN($event)"
-            (onBackButton)="onBackButton($event)">
+            (onNewConversationButtonClicked)="onNewConversationButtonClickedFN($event)">
         </chat-conversation-footer>
 
     </div>

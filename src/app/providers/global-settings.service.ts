@@ -331,6 +331,8 @@ export class GlobalSettingsService {
         this.globals.setColorWithGradient();
         /** set css iframe from parameters */
         this.setCssIframe();
+        /** set main style */
+        this.setStyle();
 
         this.logger.debug('[GLOBAL-SET] ***** END SET PARAMETERS *****');
         this.obsSettingsService.next(true);
@@ -373,7 +375,35 @@ export class GlobalSettingsService {
             divTiledeskiframe.style.height = '100%';
             divTiledeskiframe.style.maxHeight = 'none';
             divTiledeskiframe.style.maxWidth = 'none';
+            // divTiledeskiframe.classList.add('fullscreen')
+            divTiledeskiframe.classList.remove('min-size')
+            divTiledeskiframe.classList.remove('max-size')
+            divTiledeskiframe.classList.remove('top-size')
+
         }
+    }
+
+    setStyle(){
+
+        /** load custom FONT */
+        if(this.globals.fontFamily && this.globals.fontFamilySource){
+            this.loadFont(this.globals.fontFamily, this.globals.fontFamilySource)
+        }
+    }
+    loadFont(family: string, href: string,) {
+        const mainFont = family.split(",")[0].replace(/['"]/g, "").trim(); // es. "Montserrat"
+
+        if (document.querySelector(`link[data-font='${mainFont}']`)) {
+            return;
+        }
+
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        link.setAttribute('data-font', mainFont); // marker pulito
+        document.head.appendChild(link);
+
+        document.documentElement.style.setProperty('--font-family', family);
     }
     /**
      * A: setVariablesFromService
@@ -521,6 +551,9 @@ export class GlobalSettingsService {
                     }
                     if (variables.hasOwnProperty('allowedOnSpecificUrlList')) {
                         globals['allowedOnSpecificUrlList'] = variables['allowedOnSpecificUrlList'];
+                    }
+                    if (variables.hasOwnProperty('allowedUploadExtentions')) {
+                        globals['fileUploadAccept'] = variables['allowedUploadExtentions'];
                     }
                     
                 }
@@ -889,7 +922,7 @@ export class GlobalSettingsService {
             globals.hideSettings = (TEMP === true) ? true : false;;
         }
         TEMP = tiledeskSettings['isLogEnabled'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > logLevel:: ', TEMP]);
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > isLogEnabled:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.isLogEnabled = TEMP;
         }
@@ -935,7 +968,12 @@ export class GlobalSettingsService {
         TEMP = tiledeskSettings['fontFamily'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > fontFamily:: ', TEMP]);
         if (TEMP !== undefined) {
-            globals.fontFamily = TEMP;
+            globals.fontFamily = TEMP + ',' + globals.fontFamily;
+        }
+        TEMP = tiledeskSettings['fontFamilySource'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > fontFamilySource:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.fontFamilySource = TEMP;
         }
         TEMP = tiledeskSettings['buttonFontSize'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > buttonFontSize:: ', TEMP]);
@@ -982,7 +1020,7 @@ export class GlobalSettingsService {
             globals.nativeRating = (TEMP === true) ? true : false;
         }
         TEMP = tiledeskSettings['showInfoMessage'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showBubbleInfoMessage:: ', TEMP]);
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showInfoMessage:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.showInfoMessage = TEMP.split(',').map(key => { return key.trim()});
         }
@@ -1025,7 +1063,7 @@ export class GlobalSettingsService {
             globals.telegramUsername = TEMP;
         }
         TEMP = tiledeskSettings['fileUploadAccept'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > telegramUsername:: ', TEMP]);
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > fileUploadAccept:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.fileUploadAccept = TEMP;
         } 
@@ -1065,9 +1103,14 @@ export class GlobalSettingsService {
             globals.showEmojiFooterButton = (TEMP === true) ? true : false;
         } 
         TEMP = tiledeskSettings['showAudioRecorderFooterButton'];
-        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showEmojiFooterButton:: ', TEMP]);
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showAudioRecorderFooterButton:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.showAudioRecorderFooterButton = (TEMP === true) ? true : false;
+        }
+        TEMP = tiledeskSettings['size'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > size:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.size = TEMP;
         } 
     }
 
@@ -1266,7 +1309,11 @@ export class GlobalSettingsService {
         }
         TEMP = el.nativeElement.getAttribute('fontFamily');
         if (TEMP !== null) {
-            this.globals.fontFamily = TEMP;
+            this.globals.fontFamily = TEMP + ',' + this.globals.fontFamily;
+        }
+        TEMP = el.nativeElement.getAttribute('fontFamilySource');
+        if (TEMP !== null) {
+            this.globals.fontFamilySource = TEMP;
         }
         TEMP = el.nativeElement.getAttribute('buttonFontSize');
         if (TEMP !== null) {
@@ -1805,6 +1852,11 @@ export class GlobalSettingsService {
         TEMP = getParameterByName(windowContext, 'tiledesk_showEmojiFooterButton');
         if (TEMP) {
             globals.showEmojiFooterButton = stringToBoolean(TEMP);
+        }
+
+        TEMP = getParameterByName(windowContext, 'tiledesk_size');
+        if (TEMP) {
+            globals.size = TEMP;
         }
         
     }

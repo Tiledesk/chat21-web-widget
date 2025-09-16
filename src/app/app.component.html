@@ -11,13 +11,19 @@
         [archivedConversations]="archivedConversations"
         [hideSettings]="g.hideSettings"
         [stylesMap]="styleMapConversation"
+        [size]="g.size"
+        [fullscreenMode]="g.fullscreenMode"
+        [hideHeaderConversationOptionsMenu]="g.hideHeaderConversationOptionsMenu"
+        [isButtonsDisabled]="isButtonsDisabled"
+        [translationMap]="translationMap"
         (onNewConversation)="onNewConversation()" 
         (onConversationSelected)="onSelectedConversation($event)"
         (onOpenAllConvesations)="onOpenAllConversation()"
         (onCloseWidget)="onCloseWidget()" 
         (onSignOut)="onSignOut()"
         (onImageLoaded)="onImageLoaded($event)"
-        (onConversationLoaded)="onConversationLoaded($event)">
+        (onConversationLoaded)="onConversationLoaded($event)"
+        (onMenuOptionClick)="onMenuOptionClick($event)">
       </chat-home>
     </div>
 

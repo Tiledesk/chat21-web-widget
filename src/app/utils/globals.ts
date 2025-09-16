@@ -223,8 +223,9 @@ export class Globals {
   allowedOnSpecificUrl: boolean // *******  new ********
   allowedOnSpecificUrlList: Array<string> // *******  new ********
 
+  fontFamilySource: string; // *******  new ********
 
-
+  size: 'min' | 'max' | 'top'; // *******  new ********
   constructor(
   ) { }
 
@@ -247,92 +248,94 @@ export class Globals {
     // ============ BEGIN: SET EXTERNAL PARAMETERS ==============//
     this.baseLocation = 'https://widget.tiledesk.com/v2';
     this.autoStart = true;
-    this.startHidden = false;
     /** start Authentication and startUI */
-    this.isShown = true;
+    this.startHidden = false;
     /** show/hide all widget -> js call: showAllWidget */
-    this.isOpen = false;
+    this.isShown = true;
     /** show/hide window widget -> js call: hideAllWidget */
-    this.startFromHome = true;
+    this.isOpen = false;
     /** start from Home or Conversation */
-    this.isOpenPrechatForm = true;
+    this.startFromHome = true;
     /** check open/close modal prechatform if g.preChatForm is true  */
-    this.isOpenStartRating = false;
+    this.isOpenPrechatForm = true;
     /** show/hide all rating chat */
-    this.projectid = '';
+    this.isOpenStartRating = false;
     /** The TileDesk project id. Find your TileDesk ProjectID in the
-    TileDesk Dashboard under the Widget menu. */
-    this.preChatForm = false;
+     TileDesk Dashboard under the Widget menu. */
+    this.projectid = '';
     /** You can require customers to enter information like name and email
     before sending a chat message by enabling the Pre-Chat form. Permitted
     values: true, false. The default value is false. */
-    this.align = '';
+    this.preChatForm = false;
     /** if it is true, the chat window is automatically open when the
-    widget is loaded. Permitted values: true, false. Default value : false */
-    this.calloutTimer = -1;
+     widget is loaded. Permitted values: true, false. Default value : false */
+    this.align = '';
     /** Proactively open the chat windows to increase the customer engagement.
     Permitted values: -1 (Disabled), 0 (Immediatly) or a positive integer value.
     For exmaple: 5 (After 5 seconds), 10 (After 10 seconds). */
-    this.calloutTitle = '';
+    this.calloutTimer = -1;
     /** title box callout */
-    this.calloutMsg = '';
+    this.calloutTitle = '';
     /** stato callout (shown only first time) */
-    this.calloutStaus = true;
+    this.calloutMsg = '';
     /** message box callout */
-    this.userFullname = '';
+    this.calloutStaus = true;
     /** userFullname: Current user fullname. Set this parameter to specify
     the visitor fullname. */
-    this.userEmail = '';
+    this.userFullname = '';
     /** Current user email address. Set this parameter to specify the visitor
     email address.  */
-    this.widgetTitle = '';
+    this.userEmail = '';
     /** Set the widget title label shown in the widget header. Value type : string.
     The default value is Tiledesk. */
-    this.dynamicWaitTimeReply = true;  
+    this.widgetTitle = '';
     /** The user can decide whether or not to share the 
-     * average response time of his team (if 'dynamicWaitTimeReply' is 
-     * false the WAITING_TIME_NOT_FOUND will always be displayed) 
-     * is set to true for backward compatibility with old projects */
-    this.fullscreenMode = false;
+    * average response time of his team (if 'dynamicWaitTimeReply' is 
+    * false the WAITING_TIME_NOT_FOUND will always be displayed) 
+    * is set to true for backward compatibility with old projects */
+    this.dynamicWaitTimeReply = true;  
+    /** Hide the close button in the widget header. Permitted values: true,
+    false. The default value is false. */
+    this.hideHeaderCloseButton = false;
     /** if it is true, the chat window is open in fullscreen mode. Permitted
     values: true, false. Default value : false */
-    this.themeColor = convertColorToRGBA('#2a6ac1', 100);
+    this.fullscreenMode = false;
     /** allows you to change the main widget's color
     (color of the header, color of the launcher button,
     other minor elements). Permitted values: Hex color
     codes, e.g. #87BC65 and RGB color codes, e.g. rgb(135,188,101) */
-    this.themeColorOpacity = 100
+    this.themeColor = convertColorToRGBA('#2a6ac1', 100);
     /**allows you to change opacity in background headers component 
-     * Permitted values: [0..1] */
-    this.themeForegroundColor = convertColorToRGBA('#ffffff', 100);
+    * Permitted values: [0..1] */
+    this.themeColorOpacity = 100
     /** allows you to change text and icons' color.
     Permitted values: Hex color codes, e.g. #425635 and RGB color
     codes, e.g. rgb(66,86,53) */
-    this.allowTranscriptDownload = false;
+    this.themeForegroundColor = convertColorToRGBA('#ffffff', 100);
     /** allows the user to download the chat transcript. The download button appears
     when the chat is closed by the operator. Permitter values: true, false.
     Default value: false */
-    this.poweredBy = BRAND_BASE_INFO.POWERED_BY;
+    this.allowTranscriptDownload = false;
     /** link nel footer widget */
-    this.logoChat = BRAND_BASE_INFO.LOGO_CHAT;
+    this.poweredBy = BRAND_BASE_INFO.POWERED_BY;
     /** url img logo */
-    this.marginX = '20px';
+    this.logoChat = BRAND_BASE_INFO.LOGO_CHAT;
     /** set margin left or rigth widget  */
-    this.marginY = '20px';
+    this.marginX = '20px';
     /** set margin bottom widget */
-    this.mobileMarginX = '0px';
+    this.marginY = '20px';
     /** set margin left or rigth widget for mobile */
-    this.mobileMarginY = '0px';
+    this.mobileMarginX = '0px';
     /** set margin bottom widget for mobile*/
-    this.launcherWidth = '60px'
+    this.mobileMarginY = '0px';
     /** set launcher width widget  */
-    this.launcherHeight = '60px'
+    this.launcherWidth = '60px'
     /** set launcher height widget  */
-    this.baloonImage='';
+    this.launcherHeight = '60px'
     /** set launcher baloon widget image: require SVG url  */
-    this.baloonShape = '50%';
+    this.baloonImage='';
     /** set launcher balon widget shape: can set corner by corner   */
-    this.isLogEnabled = false;
+    this.baloonShape = '50%';
     // this.parameters['isLogEnabled'] = false;
     this.openExternalLinkButton = true;
     /** Hide the header conversation Permitted values: true,
@@ -341,65 +344,68 @@ export class Globals {
     /** Hide the close button in the widget header. Permitted values: true,
     false. The default value is false. */
     this.hideHeaderCloseButton = false;
+    /** set global log. Permitted values: true, false. The default value is false.   */
+    this.isLogEnabled = false;
     /** enable to hide/show upper-right header conversation options menu */
-    this.hideHeaderConversationOptionsMenu = false;
+    this.openExternalLinkButton = true;
     /** enable to close a conversation from upper-right header menu  */
-    this.hideCloseConversationOptionMenu = false;
+    this.hideHeaderConversationOptionsMenu = false;
     /** enable to hide/show options menu in conversation detail header */
-    this.hideSettings = false;
+    this.hideCloseConversationOptionMenu = false;
     /** enable to hide/show options menu in home component */
-    this.filterByRequester = false;
+    this.hideSettings = false;
     /** show conversations with conversation.attributes.requester_id == user.uid */
-    this.persistence = 'local';
+    this.filterByRequester = false;
     /** set the auth persistence */
-    this.preChatFormJson = [{name: "userFullname", type:"text", mandatory:true, label:"LABEL_FIELD_NAME"},{name:"userEmail", type:"text", mandatory:true, regex:"/^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/", label:"LABEL_FIELD_EMAIL", errorLabel:"LABEL_ERROR_FIELD_EMAIL"}]
+    this.persistence = 'local';
     /** set the preChatForm Json as default if preChatFormCustomFieldsEnabled is false or not exist */
-    this.bubbleSentBackground = convertColorToRGBA('#2a6ac1', 100); //'#62a8ea'
+    this.preChatFormJson = [{name: "userFullname", type:"text", mandatory:true, label:"LABEL_FIELD_NAME"},{name:"userEmail", type:"text", mandatory:true, regex:"/^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/", label:"LABEL_FIELD_EMAIL", errorLabel:"LABEL_ERROR_FIELD_EMAIL"}]
     /** set the background of bubble sent message */
-    this.bubbleSentTextColor = convertColorToRGBA('#ffffff', 100); //'#ffffff'
+    this.bubbleSentBackground = convertColorToRGBA('#2a6ac1', 100); //'#62a8ea'
     /** set the text color of bubble sent message */
-    this.bubbleReceivedBackground= convertColorToRGBA('#f0f2f7', 100); //#f7f7f7;
+    this.bubbleSentTextColor = convertColorToRGBA('#ffffff', 100); //'#ffffff'
     /** set the background of bubble received message */
-    this.bubbleReceivedTextColor = convertColorToRGBA('#06132b', 100); //#1a1a1a
+    this.bubbleReceivedBackground= convertColorToRGBA('#f0f2f7', 100); //#f7f7f7;
     /** set the text color of bubble received message */
-    this.fontSize = '1.4em'
+    this.bubbleReceivedTextColor = convertColorToRGBA('#06132b', 100); //#1a1a1a
     /** set the text size of bubble messages */
-    this.fontFamily = "'Roboto','Google Sans', Helvetica, Arial, sans-serif'"
+    this.fontSize = '1.4em'
     /** set the text family of bubble messages */
-    this.buttonFontSize = '15px'
+    this.fontFamily = "'Roboto','Google Sans', Helvetica, Arial, sans-serif"
     /** set the text size of attachment-buttons */
-    this.buttonBackgroundColor = convertColorToRGBA('#ffffff', 100)
+    this.buttonFontSize = '15px'
     /** set the backgroundColor of attachment-buttons */
-    this.buttonTextColor = convertColorToRGBA('#2a6ac1', 100)
+    this.buttonBackgroundColor = convertColorToRGBA('#ffffff', 100)
     /** set the text color of attachment-buttons */
+    this.buttonTextColor = convertColorToRGBA('#2a6ac1', 100)
+    /** set the text size of attachment-buttons */
     this.buttonHoverBackgroundColor = convertColorToRGBA('#2a6ac1', 100)
     /** set the text size of attachment-buttons */
     this.buttonHoverTextColor = convertColorToRGBA('#ffffff', 100);
-    /** set the text size of attachment-buttons */
-    this.singleConversation = false;
     /** set the single conversation mode for the widget */
-    this.restartConversation = false;
+    this.singleConversation = false;
     /** allow you to always restart a new converazioe */
-    this.nativeRating = true;
+    this.restartConversation = false;
     /** set if native rating componet has to be shown */
-    this.showInfoMessage = 'MEMBER_JOINED_GROUP'.split(',').map(key => { return key.trim()});
+    this.nativeRating = true;
     /** disable or show bubble info message 'MEMBER_JOINED_CHAT' */
-    this.typingLocation = 'content'
+    this.showInfoMessage = 'MEMBER_JOINED_GROUP'.split(',').map(key => { return key.trim()});
     /** set the location of typing indicator (header or content) */
-    this.allowReopen = false;
+    this.typingLocation = 'content'
     /** enable the user to reopen a closed conversation */
     // this.continueConversationBeforeTime = 48;
     /** enable user to continue archived confersation before the value time from last timeout message */
-    this.participants = [];
+    this.allowReopen = false;
     /** enable user to talk with specific chat-bots/humans */
-    this.whatsappNumber = '';
+    this.participants = [];
     /**enable user to set a whatsapp business number to chat with */
-    this.messangerPageTitle = ''
+    this.whatsappNumber = '';
     /**enable user to set a facebook messanger page to chat with */
-    this.telegramUsername = ''
+    this.messangerPageTitle = ''
     /**enable user to set a telegram number to chat with */
-    this.fileUploadAccept = "image/*,.pdf,.txt,.mp3"
+    this.telegramUsername = ''
     /**enable auto disconnect from messaging after a defined amount of time (s)*/
+    this.fileUploadAccept = "image/*,.pdf,.txt,.mp3"
     this.disconnetTime = 0
 
     this.showWaitTime = true;
@@ -431,57 +437,36 @@ export class Globals {
     this.allowedOnSpecificUrl = false
     /** set a list of pattern url able to load the widget */
     this.allowedOnSpecificUrlList = [];
+    /** set widget size from 3 different positions: min, max, top */
+    this.size = 'min';
 
     // ============ END: SET EXTERNAL PARAMETERS ==============//
 
 
     // ============ BEGIN: SET INTERNAL PARAMETERS ==============//
+    /** name tenant ex: tilechat */
     this.tenant = environment.firebaseConfig.tenant;
-    // this.parameters['tenant'] = environment.tenant;
-    // this.parameters.push({'tenant': environment.tenant});
-
-    /** Set the widget title label shown in the widget header. Value type : string.
-    The default value is Tiledesk. */
-                                                        /** name tenant ex: tilechat */
+    /** channelType: group/direct  */
     this.channelType = CHANNEL_TYPE.GROUP;
-    // this.parameters['channelType'] = CHANNEL_TYPE.GROUP;
-    // this.parameters.push({'channelType': CHANNEL_TYPE.GROUP});
-                                                        /** channelType: group/direct  */
+    /** settings for pass variables to js */                                                
     this.default_settings = {};
-    // this.parameters.push({'default_settings': '' });
-                                                        /** settings for pass variables to js */
+    /** detect is mobile : detectIfIsMobile() */                                         
     this.isMobile = false;
-    // this.parameters['isMobile'] = false;
-    // this.parameters.push({'isMobile': false});  /** detect is mobile : detectIfIsMobile() */
-
+    /** detect is logged */
     this.isLogged = false;
-    // this.parameters['isLogged'] = false;
-    // this.parameters.push({'isLogged': false});  /** detect is logged */
-
+    
     this.BUILD_VERSION = 'v.' + environment.version;
-    // this.parameters['BUILD_VERSION'] = 'v.' + environment.version;
-    // this.parameters.push({'BUILD_VERSION': 'v.' + environment.version});
 
     this.soundEnabled = true;
-    // this.parameters['soundEnabled'] = true;
-    // this.parameters.push({'soundEnabled': true});
 
     this.conversationsBadge = 0;
-    // this.parameters['conversationsBadge'] = 0;
-    // this.parameters.push({'conversationsBadge': 0});
 
     this.isOpenMenuOptions = false;
-    // this.parameters['isOpenMenuOptions'] = false;
-    // this.parameters.push({'isOpenMenuOptions': false});
 
     this.displayEyeCatcherCard = 'none';
-    // this.parameters['displayEyeCatcherCard'] = 'none';
-    // this.parameters.push({'displayEyeCatcherCard': 'none'});
     // ============ END: SET INTERNAL PARAMETERS ==============//
 
     this.supportMode = true;
-    // this.parameters['supportMode'] = true;
-    // this.parameters.push({'supportMode': true});
 
     this.newConversationStart = true;
 
@@ -631,6 +616,11 @@ export class Globals {
     } else if(!isOpen && this.isMobile && divTiledeskWidget){
       divTiledeskWidget.style.bottom = this.marginY
       this.align === 'left'?  divTiledeskWidget.style.left = this.mobileMarginX : divTiledeskWidget.style.right = this.mobileMarginX; 
+    }
+
+    //customize position for 'tiledeskdiv' for desktop if fullscreenMode is not active
+    if(isOpen && !this.isMobile && !this.fullscreenMode && divTiledeskWidget && this.size){
+      divTiledeskWidget.classList.add(this.size + '-size')
     }
 
 

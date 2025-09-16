@@ -8,19 +8,13 @@
 
         <!-- ICON CLOSE CHAT -->
         <button [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-close c21-button-clean" [ngStyle]="{'display': (hideHeaderCloseButton)?'none':'flex'}" (click)="closeWidget()">
-            <!-- <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
-                width="24px" height="24px" viewBox="0 0 24 24">
-                <path fill="none" d="M0 0h24v24H0V0z" />
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-                <title id="altIconTitle">{{ translationMap?.get('BUTTON_CLOSE_TO_ICON') }}</title>
-            </svg> -->
             <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
                 width="24px" height="24px" viewBox="0 0 24 24">
                 <path d="M19.35,9.21c.2-.2.2-.51,0-.71l-.71-.71c-.2-.2-.51-.2-.71,0l-5.94,5.94-5.94-5.94c-.2-.2-.51-.2-.71,0l-.71.71c-.2.2-.2.51,0,.71l7,7c.2.2.51.2.71,0l7-7Z"/>
                 <title id="altIconTitle">{{ translationMap?.get('BUTTON_CLOSE_TO_ICON') }}</title>
             </svg>
         </button>
-
+            
         <!-- ICON MENU OPTION -->
         <button [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-button-clean" [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}" (click)="toggleMenu()" >
             <svg aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
@@ -30,6 +24,38 @@
                 <title id="altIconTitle">{{ translationMap?.get('OPTIONS') }}</title>
             </svg>
         </button>
+
+
+    <!-- ICON MAXIMIZE -->
+    <button *ngIf="size === 'min' && !fullscreenMode" [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-button-clean" [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}" (click)="onChangeSize('max')" >
+        <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
+            width="17" height="17" viewBox="0 0 17 17">
+            <path d="M6.49001 8.30999L3.69 11.11V9.40999C3.69 8.93999 3.31 8.55999 2.84 8.55999C2.37 8.55999 1.99001 8.93999 1.99001 9.40999V14.01H6.59C7.06 14.01 7.44 13.63 7.44 13.16C7.44 12.69 7.06 12.31 6.59 12.31H4.89L7.69 9.50999L6.49001 8.30999ZM9.41 1.98999C8.94 1.98999 8.56001 2.36999 8.56001 2.83999C8.56001 3.30999 8.94 3.68999 9.41 3.68999H11.11L8.31001 6.48999L9.51 7.68999L12.31 4.88999V6.58999C12.31 7.05999 12.69 7.43999 13.16 7.43999C13.63 7.43999 14.01 7.05999 14.01 6.58999V1.98999H9.41Z"></path>
+            <title id="altIconTitle">{{ translationMap?.get('MAXIMIZE') }}</title>
+        </svg>
+    </button>
+
+     <!-- ICON MINIMIZE -->
+    <button *ngIf="size==='top' && !fullscreenMode" [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-button-clean" [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}" (click)="onChangeSize('min')" >
+        <svg role="img" aria-labelledby="altIconTitle" class="icon-menu" [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
+            width="17" height="17" viewBox="0 0 17 17">
+            <path d="M13.59 5.31h-1.7l3.3-3.3-1.2-1.2-3.3 3.3v-1.7a.85.85 0 1 0-1.7 0v4.6h4.6a.85.85 0 1 0 0-1.7M1.57 9.84c0 .47.38.85.85.85h1.7l-3.3 3.3 1.2 1.2 3.3-3.3v1.7a.85.85 0 1 0 1.7 0v-4.6h-4.6a.85.85 0 0 0-.85.85"></path>
+            <title id="altIconTitle">{{ translationMap?.get('MINIMIZE') }}</title>
+        </svg>
+    </button>
+
+    <!-- ICON TOP -->
+    <button *ngIf="size==='max' && !fullscreenMode" [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-button-clean" [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}" (click)="onChangeSize('top')" >
+        <svg  role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
+            width="17" height="17" viewBox="0 0 17 17">
+            <path d="M3.7,7.6L2.5,6.4C2.2,6,2.2,5.5,2.5,5.2s0.9-0.4,1.2-0.1L7,8.4l-3.3,3.3c-0.4,0.4-0.8,0.3-1.1,0s-0.4-0.9-0.1-1.2l1.2-1.2 H1.5l0-1.7H3.7z"/>
+            <path d="M13.3,7.6l1.2-1.2c0.4-0.4,0.3-0.8,0-1.1s-0.9-0.4-1.2-0.1L10,8.4l3.3,3.3c0.4,0.4,0.8,0.3,1.1,0s0.4-0.9,0.1-1.2l-1.2-1.2 h2.2l0-1.7H13.3z"/>
+            <path d="M8.5,14.5L8.5,14.5c-0.5,0-0.9-0.4-0.9-0.8V3.3c0-0.5,0.4-0.8,0.8-0.8h0c0.5,0,0.8,0.4,0.8,0.8v10.4 C9.4,14.2,9,14.5,8.5,14.5z"/>
+            <title id="altIconTitle">{{ translationMap?.get('CENTER') }}</title>
+        </svg>
+    </button>
+
+
 
         <!-- ICON BACK -->
         <button [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="1530" aria-label=" indietro " class="c21-header-button c21-left c21-button-clean" [ngStyle]="{'display': (hideHeaderBackButton)?'none':'flex'}" (click)="returnHome()">
@@ -123,23 +149,34 @@
     </div> -->
     
     <!-- ICON MAXIMIZE -->
-    <!-- <div class="c21-header-button c21-right" *ngIf="heightStatus==='min'" (click)="maximizeMinimize('max')">
-        <svg role="img" aria-labelledby="altIconTitle" [class="icon-menu" xmlns="http://www.w3.org/2000/svg" 
-            width="17" height="17" viewBox="0 0 62 62">
-            <path d="M61,2H33a1,1,0,0,0-1,1V9a1,1,0,0,0,1,1H48.344L2.293,56.051a1,1,0,0,0,0,1.414l4.243,4.242a1,1,0,0,0,1.414,0L54,15.656V31a1,1,0,0,0,1,1h6a1,1,0,0,0,1-1V3A1,1,0,0,0,61,2Z"></path>
+    <div class="c21-header-button c21-right" *ngIf="size === 'min' && !fullscreenMode" (click)="onChangeSize('max')">
+        <svg  role="img" aria-labelledby="altIconTitle" fill="none" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
+            width="17" height="17" viewBox="0 0 17 17">
+            <path d="M6.49001 8.30999L3.69 11.11V9.40999C3.69 8.93999 3.31 8.55999 2.84 8.55999C2.37 8.55999 1.99001 8.93999 1.99001 9.40999V14.01H6.59C7.06 14.01 7.44 13.63 7.44 13.16C7.44 12.69 7.06 12.31 6.59 12.31H4.89L7.69 9.50999L6.49001 8.30999ZM9.41 1.98999C8.94 1.98999 8.56001 2.36999 8.56001 2.83999C8.56001 3.30999 8.94 3.68999 9.41 3.68999H11.11L8.31001 6.48999L9.51 7.68999L12.31 4.88999V6.58999C12.31 7.05999 12.69 7.43999 13.16 7.43999C13.63 7.43999 14.01 7.05999 14.01 6.58999V1.98999H9.41Z" fill="currentColor"></path>
             <title id="altIconTitle">{{ translationMap?.get('MAXIMIZE') }}</title>
         </svg>
         <span class="label-menu-item">{{ translationMap?.get('MAXIMIZE') }}</span>
-    </div> -->
+    </div>
     <!-- ICON MINIMIZE -->
-    <!-- <div class="c21-header-button c21-right" *ngIf="heightStatus==='max'" (click)="maximizeMinimize('min')">
-        <svg role="img" aria-labelledby="altIconTitle" class="icon-menu" transform="rotate(180)" xmlns="http://www.w3.org/2000/svg" 
-            width="17" height="17" viewBox="0 0 62 62">
-            <path d="M61,2H33a1,1,0,0,0-1,1V9a1,1,0,0,0,1,1H48.344L2.293,56.051a1,1,0,0,0,0,1.414l4.243,4.242a1,1,0,0,0,1.414,0L54,15.656V31a1,1,0,0,0,1,1h6a1,1,0,0,0,1-1V3A1,1,0,0,0,61,2Z"></path>
+    <div class="c21-header-button c21-right" *ngIf="(size==='max' || size==='top') && !fullscreenMode" (click)="onChangeSize('min')">
+        <svg role="img" aria-labelledby="altIconTitle" class="icon-menu" fill="none" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
+            width="17" height="17" viewBox="0 0 17 17">
+            <path d="M13.59 5.31h-1.7l3.3-3.3-1.2-1.2-3.3 3.3v-1.7a.85.85 0 1 0-1.7 0v4.6h4.6a.85.85 0 1 0 0-1.7M1.57 9.84c0 .47.38.85.85.85h1.7l-3.3 3.3 1.2 1.2 3.3-3.3v1.7a.85.85 0 1 0 1.7 0v-4.6h-4.6a.85.85 0 0 0-.85.85" fill="currentColor"></path>
             <title id="altIconTitle">{{ translationMap?.get('MINIMIZE') }}</title>
         </svg>
         <span class="label-menu-item">{{ translationMap?.get('MINIMIZE') }}</span>
-    </div> -->
+    </div>
+    <!-- ICON TOP -->
+    <div class="c21-header-button c21-right" *ngIf="size!=='top' && !fullscreenMode" (click)="onChangeSize('top')">
+        <svg  role="img" aria-labelledby="altIconTitle" fill="none" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
+            width="17" height="17" viewBox="0 0 17 17">
+            <path fill="currentColor" d="M3.7,7.6L2.5,6.4C2.2,6,2.2,5.5,2.5,5.2s0.9-0.4,1.2-0.1L7,8.4l-3.3,3.3c-0.4,0.4-0.8,0.3-1.1,0s-0.4-0.9-0.1-1.2l1.2-1.2 H1.5l0-1.7H3.7z"/>
+            <path fill="currentColor" d="M13.3,7.6l1.2-1.2c0.4-0.4,0.3-0.8,0-1.1s-0.9-0.4-1.2-0.1L10,8.4l3.3,3.3c0.4,0.4,0.8,0.3,1.1,0s0.4-0.9,0.1-1.2l-1.2-1.2 h2.2l0-1.7H13.3z"/>
+            <path fill="currentColor" d="M8.5,14.5L8.5,14.5c-0.5,0-0.9-0.4-0.9-0.8V3.3c0-0.5,0.4-0.8,0.8-0.8h0c0.5,0,0.8,0.4,0.8,0.8v10.4 C9.4,14.2,9,14.5,8.5,14.5z"/>
+            <title id="altIconTitle">{{ translationMap?.get('CENTER') }}</title>
+        </svg>
+        <span class="label-menu-item">{{ translationMap?.get('CENTER') }}</span>
+    </div>
 
     <!-- ICON LOGOUT -->
     <div class="c21-header-button c21-right"  *ngIf="!hideSignOutOptionMenu" (click)="signOut()">

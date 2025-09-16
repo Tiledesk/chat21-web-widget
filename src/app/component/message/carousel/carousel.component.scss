@@ -1,5 +1,3 @@
-@import 'src/app/sass/variables';
-
 :host {
     --backgroundColor: #{var(--blue)};
     --textColor: #{var(--bck-msg-sent)};
@@ -7,6 +5,7 @@
     --hoverTextColor: #{var(--blue)};
     --buttonFontSize: #{var(--button-in-msg-font-size)};
     --max-width: #{var(--button-in-msg-max-width)};
+    --fontFamily: #{var(--font-family)};
 
     --cardWidth: 220px;
 }
@@ -203,7 +202,7 @@
         transition: all .3s;
 
         background: var(--backgroundColor);
-        font-family: 'Muli', sans-serif;
+        font-family: var(--fontFamily);
         font-size: var(--buttonFontSize);
         -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
