@@ -6,6 +6,18 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc21
+- **bug-fixed**: shadow is visible while decrease widget size
+
+# 5.1.0-rc20
+- **added**: fontFamilySource settings variable
+- **added**: --font-family-bubble-message as variable to manage custom font
+- **removed**: fontSize and fontFamily as input property in bubble-message component
+
+# 5.1.0-rc19
+- **added**: ability to maximize, minimize and fullscreen the widget window
+- **added**: variable for font-family attribute css value
+
 # 5.0.102
 - **bug-fixed**: cannot add message if array is empty
 
