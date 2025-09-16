@@ -16,7 +16,7 @@
     display: none;
     z-index: 3000000000; /*999999*/; 
 }
-#tiledesk-container.overlay--popup {
+#tiledesk-container.open.overlay--popup {
     background-color: rgba(0, 0, 0, 0.4);
     position: absolute;
     width: 100%;
