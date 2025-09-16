@@ -8,7 +8,19 @@
 
 # 5.0.103
 - **added**: new /me tiledesk api to get all my requests
-- **changed**: removed header and footer for chatbot-panel.html page in case widget is embedded 
+- **changed**: removed header and footer for chatbot-panel.html page in case widget is embedded
+ 
+# 5.1.0-rc21
+- **bug-fixed**: shadow is visible while decrease widget size
+
+# 5.1.0-rc20
+- **added**: fontFamilySource settings variable
+- **added**: --font-family-bubble-message as variable to manage custom font
+- **removed**: fontSize and fontFamily as input property in bubble-message component
+
+# 5.1.0-rc19
+- **added**: ability to maximize, minimize and fullscreen the widget window
+- **added**: variable for font-family attribute css value
 
 # 5.0.102
 - **bug-fixed**: cannot add message if array is empty
@@ -16,6 +28,52 @@
 # 5.0.101
 - **bug-fixed**: removed private note msgs
 
+# 5.1.0-rc18
+- **bug-fixed**: allowedOnSpecificUrl 
+
+# 5.1.0-rc17
+- **added**: allowedOnSpecificUrl and allowedOnSpecificUrlList to manage list of pattern url to allow to load the widget
+
+# 5.1.0-rc16
+- **added**: hideOnSpecificUrlList replaced in favour of hideOnSpecificDomainList
+
+# 5.1.0-rc15
+# 5.1.0-rc14
+- **added**: ability to hide widget on selected domains based on hideOnSpecificDomainList variable
+
+# 5.1.0-rc13
+- **added**: ability to manage embedded chatbot-panel.html page into an iframe and hide some elements
+
+# 5.1.0-rc12
+- **added**: ability to get all my request from Tiledesk API
+
+# 5.1.0-rc11
+- **bug-fixed**: removed private note msgs
+
+# 5.1.0-rc10
+- **bug-fixed**: minor fix allowed urls
+
+# 5.1.0-rc9
+- **bug-fixed**: minor fix allowed urls
+
+# 5.1.0-rc8
+- **added**: ability to filter on urls attached to message textarea 
+
+# 5.1.0-rc7
+- **added**: ability to allows emoji after message is sent
+
+# 5.1.0-rc6
+- **removed**: hideRestartConversationOptionsMenu
+
+# 5.1.0-rc5
+# 5.1.0-rc4
+- **bug-fixed**: Dockerfile for angular 18
+
+# 5.1.0-rc3
+- **added**: angular 18
+
+# 5.1.0-rc2
+- **added**: angular 17
 # 5.0.99
 
 # 5.0.99-rc1

@@ -54,7 +54,7 @@ import { AppConfigService } from './providers/app-config.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 
@@ -303,21 +303,18 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     NetworkOfflineComponent,
     ConfirmCloseComponent
   ],
-  imports: [
-    BrowserModule,
+  imports: [BrowserModule,
     BrowserAnimationsModule,
-    // AppRoutingModule,
-    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     PickerModule,
     TranslateModule.forRoot(//),
     {
-      // loader: {
-      //   provide: TranslateLoader,
-      //   useFactory: (createTranslateLoader),
-      //   deps: [HttpClient]
-      // }
+    // loader: {
+    //   provide: TranslateLoader,
+    //   useFactory: (createTranslateLoader),
+    //   deps: [HttpClient]
+    // }
     }),
     LoggerModule.forRoot({
       level: NgxLoggerLevel.DEBUG,
@@ -349,7 +346,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     {
       provide: MessagingAuthService,
       useFactory: authenticationFactory,
-      deps: [HttpClient, AppConfigService, Chat21Service, AppStorageService ]
+      deps: [HttpClient, AppConfigService, Chat21Service, AppStorageService]
     },
     {
       provide: ConversationsHandlerService,
@@ -389,7 +386,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     {
       provide: UploadService,
       useFactory: uploadFactory,
-      deps: [HttpClient, AppConfigService, AppStorageService ]
+      deps: [HttpClient, AppConfigService, AppStorageService]
     },
     TiledeskAuthService,
     TiledeskRequestsService,
@@ -398,7 +395,8 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     Triggerhandler,
     WaitingService,
     ScriptService,
-    BrandService
+    BrandService,
+    provideHttpClient(withInterceptorsFromDi())
   ],
   bootstrap: [AppComponent]
 })

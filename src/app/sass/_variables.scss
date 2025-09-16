@@ -20,19 +20,40 @@
 
     --border-radius-bubble-message: 20px;
     --button-in-msg-font-size: 15px;
+    --button-in-msg-font-family: 'Roboto','Google Sans', Helvetica, Arial, sans-serif;
     --button-in-msg-max-width: 280px;
+    --button-in-msg-padding: 8px 16px;
 
     --max-width-images: 230px; //change also MAX_WIDTH_IMAGES in constants.ts
 
     --bkg-color-info-message: rgba(24, 119, 242, 0.1);
 
-    --chat-footer-height: 56px;
+    --chat-header-height: 52px;
+    
+    --chat-footer-height: 64px;
     --chat-footer-logo-height: 30px;
     --chat-footer-border-radius: 16px;
     --chat-footer-background-color: #f6f7fb;
     --chat-footer-color: #1a1a1a;
+    --chat-footer-border-color-error: #aa0404;
 
-    --icon-fill-color: #5f6368
+    --icon-fill-color: #5f6368;
+
+
+    --content-background-color: #fff;
+    --content-text-color: var(--black);
+
+    --avatar-height: 40px;
+    --avatar-width: 40px;
+
+
+    --font-family: 'Roboto','Google Sans', Helvetica, Arial, sans-serif; //Mulish, sans-serif;
+    --font-family-bubble-message: 'Roboto','Google Sans', Helvetica, Arial, sans-serif;
+    --font-family-callout: 'Helvetica Neue', 'Apple Color Emoji', Helvetica, Arial, sans-serif; 
+    --font-family-powered-by: Mulish, sans-serif;
+
+    --font-size-bubble-message: 1.4em;
+
 }
 
 $trasp-black:rgba(0,0,0,0.8);

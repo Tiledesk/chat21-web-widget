@@ -53,8 +53,9 @@
     "WAITING_TIME_NOT_FOUND": "The team will reply as soon as possible",
     "CLOSED": "CLOSED",
     "CLOSE_CHAT": "Close chat",
-    "MINIMIZE":"Minimize",
-    "MAXIMIZE":"Maximize",
+    "MINIMIZE":"Minimize window",
+    "MAXIMIZE":"Expand window",
+    "CENTER":"Center",
     "CONFIRM_CLOSE_CHAT":"Are you sure you want to close this chat?",
     
     "INFO_SUPPORT_USER_ADDED_SUBJECT":"you",
@@ -91,5 +92,7 @@
 
     "LABEL_PREVIEW": "Preview",
     "SWITCH_TO": "Or switch to:",
-    "CONNECTION_NETWORK_ERROR": "Our apologies. There was some trouble connecting to network"
+    "CONNECTION_NETWORK_ERROR": "Our apologies. There was some trouble connecting to network",
+    "EMOJI_NOT_ELLOWED":"Emoji not allowed",
+    "DOMAIN_NOT_ALLOWED":"URL contains a non-allowed domain"
 }

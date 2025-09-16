@@ -205,14 +205,34 @@ export function isEmojii(message: any){
   // https://localcoder.org/javascript-detect-if-a-string-contains-only-unicode-emojis
   try {
     if(!message) return false;
+    // Removes all characters that are NOT emojis (unicode > \u1eeff)
     const onlyEmojis = message.replace(new RegExp('[\u0000-\u1eeff]', 'g'), '')
+    // Removes spaces, line breaks, and carriage returns from the string
     const visibleChars = message.replace(new RegExp('[\n\r\s]+|( )+', 'g'), '')
+    // Removes Chinese characters from the string
     const chineseChars = message.replace(new RegExp('[\u4e00-\u9fa5]', 'g'), '')
+    
     if(onlyEmojis === '' || visibleChars == '' || chineseChars=='') return false
     return (onlyEmojis.length === visibleChars.length && onlyEmojis.length <= 2)
   } catch(e) {
     return false
   }
+}
+
+export function findAndRemoveEmoji(text): string{
+
+  if (!text) return text;
+
+  // Regex to find most unicode emojis
+  // Source: https://thekevinscott.com/emojis-in-javascript/
+  const emojiRegex = /([\u2700-\u27BF]|[\uE000-\uF8FF]|[\uD83C-\uDBFF][\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83D[\uDE00-\uDE4F])/g;
+
+  // Removes all found emojis
+  text = text.replace(emojiRegex, '');
+
+  // Removes any multiple spaces left by the removal of emojis
+  text = text.replace(/\s{2,}/g, ' ').trim();
+  return text
 }
 
 export function isJustRecived(startedAt, time) {

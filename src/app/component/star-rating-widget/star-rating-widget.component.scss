@@ -1,7 +1,5 @@
 // @import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
 // @import url(https://use.fontawesome.com/releases/v5.5.0/css/all.css);
-// @import 'src/app/sass/variables';
-
 #chat21-star-rating-widget {
   background-color: #ffffff;
   width: 100%;
@@ -82,11 +80,6 @@
     .c21-body-content  {
       padding: 10px 0px;
       /* star-rating */
-      .default-title {
-        font-size: 2em;
-        font-family:'Roboto';
-        color:var(--black);
-      }
       .default-text {
         font-size: 1.4em;
         font-family:'Roboto';

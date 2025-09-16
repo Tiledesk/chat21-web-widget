@@ -80,10 +80,11 @@ function loadIframe(tiledeskScriptBaseLocation) {
     srcTileDesk += '</head>';
     srcTileDesk += '<body>';
     srcTileDesk += '<chat-root></chat-root>';
-    srcTileDesk += '<script async type="text/javascript" src="'+tiledeskScriptBaseLocation+'/{{runtime}}.js"></script>';
-    srcTileDesk += '<script async type="text/javascript" src="'+tiledeskScriptBaseLocation+'/{{polyfills}}.js"></script>';
-    srcTileDesk += '<script async type="text/javascript" src="'+tiledeskScriptBaseLocation+'/{{vendor}}.js"></script>';
-    srcTileDesk += '<script async type="text/javascript" src="'+tiledeskScriptBaseLocation+'/{{main}}.js"></script>';
+    // srcTileDesk += '<script async type="text/javascript" src="'+tiledeskScriptBaseLocation+'/{{runtime}}.js"></script>';
+    srcTileDesk += '<script type="module" async type="text/javascript" src="'+tiledeskScriptBaseLocation+'/{{polyfills}}.js"></script>';
+    // srcTileDesk += '<script async type="text/javascript" src="'+tiledeskScriptBaseLocation+'/{{vendor}}.js"></script>';
+    srcTileDesk += '<script type="module" async type="text/javascript" src="'+tiledeskScriptBaseLocation+'/{{main}}.js"></script>';
+    srcTileDesk += '<script type="module" async type="text/javascript" src="'+tiledeskScriptBaseLocation+'/{{scripts}}.js"></script>';
     srcTileDesk += '<link type="text/css" rel="stylesheet" href="'+tiledeskScriptBaseLocation+'/{{styles}}.css" media="all"></link>';
     srcTileDesk += '</body>';
     srcTileDesk += '</html>';

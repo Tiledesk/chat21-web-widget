@@ -1,7 +1,7 @@
 ### STAGE 1: Build ###
 
 # We label our stage as ‘builder’
-FROM node:16.20.2-alpine3.18 as builder
+FROM node:20.12.2-alpine3.19 as builder
 
 COPY package.json package-lock.json ./
 
@@ -15,7 +15,7 @@ COPY . .
 
 ## Build the angular app in production mode and store the artifacts in dist folder
 
-RUN npm run ng build -- --configuration="prod" --output-path=dist --base-href="./" --output-hashing=none --build-optimizer=false --vendor-chunk
+RUN npx ng build --configuration="prod" --output-path=dist --base-href=./ --output-hashing=none
 
 
 ### STAGE 2: Setup ###
@@ -29,7 +29,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /usr/share/nginx/html/*
 
 ## From ‘builder’ stage copy over the artifacts in dist folder to default nginx public folder
-COPY --from=builder /ng-app/dist /usr/share/nginx/html
+COPY --from=builder /ng-app/dist/browser /usr/share/nginx/html
 
 RUN echo "Chat21 Web Widget Started!!"
 

@@ -7,11 +7,12 @@ initReplacement()
 function initReplacement(){
     console.log('init replacement HEREEE')
     fileToBeReplaced = {
-        'main' : {name: 'main', extension: '.js', regex: /(?<=\/main\.)(.+?)(?=\.js|$)/},
-        'runtime' : {name: 'runtime', extension: '.js', regex: /(?<=\/runtime\.)(.+?)(?=\.js|$)/},
-        'polyfills' : {name: 'polyfills', extension: '.js', regex: /(?<=\/polyfills\.)(.+?)(?=\.js|$)/},
-        'vendor' : {name: 'vendor', extension: '.js', regex: /(?<=\/vendor\.)(.+?)(?=\.js|$)/},
-        'styles' : {name: 'styles', extension: '.css', regex: /(?<=\/styles\.)(.+?)(?=\.css|$)/},
+        'main' : {name: 'main', extension: '.js', regex: /(?<=\/main-)(.+?)(?=\.js|$)/},
+        'scripts' : {name: 'scripts', extension: '.js', regex: /(?<=\/scripts-)(.+?)(?=\.js|$)/},
+        // 'runtime' : {name: 'runtime', extension: '.js', regex: /(?<=\/runtime\.)(.+?)(?=\.js|$)/},
+        'polyfills' : {name: 'polyfills', extension: '.js', regex: /(?<=\/polyfills-)(.+?)(?=\.js|$)/},
+        // 'vendor' : {name: 'vendor', extension: '.js', regex: /(?<=\/vendor\.)(.+?)(?=\.js|$)/},
+        'styles' : {name: 'styles', extension: '.css', regex: /(?<=\/styles-)(.+?)(?=\.css|$)/},
     }
 
     Object.keys(fileToBeReplaced).forEach(key => {
@@ -46,7 +47,7 @@ function initReplacement(){
 
 function replaceFile(name, element){
     let hashCode = ''
-    glob("./dist/"+name+"*", function (er, files) {
+    glob("./dist/browser/"+name+"*", function (er, files) {
         // files is an array of filenames.
         // If the `nonull` option is set, and nothing
         // was found, then files is ["**/*.js"]
@@ -56,8 +57,8 @@ function replaceFile(name, element){
         console.log('hashhh',hashCode ,name )
         replace({
             regex: '{{'+ name + '}}'+ element.extension,
-            replacement: name + "." + hashCode + element.extension ,
-            paths: [ './dist/launch.js' ],
+            replacement: name + "-" + hashCode + element.extension ,
+            paths: [ './dist/browser/launch.js' ],
             recursive: true,
             silent: false,
         }, (error,changedFiles)=>{

@@ -9,12 +9,15 @@ import { marked } from 'marked';
 export class MarkedPipe implements PipeTransform {
   transform(value: any): any {
     const renderer = new marked.Renderer();
-    renderer.link = function(href, title, text) {
+    renderer.link = function({ href, title, tokens }) {
+        const text = tokens.map(token => token.raw).join('');
         const link = marked.Renderer.prototype.link.call(this, href, title, text);
         return link.replace('<a', '<a target="_blank" ');
     };
     marked.setOptions({
-        renderer: renderer
+        renderer: renderer,
+        gfm: true,
+        breaks: true
     });
     if (value && value.length > 0) {
       const text = marked(value);
