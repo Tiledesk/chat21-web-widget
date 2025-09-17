@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.1-rc1
+- **bug-fixed**: marked pipe not renders urls
+
 # 5.1.0-rc34
 - **bug-fixed**: css fixed carousel
 
