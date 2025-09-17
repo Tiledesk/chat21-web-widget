@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.0-rc34
+- **bug-fixed**: css fixed carousel
+
 # 5.1.0-rc32
 - **bug-fixed**: overlay--popup
 
