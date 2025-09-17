@@ -134,6 +134,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     public uploadService: UploadService
   ){}
 
+
+
+
     ngOnInit(): void {
         this.logger.info('[APP-CONF]---------------- ngOnInit: APP.COMPONENT ---------------- ')
         this.initWidgetParamiters();
@@ -168,9 +171,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 } else {
                     //widget closed
-
-                    let badgeNewConverstionNumber = that.conversationsHandlerService.countIsNew()
+                    let badgeNewConverstionNumber = that.conversationsHandlerService.countIsNew() 
                     that.g.setParameter('conversationsBadge', badgeNewConverstionNumber);
+                    // that.setBadgeNewConverstionNumber();
                 }
                 // that.manageTabNotification()
                 // });
@@ -213,14 +216,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                             that.g.isOpenNewMessage = true;
                             that.logger.debug('[APP-COMP] lastconversationnn', that.lastConversation)
                         }
-                        
-
                         let badgeNewConverstionNumber = that.conversationsHandlerService.countIsNew()
                         that.g.setParameter('conversationsBadge', badgeNewConverstionNumber);
+                        // that.setBadgeNewConverstionNumber();
                         // }
                     }
-
                     that.triggerOnConversationUpdated(conversation);
+
                 } else {
                     this.logger.debug('[APP-COMP] oBSconversationChanged null: errorrr')
                     return;
@@ -259,6 +261,22 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.chatManager.initialize();
         this.uploadService.initialize();
     }
+
+
+    saveBadgeNewConverstionNumber(){
+        let badgeNewConverstionNumber = this.conversationsHandlerService.countIsNew() 
+        this.appStorageService.setItem('hiddenConversationsBadge', badgeNewConverstionNumber)
+    }
+
+    setBadgeNewConverstionNumber(){
+        let badgeNewConverstionNumber = this.conversationsHandlerService.countIsNew();
+        let hiddenConversationsBadge = this.appStorageService.getItem('hiddenConversationsBadge')
+        let newNumberBadge = badgeNewConverstionNumber - hiddenConversationsBadge;
+        this.logger.debug('[APP-COMP] setBadgeNewConverstionNumber: ', newNumberBadge, badgeNewConverstionNumber, hiddenConversationsBadge)
+        this.g.conversationsBadge = newNumberBadge;
+        this.g.setParameter('conversationsBadge', newNumberBadge);
+    }
+
 
     private initWidgetParamiters(){
         const that = this;
@@ -1578,6 +1596,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.logger.debug('[APP-COMP] widgetclosed:::', this.g.conversationsBadge, this.conversationsHandlerService.countIsNew())
         // this.g.isOpen = false;
         // this.g.setIsOpen(false);
+        // this.setBadgeNewConverstionNumber();
         this.f21_close();
     }
 
@@ -1629,12 +1648,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             // }
             // this.g.startFromHome = true;
             this.triggerOnOpenEvent();
+            
         } else {
             this.triggerOnCloseEvent();
         }
         //change status to the widget
         this.g.setIsOpen(!this.g.isOpen);
         this.appStorageService.setItem('isOpen', this.g.isOpen);
+
+        this.saveBadgeNewConverstionNumber();
     }
 
     /**
