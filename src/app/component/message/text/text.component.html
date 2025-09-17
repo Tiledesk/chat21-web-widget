@@ -1,3 +1,4 @@
-<p  #messageEl class="message_innerhtml marked" 
-    [innerHTML]="printMessage(text, messageEl, this) | htmlEntitiesEncode | marked" 
+<p #messageEl class="message_innerhtml marked" 
+    [innerHTML]="printMessage(text, messageEl, this) | marked" 
     [style.color]="color"></p>
+<!-- [innerHTML]="printMessage(text, messageEl, this) | htmlEntitiesEncode | marked"  -->

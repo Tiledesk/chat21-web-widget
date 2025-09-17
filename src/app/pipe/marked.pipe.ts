@@ -15,7 +15,9 @@ export class MarkedPipe implements PipeTransform {
         return link.replace('<a', '<a target="_blank" ');
     };
     marked.setOptions({
-        renderer: renderer
+        renderer: renderer,
+        gfm: true,
+        breaks: true
     });
     if (value && value.length > 0) {
       const text = marked(value);

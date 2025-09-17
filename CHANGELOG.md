@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0-rc33
+- **changed**: updated "marked library" from 4.0.16 to 16.3.0 - enabled list and table
+
 # 5.1.0-rc32
 - **bug-fixed**: overlay--popup
 
