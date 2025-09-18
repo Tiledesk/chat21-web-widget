@@ -2163,11 +2163,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.el.nativeElement.style.setProperty('--button-in-msg-background-color', this.g.bubbleSentBackground)
         this.el.nativeElement.style.setProperty('--button-in-msg-font-size', this.g.buttonFontSize)
+        this.el.nativeElement.style.setProperty('--button-in-msg-font-family', this.g.fontFamily)
+
+        this.el.nativeElement.style.setProperty('--chat-header-height', this.g.hideHeaderConversation? '0px': null)
         this.el.nativeElement.style.setProperty('--font-size-bubble-message', this.g.fontSize)
         this.el.nativeElement.style.setProperty('--font-family-bubble-message', this.g.fontFamily)
-        this.el.nativeElement.style.setProperty('--button-in-msg-font-family', this.g.fontFamily)
         
-        this.el.nativeElement.style.setProperty('--chat-header-height', this.g.hideHeaderConversation? '0px': null)
     }
 
 
