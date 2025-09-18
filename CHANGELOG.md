@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.1-rc2
+- **bug-fixed**: marked update @types/marked
+
 # 5.1.1-rc1
 - **bug-fixed**: marked pipe not renders urls
 
