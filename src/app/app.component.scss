@@ -620,8 +620,9 @@ chat-root {
                 position: absolute;
                 top: 0;
                 left: 0;
-                width: 100%;
+                width: calc(100% - 18px);
                 height: 100%;
+                padding: 0 9px;
 
                 .c21-header-button{
                     display: block;
