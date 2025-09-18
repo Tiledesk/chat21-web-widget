@@ -42,15 +42,16 @@
     --content-background-color: #fff;
     --content-text-color: var(--black);
 
+    --avatar-height: 40px;
+    --avatar-width: 40px;
+
+
     --font-family: 'Roboto','Google Sans', Helvetica, Arial, sans-serif; //Mulish, sans-serif;
     --font-family-bubble-message: 'Roboto','Google Sans', Helvetica, Arial, sans-serif;
     --font-family-callout: 'Helvetica Neue', 'Apple Color Emoji', Helvetica, Arial, sans-serif; 
     --font-family-powered-by: Mulish, sans-serif;
 
     --font-size-bubble-message: 1.4em;
-
-    --avatar-height: 40px;
-    --avatar-width: 40px;
 }
 
 $trasp-black:rgba(0,0,0,0.8);

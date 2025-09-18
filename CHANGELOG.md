@@ -6,6 +6,23 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.0
+
+# 5.1.0-rc33
+- **changed**: updated "marked library" from 4.0.16 to 16.3.0 - enabled list and table
+
+# 5.1.0-rc32
+- **bug-fixed**: overlay--popup
+
+# 5.1.0-rc31
+- **bug-fixed**: fixed the text area css
+
+# 5.1.0-rc30
+- **changed**: left-aligned buttons with variable widths, like UIPath
+- **changed**: input text area, CSS changed, like ChatGPT style
+- **changed**: increased chatbot width in top-size view with maximum width like UIPath
+- **changed**: added dark screen in top-size view
+
 # 5.1.0-rc29
 - **bug-fixed**: Bug fix for vertical position of widget ball
 
