@@ -43,13 +43,19 @@
 }
 
 .chat21-textarea-button {
-    // fill: var(--icon-fill-color);
     color: var(--icon-fill-color);
     pointer-events: auto;
-    // height: var(--chat-footer-height);
     bottom: 22px;
     opacity: 0.3;
     cursor: initial;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    // background-color: aquamarine;
+    width: 25px;
+    height: 25px;
+
     &.active {
         opacity: 1;
         cursor: pointer;
@@ -58,7 +64,10 @@
         opacity: 0.3 !important;
         pointer-events: none !important;
         cursor: not-allowed !important;
-
+    }
+    span svg {
+        width: 20px;
+        height: 20px; 
     }
 }
 

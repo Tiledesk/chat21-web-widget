@@ -6,6 +6,26 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.2-rc1
+- **bug-fixed**: set left alignment, border-round as uipath, removed animation on over
+- **changed**: Leave the same text area in the intermediate size
+- **bug-fixed**: shadow that appears suddenly
+- **bug-fixed**: missing animation from intermediate to large
+- **changed**: reduce and update padding and resolution of text area icons
+- **bug-fixed**: check button padding in the header
+
+# 5.1.1-rc2
+- **bug-fixed**: marked update @types/marked
+
+# 5.1.1-rc1
+- **bug-fixed**: marked pipe not renders urls
+
+# 5.1.0-rc34
+- **bug-fixed**: css fixed carousel
+
+# 5.1.0-rc33
+- **changed**: updated "marked library" from 4.0.16 to 16.3.0 - enabled list and table
+
 # 5.1.0-rc32
 - **bug-fixed**: overlay--popup
 

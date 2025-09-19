@@ -294,6 +294,9 @@ export class Globals {
     * false the WAITING_TIME_NOT_FOUND will always be displayed) 
     * is set to true for backward compatibility with old projects */
     this.dynamicWaitTimeReply = true;  
+    /** Hide the close button in the widget header. Permitted values: true,
+    false. The default value is false. */
+    this.hideHeaderCloseButton = false;
 
     /** if it is true, the chat window is open in fullscreen mode. Permitted
     values: true, false. Default value : false */
@@ -335,13 +338,15 @@ export class Globals {
     /** set launcher balon widget shape: can set corner by corner   */
     this.baloonShape = '50%';
     // this.parameters['isLogEnabled'] = false;
-    this.isLogEnabled = false;
+    this.openExternalLinkButton = true;
     /** Hide the header conversation Permitted values: true,
     false. The default value is false. */
     this.hideHeaderConversation= false;
     /** Hide the close button in the widget header. Permitted values: true,
     false. The default value is false. */
     this.hideHeaderCloseButton = false;
+    /** set global log. Permitted values: true, false. The default value is false.   */
+    this.isLogEnabled = false;
     /** enable to hide/show upper-right header conversation options menu */
     this.openExternalLinkButton = true;
     /** enable to close a conversation from upper-right header menu  */

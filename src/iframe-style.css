@@ -16,6 +16,7 @@
     display: none;
     z-index: 3000000000; /*999999*/; 
 }
+
 #tiledesk-container.open.overlay--popup {
     background-color: rgba(0, 0, 0, 0.4);
     position: absolute;
@@ -38,6 +39,7 @@
     display: block;
     position: fixed;
     max-height: calc(100% - 50px);
+    border-radius: 16px;
 }
 
 #tiledeskdiv.fullscreen {
@@ -50,19 +52,30 @@
 }
 
 #tiledeskdiv.top-size {
+    /* transition: width 50ms, height 200ms, max-height 200ms, transform 300ms cubic-bezier(0, 1.2, 1, 1), opacity 83ms ease-out; */
     position: fixed;
     top: 0;
     bottom: 0;
-    left: 50%;
-    /* width: calc( var(--iframeMaxWidth) + 180px); */
     height: 100%; /*var(--iframeMaxHeight);*/
     /* transform: translate(-50%, -50%);   */
-    transform: translate(-50%, 0%);  
+    /* transform: translate(-50%, 0%);   */
     width: 100%;
     max-width: 1024px;
     max-height: 100%;
+
+    transition: 
+    width 300ms, 
+    height 300ms, 
+    max-height 300ms, 
+    transform 300ms cubic-bezier(0, 1.2, 1, 1), 
+    opacity 300ms ease-out;
+    /* per migliorare le prestazioni quando si usa transform */
+    will-change: transform, opacity, width, height;
 }
- 
+
+/* #tiledesk-container.open #tiledeskdiv.top-size #tiledeskiframe {
+    border-radius: unset;
+} */
 
 @keyframes right-animate {
     0% {
@@ -82,6 +95,7 @@
     left: auto; /* NEW DEPA */ 
     top:auto;
     transform: none;
+    transition: none;
 }
 #tiledesk-container.closed #tiledeskdiv.callout {
     /* width: 400px;
@@ -112,12 +126,21 @@
 #tiledesk-container.open #tiledeskiframe {
     display: block;
     /*width: 376px;*/
-}
-#tiledesk-container.open #tiledeskdiv.shadow {
+    border-radius: 16px;
     transition: box-shadow 0.8s ease-in;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 8px 36px 0px; /*NEW GAB*/
 }
+/* 
+#tiledesk-container.open #tiledeskdiv.shadow {
+    transition: box-shadow 0.8s ease-in;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 8px 36px 0px;
+} 
+*/
 
+#tiledesk-container.open #tiledeskdiv {
+    /* transition: box-shadow 0.8s ease-in;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 8px 36px 0px; */
+}
 
 #tiledesk-container.closed #tiledeskiframe {
     display: block;

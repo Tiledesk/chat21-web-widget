@@ -89,9 +89,7 @@
     left: 0px;
     right: 0px;
     margin: 0px;
-    margin: 12px 8px;
-    // padding: 0;
-    
+    padding: 12px;
     // box-shadow: 0 -1px 0px 0px $trasp-light-gray;
     background: white;
     min-height: 40px;
@@ -185,11 +183,7 @@ dialog:-internal-dialog-in-top-layer{
 
 @media(min-width:688px){
     
-    #chat21-footer{
-        left: 20%;
-        right: 20%;
-        margin: 12px 0px 30px;
-    }
+    
 
     :host-context(#chat21-conversations.full-screen-mode){
         --button-in-msg-padding: 10px 16px;
@@ -214,6 +208,21 @@ dialog:-internal-dialog-in-top-layer{
      
     }
 
+
+
+
+    ::ng-deep .chat21-sheet-content{
+        bottom: calc(var(--chat-footer-logo-height) + var(--chat-footer-height) + 34px)!important;
+    }
+    
+}
+
+@media(min-width:689px){
+    #chat21-footer{
+        left: 20%;
+        right: 20%;
+        margin: 12px 0px 30px;
+    }
     chat-conversation-footer ::ng-deep {
         .textarea-container {
             padding: 8px 24px;
@@ -229,9 +238,7 @@ dialog:-internal-dialog-in-top-layer{
             border-radius: 2rem;
             background-color: #ffffff;
             box-shadow: 0px 4px 4px 0px var(--tw-shadow-color, var(--shadow-color-1, #0000000a)), 0px 0px 1px 0px var(--tw-shadow-color, var(--shadow-color-2, #0000009e));
-            transition: border-color 0.2s 
-            ease, box-shadow 0.2s 
-            ease;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
             .visible-text-area {
                 background-color: #ffffff;
@@ -242,11 +249,4 @@ dialog:-internal-dialog-in-top-layer{
             bottom: calc(100% + 6px);
         }
     }
-
-
-
-    ::ng-deep .chat21-sheet-content{
-        bottom: calc(var(--chat-footer-logo-height) + var(--chat-footer-height) + 34px)!important;
-    }
-    
 }
