@@ -6,6 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.2-rc2
+- **bug-fixed**: set css carousel
+- **changed**: set css top-size
+
 # 5.1.2-rc1
 - **bug-fixed**: set left alignment, border-round as uipath, removed animation on over
 - **changed**: Leave the same text area in the intermediate size
