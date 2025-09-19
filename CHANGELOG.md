@@ -6,7 +6,15 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# 5.1.0
+
+# 5.1.1-rc2
+- **bug-fixed**: marked update @types/marked
+
+# 5.1.1-rc1
+- **bug-fixed**: marked pipe not renders urls
+
+# 5.1.0-rc34
+- **bug-fixed**: css fixed carousel
 
 # 5.1.0-rc33
 - **changed**: updated "marked library" from 4.0.16 to 16.3.0 - enabled list and table
