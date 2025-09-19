@@ -3,7 +3,7 @@
     --textColor: #{var(--bck-msg-sent)};
     --hoverBackgroundColor: #{var(--bck-msg-sent)};
     --hoverTextColor: #{var(--blue)};
-    --buttonFontSize: #{var(--button-in-msg-font-size)};
+    --buttonFontSize: #{var(--button-font-size)};
     --max-width: #{var(--button-in-msg-max-width)};
     --fontFamily: #{var(--font-family)};
 
@@ -218,7 +218,7 @@
         &:hover {
             color: var(--hoverTextColor);
             background:  var(--hoverBackgroundColor);
-            // transform: scale(1.05);
+            transform: scale(1.05);
             .icon-button-action {
                 svg {
                     fill: var(--hoverTextColor);

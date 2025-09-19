@@ -242,8 +242,10 @@
                         line-height: 1.4;
                         color: var(--black);
                         overflow: hidden;
-                        -webkit-box-shadow: 0 4px 15px 0 var(--trasp-light-black), 0 1px 2px 0 var(--trasp-light-black);
-                        box-shadow: 0 4px 15px 0 var(--trasp-light-black), 0 1px 2px 0 var(--trasp-light-black);
+                        // -webkit-box-shadow: 0 4px 15px 0 var(--trasp-light-black), 0 1px 2px 0 var(--trasp-light-black);
+                        // box-shadow: 0 4px 15px 0 var(--trasp-light-black), 0 1px 2px 0 var(--trasp-light-black);
+
+                        box-shadow:rgba(0, 0, 0, 0.16) 0px 8px 36px 0px;
                         z-index: 20;
                         text-align: left;
 

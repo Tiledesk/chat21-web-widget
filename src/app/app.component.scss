@@ -484,11 +484,11 @@ chat-root {
         /* CSS BOX CONTAINER */
         #chat21-conversations {
             position: absolute;
-            left: 1px;
-            right: 1px;
-            top: 1px;
-            bottom: 1px;
-            border-radius: 16px;
+            left: 0px;
+            right: 0px;
+            top: 0px;
+            bottom: 0px;
+            // border-radius: 16px;
             overflow: hidden;
             background-color: transparent;
             // border: 1px solid #cccccc; //NEW GAB
@@ -510,9 +510,10 @@ chat-root {
                 border-radius: 0px;
             }
             &.shadow{
-                transition: box-shadow 0.8s ease-in;
-                box-shadow: rgba(0, 0, 0, 0.16) 0px 8px 36px 0px; /*NEW GAB*/
+                // transition: box-shadow 0.8s ease-in;
+                // box-shadow: rgba(0, 0, 0, 0.16) 0px 8px 36px 0px; /*NEW GAB*/
             }
+            
         }
 
 
