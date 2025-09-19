@@ -6,6 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+
+# 5.1.2
+- **bug-fixed**: Fixed a bug that detects and extracts the emoticon from the callout message
+
 # 5.1.1
 
 # 5.1.1-rc2
