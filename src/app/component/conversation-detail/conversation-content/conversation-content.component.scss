@@ -46,6 +46,9 @@
                 left: 0;
                 bottom: calc(var(--chat-footer-logo-height) + var(--chat-footer-height));
                 overflow: hidden;
+
+                max-width: 740px;
+                margin: auto;
                 .time{
                     margin-bottom: 20px;
                 }

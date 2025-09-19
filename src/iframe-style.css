@@ -58,16 +58,20 @@
     position: fixed;
     top: 0;
     bottom: 0;
-    left: 50%;
+    left:0!important;
+    /* left: 50%; */
     /* width: calc( var(--iframeMaxWidth) + 180px); */
     height: 100%; /*var(--iframeMaxHeight);*/
     /* transform: translate(-50%, -50%);   */
-    transform: translate(-50%, 0%);  
+    /* transform: translate(-50%, 0%);   */
     width: 100%;
-    max-width: 1024px;
+    /* max-width: 1024px; */
     max-height: 100%;
 }
- 
+
+#tiledesk-container.open #tiledeskdiv.top-size #tiledeskiframe {
+    border-radius: unset;
+}
 
 @keyframes right-animate {
     0% {

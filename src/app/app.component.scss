@@ -692,6 +692,9 @@ chat-root {
         padding: 0px;
         margin: 0px auto;
         overflow: auto;
+
+        max-width: 740px!important;
+        margin: auto !important;
         
         .c21-body-container {
             position: absolute;

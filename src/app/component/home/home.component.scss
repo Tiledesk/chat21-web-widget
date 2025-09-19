@@ -2,7 +2,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-
+    background-color: #ffffff;
     /*********  Animations **********/
     &.start-animation .fade-in-top {
         -webkit-animation: fade-in-top 0.5s cubic-bezier(0.390, 0.575, 0.565, 1.000) 0.3s both;
