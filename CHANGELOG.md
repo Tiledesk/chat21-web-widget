@@ -6,6 +6,13 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.2-rc1
+- **bug-fixed**: set left alignment, border-round as uipath, removed animation on over
+- **changed**: Leave the same text area in the intermediate size
+- **bug-fixed**: shadow that appears suddenly
+- **bug-fixed**: missing animation from intermediate to large
+- **changed**: reduce and update padding and resolution of text area icons
+- **bug-fixed**: check button padding in the header
 
 # 5.1.1-rc2
 - **bug-fixed**: marked update @types/marked
