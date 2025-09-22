@@ -142,16 +142,65 @@ export class LastMessageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     execute(commands[0])
-
   }
 
-  private manageIframeHeight(){
-    setTimeout(() => {
-      if(this.messageListWRP.get(this.messages.length-1)){
-        let height = getComputedStyle(this.messageListWRP.get(this.messages.length-1).nativeElement).height
-        this.g.setWidgetPreviewContainerSize(0, +height.substring(0, height.length-2))
-      }
-    }, 50);
+
+
+
+
+  private manageIframeHeight(retryCount = 0) {
+    const maxRetries = 5;
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const element = this.messageListWRP.last?.nativeElement;
+        if (!element) {
+          this.retryIfNeeded(retryCount, maxRetries);
+          return;
+        }
+        const height = this.getElementHeight(element);
+        if (height === 0 && retryCount < maxRetries) {
+          this.retryIfNeeded(retryCount, maxRetries);
+        } else {
+          this.g.setWidgetPreviewContainerSize(0, height);
+        }
+      }, 100);
+    });
+  }
+
+  private getElementHeight(element: HTMLElement): number {
+    // Forza il calcolo dell'altezza
+    const originalHeight = element.style.height;
+    element.style.height = 'auto';
+    let height = element.getBoundingClientRect().height;
+    // Prova diverse proprietà di altezza
+    if (height === 0) height = element.offsetHeight;
+    if (height === 0) height = element.scrollHeight;
+    if (height === 0) height = element.clientHeight;
+    // Se ancora 0, calcola l'altezza dai figli
+    if (height === 0) {
+      height = this.calculateHeightFromChildren(element);
+    }
+    // Ripristina l'altezza originale
+    element.style.height = originalHeight;
+    return height;
+  }
+
+  private calculateHeightFromChildren(element: HTMLElement): number {
+    let totalHeight = 0;
+    for (let i = 0; i < element.children.length; i++) {
+      totalHeight += element.children[i].getBoundingClientRect().height;
+    }
+    return totalHeight;
+  }
+
+  private retryIfNeeded(retryCount: number, maxRetries: number) {
+    if (retryCount < maxRetries) {
+      setTimeout(() => {
+        this.manageIframeHeight(retryCount + 1);
+      }, 100 * (retryCount + 1));
+    } else {
+      console.warn('Element not found after maximum retries');
+    }
   }
 
   isSameSender(senderId: string, index: number){
@@ -191,10 +240,13 @@ export class LastMessageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onElementRenderedFN(event){
     this.messageListWRP.forEach((item, index)=> {
+      console.log('messageListWRP ---------------------> ', item);
       setTimeout(() => {
         if(this.messageListWRP.get(index)){
-          let height = getComputedStyle(this.messageListWRP.get(index).nativeElement).height
-          this.g.setWidgetPreviewContainerSize(0, +height.substring(0, height.length-2))
+          // let height = getComputedStyle(this.messageListWRP.get(index).nativeElement).height
+          // this.g.setWidgetPreviewContainerSize(0, +height.substring(0, height.length-2))
+          let height = this.messageListWRP.get(this.messages.length-1).nativeElement.offsetHeight
+          this.g.setWidgetPreviewContainerSize(0, height)
         }
       }, 50);
     })

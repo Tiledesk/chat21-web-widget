@@ -1656,7 +1656,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.g.setIsOpen(!this.g.isOpen);
         this.appStorageService.setItem('isOpen', this.g.isOpen);
 
-        this.saveBadgeNewConverstionNumber();
+        // this.saveBadgeNewConverstionNumber();
     }
 
     /**
@@ -2035,8 +2035,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onWidgetSizeChange(mode: 'min' | 'max' | 'top') {
         var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv');
-        this.g.size = mode 
-        const parent = tiledeskDiv.parentElement as HTMLElement | null;
+        this.g.size = mode;
+        let parent = tiledeskDiv.parentElement as HTMLElement | null;
+
         if(mode==='max'){
             tiledeskDiv.classList.add('max-size')
             tiledeskDiv.classList.remove('min-size')
