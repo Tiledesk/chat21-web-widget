@@ -85,16 +85,15 @@
     align-items: center;
 }
 .carousel .card { 
-    // padding: 0px 5px;
     scroll-snap-align: start;
     width: var(--cardWidth);
     background: rgb(255, 255, 255);
     list-style: none;
     cursor: pointer;
-    // padding-bottom: 15px;
     flex-direction: column;
     border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.23);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.04);
 }
 .carousel .card .card-image {
     height: 150px;
@@ -143,24 +142,33 @@
     display: flex;
     -ms-flex-direction: column;
     flex-direction: column;
-    padding: 0 20px 30px;
-
+    padding: 20px 20px;
     .card-title{
+        // word-wrap: break-word;
+        // font-size: 13px;
+        // font-weight: 600;
+        // line-height: 20px;
+        // // margin-top: 12px;
+        // white-space: pre-wrap;
+        // width: 100%;
         word-wrap: break-word;
-        font-size: 16px;
-        font-weight: 600;
-        line-height: 20px;
-        margin-top: 12px;
-        white-space: pre-wrap;
-        width: 100%;
+        font-size: 1.1em;
+        font-weight: 500;
+        font-family: var(--font-family);
+        color: #333;
     }
 
     .card-description{
+        // word-wrap: break-word;
+        // font-size: 16px;
+        // line-height: 20px;
+        // margin-top: 12px;
+        // white-space: pre-wrap;
         word-wrap: break-word;
-        font-size: 16px;
-        line-height: 20px;
-        margin-top: 12px;
+        font-size: 1.0em;
+        margin-top: 6px;
         white-space: pre-wrap;
+        font-weight: 300;
     }
 
 }
@@ -190,7 +198,7 @@
         -ms-flex-align: center;
         align-items: center;
         justify-content: center;
-        border-top: 1px solid var(--textColor);
+        border-top: 1px dashed rgba(0, 0, 0, 0.08);
         cursor: pointer;
         display: -webkit-box;
         display: -ms-flexbox;
