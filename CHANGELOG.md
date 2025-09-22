@@ -6,6 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.2-rc3
+- **changed**: disabled badge on launcher-button
+- **bug-fixed**: fullscreen widget position
+- **bug-fixed**: handleIframeHeight disappears when the widget is closed and a new message arrives
+- **changed**: changed avatar size
 
 # 5.1.2-rc2
 - **bug-fixed**: set css carousel
