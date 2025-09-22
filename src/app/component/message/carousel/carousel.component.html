@@ -7,7 +7,8 @@
     <div class="carousel">
         <!-- <div class="card" style="width: 17px;"></div> -->
         <div class="card" *ngFor="let card of gallery; let i = index">
-            <div [style.opacity]="i+1 === activeElement? 1: 0.5">
+            <!-- <div [style.opacity]="i+1 === activeElement? 1: 0.5"> -->
+            <div>
                 <div class="card-image" *ngIf="card?.preview?.src !== ''">
                     <img [src]="card?.preview?.src" alt="img" draggable="false">
                 </div>

@@ -10,18 +10,27 @@ export class MarkedPipe implements PipeTransform {
   transform(value: any): any {
     const renderer = new marked.Renderer();
     renderer.link = function({ href, title, tokens }) {
-        const text = tokens.map(token => token.raw).join('');
-        const link = marked.Renderer.prototype.link.call(this, href, title, text);
-        return link.replace('<a', '<a target="_blank" ');
+      const text = tokens
+        ? tokens.map(token => token.raw).join('')
+        : href; // fallback se tokens non c'è
+      if (!href) return text;
+
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
     };
+
     marked.setOptions({
-        renderer: renderer,
-        gfm: true,
-        breaks: true
+      renderer,
+      gfm: true,
+      breaks: true
     });
+
     if (value && value.length > 0) {
-      const text = marked(value);
-      return text;
+      try {
+        return marked.parse(value);
+      } catch (err) {
+        console.error('Errore nel parsing markdown:', err);
+        return value;
+      }
     }
     return value;
   }
