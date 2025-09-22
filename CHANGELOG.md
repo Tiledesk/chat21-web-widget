@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.2-rc4
+- **changed**: css sender fullname 
+
 # 5.1.2-rc3
 - **changed**: disabled badge on launcher-button
 - **bug-fixed**: fullscreen widget position
