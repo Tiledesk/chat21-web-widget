@@ -8,8 +8,9 @@
     --padding: #{var(--button-in-msg-padding)};
     --font-family: #{var(--button-in-msg-font-family)};
     --buttonBorderColor: #{var(--button-border-color)};
-    --buttonColor: #{var(--button-color)};
+    // --buttonColor: #{var(--buttonColor)};
     --buttonBackgroundColor: #{var(--button-background-color)};
+    --buttonColor: #{var(--button-color)};
 }
 
 
@@ -20,9 +21,11 @@
     cursor: pointer;
     border: 1px solid var(--buttonBorderColor);
     background: var(--buttonBackgroundColor);
+    // background: var(--backgroundColor);
     font-family: var(--font-family);
     font-size: var(--buttonFontSize2);
-    color: var(--buttonColor);
+    // color: var(--buttonColor);
+    color: var(--textColor);
     overflow: hidden;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
