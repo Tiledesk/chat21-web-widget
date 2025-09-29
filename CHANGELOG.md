@@ -7,6 +7,9 @@
 *Tiledesk SRL*
 
 
+# 5.1.2-rc5
+- **bug-fixed**: css buttons and bubble sender 
+
 # 5.1.2-rc4
 - **changed**: css sender fullname 
 
