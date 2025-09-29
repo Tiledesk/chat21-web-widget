@@ -2181,17 +2181,21 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.styleMapConversation.set('buttonTextColor', this.g.buttonTextColor)
         this.styleMapConversation.set('buttonHoverBackgroundColor',this.g.buttonHoverBackgroundColor)
         this.styleMapConversation.set('buttonHoverTextColor', this.g.buttonHoverTextColor)
-
         this.styleMapConversation.set('iconColor', '#5f6368')
 
         this.el.nativeElement.style.setProperty('--button-in-msg-background-color', this.g.bubbleSentBackground)
         this.el.nativeElement.style.setProperty('--button-in-msg-font-size', this.g.buttonFontSize)
         this.el.nativeElement.style.setProperty('--button-in-msg-font-family', this.g.fontFamily)
-
         this.el.nativeElement.style.setProperty('--chat-header-height', this.g.hideHeaderConversation? '0px': null)
         this.el.nativeElement.style.setProperty('--font-size-bubble-message', this.g.fontSize)
         this.el.nativeElement.style.setProperty('--font-family-bubble-message', this.g.fontFamily)
         
+
+        this.styleMapConversation.set('buttonBackgroundColor', this.g.bubbleReceivedBackground)
+        this.styleMapConversation.set('buttonTextColor', this.g.bubbleReceivedTextColor)
+        this.styleMapConversation.set('buttonHoverBackgroundColor',this.g.bubbleSentBackground)
+        this.styleMapConversation.set('buttonHoverTextColor', this.g.bubbleSentTextColor)
+
     }
 
 

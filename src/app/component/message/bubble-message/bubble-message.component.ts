@@ -49,10 +49,10 @@ export class BubbleMessageComponent implements OnInit {
     }
 
     if(this.fontColor){
-      this.fullnameColor = "#999";//convertColorToRGBA(this.fontColor, 65)
+      this.fullnameColor = convertColorToRGBA(this.fontColor, 65)
     }
     if(this.message && this.message.sender_fullname && this.message.sender_fullname.trim() !== ''){
-      this.fullnameColor = "#999";//getColorBck(this.message.sender_fullname)
+      this.fullnameColor = getColorBck(this.message.sender_fullname)
     }
 
   }
