@@ -7,6 +7,9 @@
 *Tiledesk SRL*
 
 
+# 5.1.2-rc6
+- **bug-fixed**: cannot upload xlsx files
+
 # 5.1.2-rc5
 - **bug-fixed**: css buttons and bubble sender 
 
