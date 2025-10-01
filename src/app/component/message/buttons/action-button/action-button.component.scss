@@ -9,7 +9,7 @@
     --font-family: #{var(--button-in-msg-font-family)};
     --buttonBorderColor: #{var(--button-border-color)};
     --buttonColor: #{var(--button-color)};
-    --buttonBackgroundColor: #{var(--button-background-color)};
+    --buttonBackgroundColor: #ffffff; //#{var(--button-background-color)};
 }
 
 .button-in-msg {
