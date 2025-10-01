@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.2-rc7
+- **bug-fixed**: ctest button color (#ffffff)
 
 # 5.1.2-rc6
 - **bug-fixed**: cannot upload xlsx files
