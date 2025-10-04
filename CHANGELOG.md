@@ -6,6 +6,14 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.2-rc7
+- **bug-fixed**: ctest button color (#ffffff)
+
+# 5.1.2-rc6
+- **bug-fixed**: cannot upload xlsx files
+
+# 5.1.2-rc5
+- **bug-fixed**: css buttons and bubble sender 
 
 # 5.1.2-rc4
 - **changed**: css sender fullname 
