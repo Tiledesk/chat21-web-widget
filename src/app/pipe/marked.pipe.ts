@@ -12,54 +12,53 @@ export class MarkedPipe implements PipeTransform {
     const renderer = new marked.Renderer();
     renderer.link = function({ href, title, tokens }) {
       // Normalizza l'href per evitare falsi negativi
-      // const normalized = (href || '').trim().toLowerCase();
+      const normalized = (href || '').trim().toLowerCase();
       // Pattern pericolosi da cercare nell'intero URL (non solo all'inizio)
-      // const dangerousPatterns = [
-      //   /javascript:/i,           // javascript: protocol
-      //   /data:/i,                // data: protocol  
-      //   /vbscript:/i,            // vbscript: protocol
-      //   /on\w+\s*=/i,           // event handlers (onclick, onload, etc.)
-      //   /alert\s*\(/i,          // alert() function
-      //   /eval\s*\(/i,           // eval() function
-      //   /document\./i,          // document object access
-      //   /window\./i,            // window object access
-      //   /\.appendChild\s*\(/i,  // DOM manipulation
-      //   /\.createElement\s*\(/i, // DOM creation
-      //   /<script/i,             // script tags
-      //   /<\/script>/i,          // closing script tags
-      //   /function\s*\(/i,       // function definitions
-      //   /\(function/i,          // IIFE patterns
-      //   /setTimeout\s*\(/i,     // setTimeout
-      //   /setInterval\s*\(/i,    // setInterval
-      //   /location\./i,          // location object manipulation
-      //   /history\./i,           // history object manipulation
-      //   /localStorage\./i,      // localStorage access
-      //   /sessionStorage\./i,    // sessionStorage access
-      //   /cookie/i,              // cookie manipulation
-      //   /fetch\s*\(/i,          // fetch API
-      //   /XMLHttpRequest/i,      // XHR
-      //   /FormData/i,            // FormData
-      //   /Blob\s*\(/i,           // Blob constructor
-      //   /FileReader/i,          // FileReader
-      //   /crypto\./i,            // crypto object
-      //   /btoa\s*\(/i,           // base64 encoding
-      //   /atob\s*\(/i,           // base64 decoding
-      //   /decodeURI/i,           // URI decoding
-      //   /encodeURI/i,           // URI encoding
-      //   /String\.fromCharCode/i, // character code conversion
-      //   /unescape\s*\(/i,       // unescape function
-      //   /escape\s*\(/i          // escape function
-      // ];
+      const dangerousPatterns = [
+        /javascript:/i,           // javascript: protocol
+        /data:/i,                // data: protocol  
+        /vbscript:/i,            // vbscript: protocol
+        /on\w+\s*=/i,           // event handlers (onclick, onload, etc.)
+        /alert\s*\(/i,          // alert() function
+        /eval\s*\(/i,           // eval() function
+        /document\./i,          // document object access
+        /window\./i,            // window object access
+        /\.appendChild\s*\(/i,  // DOM manipulation
+        /\.createElement\s*\(/i, // DOM creation
+        /<script/i,             // script tags
+        /<\/script>/i,          // closing script tags
+        /function\s*\(/i,       // function definitions
+        /\(function/i,          // IIFE patterns
+        /setTimeout\s*\(/i,     // setTimeout
+        /setInterval\s*\(/i,    // setInterval
+        /location\./i,          // location object manipulation
+        /history\./i,           // history object manipulation
+        /localStorage\./i,      // localStorage access
+        /sessionStorage\./i,    // sessionStorage access
+        /cookie/i,              // cookie manipulation
+        /fetch\s*\(/i,          // fetch API
+        /XMLHttpRequest/i,      // XHR
+        /FormData/i,            // FormData
+        /Blob\s*\(/i,           // Blob constructor
+        /FileReader/i,          // FileReader
+        /crypto\./i,            // crypto object
+        /btoa\s*\(/i,           // base64 encoding
+        /atob\s*\(/i,           // base64 decoding
+        /decodeURI/i,           // URI decoding
+        /encodeURI/i,           // URI encoding
+        /String\.fromCharCode/i, // character code conversion
+        /unescape\s*\(/i,       // unescape function
+        /escape\s*\(/i          // escape function
+      ];
 
-      // // Controlla se l'URL contiene pattern pericolosi
-      // const isDangerous = dangerousPatterns.some(pattern => pattern.test(normalized));
-      
-      // if (isDangerous) {
-      //   // Ritorna solo il testo come stringa, niente <a>
-      //   return tokens ? tokens.map(token => token.raw).join('') : href || '';
-      // }
+      // Controlla se l'URL contiene pattern pericolosi
+      const isDangerous = dangerousPatterns.some(pattern => pattern.test(normalized));
+      if (isDangerous) {
+        // Ritorna solo il testo come stringa, niente <a>
+        return tokens ? tokens.map(token => token.raw).join('') : href || '';
+      }
 
-      tokens = this.cleanInput(href);
+      // tokens = this.cleanInput(href);
 
       const text = tokens
         ? tokens.map(token => token.raw).join('')
