@@ -420,7 +420,7 @@ function getMimeTypeFromExtension(extension: string): string {
       '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       '.xls': 'application/vnd.ms-excel',
-      '.wav' : 'audio/wav'
+      '.wav': 'audio/wav'
       // Aggiungi altri tipi MIME se necessario
   };
   return mimeTypes[extension] || '';
