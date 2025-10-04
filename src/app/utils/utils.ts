@@ -423,3 +423,32 @@ function getMimeTypeFromExtension(extension: string): string {
   };
   return mimeTypes[extension] || '';
 }
+
+export const BLOCKED_DOMAINS = [
+  // DOMINI MALEVOLI NOTI
+ 'attacker.me', 'evil.com', 'malicious.site', 'hacker.com', 'phishing.com',
+ 'malware.com', 'ransomware.com', 'trojan.com', 'virus.com', 'spyware.com',
+ 
+ // DOMINI DI PHISHING
+ 'phish.com', 'stealer.com', 'credential-thief.com', 'login-stealer.com',
+ 'password-stealer.com', 'banking-phish.com', 'paypal-phish.com',
+ 
+ // DOMINI DI SPAM
+ 'spam.com', 'spammer.com', 'bulk-email.com', 'unsolicited.com',
+ 
+ // DOMINI TRUFFA
+ 'scam.com', 'fraud.com', 'fake.com', 'counterfeit.com', 'hoax.com',
+ 
+ // DOMINI EXPLOIT
+ 'exploit.com', 'vulnerability.com', 'zero-day.com', 'payload.com',
+ 'shellcode.com', 'backdoor.com', 'rootkit.com',
+ 
+ // DOMINI BOTNET
+ 'botnet.com', 'zombie-pc.com', 'command-control.com', 'c2-server.com',
+ 
+ // DOMINI ADWARE/MALVERTISING
+ 'adware.com', 'malvertising.com', 'popup-ads.com', 'unwanted-ads.com',
+ 
+ // DOMINI GENERICI PERICOLOSI
+ 'danger.com', 'unsafe.com', 'insecure.com', 'threat.com', 'risk.com',
+]
