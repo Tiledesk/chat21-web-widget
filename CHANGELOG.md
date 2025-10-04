@@ -6,6 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.2-rc8
+- **bug-fixed**: css margin icon
+- **added**: added text verification to delete dangerous patterns
+
 # 5.1.2-rc7
 - **bug-fixed**: ctest button color (#ffffff)
 
