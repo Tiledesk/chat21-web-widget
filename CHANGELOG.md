@@ -6,6 +6,12 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.3-rc1
+- **changed** Check if the uploaded file extension directly matches one of those allowed in the control panel (e.g. .xls)
+
+# 5.1.3
+
 # 5.1.2-rc9
 - **added** .xls and .xlsx to file Upload Accept
 
