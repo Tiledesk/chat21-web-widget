@@ -620,6 +620,10 @@ function componentFromStr(numStr, percent) {
 export function isAllowedUrlInText(text: string, allowedUrls: string[]) {
   const urlsInMessage = extractUrls(text);
 
+  if (urlsInMessage.length === 0) {
+    return true; // Nessun URL => testo ammesso
+  }
+  
   const allowedPatterns = allowedUrls.map((url) => {
     try {
       // Prova a estrarre il dominio da una URL completa
