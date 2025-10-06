@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.3
+
 # 5.1.2-rc9
 - **added** .xls and .xlsx to file Upload Accept
 
