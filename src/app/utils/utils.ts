@@ -379,17 +379,23 @@ export function getUnique(arr, comp) {
     .filter(e => arr[e]).map(e => arr[e]);
 }
 
-export function checkAcceptedFile(fileType, fileUploadAccept ): boolean{
+export function checkAcceptedFile(nameFile, fileType, fileUploadAccept): boolean {
+  console.log('checkAcceptedFile ------------>', fileType, fileUploadAccept);
   
+  const fileExtension = getFileExtension(nameFile);
+  console.log('[CONV-FOOTER] fileExtension: ', fileExtension);
+
   if (fileUploadAccept === '*/*') {
-    return true
+    return true;
   }
+ 
   // Dividi la stringa fileUploadAccept in un array di tipi accettati
   const acceptedTypes = fileUploadAccept.split(',');
 
   // Verifica se il tipo di file è accettato
   return acceptedTypes.some((accept) => {
     accept = accept.trim();
+    
     // Controlla per i tipi MIME con wildcard, come image/*
     if (accept.endsWith('/*')) {
       const baseMimeType = fileType.split('/')[0]; // Ottieni la parte principale del MIME type
@@ -402,9 +408,39 @@ export function checkAcceptedFile(fileType, fileUploadAccept ): boolean{
     }
 
     // Controlla per le estensioni di file specifiche come .pdf o .txt
-    return fileType === getMimeTypeFromExtension(accept);
-  });
+    const expectedMimeType = getMimeTypeFromExtension(accept);
+    if (expectedMimeType && fileType === expectedMimeType) {
+      return true;
+    }
 
+    // // Controlla se l'estensione del file corrisponde direttamente
+    // if (accept.startsWith('.') && fileExtension === accept.substring(1)) {
+    //   return true;
+    // }
+
+    // Controlla se l'estensione del file corrisponde direttamente
+    // Dividi la stringa fileUploadAccept in un array di tipi accettati
+    const acceptedTypes = fileUploadAccept.split(',');
+    //verifica se l'estensione del file è accettata
+    if (acceptedTypes.includes(fileExtension)) {
+      return true;
+    }
+
+    return false;
+  });
+}
+
+
+/**
+ * Estrae l'estensione del file dal nome
+ * @param filename Nome del file
+ * @returns Estensione in lowercase (es. 'xlsx', 'pdf', 'jpg')
+ */
+export function getFileExtension(filename: string): string {
+  if (!filename || filename.indexOf('.') === -1) {
+    return '';
+  }
+  return filename.split('.').pop()?.toLowerCase() || '';
 }
 
 function getMimeTypeFromExtension(extension: string): string {
