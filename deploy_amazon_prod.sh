@@ -16,7 +16,7 @@ ng build --configuration="prod" --aot=true
 cd dist
 # aws s3 sync . s3://tiledesk-widget/v5/latest/
 aws s3 sync . s3://tiledesk-widget/v6/$version/ --cache-control max-age=300
-aws s3 sync . s3://tiledesk-widget/v6/ --cache-control max-age=300
+#aws s3 sync . s3://tiledesk-widget/v6/ --cache-control max-age=300
 cd ..
 
 
