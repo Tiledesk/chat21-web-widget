@@ -138,19 +138,19 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
         
         const that = this;
         if (event.target.files && event.target.files[0]) {
+          const nameFile = event.target.files[0].name;
+          const typeFile = event.target.files[0].type;
+          const size = event.target.files[0].size;
 
-          const canUploadFile = checkAcceptedFile(event.target.files[0].type, this.fileUploadAccept)
+          const canUploadFile = checkAcceptedFile(nameFile, typeFile, this.fileUploadAccept)
           if(!canUploadFile){
             this.logger.error('[IMAGE-UPLOAD] detectFiles: can not upload current file type--> NOT ALLOWED', this.fileUploadAccept)
             this.isFilePendingToUpload = false;
             return;
           }
-
-          const nameFile = event.target.files[0].name;
-          const typeFile = event.target.files[0].type;
-          const size = event.target.files[0].size
+          
           const reader = new FileReader();
-            that.logger.debug('[CONV-FOOTER] OK preload: ', nameFile, typeFile, reader);
+            // that.logger.debug('[CONV-FOOTER] OK preload: ', nameFile, typeFile, reader);
             reader.addEventListener('load', function () {
               that.logger.debug('[CONV-FOOTER] addEventListener load', reader.result);
               that.isFileSelected = true;

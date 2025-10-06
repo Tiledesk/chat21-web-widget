@@ -406,7 +406,7 @@ export class Globals {
     /**enable user to set a telegram number to chat with */
     this.telegramUsername = ''
     /**enable auto disconnect from messaging after a defined amount of time (s)*/
-    this.fileUploadAccept = "image/*,.pdf,.txt,.mp3,.xls,.xlsx"
+    this.fileUploadAccept = '';//image/*,.pdf,.txt,.mp3,.xls,.xlsx"
     this.disconnetTime = 0
 
     this.showWaitTime = true;
