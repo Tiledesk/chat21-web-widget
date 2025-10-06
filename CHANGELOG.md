@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.2-rc9
+- **added** .xls and .xlsx to file Upload Accept
 
 # 5.1.2-rc8
 - **bug-fixed**: css margin icon
