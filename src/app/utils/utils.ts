@@ -396,7 +396,7 @@ export function checkAcceptedFile(nameFile, fileType, fileUploadAccept): boolean
   return acceptedTypes.some((accept) => {
     accept = accept.trim();
     
-    // Controlla per i tipi MIME con wildcard, come image/*
+    // Controlla wildcard MIME type (es. "image/*")
     if (accept.endsWith('/*')) {
       const baseMimeType = fileType.split('/')[0]; // Ottieni la parte principale del MIME type
       return accept.replace('/*', '') === baseMimeType;
@@ -413,18 +413,16 @@ export function checkAcceptedFile(nameFile, fileType, fileUploadAccept): boolean
       return true;
     }
 
-    // // Controlla se l'estensione del file corrisponde direttamente
-    // if (accept.startsWith('.') && fileExtension === accept.substring(1)) {
-    //   return true;
-    // }
+    // Controlla estensione con punto (es. ".pdf")
+    if (accept.startsWith('.')) {
+      return fileExtension === accept.slice(1);
+    }
 
-    // Controlla se l'estensione del file corrisponde direttamente
-    // Dividi la stringa fileUploadAccept in un array di tipi accettati
-    const acceptedTypes = fileUploadAccept.split(',');
-    //verifica se l'estensione del file è accettata
-    if (acceptedTypes.includes(fileExtension)) {
+    // Controlla se accept è un'estensione senza punto (es. "pdf")
+    if (!accept.includes('/') && fileExtension === accept) {
       return true;
     }
+
 
     return false;
   });
