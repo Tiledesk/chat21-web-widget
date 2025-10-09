@@ -380,10 +380,10 @@ export function getUnique(arr, comp) {
 }
 
 export function checkAcceptedFile(nameFile, fileType, fileUploadAccept): boolean {
-  console.log('checkAcceptedFile ------------>', fileType, fileUploadAccept);
+  // console.log('checkAcceptedFile ------------>', fileType, fileUploadAccept);
   
   const fileExtension = getFileExtension(nameFile);
-  console.log('[CONV-FOOTER] fileExtension: ', fileExtension);
+  // console.log('[CONV-FOOTER] fileExtension: ', fileExtension);
 
   if (fileUploadAccept === '*/*') {
     return true;
