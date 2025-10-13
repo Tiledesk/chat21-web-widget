@@ -84,6 +84,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   showAlertEmoji: boolean = false
   showAlertUrl: boolean = false;
 
+  file_size_limit: number = 10;
+  attachmentTooltip: string = '';
+
   convertColorToRGBA = convertColorToRGBA;
   private logger: LoggerService = LoggerInstance.getInstance()
   constructor(private chatManager: ChatManager,
@@ -105,6 +108,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       this.onDrop(this.dropEvent)
     }
 
+    if(changes['translationMap'] && changes['translationMap'].currentValue !== undefined){
+      this.updateAttachmentTooltip();
+    }
+
   }
   
   ngAfterViewInit() {
@@ -112,6 +119,13 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     // setTimeout(() => {
       this.showEmojiPicker = true
     // }, 500);
+  }
+
+  updateAttachmentTooltip() {
+    if (this.translationMap && this.translationMap.has('ATTACHMENT')) {
+      const template = this.translationMap.get('ATTACHMENT');
+      this.attachmentTooltip = template.replace('{{file_size_limit}}', this.file_size_limit.toString());
+    }
   }
 
   // ========= begin:: functions send image ======= //

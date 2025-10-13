@@ -92,5 +92,8 @@
     
     "LABEL_PREVIEW": "Anteprima",
     "SWITCH_TO":"Oppure passa a:",
-    "CONNECTION_NETWORK_ERROR": "Ci scusiamo. Si sono verificati problemi di connessione di rete"
+    "CONNECTION_NETWORK_ERROR": "Ci scusiamo. Si sono verificati problemi di connessione di rete",
+    "ATTACHMENT": "Dimensione massima consentita {{file_size_limit}}Mb",
+    "ADD_ATTACHMENT": "Aggiungi allegato",
+    "EMOJI": "Emoji"
 }
