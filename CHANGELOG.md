@@ -6,7 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-
+# 5.1.7-rc2
+- **bug-fixed**: translations completed
+- **changed**: set wait to 0 if messages have already been read
 
 # 5.1.7-rc1
 - **changed**: replace fullname with firstname
