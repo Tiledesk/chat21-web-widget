@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.6
+
+# 5.1.5
+# 5.1.4
 
 # 5.1.3-rc1
 - **changed** Check if the uploaded file extension directly matches one of those allowed in the control panel (e.g. .xls)
@@ -54,6 +58,8 @@
 
 # 5.1.1-rc1
 - **bug-fixed**: marked pipe not renders urls
+
+# 5.1.0
 
 # 5.1.0-rc34
 - **bug-fixed**: css fixed carousel

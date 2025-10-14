@@ -86,11 +86,11 @@
     "LABEL_LAST_ACCESS": "ultimo accesso",
     "LABEL_TO": "a",
     "ARRAY_DAYS": ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"],
-    
     "SENT_AN_ATTACHMENT": "ha inviato un allegato",
     "SENT_AN_IMAGE":"ha inviato un'immagine",
-    
     "LABEL_PREVIEW": "Anteprima",
     "SWITCH_TO":"Oppure passa a:",
-    "CONNECTION_NETWORK_ERROR": "Ci scusiamo. Si sono verificati problemi di connessione di rete"
+    "CONNECTION_NETWORK_ERROR": "Ci scusiamo. Si sono verificati problemi di connessione di rete",
+    "ATTACHMENT": "Dimensione massima consentita {{file_size_limit}}Mb",
+    "EMOJI": "Emoji"
 }

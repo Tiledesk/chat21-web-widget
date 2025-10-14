@@ -261,7 +261,9 @@ export class TranslatorService {
       'WAITING_TIME_FOUND',
       'WAITING_TIME_NOT_FOUND',
       'CLOSED',
-      'LABEL_PREVIEW'
+      'LABEL_PREVIEW',
+      'ATTACHMENT',
+      'EMOJI'
     ];
 
 
@@ -316,6 +318,8 @@ export class TranslatorService {
       globals.CLOSED = res['CLOSED'];
       globals.LABEL_PREVIEW = res['LABEL_PREVIEW']
       globals.LABEL_ERROR_FIELD_REQUIRED= res['LABEL_ERROR_FIELD_REQUIRED']
+      globals.ATTACHMENT = res['ATTACHMENT']
+      globals.EMOJI = res['EMOJI']
       
       
       if(globals.WELCOME_TITLE === 'WELLCOME_TITLE') globals.WELCOME_TITLE = res['WELCOME_TITLE']
