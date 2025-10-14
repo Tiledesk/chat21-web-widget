@@ -99,7 +99,7 @@ export class TranslatorService {
 
   // https://github.com/ngx-translate/core/issues/282
   initI18n(): Promise<any> {
-    this._translate.addLangs(['en', 'it']);
+    this._translate.addLangs(['en', 'it', 'es', 'fr']);
     this.logger.debug('[TRANSLATOR-SERV]»»»» initI18n getLangs ', this._translate.getLangs());
 
     // Set the default language for translation strings.
@@ -262,7 +262,7 @@ export class TranslatorService {
       'WAITING_TIME_NOT_FOUND',
       'CLOSED',
       'LABEL_PREVIEW',
-      'ATTACHMENT',
+      'MAX_ATTACHMENT',
       'EMOJI'
     ];
 
@@ -318,7 +318,7 @@ export class TranslatorService {
       globals.CLOSED = res['CLOSED'];
       globals.LABEL_PREVIEW = res['LABEL_PREVIEW']
       globals.LABEL_ERROR_FIELD_REQUIRED= res['LABEL_ERROR_FIELD_REQUIRED']
-      globals.ATTACHMENT = res['ATTACHMENT']
+      globals.MAX_ATTACHMENT = res['MAX_ATTACHMENT']
       globals.EMOJI = res['EMOJI']
       
       

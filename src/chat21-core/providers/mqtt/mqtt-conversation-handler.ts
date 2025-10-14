@@ -464,16 +464,17 @@ export class MQTTConversationHandler extends ConversationHandlerService {
     private async addCommandMessage(msg: MessageModel): Promise<boolean>{
         const that = this;
         const commands = msg.attributes.commands;
+        that.logger.debug('[MQTTConversationHandlerSERVICE] addCommandMessage: ', commands)
         let i=0;
         if(commands.length === 0) return;
         return new Promise((resolve, reject)=>{
             function execute(command){
+                that.logger.debug('[MQTTConversationHandlerSERVICE] command: ', command, i)
                 if(command.type === "message"){
                     that.logger.debug('[MQTTConversationHandlerSERVICE] addCommandMessage --> type="message"', command, i)
                     if (i >= 2) {
-                        
                         //check if previus wait message type has time value, otherwize set to 1000ms
-                        !commands[i-1].time? commands[i-1].time= 1000 : commands[i-1].time
+                        !commands[i-1].time? commands[i-1].time= 1000 : commands[i-1].time;
                         command.message.timestamp = commands[i-2].message.timestamp + commands[i-1].time;
                         
                         /** CHECK IF MESSAGE IS JUST RECEIVED: IF false, set next message time (if object exist) to 0 -> this allow to show it immediately */
@@ -483,12 +484,14 @@ export class MQTTConversationHandler extends ConversationHandlerService {
                             command.message.timestamp = previewsTimeMsg + 100
                             commands[i+1]? commands[i+1].time = 0 : null
                         }
-                    } else { /**MANAGE FIRST MESSAGE */
+                    } 
+                    else { /**MANAGE FIRST MESSAGE */
                         command.message.timestamp = msg.timestamp;
                         if(!isJustRecived(that.startTime.getTime(), msg.timestamp)){
                             commands[i+1]? commands[i+1].time = 0 : null
                         }
                     }
+
                     that.generateMessageObject(msg, command.message, i, function () {
                         i += 1
                         if (i < commands.length) {
@@ -499,28 +502,36 @@ export class MQTTConversationHandler extends ConversationHandlerService {
                             resolve(true)
                         }
                     })
-                }else if(command.type === "wait"){
-                    that.logger.debug('[MQTTConversationHandlerSERVICE] addCommandMessage --> type="wait"', command, i, commands.length)
+                } else if(command.type === "wait"){
                     //publish waiting event to simulate user typing
                     if(isJustRecived(that.startTime.getTime(), msg.timestamp)){
                         // console.log('message just received::', command, i, commands)
                         that.messageWait.next({uid: that.conversationWith, uidUserTypingNow: msg.sender, nameUserTypingNow: msg.sender_fullname, waitTime: command.time, command: command})
                     }
-                    setTimeout(function() {
+                    that.logger.debug('[MQTTConversationHandlerSERVICE] addCommandMessage: --> msg.status: ', msg.status)
+                    
+                    const executeNext = () => {
                         i += 1
                         if (i < commands.length) {
                             execute(commands[i])
-                        }
-                        else {
+                        } else {
                             that.logger.debug('[MQTTConversationHandlerSERVICE] addCommandMessage --> last command executed (send message), exit') 
                             resolve(true)
                         }
-                    },command.time)
+                    }
+
+                    if(msg.status === MSG_STATUS_RECEIVED){
+                        executeNext()
+                    } else {
+                        setTimeout(executeNext, command.time)
+                    }
                 }
             }
             execute(commands[0]) //START render first message
         })
     }
+
+    
     
     private generateMessageObject(message, command_message, index, callback) {
         let parentUid = message.uid
