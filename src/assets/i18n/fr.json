@@ -94,6 +94,5 @@
     "SWITCH_TO":"Ou passer à:",
     "CONNECTION_NETWORK_ERROR": "Nos excuses. Il y a eu des problèmes de connexion au réseau",
     "ATTACHMENT": "Taille maximale autorisée {{file_size_limit}}Mb",
-    "ADD_ATTACHMENT": "Ajouter une pièce jointe",
     "EMOJI": "Emoji"
 }

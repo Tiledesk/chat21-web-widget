@@ -413,8 +413,8 @@ export class FirebaseConversationHandler extends ConversationHandlerService {
             message.text = INFO_SUPPORT_LEAD_UPDATED;
         } else if (infoMessageType(message) === INFO_MESSAGE_TYPE.MEMBER_LEFT_GROUP) {
             let subject: string = '';
-            if (message.attributes.messagelabel.parameters.fullname) {
-                subject = message.attributes.messagelabel.parameters.fullname;
+            if (message.attributes.messagelabel.parameters.firstname) {
+                subject = message.attributes.messagelabel.parameters.firstname;
             }else{
                 subject = message.attributes.messagelabel.parameters.member_id;
             }

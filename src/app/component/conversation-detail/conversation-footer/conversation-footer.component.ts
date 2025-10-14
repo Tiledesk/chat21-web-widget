@@ -96,6 +96,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   ngOnInit() {
   }
 
+
   ngOnChanges(changes: SimpleChanges){
     if(changes['conversationWith'] && changes['conversationWith'].currentValue !== undefined){
       this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
@@ -120,6 +121,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       this.showEmojiPicker = true
     // }, 500);
   }
+
 
   updateAttachmentTooltip() {
     if (this.translationMap && this.translationMap.has('ATTACHMENT')) {
@@ -333,6 +335,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
    * @param additional_attributes
    */
   sendMessage(msg: string, type: string, metadata?: any, additional_attributes?: any) { // sponziello
+
     (metadata) ? metadata = metadata : metadata = '';
     this.onEmojiiPickerShow.emit(false)
     this.logger.log('[CONV-FOOTER] SEND MESSAGE: ', msg, type, metadata, additional_attributes);
