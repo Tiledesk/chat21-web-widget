@@ -6,6 +6,15 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+
+# 5.1.7-rc1
+- **changed**: replace fullname with firstname
+- **added**: added tooltip on attachment an emoji
+- **bug-fixed**: bug fixed button color
+- **bug-fixed**: bug fixed min-height message-receive
+- **bug-fixed**: bug-fixed css footer
+
 # 5.1.6
 
 # 5.1.5
