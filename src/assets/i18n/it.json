@@ -91,6 +91,8 @@
     "LABEL_PREVIEW": "Anteprima",
     "SWITCH_TO":"Oppure passa a:",
     "CONNECTION_NETWORK_ERROR": "Ci scusiamo. Si sono verificati problemi di connessione di rete",
-    "ATTACHMENT": "Dimensione massima consentita {{file_size_limit}}Mb",
+    "EMOJI_NOT_ELLOWED":"Emoji non consentiti",
+    "DOMAIN_NOT_ALLOWED":"L'URL contiene un dominio non consentito",
+    "MAX_ATTACHMENT": "Dimensione massima consentita {{file_size_limit}}Mb",
     "EMOJI": "Emoji"
 }
