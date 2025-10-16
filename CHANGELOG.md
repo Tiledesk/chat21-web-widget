@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.7-rc4
+- **bug-fixed**: bug fixed widget fullscreen style
+
 # 5.1.7-rc3
 - **changed**: replace extractUrls
 
