@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.7-rc3
+- **changed**: replace extractUrls
+
 # 5.1.7-rc2
 - **bug-fixed**: translations completed
 - **changed**: set wait to 0 if messages have already been read
