@@ -1,15 +1,15 @@
 :host {
     --backgroundColor: #{var(--blue)};
-    --textColor: #{var(--bck-msg-sent)};
+    --buttonTextColor: #{var(--bck-msg-sent)};
     --hoverBackgroundColor: #{var(--bck-msg-sent)};
     --hoverTextColor: #{var(--blue)};
-    --buttonFontSize2: #{var(--button-font-size)};
+    --buttonFontSize: #{var(--button-font-size)};
     --max-width: #{var(--button-in-msg-max-width)};
     --padding: #{var(--button-in-msg-padding)};
     --font-family: #{var(--button-in-msg-font-family)};
     --buttonBorderColor: #{var(--button-border-color)};
     --buttonColor: #{var(--button-color)};
-    --buttonBackgroundColor: #ffffff; //#{var(--button-background-color)};
+    --buttonBackgroundColor: #{var(--button-background-color)};
 }
 
 
@@ -21,8 +21,8 @@
     border: 1px solid var(--buttonBorderColor);
     background: var(--buttonBackgroundColor);
     font-family: var(--font-family);
-    font-size: var(--buttonFontSize2);
-    color: var(--textColor);
+    font-size: var(--buttonFontSize);
+    color: var(--buttonTextColor);
     overflow: hidden;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
