@@ -2189,12 +2189,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.el.nativeElement.style.setProperty('--chat-header-height', this.g.hideHeaderConversation? '0px': null)
         this.el.nativeElement.style.setProperty('--font-size-bubble-message', this.g.fontSize)
         this.el.nativeElement.style.setProperty('--font-family-bubble-message', this.g.fontFamily)
-        
-
-        this.styleMapConversation.set('buttonBackgroundColor', this.g.bubbleReceivedBackground)
-        this.styleMapConversation.set('buttonTextColor', this.g.bubbleReceivedTextColor)
-        this.styleMapConversation.set('buttonHoverBackgroundColor',this.g.bubbleSentBackground)
-        this.styleMapConversation.set('buttonHoverTextColor', this.g.bubbleSentTextColor)
 
     }
 
