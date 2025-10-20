@@ -84,6 +84,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   showAlertEmoji: boolean = false
   showAlertUrl: boolean = false;
 
+  file_size_limit: number = 10;
+  attachmentTooltip: string = '';
+
   convertColorToRGBA = convertColorToRGBA;
   private logger: LoggerService = LoggerInstance.getInstance()
   constructor(private chatManager: ChatManager,
@@ -91,7 +94,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
               private uploadService: UploadService) { }
 
   ngOnInit() {
+    this.updateAttachmentTooltip();
   }
+
 
   ngOnChanges(changes: SimpleChanges){
     if(changes['conversationWith'] && changes['conversationWith'].currentValue !== undefined){
@@ -105,6 +110,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       this.onDrop(this.dropEvent)
     }
 
+    if(changes['translationMap'] && changes['translationMap'].currentValue !== undefined){
+      this.updateAttachmentTooltip();
+    }
+
   }
   
   ngAfterViewInit() {
@@ -112,6 +121,23 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     // setTimeout(() => {
       this.showEmojiPicker = true
     // }, 500);
+    this.updateAttachmentTooltip();
+  }
+
+
+  updateAttachmentTooltip() {
+    // Use setTimeout to wait for the async translation map to be populated
+    setTimeout(() => {
+      this.logger.log('[CONV-FOOTER] updateAttachmentTooltip - translationMap:', this.translationMap);
+      if (this.translationMap && this.translationMap.has('MAX_ATTACHMENT')) {
+        const template = this.translationMap.get('MAX_ATTACHMENT');
+        this.logger.log('[CONV-FOOTER] MAX_ATTACHMENT template:', template);
+        this.attachmentTooltip = template.replace('{{file_size_limit}}', this.file_size_limit.toString());
+        this.logger.log('[CONV-FOOTER] attachmentTooltip:', this.attachmentTooltip);
+      } else {
+        this.logger.log('[CONV-FOOTER] MAX_ATTACHMENT not found in translationMap');
+      }
+    }, 500);
   }
 
   // ========= begin:: functions send image ======= //
@@ -319,6 +345,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
    * @param additional_attributes
    */
   sendMessage(msg: string, type: string, metadata?: any, additional_attributes?: any) { // sponziello
+
     (metadata) ? metadata = metadata : metadata = '';
     this.onEmojiiPickerShow.emit(false)
     this.logger.log('[CONV-FOOTER] SEND MESSAGE: ', msg, type, metadata, additional_attributes);

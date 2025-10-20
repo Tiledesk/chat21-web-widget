@@ -1,15 +1,14 @@
 :host {
     --backgroundColor: #{var(--blue)};
-    --textColor: #{var(--bck-msg-sent)};
-    --hoverBackgroundColor: #{var(--bck-msg-sent)};
-    --hoverTextColor: #{var(--blue)};
-    --buttonFontSize2: #{var(--button-font-size)};
+    --buttonTextColor: #{var(--bck-msg-sent)};
+    --buttonHoverBackgroundColor: #{var(--bck-msg-sent)};
+    --buttonHoverTextColor: #{var(--blue)};
+    --buttonFontSize: #{var(--button-font-size)};
     --max-width: #{var(--button-in-msg-max-width)};
     --padding: #{var(--button-in-msg-padding)};
     --font-family: #{var(--button-in-msg-font-family)};
     --buttonBorderColor: #{var(--button-border-color)};
-    // --buttonColor: #{var(--buttonColor)};
-    --buttonBackgroundColor: #ffffff; //#{var(--button-background-color)};
+    --buttonBackgroundColor: #{var(--button-background-color)};
     --buttonColor: #{var(--button-color)};
 }
 
@@ -21,11 +20,9 @@
     cursor: pointer;
     border: 1px solid var(--buttonBorderColor);
     background: var(--buttonBackgroundColor);
-    // background: var(--backgroundColor);
     font-family: var(--font-family);
-    font-size: var(--buttonFontSize2);
-    // color: var(--buttonColor);
-    color: var(--textColor);
+    font-size: var(--buttonFontSize);
+    color: var(--buttonTextColor);
     overflow: hidden;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
@@ -47,8 +44,8 @@
     transition: background-color .6s ease;
     &:focus,
     &:hover {
-        color: var(--hoverTextColor);
-        background: var(--hoverBackgroundColor);
+        color: var(--buttonHoverTextColor);
+        background: var(--buttonHoverBackgroundColor);
         // transform: scale(1.05);
         .icon-button-action {
             svg {

@@ -3,15 +3,11 @@
 
     <span *ngFor="let button of buttons | slice:0:limit" class="div-button">
       
-      <!-- 
-      // bubbleReceivedBackground
-      // buttonBackgroundColor 
-      -->
       <chat-text-button-attachment *ngIf="button.type === 'text' && isLastMessage === true" class="div-button"
         [button]="button"
         [isConversationArchived]="isConversationArchived"
         [fontSize]="stylesMap.get('buttonFontSize')"
-        [backgroundColor]="stylesMap.get('bubbleReceivedBackground')"
+        [backgroundColor]="stylesMap.get('buttonBackgroundColor')"
         [textColor]="stylesMap.get('buttonTextColor')"
         [hoverBackgroundColor]="stylesMap.get('buttonHoverBackgroundColor')"
         [hoverTextColor]="stylesMap.get('buttonHoverTextColor')"
@@ -21,7 +17,7 @@
       <chat-link-button-attachment *ngIf="button.type === 'url'" class="div-button"
         [button]="button"
         [fontSize]="stylesMap.get('buttonFontSize')"
-        [backgroundColor]="stylesMap.get('bubbleReceivedBackground')"
+        [backgroundColor]="stylesMap.get('buttonBackgroundColor')"
         [textColor]="stylesMap.get('buttonTextColor')"
         [hoverBackgroundColor]="stylesMap.get('buttonHoverBackgroundColor')"
         [hoverTextColor]="stylesMap.get('buttonHoverTextColor')"
@@ -32,7 +28,7 @@
         [button]="button"
         [isConversationArchived]="isConversationArchived"
         [fontSize]="stylesMap.get('buttonFontSize')"
-        [backgroundColor]="stylesMap.get('bubbleReceivedBackground')"
+        [backgroundColor]="stylesMap.get('buttonBackgroundColor')"
         [textColor]="stylesMap.get('buttonTextColor')"
         [hoverBackgroundColor]="stylesMap.get('buttonHoverBackgroundColor')"
         [hoverTextColor]="stylesMap.get('buttonHoverTextColor')"

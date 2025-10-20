@@ -223,6 +223,7 @@
                     .msg_receive {
                         background-color: var(--light-white);
                         color: var(--black);
+                        min-height: 38px;
                         // max-width: 260px;
                         max-width: calc(100% - 70px);
                         min-width: 14px;
