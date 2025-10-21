@@ -33,9 +33,9 @@ cd ../..
 
 aws  cloudfront create-invalidation --distribution-id E3EJDWEHY08CZZ --paths "/*"
 
-git restore src/environments/environment.pre.ts
+git restore src/environments/environment.prod.ts
 
-echo new version deployed $version on s3://tiledesk-widget/v5
-echo available on https://s3.eu-west-1.amazonaws.com/tiledesk-widget/v5/index.html
-echo https://widget.tiledesk.com/v5/index.html
-echo https://widget.tiledesk.com/v5/$version/index.html
+echo new version deployed $version on s3://tiledesk-widget/v6
+echo available on https://s3.eu-west-1.amazonaws.com/tiledesk-widget/v6/index.html
+echo https://widget.tiledesk.com/v6/index.html
+echo https://widget.tiledesk.com/v6/$version/index.html

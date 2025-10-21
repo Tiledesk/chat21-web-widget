@@ -6,6 +6,29 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.7-rc5
+- **bug-fixed**: bug fixed BUTTON STYLES
+
+# 5.1.7-rc4
+- **bug-fixed**: bug fixed widget fullscreen style
+
+# 5.1.7-rc3
+- **changed**: replace extractUrls
+
+# 5.1.7-rc2
+- **bug-fixed**: translations completed
+- **changed**: set wait to 0 if messages have already been read
+
+# 5.1.7-rc1
+- **changed**: replace fullname with firstname
+- **added**: added tooltip on attachment an emoji
+- **bug-fixed**: bug fixed button color
+- **bug-fixed**: bug fixed min-height message-receive
+- **bug-fixed**: bug-fixed css footer
+
+# 5.1.7
+
 # 5.1.6
 
 # 5.1.5
