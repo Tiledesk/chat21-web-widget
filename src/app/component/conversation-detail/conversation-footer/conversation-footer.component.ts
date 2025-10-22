@@ -86,6 +86,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   file_size_limit: number = 10;
   attachmentTooltip: string = '';
+  isErrorNetwork: boolean = false;
 
   convertColorToRGBA = convertColorToRGBA;
   private logger: LoggerService = LoggerInstance.getInstance()
@@ -137,7 +138,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       } else {
         this.logger.log('[CONV-FOOTER] MAX_ATTACHMENT not found in translationMap');
       }
-    }, 500);
+    }, 0);
   }
 
   // ========= begin:: functions send image ======= //
@@ -228,7 +229,12 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
             const fileXLoad = this.arrayFilesLoad[0].file;
             const uid = this.arrayFilesLoad[0].uid;
             const type = this.arrayFilesLoad[0].type;
-            const size = this.arrayFilesLoad[0].size
+            const size = this.arrayFilesLoad[0].size;
+            if(size > this.file_size_limit * 1024 * 1024){
+              this.logger.error('[CONV-FOOTER] file size is greater than the limit: ', size, this.file_size_limit * 1024 * 1024);
+              this.showErrorNetwork();
+              return;
+            }
             this.logger.log('[CONV-FOOTER] that.fileXLoad: ', type);
             let metadata;
             if (type.startsWith('image') && !type.includes('svg')) {
@@ -264,6 +270,15 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
         }
     }
 
+
+    private showErrorNetwork() {
+      this.isErrorNetwork = true;
+      setTimeout(() => {
+        this.isErrorNetwork = false;
+        this.isFilePendingToUpload = false;
+        this.hideTextReply = false;
+      }, 5000);
+    }
 
     uploadSingle(metadata, file, messageText?: string) {
       const that = this;

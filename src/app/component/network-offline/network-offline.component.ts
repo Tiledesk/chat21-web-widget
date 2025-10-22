@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CustomTranslateService } from 'src/chat21-core/providers/custom-translate.service';
 
 @Component({
@@ -8,6 +8,7 @@ import { CustomTranslateService } from 'src/chat21-core/providers/custom-transla
 })
 export class NetworkOfflineComponent implements OnInit {
 
+  @Input() keyErrorMessage: string = 'CONNECTION_NETWORK_ERROR';
   translationMap: Map< string, string>;
 
   constructor(
@@ -16,7 +17,7 @@ export class NetworkOfflineComponent implements OnInit {
 
   ngOnInit(): void {
     let keys = [
-      'CONNECTION_NETWORK_ERROR'
+      this.keyErrorMessage
     ]
     this.translationMap = this.customTranslateService.translateLanguage(keys)
   }
