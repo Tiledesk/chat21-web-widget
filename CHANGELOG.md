@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.7-rc7
+- **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
+
 # 5.1.7-rc6
 - **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
 
