@@ -356,6 +356,11 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       return
     }
 
+    let check = this.checkForEmojii(this.textInputTextArea)
+    if(!check){
+      return;
+    }
+
     if (msg && msg.trim() !== '' || type === TYPE_MSG_IMAGE || type === TYPE_MSG_FILE ) {
 
       // msg = htmlEntities(msg);
@@ -596,6 +601,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   onSendPressed(event) {
     this.logger.log('[CONV-FOOTER] onSendPressed:event', event);
+    if(this.showAlertEmoji || this.showAlertUrl){
+      return; 
+    }
     event.preventDefault();
     this.logger.log('[CONV-FOOTER] AppComponent::onSendPressed::isFilePendingToUpload:', this.isFilePendingToUpload);
     if (this.isFilePendingToUpload) {
@@ -724,6 +732,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     const keyCode = event.which || event.keyCode;
     this.textInputTextArea = ((document.getElementById('chat21-main-message-context') as HTMLInputElement).value);
     if (keyCode === 13) { // ENTER pressed
+      if(this.showAlertEmoji || this.showAlertUrl){
+        return; 
+      }
       if (this.textInputTextArea && this.textInputTextArea.trim() !== '') {
         //   that.logger.log('[CONV-FOOTER] sendMessage -> ', this.textInputTextArea);
         // this.resizeInputField();
