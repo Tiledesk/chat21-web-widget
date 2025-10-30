@@ -465,7 +465,6 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       this.isConversationArchived=true
       return { requests: [] }
     });
-    console.log('requesttttttt', requests_list)
     if (requests_list && requests_list.requests.length > 0) {
       this.logger.debug('[CONV-COMP] getConversationDetail: request exist on Tiledesk', requests_list);
       let conversation = requests_list.requests.find((request)=> request.request_id === this.conversationId)
@@ -836,16 +835,6 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
 
       subscribtion = this.chatManager.conversationsHandlerService.conversationChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((conversation) => {
         this.logger.debug('[CONV-COMP] ***** DATAIL conversationsChanged *****', conversation, this.conversationWith, this.isConversationArchived);
-        // if(conversation && conversation.recipient === this.g.senderId && isUserBanned(conversation)){
-        //   return;
-        // }
-        // if(conversation && conversation.sender !== this.senderId){
-        //   const checkContentScrollPosition = that.conversationContent.checkContentScrollPosition();
-        //   if(checkContentScrollPosition && conversation.is_new){ //update conversation if scroolToBottom is to the end
-        //     this.logger.debug('[CONV-COMP] updateConversationBadge...')
-        //     that.updateConversationBadge();
-        //   }
-        // }
         if(conversation && conversation.recipient === this.conversationId){
           this.isConversationArchived = false
         }
