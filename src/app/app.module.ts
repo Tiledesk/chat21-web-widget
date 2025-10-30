@@ -134,7 +134,7 @@ import { Rules } from './utils/rules';
 import { ScriptService } from 'src/chat21-core/providers/scripts/script.service';
 import { CarouselComponent } from './component/message/carousel/carousel.component';
 import { BrandService } from './providers/brand.service';
-import { NetworkOfflineComponent } from './component/network-offline/network-offline.component';
+import { ErrorAlertComponent } from './component/error-alert/error-alert.component';
 import { ConfirmCloseComponent } from './modals/confirm-close/confirm-close.component';
 
 
@@ -300,7 +300,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     LikeUnlikeComponent,
     TooltipDirective,
     CarouselComponent,
-    NetworkOfflineComponent,
+    ErrorAlertComponent,
     ConfirmCloseComponent
   ],
   imports: [BrowserModule,

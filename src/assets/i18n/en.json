@@ -95,6 +95,6 @@
     "CONNECTION_NETWORK_ERROR": "Our apologies. There was some trouble connecting to network",
     "EMOJI_NOT_ELLOWED":"Emoji not allowed",
     "DOMAIN_NOT_ALLOWED":"URL contains a non-allowed domain",
-    "MAX_ATTACHMENT": "Max allowed size {{file_size_limit}}Mb",
+    "MAX_ATTACHMENT": "Max allowed size {{FILE_SIZE_LIMIT}}Mb",
     "EMOJI": "Emoji"
 }

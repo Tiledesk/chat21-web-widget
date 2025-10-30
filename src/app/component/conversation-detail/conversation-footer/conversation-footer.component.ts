@@ -1,4 +1,6 @@
 import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
+import { error } from 'console';
+import { FILE_SIZE_LIMIT } from 'src/app/utils/constants';
 import { Globals } from 'src/app/utils/globals';
 import { checkAcceptedFile } from 'src/app/utils/utils';
 import { MessageModel } from 'src/chat21-core/models/message';
@@ -84,8 +86,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   showAlertEmoji: boolean = false
   showAlertUrl: boolean = false;
 
-  file_size_limit: number = 10;
+  file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
+
 
   convertColorToRGBA = convertColorToRGBA;
   private logger: LoggerService = LoggerInstance.getInstance()
@@ -228,7 +231,12 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
             const fileXLoad = this.arrayFilesLoad[0].file;
             const uid = this.arrayFilesLoad[0].uid;
             const type = this.arrayFilesLoad[0].type;
-            const size = this.arrayFilesLoad[0].size
+            const size = this.arrayFilesLoad[0].size;
+            if(size > this.file_size_limit * 1024 * 1024){
+              this.logger.error('[CONV-FOOTER] file size is greater than the limit: ', size, this.file_size_limit * 1024 * 1024);
+              this.showErrorNetwork();
+              return;
+            }
             this.logger.log('[CONV-FOOTER] that.fileXLoad: ', type);
             let metadata;
             if (type.startsWith('image') && !type.includes('svg')) {
@@ -264,6 +272,17 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
         }
     }
 
+
+    private showErrorNetwork() {
+      // posso anche passare solo keyMessage, nel caso non voglio passare un messaggio custom posso passare message e params(se il messaggio possiede dei parametri),
+      //window.dispatchEvent(new CustomEvent('tooltipErrorMessage', { detail: { error: true, message: 'File size is greater than the limit {{file_size_limit}}', keyMessage: null, params: { file_size_limit: this.file_size_limit } } }));
+      window.dispatchEvent(new CustomEvent('tooltipErrorMessage', { detail: { error: true,  keyMessage: 'MAX_ATTACHMENT' } }));
+      setTimeout(() => {
+        this.isFilePendingToUpload = false;
+        this.hideTextReply = false;
+        window.dispatchEvent(new CustomEvent('tooltipErrorMessage', { detail: { error: false, message: '', keyMessage: null } }));
+      }, 5000);
+    }
 
     uploadSingle(metadata, file, messageText?: string) {
       const that = this;

@@ -93,6 +93,6 @@
     "CONNECTION_NETWORK_ERROR": "Ci scusiamo. Si sono verificati problemi di connessione di rete",
     "EMOJI_NOT_ELLOWED":"Emoji non consentiti",
     "DOMAIN_NOT_ALLOWED":"L'URL contiene un dominio non consentito",
-    "MAX_ATTACHMENT": "Dimensione massima consentita {{file_size_limit}}Mb",
+    "MAX_ATTACHMENT": "Dimensione massima consentita {{FILE_SIZE_LIMIT}}Mb",
     "EMOJI": "Emoji"
 }
