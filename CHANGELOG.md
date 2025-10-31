@@ -6,6 +6,7 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.8
 
 # 5.1.7-rc8
 - **changed**: Updated the translations of the tooltips in the footer-component
