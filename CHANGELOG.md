@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# changes in the branch 
+- **changed**: Updated the translations of the tooltips in the footer-component
+- **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
+
 
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES
