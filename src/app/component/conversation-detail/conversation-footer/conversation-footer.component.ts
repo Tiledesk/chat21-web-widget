@@ -97,7 +97,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
               private uploadService: UploadService) { }
 
   ngOnInit() {
-    this.updateAttachmentTooltip();
+    // this.updateAttachmentTooltip();
   }
 
 
@@ -113,9 +113,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       this.onDrop(this.dropEvent)
     }
 
-    if(changes['translationMap'] && changes['translationMap'].currentValue !== undefined){
-      this.updateAttachmentTooltip();
-    }
+    // if(changes['translationMap'] && changes['translationMap'].currentValue !== undefined){
+    //   this.updateAttachmentTooltip();
+    // }
 
   }
   
@@ -124,24 +124,24 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     // setTimeout(() => {
       this.showEmojiPicker = true
     // }, 500);
-    this.updateAttachmentTooltip();
+    // this.updateAttachmentTooltip();
   }
 
 
-  updateAttachmentTooltip() {
-    // Use setTimeout to wait for the async translation map to be populated
-    setTimeout(() => {
-      this.logger.log('[CONV-FOOTER] updateAttachmentTooltip - translationMap:', this.translationMap);
-      if (this.translationMap && this.translationMap.has('MAX_ATTACHMENT')) {
-        const template = this.translationMap.get('MAX_ATTACHMENT');
-        this.logger.log('[CONV-FOOTER] MAX_ATTACHMENT template:', template);
-        this.attachmentTooltip = template.replace('{{file_size_limit}}', this.file_size_limit.toString());
-        this.logger.log('[CONV-FOOTER] attachmentTooltip:', this.attachmentTooltip);
-      } else {
-        this.logger.log('[CONV-FOOTER] MAX_ATTACHMENT not found in translationMap');
-      }
-    }, 500);
-  }
+  // updateAttachmentTooltip() {
+  //   // Use setTimeout to wait for the async translation map to be populated
+  //   setTimeout(() => {
+  //     this.logger.log('[CONV-FOOTER] updateAttachmentTooltip - translationMap:', this.translationMap);
+  //     if (this.translationMap && this.translationMap.has('MAX_ATTACHMENT')) {
+  //       const template = this.translationMap.get('MAX_ATTACHMENT');
+  //       this.logger.log('[CONV-FOOTER] MAX_ATTACHMENT template:', template);
+  //       // this.attachmentTooltip = template.replace('{{file_size_limit}}', this.file_size_limit.toString());
+  //       this.logger.log('[CONV-FOOTER] attachmentTooltip:', this.attachmentTooltip);
+  //     } else {
+  //       this.logger.log('[CONV-FOOTER] MAX_ATTACHMENT not found in translationMap');
+  //     }
+  //   }, 500);
+  // }
 
   // ========= begin:: functions send image ======= //
   // START LOAD IMAGE //

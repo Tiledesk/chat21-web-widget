@@ -59,7 +59,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 
 //THIRD-PART MODULES
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 // import { MomentModule } from 'ngx-moment';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { LoggerModule, NGXLogger, NgxLoggerLevel } from "ngx-logger";
@@ -204,6 +205,11 @@ export function conversationHandlerFactory(chat21Service: Chat21Service, appConf
   }
 }
 
+// ngx-translate Http loader factory
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
+
 export function typingFactory(chat21Service: Chat21Service, appConfig: AppConfigService) {
   const config = appConfig.getConfig()
   if (config.chatEngine === CHAT_ENGINE_MQTT) {
@@ -308,13 +314,13 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     FormsModule,
     ReactiveFormsModule,
     PickerModule,
-    TranslateModule.forRoot(//),
-    {
-    // loader: {
-    //   provide: TranslateLoader,
-    //   useFactory: (createTranslateLoader),
-    //   deps: [HttpClient]
-    // }
+    TranslateModule.forRoot({
+      defaultLanguage: 'en',
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (createTranslateLoader),
+        deps: [HttpClient]
+      }
     }),
     LoggerModule.forRoot({
       level: NgxLoggerLevel.DEBUG,
