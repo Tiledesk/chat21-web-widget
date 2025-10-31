@@ -6,6 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.7-rc8
+- **changed**: Updated the translations of the tooltips in the footer-component
+- **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
+
 # 5.1.7-rc7
 - **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
 
