@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.7-rc9
+- **removed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
 
 # 5.1.7-rc8
 - **changed**: Updated the translations of the tooltips in the footer-component
