@@ -52,4 +52,4 @@ src/widget-config-native-mqtt.json
 .angular/cache/
 
 
-deploy*.sh
+deploy_amazon_*.sh
