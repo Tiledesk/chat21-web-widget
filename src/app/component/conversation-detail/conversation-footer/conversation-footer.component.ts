@@ -82,7 +82,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   }
 
   showAlertEmoji: boolean = false
-  showAlertUrl: boolean = false;
 
   file_size_limit: number = 10;
   attachmentTooltip: string = '';
@@ -350,12 +349,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     this.onEmojiiPickerShow.emit(false)
     this.logger.log('[CONV-FOOTER] SEND MESSAGE: ', msg, type, metadata, additional_attributes);
 
-
-    let checkUrlDomain = this.checkForUrlDomain(this.textInputTextArea)
-    if(!checkUrlDomain){
-      return
-    }
-
     let check = this.checkForEmojii(this.textInputTextArea)
     if(!check){
       return;
@@ -568,22 +561,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     this.showAlertEmoji = false;
     return true
   }
-
-  checkForUrlDomain(text){
-    if(this.project && this.project.settings?.allowed_urls === true && this.project.settings?.allowed_urls_list){
-      this.showAlertUrl = !isAllowedUrlInText(text, this.project.settings?.allowed_urls_list);
-      if(this.showAlertUrl){
-        return false
-      }
-      this.showAlertUrl = false
-      return true
-    }
-    this.showAlertUrl = false
-    return true
-
-
-  }
-
   
 
   onTextAreaChange(){
@@ -592,7 +569,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
     //reset alert to defalt values before checking again
     this.showAlertEmoji= false;
-    this.showAlertUrl = false;
     let check = this.checkForEmojii(this.textInputTextArea)
     if(!check){
       return;
@@ -601,10 +577,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   onSendPressed(event) {
     this.logger.log('[CONV-FOOTER] onSendPressed:event', event);
-    if(this.showAlertEmoji || this.showAlertUrl){
+    event.preventDefault();
+    if(this.showAlertEmoji){
       return; 
     }
-    event.preventDefault();
     this.logger.log('[CONV-FOOTER] AppComponent::onSendPressed::isFilePendingToUpload:', this.isFilePendingToUpload);
     if (this.isFilePendingToUpload) {
       this.logger.log('[CONV-FOOTER] AppComponent::onSendPressed', 'is a file');
@@ -732,7 +708,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     const keyCode = event.which || event.keyCode;
     this.textInputTextArea = ((document.getElementById('chat21-main-message-context') as HTMLInputElement).value);
     if (keyCode === 13) { // ENTER pressed
-      if(this.showAlertEmoji || this.showAlertUrl){
+      if(this.showAlertEmoji){
         return; 
       }
       if (this.textInputTextArea && this.textInputTextArea.trim() !== '') {
