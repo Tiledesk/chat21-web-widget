@@ -234,9 +234,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'LABEL_START_NW_CONV',
       'CONTINUE',
       'EMOJI_NOT_ELLOWED',
-      'DOMAIN_NOT_ALLOWED',
-      'MAX_ATTACHMENT',
-      'MAX_ATTACHMENT_ERROR',
+      'ATTACHMENT',
       'EMOJI'
     ];
 
