@@ -108,6 +108,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   //network status
   isOnline: boolean = true;
+
+  loading: boolean = false;
   
   private logger: LoggerService = LoggerInstance.getInstance();
   constructor(
@@ -400,7 +402,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
         /** NETWORK STATUS */
-        this.listenToNetworkStatus()
+        this.listenToNetworkStatus();
+
+        /** SET LOADING TO FALSE */
+        this.loading = false;
 
     }
 
@@ -481,12 +486,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (autoStart) {
                     that.authenticate();
                 }
-            }else if(state && state === AUTH_STATE_CLOSE ){
+            } else if(state && state === AUTH_STATE_CLOSE ){
                 that.logger.info('[APP-COMP] CLOSE - CHANNEL CLOSED: ', this.chatManager);
                 if(this.g.recipientId){
                     this.chatManager.removeConversationHandler(this.g.recipientId)
                     this.g.recipientId = null;
                 }
+            }  
+            
+            if(!autoStart){
+                that.logger.info('[APP-COMP] OFFLINE - NO CURRENT USER AUTENTICATE: ');
+                this.g.setParameter('isShown', true, true);
             }
 
 
@@ -1600,11 +1610,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.f21_close();
     }
 
+
+    ricarica() {
+        // this.authenticate();
+        // this.initAll();
+        // this.loading = false;
+    }
     /**
      * LAUNCHER BUTTON:
      * onClick button open/close widget
      */
     onOpenCloseWidget($event) {
+        this.logger.debug('[APP-COMP] onOpenCloseWidget', $event, this.g.isLogged);
+        if(!this.g.isLogged){
+            this.loading = true;
+            this.authenticate();
+            this.initAll();
+        }
         this.g.setParameter('displayEyeCatcherCard', 'none');
         // const conversationActive: ConversationModel = JSON.parse(this.appStorageService.getItem('activeConversation'));
         const recipientId : string = this.appStorageService.getItem('recipientId')
@@ -1616,7 +1638,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.messagingAuthService.createCustomToken(this.g.tiledeskToken)
                 this.forceDisconnect = false;
             }
-
             if (!recipientId) {
                 if(this.g.singleConversation){
                     this.isOpenHome = false;
@@ -1655,7 +1676,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         //change status to the widget
         this.g.setIsOpen(!this.g.isOpen);
         this.appStorageService.setItem('isOpen', this.g.isOpen);
-
         // this.saveBadgeNewConverstionNumber();
     }
 
