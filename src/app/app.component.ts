@@ -315,8 +315,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.g.setIsOpen(isOpen)
                     this.appStorageService.setItem('isOpen', isOpen)
                 }
-                
-                
+
+                if(this.g.onPageChangeVisibilityDesktop === 'last'){
+                    this.logger.debug('[APP-COMP2] ------this.g.isOpen: ', this.g.isOpen)
+                    if(this.g.isOpen){
+                        this.g.autoStart = true;
+                    }
+                }
+
+
                 /**CHECK IF JWT IS IN URL PARAMETERS */
                 this.logger.debug('[APP-COMP] check if token is passed throw url: ', this.g.jwt);
                 if (this.g.jwt) {
@@ -406,6 +413,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
         /** SET LOADING TO FALSE */
         this.loading = false;
+        this.logger.debug('[APP-COMP-1] BBB - loading = false');
 
     }
 
@@ -480,7 +488,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 /** non sono loggato */
                 that.logger.info('[APP-COMP] OFFLINE - NO CURRENT USER AUTENTICATE: ');
                 that.g.setParameter('isLogged', false);
-                that.hideWidget();
+                // that.hideWidget();
                 // that.g.setParameter('isShown', false, true);
                 that.triggerOnAuthStateChanged(that.stateLoggedUser);
                 if (autoStart) {
@@ -493,12 +501,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.g.recipientId = null;
                 }
             }  
-            
+
+            /** DDP IF AUTOSTART IS FALSE, SHOW WIDGET */
             if(!autoStart){
                 that.logger.info('[APP-COMP] OFFLINE - NO CURRENT USER AUTENTICATE: ');
                 this.g.setParameter('isShown', true, true);
             }
-
 
         });
         this.subscriptions.push(subAuthStateChanged);
@@ -1611,11 +1619,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
 
-    ricarica() {
-        // this.authenticate();
-        // this.initAll();
-        // this.loading = false;
+    /** DDP reload widget */
+    async reloadWidget() {
+        this.loading = true;
+        this.logger.debug('[APP-COMP-1] AAA - hideWidget');
+        await Promise.all([
+            this.authenticate(),
+            this.initAll()
+        ]);
+        this.logger.debug('[APP-COMP-1] CCC - showWidget');
+        this.openCloseWidget();
+        this.loading = false;
     }
+
+
     /**
      * LAUNCHER BUTTON:
      * onClick button open/close widget
@@ -1624,14 +1641,21 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.logger.debug('[APP-COMP] onOpenCloseWidget', $event, this.g.isLogged);
         if(!this.g.isLogged){
             this.loading = true;
-            this.authenticate();
-            this.initAll();
+            this.reloadWidget();
+        } else {
+            this.openCloseWidget();
         }
+    }
+
+    /** DDP show widget */
+    openCloseWidget() {
+        
         this.g.setParameter('displayEyeCatcherCard', 'none');
         // const conversationActive: ConversationModel = JSON.parse(this.appStorageService.getItem('activeConversation'));
         const recipientId : string = this.appStorageService.getItem('recipientId')
         this.g.setParameter('recipientId', recipientId);
         this.logger.debug('[APP-COMP] openCloseWidget', recipientId, this.g.isOpen, this.g.startFromHome);
+
         if (this.g.isOpen === false) {
             if(this.forceDisconnect){
                 this.logger.log('[FORCE] onOpenCloseWidget --> reconnect', this.forceDisconnect)
@@ -1657,19 +1681,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.isOpenHome = false;
                 this.isOpenConversation = true;
                 this.startUI()
-                // this.isOpenSelectionDepartment = false;
             }
-            // if (!conversationActive && !this.g.startFromHome) {
-            //     this.isOpenHome = false;
-            //     this.isOpenConversation = true;
-            //     this.startNwConversation();
-            // } else if (conversationActive) {
-            //     this.isOpenHome = false;
-            //     this.isOpenConversation = true;
-            // }
-            // this.g.startFromHome = true;
             this.triggerOnOpenEvent();
-            
         } else {
             this.triggerOnCloseEvent();
         }
@@ -1678,6 +1691,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.appStorageService.setItem('isOpen', this.g.isOpen);
         // this.saveBadgeNewConverstionNumber();
     }
+
 
     /**
      * MODAL SELECTION DEPARTMENT:
