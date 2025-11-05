@@ -360,10 +360,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.subscriptions.push(obsSettingsService);
         this.globalSettingsService.initWidgetParamiters(this.g, this.el);
 
-        // SET AUDIO
-        this.audio = new Audio();
-        this.audio.src = this.g.baseLocation + URL_SOUND_LIST_CONVERSATION;
-        this.audio.load();
     }
 
     private initAll() {
@@ -456,7 +452,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 that.triggerOnAuthStateChanged(that.stateLoggedUser);
                 that.logger.debug('[APP-COMP]  1 - IMPOSTO STATO CONNESSO UTENTE ', autoStart);
                 
-                
+                this.initAudioNotification()
 
                 new Promise(async (resolve, reject)=> {
                     that.typingService.initialize(this.g.tenant);
@@ -859,7 +855,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.appStorageService.setItem('attributes', JSON.stringify(attributes));
         return attributes;
     }
-
+    
+    // SET AUDIO
+    private initAudioNotification(){
+        this.audio = new Audio();
+        this.audio.src = this.g.baseLocation + URL_SOUND_LIST_CONVERSATION;
+        this.audio.load();
+    }
 
     private async initConversationsHandler(tenant: string, senderId: string) {
         this.logger.debug('[APP-COMP] initialize: ListConversationsComponent');
