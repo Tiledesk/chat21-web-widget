@@ -4,7 +4,6 @@
   <div id="chat21-conversations"
     [ngClass]="{ 'swing-in-bottom-fwd' : g.isOpen === true, 'full-screen-mode' : g.fullscreenMode === true, 'c21-align-left' : g.align === 'left', 'c21-align-right' : g.align !== 'left'}"
     [ngStyle]="{ 'display': (g.isOpen == true)?'block':'none', 'bottom': g.marginY+'px', 'left':(g.align==='left')?g.marginX+'px':'', 'right':(g.align==='right')?g.marginX+'px':'' }">
-    <!--  -->
       
     <div *ngIf="isOpenHome && g.senderId" class="modal-page active">
       <chat-home 
@@ -147,5 +146,11 @@
     (onButtonClicked)="onOpenCloseWidget($event)">
   </chat-launcher-button>
 
-  <!-- <div *ngIf="loading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;"><button (click)="reloadWidget()">loading</button></div> -->
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="tiledesk-loading-overlay">
+    <div class="tiledesk-loading-spinner">
+      <div class="spinner-circle"></div>
+      <div class="loading-text">{{ translationMap.get('LABEL_LOADING') }}</div>
+    </div>
+  </div>
 </div>
