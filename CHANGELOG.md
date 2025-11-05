@@ -6,6 +6,18 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.7-rc9
+- **removed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
+
+# 5.1.7-rc8
+- **changed**: Updated the translations of the tooltips in the footer-component
+- **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
+
+# 5.1.7-rc7
+- **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
+
+# 5.1.7-rc6
+- **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
 
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES
@@ -26,8 +38,6 @@
 - **bug-fixed**: bug fixed button color
 - **bug-fixed**: bug fixed min-height message-receive
 - **bug-fixed**: bug-fixed css footer
-
-# 5.1.7
 
 # 5.1.6
 

@@ -108,9 +108,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   //network status
   isOnline: boolean = true;
-
   loading: boolean = false;
   
+  // alert error message 
+  isShowErrorMessage: boolean = false;
+  errorMessage: string = '';
+  errorKeyMessage: string = null;
+  errorParams: Record<string, any> = {};
+
   private logger: LoggerService = LoggerInstance.getInstance();
   constructor(
     private el: ElementRef,
@@ -2249,8 +2254,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private listenToNetworkStatus(){
-        window.addEventListener('online', () => this.isOnline = true);
-        window.addEventListener('offline', () =>  this.isOnline = false);
+        window.addEventListener('online', () => {
+            this.isShowErrorMessage = false;
+            this.errorMessage = null;
+            this.errorKeyMessage = null;
+        });
+        window.addEventListener('offline', () => {
+            this.isShowErrorMessage = true;
+            this.errorMessage = null;
+            this.errorKeyMessage = 'CONNECTION_NETWORK_ERROR';
+        });
+        window.addEventListener('tooltipErrorMessage', (event: CustomEvent) => {
+            // console.log('event-------------------> tooltipErrorMessage', event);
+            this.isShowErrorMessage = event.detail?.error;
+            this.errorKeyMessage = event.detail?.keyMessage || null;
+            this.errorMessage = event.detail?.message || null;
+            this.errorParams = event.detail?.params || {};                                        
+        });
     }
 
     // ========= begin:: DESTROY ALL SUBSCRIPTIONS ============//
