@@ -148,7 +148,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.logger.info('[APP-CONF]---------------- ngAfterViewInit: APP.COMPONENT ---------------- ')
         
         // Initialize translation map and enable buttons
-        const keys = ['MAXIMIZE', 'MINIMIZE', 'CENTER', 'BUTTON_CLOSE_TO_ICON'];
+        const keys = ['MAXIMIZE', 'MINIMIZE', 'CENTER', 'BUTTON_CLOSE_TO_ICON', 'LABEL_LOADING'];
         this.translationMap = this.translateService.translateLanguage(keys);
         this.isButtonsDisabled = false;
         
@@ -409,7 +409,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
         /** SET LOADING TO FALSE */
         this.loading = false;
-        this.logger.debug('[APP-COMP-1] BBB - loading = false');
+        this.logger.debug('[APP-COMP-1] BBB - loading  false');
 
     }
 
@@ -1622,16 +1622,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
     /** DDP reload widget */
-    async reloadWidget() {
-        this.loading = true;
-        this.logger.debug('[APP-COMP-1] AAA - hideWidget');
-        await Promise.all([
-            this.authenticate(),
-            this.initAll()
-        ]);
-        this.logger.debug('[APP-COMP-1] CCC - showWidget');
+    async reloadWidget() { 
         this.openCloseWidget();
-        this.loading = false;
+        this.logger.debug('[APP-COMP-1] AAA - hideWidget');
+        // setTimeout(() => {
+        await Promise.all([
+                this.authenticate(),
+                this.initAll()
+            ]);
+        // }, 20000);
+        this.logger.debug('[APP-COMP-1] CCC - showWidget');
     }
 
 
@@ -1642,7 +1642,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     onOpenCloseWidget($event) {
         this.logger.debug('[APP-COMP] onOpenCloseWidget', $event, this.g.isLogged);
         if(!this.g.isLogged){
-            this.loading = true;
             this.reloadWidget();
         } else {
             this.openCloseWidget();
@@ -1651,7 +1650,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /** DDP show widget */
     openCloseWidget() {
-        
         this.g.setParameter('displayEyeCatcherCard', 'none');
         // const conversationActive: ConversationModel = JSON.parse(this.appStorageService.getItem('activeConversation'));
         const recipientId : string = this.appStorageService.getItem('recipientId')
@@ -1691,6 +1689,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         //change status to the widget
         this.g.setIsOpen(!this.g.isOpen);
         this.appStorageService.setItem('isOpen', this.g.isOpen);
+        //show loading if widget is open and user is not logged
+        if(this.g.isOpen === true && !this.g.isLogged){
+            this.loading = true;
+        }
         // this.saveBadgeNewConverstionNumber();
     }
 
