@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.7-rc10
+- **changed**: load widget without authentication and display the balloon
+
 # 5.1.7-rc9
 - **removed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
 
