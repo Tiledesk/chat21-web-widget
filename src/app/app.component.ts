@@ -407,10 +407,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         /** NETWORK STATUS */
         this.listenToNetworkStatus();
 
-        /** SET LOADING TO FALSE */
-        this.loading = false;
-        this.logger.debug('[APP-COMP-1] BBB - loading  false');
-
     }
 
     // ========= begin:: SUBSCRIPTIONS ============//
@@ -478,6 +474,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     that.listenToWidgetClick()
                 }
 
+                /** DDP IF AUTOSTART IS FALSE, SHOW WIDGET */
+                if(!autoStart){
+                    that.logger.info('[APP-COMP] AUTOSTART IS FALSE AND LOGGED SUCCESSFULLY ');
+                    this.g.setParameter('isShown', true, true);
+                }
 
 
             } else if (state && state === AUTH_STATE_OFFLINE && !this.forceDisconnect) {
@@ -497,12 +498,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.g.recipientId = null;
                 }
             }  
-
-            /** DDP IF AUTOSTART IS FALSE, SHOW WIDGET */
-            if(!autoStart){
-                that.logger.info('[APP-COMP] OFFLINE - NO CURRENT USER AUTENTICATE: ');
-                this.g.setParameter('isShown', true, true);
-            }
 
         });
         this.subscriptions.push(subAuthStateChanged);
@@ -747,6 +742,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         //         divWidgetContainer.style.display = 'block';
         //     }
         // }, 500);
+
+        this.loading = false;
     }
     // ========= end:: START UI ============//
 
@@ -1625,12 +1622,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     async reloadWidget() { 
         this.openCloseWidget();
         this.logger.debug('[APP-COMP-1] AAA - hideWidget');
-        // setTimeout(() => {
         await Promise.all([
                 this.authenticate(),
-                this.initAll()
+                // this.initAll()
             ]);
-        // }, 20000);
         this.logger.debug('[APP-COMP-1] CCC - showWidget');
     }
 
