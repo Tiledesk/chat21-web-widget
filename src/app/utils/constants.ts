@@ -38,6 +38,9 @@ export const MAX_HEIGHT_TEXTAREA = 180;
 export const MAX_WIDTH_IMAGES = 230;
 export const MIN_WIDTH_IMAGES = 130;
 
+// FILE SIZE LIMIT
+export const FILE_SIZE_LIMIT = 10;
+
 
 // pagine
 export const PARENT_PAGE_USERS = 'users';
