@@ -368,6 +368,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private initAll() {
+        this.logger.debug('[APP-COMP] initAll : ');
         this.addComponentToWindow(this.ngZone);
 
         //INIT TRIGGER-HANDLER
@@ -411,10 +412,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
         /** NETWORK STATUS */
         this.listenToNetworkStatus();
-
-        /** SET LOADING TO FALSE */
-        this.loading = false;
-        this.logger.debug('[APP-COMP-1] BBB - loading  false');
 
     }
 
@@ -484,6 +481,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
 
 
+                /** DDP IF AUTOSTART IS FALSE, SHOW WIDGET */
+                if(!autoStart){
+                    that.logger.info('[APP-COMP] AUTOSTART IS FALSE AND LOGGED SUCCESSFULLY ');
+                    this.g.setParameter('isShown', true, true);
+                }
 
             } else if (state && state === AUTH_STATE_OFFLINE && !this.forceDisconnect) {
                 /** non sono loggato */
@@ -503,11 +505,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }  
 
-            /** DDP IF AUTOSTART IS FALSE, SHOW WIDGET */
-            if(!autoStart){
-                that.logger.info('[APP-COMP] OFFLINE - NO CURRENT USER AUTENTICATE: ');
-                this.g.setParameter('isShown', true, true);
-            }
+            
 
         });
         this.subscriptions.push(subAuthStateChanged);
@@ -752,6 +750,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         //         divWidgetContainer.style.display = 'block';
         //     }
         // }, 500);
+        this.loading = false;
     }
     // ========= end:: START UI ============//
 
@@ -1139,6 +1138,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
      * 3 - reinit widget
     */
     private reInit() {
+        this.logger.debug('[APP-COMP] reInit');
         // if (!firebase.auth().currentUser) {
         if (!this.tiledeskAuthService.getCurrentUser()) {
             this.logger.debug('[APP-COMP] reInit ma NON SONO LOGGATO!');
@@ -1172,7 +1172,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     */
     private restart() {
         // if (!firebase.auth().currentUser) {
-        
+        this.logger.debug('[APP-COMP] restart');
         this.hideWidget();
         // that.triggerOnAuthStateChanged(resp);
         if (this.g.autoStart !== false) {
@@ -1628,6 +1628,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /** DDP reload widget */
     async reloadWidget() { 
+        // prima deve aprire il widget e poi mostrare il loading
         this.openCloseWidget();
         this.logger.debug('[APP-COMP-1] AAA - hideWidget');
         // setTimeout(() => {
