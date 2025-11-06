@@ -6,6 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.7-rc11
+- **changed**: set default value autoStart false
+- **added**:added loading spinner
+
 # 5.1.7-rc10
 - **changed**: load widget without authentication and display the balloon
 
