@@ -480,6 +480,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     that.listenToWidgetClick()
                 }
 
+                /** DDP IF AUTOSTART IS FALSE, SHOW WIDGET */
+                if(!autoStart){
+                    that.logger.info('[APP-COMP] AUTOSTART IS FALSE AND LOGGED SUCCESSFULLY ');
+                    this.g.setParameter('isShown', true, true);
+                }
 
                 /** DDP IF AUTOSTART IS FALSE, SHOW WIDGET */
                 if(!autoStart){
@@ -504,8 +509,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.g.recipientId = null;
                 }
             }  
-
-            
 
         });
         this.subscriptions.push(subAuthStateChanged);
@@ -1631,12 +1634,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         // prima deve aprire il widget e poi mostrare il loading
         this.openCloseWidget();
         this.logger.debug('[APP-COMP-1] AAA - hideWidget');
-        // setTimeout(() => {
         await Promise.all([
                 this.authenticate(),
-                this.initAll()
+                // this.initAll()
             ]);
-        // }, 20000);
         this.logger.debug('[APP-COMP-1] CCC - showWidget');
     }
 
