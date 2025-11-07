@@ -493,7 +493,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 // that.hideWidget();
                 // that.g.setParameter('isShown', false, true);
                 that.triggerOnAuthStateChanged(that.stateLoggedUser);
-                if (autoStart) {
+                if (autoStart || this.g.onPageChangeVisibilityDesktop === 'open' || this.g.onPageChangeVisibilityMobile === 'open') {
                     that.authenticate();
                 }
             } else if(state && state === AUTH_STATE_CLOSE ){
