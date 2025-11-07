@@ -6,7 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# this branch
+# 5.1.7-rc13
+- **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
+
+# 5.1.7-rc12
 - **changed**: Set the default autoStart value to false
 - **added**: Added the open widget loading spinner
 - **changed**: Load the widget without authentication and display the speech bubble
