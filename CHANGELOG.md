@@ -7,6 +7,13 @@
 *Tiledesk SRL*
 
 
+
+# this branch
+- **changed**: Set the default autoStart value to false
+- **added**: Added the open widget loading spinner
+- **changed**: Load the widget without authentication and display the speech bubble
+
+
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES
 
