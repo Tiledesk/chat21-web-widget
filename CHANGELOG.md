@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.10
+- **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
 
 # 5.1.9
 - **changed**: Set the default autoStart value to false
@@ -23,14 +25,6 @@
 
 # 5.1.7-rc6
 - **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
-
-
-# this branch
-- **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
-- **changed**: Set the default autoStart value to false
-- **added**: Added the open widget loading spinner
-- **changed**: Load the widget without authentication and display the speech bubble
-
 
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES
