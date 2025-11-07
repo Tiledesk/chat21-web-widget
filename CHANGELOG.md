@@ -20,6 +20,7 @@
 
 
 # this branch
+- **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
 - **changed**: Set the default autoStart value to false
 - **added**: Added the open widget loading spinner
 - **changed**: Load the widget without authentication and display the speech bubble
