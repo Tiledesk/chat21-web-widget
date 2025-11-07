@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.7-rc14
+- **bug-fixed**: departmentId and departmentName is incorrect in attributes
+
 # 5.1.7-rc13
 - **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
 
