@@ -770,6 +770,11 @@ export function isAllowedUrlInText(text: string, allowedUrls: string[]) {
   return nonWhitelistedDomains.length === 0;
 }
 
+// function extractUrls(text: string): string[] {
+//   const urlRegex = /https?:\/\/[^\s]+/g;
+//   return text.match(urlRegex) || [];
+// }
+
 function extractUrls(text: string): string[] {
   // Rileva URL con o senza protocollo (http/https)
   const urlRegex = /\b((https?:\/\/)?(www\.)?[a-z0-9.-]+\.[a-z]{2,})(\/[^\s]*)?/gi;
@@ -782,7 +787,5 @@ function extractUrls(text: string): string[] {
     return url;
   });
 }
-
-
 
 

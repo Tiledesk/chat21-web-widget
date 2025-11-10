@@ -105,11 +105,11 @@
 
     <!-- 
     ****************************************
-    ******* MODALE OFFLINE NETWORK *********
+    ********* MODALE ERROR ALERT ***********
     ****************************************
     -->
-    <div *ngIf="g.isOpen && !isOnline" class="modal-page star-rating-widget active">
-      <chat-network-offline></chat-network-offline>
+    <div *ngIf="g.isOpen && isShowErrorMessage" class="modal-page star-rating-widget active">
+      <chat-error-alert [errorMessage]="errorMessage" [errorKeyMessage]="errorKeyMessage" [errorParams]="errorParams"></chat-error-alert>
     </div>
 
   </div>
@@ -145,5 +145,12 @@
   <chat-launcher-button *ngIf="isInitialized" 
     (onButtonClicked)="onOpenCloseWidget($event)">
   </chat-launcher-button>
-  
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="tiledesk-loading-overlay">
+    <div class="tiledesk-loading-spinner">
+      <div class="spinner-circle"></div>
+      <div class="loading-text">{{ translationMap.get('LABEL_LOADING') }}</div>
+    </div>
+  </div>
 </div>

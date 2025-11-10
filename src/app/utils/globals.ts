@@ -247,7 +247,7 @@ export class Globals {
 
     // ============ BEGIN: SET EXTERNAL PARAMETERS ==============//
     this.baseLocation = 'https://widget.tiledesk.com/v2';
-    this.autoStart = true;
+    this.autoStart = false;
     /** start Authentication and startUI */
     this.startHidden = false;
     /** show/hide all widget -> js call: showAllWidget */
