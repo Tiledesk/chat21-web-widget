@@ -386,6 +386,115 @@ export function convertColorToRGBA(color, opacity) {
   return result;
 }
 
+export function normalizeColorToHex(input?: string): string | null {
+  if (!input) {
+    return null;
+  }
+  let color = input.trim();
+  if (color.toLowerCase().includes('gradient')) {
+    const match = color.match(/(#[0-9a-fA-F]{3,8}|rgba?\([^)]*\))/);
+    if (!match) {
+      return null;
+    }
+    color = match[0];
+  }
+  if (color.startsWith('#')) {
+    const hex = color.slice(1);
+    if (hex.length === 3) {
+      return (
+        '#' +
+        hex
+          .split('')
+          .map((char) => char + char)
+          .join('')
+          .toLowerCase()
+      );
+    }
+    if (hex.length === 4) {
+      return (
+        '#' +
+        hex
+          .slice(0, 3)
+          .split('')
+          .map((char) => char + char)
+          .join('')
+          .toLowerCase()
+      );
+    }
+    if (hex.length === 6 || hex.length === 8) {
+      return '#' + hex.slice(0, 6).toLowerCase();
+    }
+    return null;
+  }
+  const rgbaMatch = color.match(/rgba?\s*\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)/i);
+  if (rgbaMatch) {
+    const [, r, g, b] = rgbaMatch;
+    const toHex = (value: number) => {
+      const clamped = Math.max(0, Math.min(255, Math.round(value)));
+      return clamped.toString(16).padStart(2, '0');
+    };
+    return `#${toHex(parseFloat(r))}${toHex(parseFloat(g))}${toHex(parseFloat(b))}`;
+  }
+  return null;
+}
+
+export function ensureAccessibleTextColor(backgroundColor?: string, fontColor?: string, minContrast = 4.5): string | null {
+  const bgHex = normalizeColorToHex(backgroundColor);
+  if (!bgHex) {
+    return normalizeColorToHex(fontColor);
+  }
+
+  const fontHex = normalizeColorToHex(fontColor);
+  if (fontHex && getContrastRatio(bgHex, fontHex) >= minContrast) {
+    return fontHex;
+  }
+
+  const blackContrast = getContrastRatio(bgHex, '#000000');
+  const whiteContrast = getContrastRatio(bgHex, '#ffffff');
+  return blackContrast >= whiteContrast ? '#000000' : '#ffffff';
+}
+
+function getContrastRatio(backgroundHex: string, foregroundHex: string): number {
+  const bg = hexToRgb(backgroundHex);
+  const fg = hexToRgb(foregroundHex);
+  if (!bg || !fg) {
+    return 1;
+  }
+  const l1 = relativeLuminance(bg);
+  const l2 = relativeLuminance(fg);
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function relativeLuminance({ r, g, b }: { r: number; g: number; b: number }): number {
+  const srgb = [r, g, b].map((value) => {
+    const channel = value / 255;
+    return channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+}
+
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  let value = hex.replace('#', '');
+  if (value.length === 3) {
+    value = value
+      .split('')
+      .map((char) => char + char)
+      .join('');
+  }
+  if (value.length !== 6) {
+    return null;
+  }
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+  if ([r, g, b].some((channel) => Number.isNaN(channel))) {
+    return null;
+  }
+  return { r, g, b };
+}
+
 
 // export function setLanguage(windowContext, translatorService) {
 //   if (translatorService.getBrowserLanguage(windowContext)) {
