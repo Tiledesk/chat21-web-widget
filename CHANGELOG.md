@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.7-rc15
+- **bug-fixed**: set the color of the buttons with visibility control to the font color
+
 # 5.1.7-rc14
 - **bug-fixed**: departmentId and departmentName is incorrect in attributes
 
@@ -36,9 +40,6 @@
 
 # 5.1.7-rc6
 - **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
-
-# this branch
-- **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
 
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES
