@@ -7,6 +7,9 @@
 *Tiledesk SRL*
 
 
+# this branch
+- **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
+
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES
 
