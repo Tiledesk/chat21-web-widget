@@ -550,7 +550,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   checkForEmojii(text){
     //remove emojii only if "emojii" exist and is set to false
-    if(this.project && this.project.settings?.allow_send_emoji === false){
+    if(!this.showEmojiFooterButton){
       this.showAlertEmoji = isEmoji(text);
       if(this.showAlertEmoji){
         return false
