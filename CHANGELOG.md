@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.12-ar
+- **bug-fixed**: check showEmojiFooterButton to enable/disable emojii
+- **bug-fixed**: markdown is fired as an emojii and blocked by isEmojii check fn
+
 # 5.1.11
 - **bug-fixed**: departmentId and departmentName is incorrect in attributes
 
