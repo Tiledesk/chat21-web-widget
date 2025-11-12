@@ -6,6 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.8-ar
+- **changed**: update emoji detection logic in conversation-footer and utils
+- **bug-fixed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
+- **bug-fixed**: departmentId and departmentName is incorrect in attributes
+
 # 5.1.8
 
 # 5.1.7-rc8
