@@ -401,9 +401,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.triggerLoadParamsEvent(); // first trigger
         //this.setAvailableAgentsStatus();
 
-
         /** NETWORK STATUS */
-        this.listenToNetworkStatus()
+        this.listenToNetworkStatus();
+
+        /** SET WIDGET SIZE */
+        this.onWidgetSizeChange(this.g.size);
 
     }
 
@@ -727,7 +729,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         // visualizzo l'iframe!!!
         this.triggerOnViewInit();
         this.g.setParentBodyStyleMobile(this.g.isOpen, this.g.isMobile);
-        this.g.setElementStyle(this.g.isOpen)
+        this.g.setElementStyle(this.g.isOpen);
         // this.triggerOnAuthStateChanged(true)
         // mostro il widget
         // setTimeout(() => {
