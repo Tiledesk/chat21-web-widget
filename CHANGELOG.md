@@ -7,6 +7,7 @@
 *Tiledesk SRL*
 
 # changes in the branch 
+- **bug-fixed**: set default widget size
 - **changed**: Updated the translations of the tooltips in the footer-component
 - **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
 
