@@ -145,5 +145,12 @@
   <chat-launcher-button *ngIf="isInitialized" 
     (onButtonClicked)="onOpenCloseWidget($event)">
   </chat-launcher-button>
-  
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="tiledesk-loading-overlay">
+    <div class="tiledesk-loading-spinner">
+      <div class="spinner-circle"></div>
+      <div class="loading-text">{{ translationMap.get('LABEL_LOADING') }}</div>
+    </div>
+  </div>
 </div>
