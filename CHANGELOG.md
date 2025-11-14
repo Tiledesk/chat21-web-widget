@@ -6,17 +6,16 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# changes in the branch 
+# 5.1.13 
 - **bug-fixed**: set default widget size
 - **changed**: Updated the translations of the tooltips in the footer-component
 - **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
+- **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
 
 # 5.1.12
 - **bug-fixed**: check showEmojiFooterButton to enable/disable emojii
 - **bug-fixed**: markdown is fired as an emojii and blocked by isEmojii check fn
 
-# this branch
-- **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
 
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES
