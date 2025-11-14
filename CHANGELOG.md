@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.12
+- **bug-fixed**: check showEmojiFooterButton to enable/disable emojii
+- **bug-fixed**: markdown is fired as an emojii and blocked by isEmojii check fn
 
 # this branch
 - **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
