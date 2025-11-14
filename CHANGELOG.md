@@ -6,13 +6,13 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# changes in the branch 
+# 5.1.9-ar
 - **bug-fixed**: set default widget size
+
+# 5.1.8-ar
 - **changed**: update emoji detection logic in conversation-footer and utils
 - **bug-fixed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
 - **bug-fixed**: departmentId and departmentName is incorrect in attributes
-
-# 5.1.8-ar
 
 # 5.1.8
 
