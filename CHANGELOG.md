@@ -6,13 +6,13 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# changes in the branch 
+# 5.1.9-ar
 - **bug-fixed**: set default widget size
+
+# 5.1.8-ar
 - **changed**: update emoji detection logic in conversation-footer and utils
 - **bug-fixed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
 - **bug-fixed**: departmentId and departmentName is incorrect in attributes
-
-# 5.1.8-ar
 
 # 5.1.8
 
@@ -25,6 +25,9 @@
 
 # 5.1.7-rc6
 - **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
+
+# this branch
+- **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
 
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES
