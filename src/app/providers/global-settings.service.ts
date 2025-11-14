@@ -1983,7 +1983,7 @@ export class GlobalSettingsService {
         this.logger.debug('[GLOBAL-SET] setDepartment > setAttributes: ', JSON.stringify(attributes));
         this.globals.setParameter('departmentSelected', department);
         this.globals.setParameter('attributes', attributes);
-        // this.appStorageService.setItem('attributes', JSON.stringify(attributes));
+        this.appStorageService.setItem('attributes', JSON.stringify(attributes));
 
     }
     // ========= end:: GET DEPARTEMENTS ============//
