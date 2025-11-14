@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.10-ar
+- **bug-fixed**: set callout with correct message
+
 # 5.1.9-ar
 - **bug-fixed**: set default widget size
 
