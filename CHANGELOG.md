@@ -33,6 +33,9 @@
 - **removed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
 
 # 5.1.7-rc8
+# changes in the branch 
+- **changed**: Load local translations before remote ones
+- **bug-fixed**: set default widget size
 - **changed**: Updated the translations of the tooltips in the footer-component
 - **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
 
