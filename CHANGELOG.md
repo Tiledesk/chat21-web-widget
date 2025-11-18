@@ -6,10 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# 5.1.14 
-- **changed**: Load local translations before remote ones
 
-# 5.1.13
+# 5.1.14 
+- **bug-fixed**: stopped loading local language json file
+
+# 5.1.13 
 - **bug-fixed**: set default widget size
 - **changed**: Updated the translations of the tooltips in the footer-component
 - **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
