@@ -10,7 +10,7 @@ import { TemplateBindingParseResult } from '@angular/compiler';
 import { AppStorageService } from '../../chat21-core/providers/abstract/app-storage.service';
 import { LoggerService } from '../../chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from '../../chat21-core/providers/logger/loggerInstance';
-import { invertColor, isAllowedUrlInText, isJsonArray } from '../../chat21-core/utils/utils';
+import { ensureAccessibleTextColor, invertColor, isAllowedUrlInText, isJsonArray, normalizeColorToHex } from '../../chat21-core/utils/utils';
 import { AppConfigService } from './app-config.service';
 
 
@@ -322,10 +322,14 @@ export class GlobalSettingsService {
         if (response !== null) {
             this.setVariablesFromService(this.globals, response);
         }
+        /** set button colors */
+        this.setButtonColors();
+
         this.setVariableFromStorage(this.globals);
         this.setVariablesFromSettings(this.globals);
         this.setVariablesFromAttributeHtml(this.globals, this.el);
         this.setVariablesFromUrlParameters(this.globals);
+        
         this.setDepartmentFromExternal();
         /** set color with gradient from theme's colors */
         this.globals.setColorWithGradient();
@@ -333,9 +337,17 @@ export class GlobalSettingsService {
         this.setCssIframe();
         /** set main style */
         this.setStyle();
-
-        this.logger.debug('[GLOBAL-SET] ***** END SET PARAMETERS *****');
         this.obsSettingsService.next(true);
+    }
+
+    private setButtonColors() {
+        this.logger.debug('[GLOBAL-SET] ***** END SET PARAMETERS *****', this.globals);
+        const bubbleSentBackground = this.globals?.bubbleSentBackground;
+        const buttonBackgroundColor = this.globals?.buttonBackgroundColor;
+
+            this.globals.buttonTextColor = ensureAccessibleTextColor(buttonBackgroundColor, bubbleSentBackground);    
+            this.globals.buttonHoverTextColor = ensureAccessibleTextColor(bubbleSentBackground, buttonBackgroundColor);    
+        
     }
 
     /**
