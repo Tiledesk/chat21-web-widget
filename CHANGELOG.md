@@ -7,6 +7,8 @@
 *Tiledesk SRL*
 
 
+# 5.1.7-rc16
+- **bug-fixed**: set default widget size
 
 # 5.1.7-rc15
 - **bug-fixed**: set the color of the buttons with visibility control to the font color
