@@ -7,6 +7,10 @@
 *Tiledesk SRL*
 
 
+
+# 5.1.15-rc1
+- **changed**:Load local translations before remote ones
+
 # 5.1.7-rc16
 - **bug-fixed**: set default widget size
 
