@@ -7,6 +7,9 @@
 *Tiledesk SRL*
 
 
+# 5.1.15 
+- **changed**: Load local translations before remote ones
+
 # 5.1.14 
 - **bug-fixed**: stopped loading local language json file
 
