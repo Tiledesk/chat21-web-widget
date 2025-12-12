@@ -766,7 +766,7 @@ th {
 .dropdown-menu>.disabled>a:focus,
 .dropdown-menu>.disabled>a:hover,
 .form-control,
-.navbar-toggle,
+.navbar-togglerr,
 .open .dropdown-toggle.btn-danger,
 .open .dropdown-toggle.btn-default,
 .open .dropdown-toggle.btn-info,
@@ -2422,7 +2422,6 @@ legend {
 
 label {
     display: inline-block;
-    margin-bottom: 5px
 }
 
 input[type=search] {
@@ -2434,7 +2433,7 @@ input[type=search] {
 
 input[type=checkbox],
 input[type=radio] {
-    margin: 4px 0 0;
+    margin: 0;
     margin-top: 1px\9;
     line-height: normal
 }
@@ -2839,7 +2838,7 @@ textarea.input-lg {
 .btn.active,
 .btn:active,
 .dropdown-toggle:focus,
-.navbar-toggle:focus,
+.navbar-togglerr:focus,
 .open>a {
     outline: 0
 }
@@ -3413,7 +3412,7 @@ input[type=submit].btn-block {
     content: "\e039"
 }
 
-.glyphicon-barcode:before {
+.glyphnavbar-toggler-iconcode:before {
     content: "\e040"
 }
 
@@ -4561,11 +4560,18 @@ textarea.input-group-sm>.input-group-btn>.btn {
 }
 
 .nav>li.disabled>a:focus,
-.nav>li.disabled>a:hover {
+.nav>li.disabled>a:hover,
+.navbar-nav>li.disabled>a:focus,
+.navbar-nav>li.disabled>a:hover{
     color: #999;
     text-decoration: none;
     cursor: not-allowed;
     background-color: transparent
+}
+
+.navbar-nav>li>a:hover,
+.navbar-nav>li>a:focus {
+    text-decoration: none;
 }
 
 .nav .open>a,
@@ -4855,7 +4861,7 @@ textarea.input-group-sm>.input-group-btn>.btn {
     }
 }
 
-.navbar-toggle {
+.navbar-toggler {
     position: relative;
     float: right;
     padding: 9px 10px;
@@ -4867,14 +4873,14 @@ textarea.input-group-sm>.input-group-btn>.btn {
     border-radius: 4px
 }
 
-.navbar-toggle .icon-bar {
+.navbar-toggler .navbar-toggler-icon {
     display: block;
     width: 22px;
     height: 2px;
     border-radius: 1px
 }
 
-.navbar-toggle .icon-bar+.icon-bar {
+.navbar-toggler .navbar-toggler-icon+.navbar-toggler-icon {
     margin-top: 4px
 }
 
@@ -4912,7 +4918,7 @@ textarea.input-group-sm>.input-group-btn>.btn {
 }
 
 @media (min-width:768px) {
-    .navbar-toggle {
+    .navbar-toggler {
         display: none
     }
     .navbar-nav {
@@ -5082,17 +5088,18 @@ textarea.input-group-sm>.input-group-btn>.btn {
     background-color: transparent
 }
 
-.navbar-default .navbar-toggle {
+.navbar-default .navbar-toggler {
     border-color: #ddd
 }
 
-.navbar-default .navbar-toggle:focus,
-.navbar-default .navbar-toggle:hover {
+.navbar-default .navbar-toggler:focus,
+.navbar-default .navbar-toggler:hover {
     background-color: #ddd
 }
 
-.navbar-default .navbar-toggle .icon-bar {
-    background-color: #888
+.navbar-default .navbar-toggler .navbar-toggler-icon {
+    background-color: #888;
+    
 }
 
 .navbar-default .navbar-collapse,
@@ -5176,17 +5183,18 @@ textarea.input-group-sm>.input-group-btn>.btn {
     background-color: transparent
 }
 
-.navbar-inverse .navbar-toggle {
+.navbar-inverse .navbar-toggler {
     border-color: #333
 }
 
-.navbar-inverse .navbar-toggle:focus,
-.navbar-inverse .navbar-toggle:hover {
+.navbar-inverse .navbar-toggler:focus,
+.navbar-inverse .navbar-toggler:hover {
     background-color: #333
 }
 
-.navbar-inverse .navbar-toggle .icon-bar {
-    background-color: #fff
+.navbar-inverse .navbar-toggler .navbar-toggler-icon {
+    background-color: #fff;
+    background-image: unset;
 }
 
 .navbar-inverse .navbar-collapse,
@@ -5397,7 +5405,8 @@ section {
 }
 
 .navbar-nav>li.sign-up a {
-    color: #fff!important
+    color: #fff!important;
+    cursor: pointer;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio:2),
