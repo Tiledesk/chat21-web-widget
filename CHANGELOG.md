@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.16
+- **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
 
 # 5.1.15 
 - **changed**: Load local translations before remote ones
