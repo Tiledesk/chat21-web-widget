@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.17
+- **bug-fixed**: set the maximum width on a message with iframe
+
 # 5.1.16
 - **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
 
