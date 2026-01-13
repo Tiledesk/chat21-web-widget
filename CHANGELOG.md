@@ -37,16 +37,12 @@
 # 5.1.7-rc8
 - **changed**: Updated the translations of the tooltips in the footer-component
 - **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
-<<<<<<< HEAD
-- **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
-=======
 
 # 5.1.7-rc7
 - **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
 
 # 5.1.7-rc6
 - **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
->>>>>>> master-pre
 
 # 5.1.12
 - **bug-fixed**: check showEmojiFooterButton to enable/disable emojii
