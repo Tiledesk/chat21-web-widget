@@ -1,3 +1,10 @@
+// Shadow DOM styles - isolati dal resto dell'applicazione
+:host {
+    display: block;
+    // Le variabili CSS custom properties possono attraversare il boundary del Shadow DOM
+    font-size: var(--font-size-bubble-message, 14px);
+}
+
 .message_innerhtml {
     margin: 0px;
     // padding: 0px 14px;
@@ -13,9 +20,9 @@
 }
 
 p {
-    font-size: var(--font-size-bubble-message);
+    font-size: inherit;
     margin: 0;
-    padding: 14px;
+    // padding: 14px;
     line-height: 1.4em;
     font-style: normal;
     letter-spacing: normal;
@@ -23,26 +30,80 @@ p {
     font-variant: normal;
     font-weight: 300;
     overflow: hidden;
-    
 }
 
-p ::ng-deep a {
+p ::ng-deep a,
+p a {
     word-break: break-word;
+    color: inherit; // Eredita il colore dal parent
+    text-decoration: underline;
 }
 
-p ::ng-deep p{
+p ::ng-deep p,
+p a:hover{
     margin-block-end: 0em;
-    margin-block-start: 0em
+    margin-block-start: 0em;
 }
 
-p ::ng-deep ol{
+p ol {
     margin-block-end: 0em;
     margin-block-start: 0em;
     padding-inline-start: 15px;
     
-    li:before {
-        content:"";
+    li::before {
+        content: "";
         font-size: 1.4em;
-        vertical-align:middle;
+        vertical-align: middle;
     }
+}
+
+// Stili aggiuntivi per elementi markdown comuni
+p h1, p h2, p h3, p h4, p h5, p h6 {
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+    font-weight: bold;
+    color: inherit; // Eredita il colore dal parent
+}
+
+p ul {
+    margin-block-end: 0em;
+    margin-block-start: 0em;
+    padding-inline-start: 15px;
+}
+
+p code {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+p pre {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 10px;
+    border-radius: 3px;
+    overflow-x: auto;
+}
+
+p blockquote {
+    border-left: 3px solid rgba(0, 0, 0, 0.1);
+    padding-left: 10px;
+    margin-left: 0;
+    font-style: italic;
+}
+
+p table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 10px 0;
+}
+
+p table td, p table th {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 8px;
+}
+
+p table th {
+    background-color: rgba(0, 0, 0, 0.05);
+    font-weight: bold;
 }
