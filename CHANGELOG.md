@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.11-ar
+- **changed**: Load local translations before remote ones
+
 # 5.1.10-ar
 - **bug-fixed**: set callout with correct message
 
