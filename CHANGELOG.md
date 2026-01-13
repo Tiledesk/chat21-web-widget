@@ -6,6 +6,31 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.15-rc3
+- **added**: Implemented Shadow DOM in the text component to isolate HTML and Markdown rendering in a safe and protected context
+- **changed**: Adapted text component styles to support Shadow DOM (removed ::ng-deep, added styles for common markdown elements)
+- **security**: HTML/Markdown content is now rendered in an isolated Shadow DOM, improving security and preventing interference with the rest of the application
+
+# 5.1.17
+- **bug-fixed**: set the maximum width on a message with iframe
+
+# 5.1.16
+- **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
+
+# 5.1.15-rc2
+- **bug-fixed**: Bug fix for ifame message width
+ 
+# 5.1.15-rc1
+- **changed**: Load local translations before remote ones
+
+# 5.1.15 
+- **changed**: Load local translations before remote ones
+
+# 5.1.14 
+- **bug-fixed**: stopped loading local language json file
+
+# 5.1.13 
+- **bug-fixed**: set default widget size
 
 # 5.1.7-rc16
 - **bug-fixed**: set default widget size
@@ -51,6 +76,11 @@
 - **bug-fixed**: check showEmojiFooterButton to enable/disable emojii
 - **bug-fixed**: markdown is fired as an emojii and blocked by isEmojii check fn
 
+# 5.1.7-rc7
+- **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
+
+# 5.1.7-rc6
+- **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
 
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES
@@ -71,6 +101,8 @@
 - **bug-fixed**: bug fixed button color
 - **bug-fixed**: bug fixed min-height message-receive
 - **bug-fixed**: bug-fixed css footer
+
+# 5.1.7
 
 # 5.1.6
 
