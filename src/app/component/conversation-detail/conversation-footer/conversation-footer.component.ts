@@ -87,6 +87,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
+  isErrorNetwork: boolean = false;
 
 
   convertColorToRGBA = convertColorToRGBA;

@@ -6,23 +6,47 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# 5.1.17
-- **bug-fixed**: set the maximum width on a message with iframe
 
-# 5.1.16
-- **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
-
-# 5.1.15 
-- **changed**: Load local translations before remote ones
-
-# 5.1.14 
-- **bug-fixed**: stopped loading local language json file
-
-# 5.1.13 
+# 5.1.7-rc16
 - **bug-fixed**: set default widget size
+
+# 5.1.7-rc15
+- **bug-fixed**: set the color of the buttons with visibility control to the font color
+
+# 5.1.7-rc14
+- **bug-fixed**: departmentId and departmentName is incorrect in attributes
+
+# 5.1.7-rc13
+- **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
+
+# 5.1.7-rc12
+- **changed**: Set the default autoStart value to false
+- **added**: Added the open widget loading spinner
+- **changed**: Load the widget without authentication and display the speech bubble
+
+# 5.1.7-rc11
+- **changed**: set default value autoStart false
+- **added**:added loading spinner
+
+# 5.1.7-rc10
+- **changed**: load widget without authentication and display the balloon
+
+# 5.1.7-rc9
+- **removed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
+
+# 5.1.7-rc8
 - **changed**: Updated the translations of the tooltips in the footer-component
 - **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
+<<<<<<< HEAD
 - **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
+=======
+
+# 5.1.7-rc7
+- **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
+
+# 5.1.7-rc6
+- **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
+>>>>>>> master-pre
 
 # 5.1.12
 - **bug-fixed**: check showEmojiFooterButton to enable/disable emojii
@@ -48,8 +72,6 @@
 - **bug-fixed**: bug fixed button color
 - **bug-fixed**: bug fixed min-height message-receive
 - **bug-fixed**: bug-fixed css footer
-
-# 5.1.7
 
 # 5.1.6
 
