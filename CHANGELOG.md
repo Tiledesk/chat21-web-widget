@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# this branc 
+- **changed**: Saved the widget's size state to local storage. The parameter flow is (default → storage → settings → URL)
+
 # 5.1.17
 - **bug-fixed**: set the maximum width on a message with iframe
 
