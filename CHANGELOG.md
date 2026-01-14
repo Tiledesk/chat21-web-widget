@@ -6,6 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.12-ar
+- **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
+- **bug-fixed**: set the maximum width on a message with iframe
+
+
 # 5.1.11-ar
 - **changed**: Load local translations before remote ones
 
