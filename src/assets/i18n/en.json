@@ -96,5 +96,6 @@
     "EMOJI_NOT_ELLOWED":"Emoji not allowed",
     "DOMAIN_NOT_ALLOWED":"URL contains a non-allowed domain",
     "MAX_ATTACHMENT": "Max allowed size {{FILE_SIZE_LIMIT}}Mb",
+    "MAX_ATTACHMENT_ERROR": "The file exceeds the maximum allowed size",
     "EMOJI": "Emoji"
 }
