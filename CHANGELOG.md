@@ -7,6 +7,7 @@
 *Tiledesk SRL*
 
 # 5.1.12-ar
+- **changed**: bootstrap version from 3 to 5.3.3
 - **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
 - **bug-fixed**: set the maximum width on a message with iframe
 
