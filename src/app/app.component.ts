@@ -405,9 +405,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.listenToNetworkStatus();
 
         /** SET WIDGET SIZE */
-        // Apply initial size without persisting it: persistence is reserved for user-driven changes
-        // so we don't overwrite a previously stored preference with the default on bootstrap.
-        this.onWidgetSizeChange(this.g.size, false);
+        this.onWidgetSizeChange(this.g.size);
 
     }
 
@@ -2040,75 +2038,27 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onWidgetSizeChange(mode: any, persist: boolean = true) {
-        const normalize = (val: any): 'min' | 'max' | 'top' => {
-            const v = (typeof val === 'string') ? val.toLowerCase().trim() : '';
-            return (v === 'min' || v === 'max' || v === 'top') ? (v as any) : 'min';
-        };
+    onWidgetSizeChange(mode: 'min' | 'max' | 'top') {
+        var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv');
+        this.g.size = mode;
+        let parent = tiledeskDiv.parentElement as HTMLElement | null;
 
-        const normalizedMode = normalize(mode);
-        const tiledeskDiv = this.g.windowContext?.window?.document?.getElementById('tiledeskdiv');
-        if (!tiledeskDiv) {
-            this.g.size = normalizedMode;
-            return;
-        }
-
-        this.g.size = normalizedMode;
-        const parent = tiledeskDiv.parentElement as HTMLElement | null;
-
-        if (normalizedMode === 'max') {
-            this.restoreInlinePositionStylesForPopup(tiledeskDiv);
+        if(mode==='max'){
             tiledeskDiv.classList.add('max-size')
             tiledeskDiv.classList.remove('min-size')
             tiledeskDiv.classList.remove('top-size')
-            if (parent) parent.classList.remove('overlay--popup');
-        } else if (normalizedMode === 'min') {
-            this.restoreInlinePositionStylesForPopup(tiledeskDiv);
+            if(parent) parent.classList.remove('overlay--popup');
+        } else if(mode==='min'){
             tiledeskDiv.classList.add('min-size')
             tiledeskDiv.classList.remove('max-size')
             tiledeskDiv.classList.remove('top-size')
-            if (parent) parent.classList.remove('overlay--popup');
-        } else if (normalizedMode === 'top') {
-            // Remove inline positioning so CSS can control centering without needing `!important`.
-            this.clearInlinePositionStylesForPopup(tiledeskDiv);
+            if(parent) parent.classList.remove('overlay--popup');
+        } else if(mode=== 'top'){
             tiledeskDiv.classList.add('top-size')
             tiledeskDiv.classList.remove('max-size')
             tiledeskDiv.classList.remove('min-size')
-            if (parent) parent.classList.add('overlay--popup');
+            if(parent) parent.classList.add('overlay--popup');
         }
-
-        // Persist only user-driven size changes; boot-time application passes persist=false.
-        if (persist) {
-            try {
-                this.appStorageService.setItem('size', normalizedMode);
-            } catch (e) {
-                this.logger.warn('[APP-COMP] onWidgetSizeChange > cannot persist size', e);
-            }
-        }
-    }
-
-    private clearInlinePositionStylesForPopup(tiledeskDiv: HTMLElement) {
-        // inline style overrides stylesheet; clear it when using top-size (centered overlay)
-        tiledeskDiv.style.removeProperty('left');
-        tiledeskDiv.style.removeProperty('right');
-        tiledeskDiv.style.removeProperty('top');
-        tiledeskDiv.style.removeProperty('bottom');
-    }
-
-    private restoreInlinePositionStylesForPopup(tiledeskDiv: HTMLElement) {
-        // restore standard widget positioning (align + margins) when leaving top-size
-        const marginX = this.g.isMobile ? this.g.mobileMarginX : this.g.marginX;
-        const marginY = this.g.isMobile ? this.g.mobileMarginY : this.g.marginY;
-
-        if (this.g.align === 'left') {
-            tiledeskDiv.style.left = marginX;
-            tiledeskDiv.style.removeProperty('right');
-        } else {
-            tiledeskDiv.style.right = marginX;
-            tiledeskDiv.style.removeProperty('left');
-        }
-        tiledeskDiv.style.bottom = marginY;
-        tiledeskDiv.style.removeProperty('top');
     }
 
     /**

@@ -192,9 +192,10 @@ textarea:active{
     max-height: 110px;
     min-height: auto;
     height: 20px;
-    padding: 0px 12px; //0px 40px 0px 70px; //NEW FOR EMOJII BUTTON
+    padding: 0px 12px;
     margin: 10px 0px 10px;
     border: none;
+    display: inline-block;
 
     &::-webkit-scrollbar {
         width: 6px;

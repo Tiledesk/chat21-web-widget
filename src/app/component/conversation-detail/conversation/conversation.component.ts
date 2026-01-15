@@ -1104,7 +1104,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
         if(parent) parent.classList.remove('overlay--popup');
     } else if(normalizedMode=== 'top'){
         // Remove inline positioning so CSS can control centering without needing `!important`.
-        this.clearInlinePositionStylesForPopup(tiledeskDiv);
+        // this.clearInlinePositionStylesForPopup(tiledeskDiv);
         tiledeskDiv.classList.add('top-size')
         tiledeskDiv.classList.remove('max-size')
         tiledeskDiv.classList.remove('min-size')
@@ -1122,12 +1122,12 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.isMenuShow = false;
   }
 
-  private clearInlinePositionStylesForPopup(tiledeskDiv: HTMLElement) {
-    tiledeskDiv.style.removeProperty('left');
-    tiledeskDiv.style.removeProperty('right');
-    tiledeskDiv.style.removeProperty('top');
-    tiledeskDiv.style.removeProperty('bottom');
-  }
+  // private clearInlinePositionStylesForPopup(tiledeskDiv: HTMLElement) {
+  //   tiledeskDiv.style.removeProperty('left');
+  //   tiledeskDiv.style.removeProperty('right');
+  //   tiledeskDiv.style.removeProperty('top');
+  //   tiledeskDiv.style.removeProperty('bottom');
+  // }
 
   private restoreInlinePositionStylesForPopup(tiledeskDiv: HTMLElement) {
     const marginX = this.g.isMobile ? this.g.mobileMarginX : this.g.marginX;

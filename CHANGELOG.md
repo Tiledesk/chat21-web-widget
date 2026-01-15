@@ -8,7 +8,11 @@
 
 
 # this branc 
-- **changed**: Saved the widget's size state to local storage. The parameter flow is (default → storage → settings → URL)
+- **bug fixed**: after sending a multi-line message, the text area remains open on multiple lines.
+- **bug fixed**: fixed widget animation when opened
+- **bug-fixed**: line-height in markdown
+- **bug-fixed**: when i move to top mode and close the widget, the balloon moves to the right
+- **changed**: saved the widget's size state to local storage. The parameter flow is (default → storage → settings → URL)
 
 # 5.1.17
 - **bug-fixed**: set the maximum width on a message with iframe
