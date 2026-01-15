@@ -17,6 +17,24 @@
     z-index: 3000000000; /*999999*/; 
 }
 
+#tiledesk-container.open {
+    /*
+    Fade-in the whole container when the "open" class is added.
+    This avoids the initial "flash" while the widget is still small.
+    */
+    opacity: 0;
+    animation: tiledesk-container-fade-in 400ms ease-in both;
+    will-change: opacity;
+}
+
+@keyframes tiledesk-container-fade-in {
+    /* Stay invisible, then become visible very fast at the end */
+    0% { opacity: 0; }
+    80% { opacity: 0.15; }
+    92% { opacity: 0.30; }
+    100% { opacity: 1; }
+}
+
 #tiledesk-container.open.overlay--popup {
     background-color: rgba(0, 0, 0, 0.4);
     position: fixed;
@@ -150,11 +168,6 @@
     box-shadow: rgba(0, 0, 0, 0.16) 0px 8px 36px 0px;
 } 
 */
-
-#tiledesk-container.open #tiledeskdiv {
-    /* transition: box-shadow 0.8s ease-in;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 8px 36px 0px; */
-}
 
 #tiledesk-container.closed #tiledeskiframe {
     display: block;
