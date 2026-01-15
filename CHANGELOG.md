@@ -14,6 +14,11 @@
 - **bug-fixed**: when i move to top mode and close the widget, the balloon moves to the right
 - **changed**: saved the widget's size state to local storage. The parameter flow is (default → storage → settings → URL)
 
+# 5.1.18
+- **added**: Implemented Shadow DOM in the text component to isolate HTML and Markdown rendering in a safe and protected context
+- **changed**: Adapted text component styles to support Shadow DOM (removed ::ng-deep, added styles for common markdown elements)
+- **security**: HTML/Markdown content is now rendered in an isolated Shadow DOM, improving security and preventing interference with the rest of the application
+
 # 5.1.17
 - **bug-fixed**: set the maximum width on a message with iframe
 

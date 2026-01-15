@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { marked } from 'marked';
 import { BLOCKED_DOMAINS } from '../utils/utils';
+import { htmlEntities } from 'src/chat21-core/utils/utils';
 
 
 @Pipe({
@@ -9,6 +10,16 @@ import { BLOCKED_DOMAINS } from '../utils/utils';
 
 export class MarkedPipe implements PipeTransform {
   transform(value: any): any {
+    // Security hardening:
+    // - Do not allow raw HTML from chat messages to be interpreted as DOM.
+    // - Keep Markdown working (marked will generate the needed HTML tags).
+    // This makes inputs like "<h1>Title</h1>" render exactly as typed.
+    const input =
+      typeof value === 'string'
+        ? value
+        : (value === null || value === undefined) ? '' : String(value);
+    const safeInput = htmlEntities(input);
+
     const renderer = new marked.Renderer();
     renderer.link = function({ href, title, tokens }) {
       // Normalizza l'href per evitare falsi negativi
@@ -74,15 +85,15 @@ export class MarkedPipe implements PipeTransform {
       breaks: true
     });
 
-    if (value && value.length > 0) {
+    if (safeInput && safeInput.length > 0) {
       try {
-        return marked.parse(value);
+        return marked.parse(safeInput);
       } catch (err) {
         console.error('Errore nel parsing markdown:', err);
-        return value;
+        return safeInput;
       }
     }
-    return value;
+    return safeInput;
   }
 
 
