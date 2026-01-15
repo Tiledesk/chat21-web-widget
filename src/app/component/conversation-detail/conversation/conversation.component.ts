@@ -298,6 +298,19 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       if (this.afConversationComponent) {
         this.afConversationComponent.nativeElement.focus();
       }
+      // Sync initial "scroll to bottom" button/badge visibility.
+      // The state is normally driven by real scroll events, but on first render
+      // we might not get any scroll event -> stale UI.
+      setTimeout(() => {
+        try {
+          const isAtBottom = this.conversationContent?.checkContentScrollPosition();
+          if (typeof isAtBottom === 'boolean') {
+            this.onScrollContent(isAtBottom);
+          }
+        } catch (e) {
+          this.logger.error('[CONV-COMP] initial scroll state sync error:', e);
+        }
+      }, 0);
       this.isButtonsDisabled = false;
     }, 300);
   }
