@@ -8,6 +8,7 @@
 
 
 # this branc 
+- **changed**: allow HTML code to be inserted into messages, but do not parse the code. Ensure coexistence with Markdown.
 - **bug fixed**: after sending a multi-line message, the text area remains open on multiple lines.
 - **bug fixed**: fixed widget animation when opened
 - **bug-fixed**: line-height in markdown
