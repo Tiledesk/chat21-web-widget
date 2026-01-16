@@ -7,7 +7,7 @@
 *Tiledesk SRL*
 
 
-# this branc 
+# 5.1.14-ar 
 - **bug fixed**: show bottom scroll button and unread message badge only when I'm not at the bottom of the page
 - **changed**: allow HTML code to be inserted into messages, but do not parse the code. Ensure coexistence with Markdown.
 - **bug fixed**: after sending a multi-line message, the text area remains open on multiple lines.
@@ -16,27 +16,42 @@
 - **bug-fixed**: when i move to top mode and close the widget, the balloon moves to the right
 - **changed**: saved the widget's size state to local storage. The parameter flow is (default → storage → settings → URL)
 
-# 5.1.18
+# 5.1.13-ar
 - **added**: Implemented Shadow DOM in the text component to isolate HTML and Markdown rendering in a safe and protected context
 - **changed**: Adapted text component styles to support Shadow DOM (removed ::ng-deep, added styles for common markdown elements)
 - **security**: HTML/Markdown content is now rendered in an isolated Shadow DOM, improving security and preventing interference with the rest of the application
-
-# 5.1.17
+- **changed**: bootstrap version from 3 to 5.3.3
+- **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
 - **bug-fixed**: set the maximum width on a message with iframe
 
-# 5.1.16
-- **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
 
-# 5.1.15 
+# 5.1.11-ar
 - **changed**: Load local translations before remote ones
 
-# 5.1.14 
-- **bug-fixed**: stopped loading local language json file
+# 5.1.10-ar
+- **bug-fixed**: set callout with correct message
 
-# 5.1.13 
+# 5.1.9-ar
 - **bug-fixed**: set default widget size
+
+# 5.1.8-ar
+- **changed**: update emoji detection logic in conversation-footer and utils
+- **bug-fixed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
+- **bug-fixed**: departmentId and departmentName is incorrect in attributes
+
+# 5.1.8
+
+# 5.1.7-rc8
 - **changed**: Updated the translations of the tooltips in the footer-component
 - **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
+
+# 5.1.7-rc7
+- **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
+
+# 5.1.7-rc6
+- **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
+
+# this branch
 - **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
 
 # 5.1.12
@@ -63,8 +78,6 @@
 - **bug-fixed**: bug fixed button color
 - **bug-fixed**: bug fixed min-height message-receive
 - **bug-fixed**: bug-fixed css footer
-
-# 5.1.7
 
 # 5.1.6
 

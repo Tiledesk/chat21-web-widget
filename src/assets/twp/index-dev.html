@@ -328,6 +328,32 @@
             outline: none !important;
         }
 
+        input[type="range"]::-webkit-slider-runnable-track {
+            /* height: 8px; */
+            background-color: #ffff;
+            /* border-radius: 4px; */
+        }
+
+        /* Filled track - Chrome/Safari/Edge */
+        input[type="range"] {
+            --value: calc((var(--val) - var(--min)) / (var(--max) - var(--min)) * 100%);
+            background: linear-gradient(
+                to right,
+                #0d6efd 0%,
+                #0d6efd var(--value),
+                #d1d1d1 var(--value),
+                #d1d1d1 100%
+            );
+            height: 8px;
+            border-radius: 4px;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            position: relative;
+            z-index: 2;
+        }
+
         button {
             padding: 5px 10px;
             border-radius: 0;
@@ -343,6 +369,9 @@
             margin: 10px 0px;
             overflow-x: hidden;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
         }
         div.row.section > div.row {
             margin-bottom: 8px
@@ -404,6 +433,7 @@
 
         div.method_container {
             margin-bottom: 20px;
+            flex-direction: row;
         }
 
         div.method_container .btn {
@@ -469,11 +499,12 @@
     <meta property="og:locale" content="en">
     
     <link rel="icon" type="image/png" href="./tiledesk_widget_files/logo-short.png">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome 7 (latest version) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" />
+    <!-- Bootstrap 5.3.3 -->
     <link href="./tiledesk_widget_files/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="./tiledesk_widget_files/website-poly.min.css" rel="stylesheet" type="text/css">
-    <script defer="" src="./tiledesk_widget_files/jquery.min.js"></script>
-    <script defer="" src="./tiledesk_widget_files/bootstrap.min.js"></script>
+    <script defer="" src="./tiledesk_widget_files/bootstrap.bundle.min.js"></script>
 
     <script type="application/javascript">
         window.tiledeskSettings = {
@@ -1714,29 +1745,29 @@
 
     <div id="wrapper">
         <header id="header">
-            <nav class="navbar navbar-inverse" role="navigation">
-                <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-inverse">
+                <div class="container-fluid">
+            
                     <div class="navbar-header">
-
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
+                        <img src="tiledesk_widget_files/logo.png" id="header-logo" alt="Logo">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                            <span class="navbar-toggler-icon"></span>
+                            <span class="navbar-toggler-icon"></span>
+                            <span class="navbar-toggler-icon"></span>
                         </button>
-                        <img src="tiledesk_widget_files/logo.png" id="header-logo">
                     </div>
-
-                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                        <ul class="nav navbar-nav docs">
-                            <li><a href="https://developer.tiledesk.com/widget/web-sdk" target="_blank">WEB SDK &amp; Docs<span></span></a></li>
-                            <li><a href="https://www.tiledesk.com/pricing-cloud/" target="_blank">Pricing<span></span></a></li>
-                            <li><a href="https://www.tiledesk.com/blog/" target="_blank">Blog<span></span></a></li>
+            
+                    <div class="collapse navbar-collapse" id="navbarContent">
+            
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0 docs">
+                            <li class="nav-item"><a class="nav-link" href="https://developer.tiledesk.com/widget/web-sdk">WEB SDK & Docs<span></span></a></li>
+                            <li class="nav-item"><a class="nav-link" href="https://www.tiledesk.com/pricing-cloud/">Pricing<span></span></a></li>
+                            <li class="nav-item"><a class="nav-link" href="https://www.tiledesk.com/blog/">Blog<span></span></a></li>
                         </ul>
-
-                        <ul class="nav navbar-nav navbar-right">
-                            <li class="sign-up"><a onclick="goToConsole()" href="#">GO TO CONSOLE</a></li>
-                        </ul>
+            
+                        <ul class="navbar-nav navbar-right">
+                            <li class="nav-item sign-up"><a class="nav-link" onclick="goToConsole()">GO TO CONSOLE</a></li>
+                        </ul>            
                     </div>
                 </div>
             </nav>
@@ -1766,7 +1797,7 @@
                         <div class="row" style="margin: 0">
                             <textarea class="form-control" id="jwt" placeholder="JWT ..." rows="4" cols="60"></textarea>
                         </div>
-                        <div class="row" style="text-align: right; margin:5px 0px">
+                        <div class="row" style="align-self: end; margin:5px 0px">
                             <button class="btn btn-light" onclick="onClickCustomToken()">Try authentication <i class="fa fa-sign-in" aria-hidden="true"></i></button>
                         </div>
 
@@ -1783,7 +1814,7 @@
                         <div class="row" style="margin: 0">
                             <textarea class="form-control" id="preChatForm" placeholder="Set preChatForm ..." rows="6" cols="60"></textarea>
                         </div>
-                        <div class="row" style="text-align: right; margin:5px 0px">
+                        <div class="row" style="align-self: end; margin:5px 0px">
                             <button class="btn btn-light" onclick="onClickCustomPreChatForm()">Test it! <i class="fa fa-sign-in" aria-hidden="true"></i></button>
                         </div>
 
@@ -1791,7 +1822,7 @@
                         <div class="row" style="margin: 0">
                             <textarea class="form-control" id="preChatFormGet" placeholder="Get preChatForm JSON..." rows="6" cols="60"></textarea>
                         </div>
-                        <div class="row" style="text-align: right; margin:5px 0px">
+                        <div class="row" style="align-self: end; margin:5px 0px">
                             <button class="btn btn-light" onclick="onClickGetPreChatForm()">Get Form <i class="fa-regular fa-sticky-note" aria-hidden="true"></i></button>
                         </div>
 
@@ -1803,7 +1834,7 @@
                         <div class="row" style="margin: 0">
                             <textarea class="form-control" id="request_id" placeholder="support-group-UUID" rows="1" cols="60"></textarea>
                         </div>
-                        <div class="row" style="text-align: right; margin:5px 0px">
+                        <div class="row" style="align-self: end; margin:5px 0px">
                             <button class="btn btn-light" onclick="onClickOpenConversationById()">Open conversation <i class="fa-regular fa-comment" aria-hidden="true"></i></button>
                         </div>
                     </div>
@@ -1887,8 +1918,8 @@
                             <div class="col-md-5">
                                 <input class="form-check-input" type="radio" name="disconnectTime" value="-1"><label class="form-check-label" for="preChatForm">-1(disabled)</label>
                                 <div class="formElement" >
-                                    <div class="col-form-label" style="width: 90px">Time (s):</div>
-                                    <input class="form-control col-sm-2" type="text" id="disconnectTimeText" name="disconnectTime" placeholder="Ex. 10">
+                                    <div class="col-form-label" style="width: 20%">Time (s):</div>
+                                    <input class="form-control col-sm-2" style="width: 80%" type="text" id="disconnectTimeText" name="disconnectTime" placeholder="Ex. 10">
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -1931,8 +1962,8 @@
                                 <input class="form-check-input" type="radio" name="calloutTimer" value="-1"><label class="form-check-label" for="preChatForm">-1(disabled)</label>
                                 <input class="form-check-input" type="radio" name="calloutTimer" value="0"><label class="form-check-label" for="preChatForm">0(Immediatly)</label>
                                 <div class="formElement" >
-                                    <div class="col-form-label" style="width: 90px">Time (s):</div>
-                                    <input class="form-control col-sm-2" type="text" id="calloutTimerText" name="calloutTimer" placeholder="Ex. 10">
+                                    <div class="col-form-label" style="width: 20%">Time (s):</div>
+                                    <input class="form-control col-sm-2" style="width: 80%" type="text" id="calloutTimerText" name="calloutTimer" placeholder="Ex. 10">
                                 </div>
                             </div>
                             <div class="col-md-2">
