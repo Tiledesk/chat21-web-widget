@@ -7,7 +7,7 @@
 *Tiledesk SRL*
 
 
-# this branc 
+# 5.1.18 
 - **bug fixed**: show bottom scroll button and unread message badge only when I'm not at the bottom of the page
 - **changed**: allow HTML code to be inserted into messages, but do not parse the code. Ensure coexistence with Markdown.
 - **bug fixed**: after sending a multi-line message, the text area remains open on multiple lines.
