@@ -447,13 +447,11 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   }
 
   private restoreTextArea() {
-    // that.logger.log('[CONV-FOOTER] AppComponent:restoreTextArea::restoreTextArea');
-    this.resizeInputField();
     const textArea = (<HTMLInputElement>document.getElementById('chat21-main-message-context'));
-    this.textInputTextArea = ''; // clear the textarea
+    this.textInputTextArea = '';
     if (textArea) {
-      textArea.value = '';  // clear the textarea
-      textArea.placeholder = this.translationMap.get('LABEL_PLACEHOLDER');  // restore the placholder
+      textArea.value = '';
+      textArea.placeholder = this.translationMap.get('LABEL_PLACEHOLDER');
       if(textArea.style.height > this.HEIGHT_DEFAULT){
         document.getElementById('chat21-button-send').style.removeProperty('right')
       }
@@ -461,6 +459,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     }
     this.setFocusOnId('chat21-main-message-context');
     this.isStopRec= false;
+    this.resizeInputField();
   }
 
   /**

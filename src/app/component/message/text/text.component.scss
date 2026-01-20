@@ -65,6 +65,10 @@ p h1, p h2, p h3, p h4, p h5, p h6 {
     color: inherit; // Eredita il colore dal parent
 }
 
+.message_innerhtml.marked h1 {
+    line-height: normal;
+}
+
 p ul {
     margin-block-end: 0em;
     margin-block-start: 0em;

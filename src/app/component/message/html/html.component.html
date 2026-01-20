@@ -1,1 +1,5 @@
-<div id="htmlCode" #htmlCode [innerHTML]="htmlText | safeHtml"></div>
+<!--
+  Security: render HTML messages as plain text (no DOM interpretation).
+  This preserves the exact input (e.g. "<h1>...</h1>") including line breaks.
+-->
+<pre id="htmlCode" #htmlCode [textContent]="htmlText"></pre>

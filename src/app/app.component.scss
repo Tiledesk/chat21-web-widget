@@ -488,14 +488,11 @@ chat-root {
             right: 0px;
             top: 0px;
             bottom: 0px;
-            // border-radius: 16px;
             overflow: hidden;
             background-color: transparent;
-            // border: 1px solid #cccccc; //NEW GAB
             margin: 0px;
             padding: 0px;
-            // box-shadow:rgba(0, 0, 0, 0.16) 0px 8px 36px 0px; //NEW GAB
-
+            opacity: 0;
             &.full-screen-mode {
                 width: 100%;
                 height: 100%;
