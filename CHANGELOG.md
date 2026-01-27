@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.20-rc1
+- **changed**: API for upload a file/iamges
 
 # 5.1.19 
 
