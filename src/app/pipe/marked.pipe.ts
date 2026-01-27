@@ -18,7 +18,23 @@ export class MarkedPipe implements PipeTransform {
       typeof value === 'string'
         ? value
         : (value === null || value === undefined) ? '' : String(value);
-    const safeInput = htmlEntities(input);
+    
+    // Converti i \n letterali in newline reali prima di htmlEntities
+    // così il markdown con breaks: true li renderizzerà correttamente
+    const inputWithNewlines = input.replace(/\\n/g, '\n');
+    
+    // Proteggi i > usati per i blockquote markdown (all'inizio di riga)
+    // sostituendoli temporaneamente con un placeholder
+    const BLOCKQUOTE_PLACEHOLDER = '___MARKDOWN_BLOCKQUOTE___';
+    const protectedInput = inputWithNewlines.replace(/^(\s*)>/gm, (match, spaces) => {
+      return spaces + BLOCKQUOTE_PLACEHOLDER;
+    });
+    
+    // Applica htmlEntities (che codificherà tutti gli altri >)
+    let safeInput = htmlEntities(protectedInput);
+    
+    // Ripristina i > dei blockquote
+    safeInput = safeInput.replace(new RegExp(BLOCKQUOTE_PLACEHOLDER, 'g'), '>');
 
     const renderer = new marked.Renderer();
     renderer.link = function({ href, title, tokens }) {
