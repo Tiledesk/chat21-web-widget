@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.20-rc2
+- **changed**: API for upload a file/iamges
+- **changed**: marked pipe do not render /n 
+
 # 5.1.20-rc1
 - **changed**: API for upload a file/iamges
 
