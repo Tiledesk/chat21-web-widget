@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.20
+- **changed**: marked pipe do not render /n 
 
 # 5.1.19 
 - **bug fixed**: show bottom scroll button and unread message badge only when I'm not at the bottom of the page
