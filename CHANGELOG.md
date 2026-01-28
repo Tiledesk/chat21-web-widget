@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.21 
+- **bug fixed**: saved the widget's size state to local storage (in HP conversations)
+
 # 5.1.20
 - **changed**: marked pipe do not render /n 
 

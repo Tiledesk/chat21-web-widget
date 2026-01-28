@@ -2038,26 +2038,49 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onWidgetSizeChange(mode: 'min' | 'max' | 'top') {
-        var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv');
-        this.g.size = mode;
+    onWidgetSizeChange(mode: any) {
+        const normalize = (val: any): 'min' | 'max' | 'top' => {
+            const v = (typeof val === 'string') ? val.toLowerCase().trim() : '';
+            return (v === 'min' || v === 'max' || v === 'top') ? (v as any) : 'min';
+        };
+        const normalizedMode = normalize(mode);
+
+        const tiledeskDiv = this.g.windowContext?.window?.document?.getElementById('tiledeskdiv');
+        this.g.size = normalizedMode;
+        if (!tiledeskDiv) {
+            // Widget container not yet available; still persist choice for later restores.
+            try {
+                this.appStorageService.setItem('size', normalizedMode);
+            } catch (e) {
+                this.logger.warn('[APP-COMP] onWidgetSizeChange > cannot persist size', e);
+            }
+            return;
+        }
+
         let parent = tiledeskDiv.parentElement as HTMLElement | null;
 
-        if(mode==='max'){
+        if(normalizedMode==='max'){
             tiledeskDiv.classList.add('max-size')
             tiledeskDiv.classList.remove('min-size')
             tiledeskDiv.classList.remove('top-size')
             if(parent) parent.classList.remove('overlay--popup');
-        } else if(mode==='min'){
+        } else if(normalizedMode==='min'){
             tiledeskDiv.classList.add('min-size')
             tiledeskDiv.classList.remove('max-size')
             tiledeskDiv.classList.remove('top-size')
             if(parent) parent.classList.remove('overlay--popup');
-        } else if(mode=== 'top'){
+        } else if(normalizedMode=== 'top'){
             tiledeskDiv.classList.add('top-size')
             tiledeskDiv.classList.remove('max-size')
             tiledeskDiv.classList.remove('min-size')
             if(parent) parent.classList.add('overlay--popup');
+        }
+
+        // Persist size changes also from the home (conversations list) view.
+        try {
+            this.appStorageService.setItem('size', normalizedMode);
+        } catch (e) {
+            this.logger.warn('[APP-COMP] onWidgetSizeChange > cannot persist size', e);
         }
     }
 
