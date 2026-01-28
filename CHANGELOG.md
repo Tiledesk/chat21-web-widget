@@ -6,9 +6,19 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-
-# this branc 
+# 5.1.20-rc3 
 - **bug fixed**: saved the widget's size state to local storage (in HP conversations)
+
+# 5.1.20-rc2
+- **changed**: API for upload a file/iamges
+- **changed**: marked pipe do not render /n 
+
+# 5.1.20-rc1
+- **changed**: API for upload a file/iamges
+
+# 5.1.19 
+
+# 5.1.19-rc1 
 - **bug fixed**: show bottom scroll button and unread message badge only when I'm not at the bottom of the page
 - **changed**: allow HTML code to be inserted into messages, but do not parse the code. Ensure coexistence with Markdown.
 - **bug fixed**: after sending a multi-line message, the text area remains open on multiple lines.

@@ -266,7 +266,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.tiledeskRequestsService.initialize(this.appConfigService.getConfig().apiUrl, this.g.projectid)
         this.messagingAuthService.initialize();
         this.chatManager.initialize();
-        this.uploadService.initialize();
+        this.uploadService.initialize(this.g.projectid);
     }
 
 
