@@ -218,63 +218,138 @@ function loadIframe(tiledeskScriptBaseLocation) {
     iDiv.appendChild(ifrm);
 
     // Funzione helper per caricare iframe con fallback per compatibilità CSP (Wix, etc.)
-    // Usa Blob URL come metodo principale (più compatibile con CSP) con fallback a srcdoc e document.write
+    // Usa srcdoc come metodo principale, con fallback a Blob URL se bloccato da CSP
     function loadIframeContent(iframe, htmlContent, baseLocation) {
         var isLocalhost = baseLocation.includes('localhost');
         var blobUrl = null;
+        var srcdocCheckTimeout = null;
+        var srcdocWorked = false;
         
-        // Metodo 1: Blob URL (più compatibile con CSP di Wix e altre piattaforme)
-        // Usa Blob URL come metodo principale perché è meno spesso bloccato da CSP rispetto a srcdoc
-        if (typeof Blob !== 'undefined' && typeof URL !== 'undefined' && URL.createObjectURL) {
-            try {
-                var blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-                blobUrl = URL.createObjectURL(blob);
-                iframe.src = blobUrl;
-                
-                // Cleanup del blob URL dopo il caricamento per liberare memoria
-                var originalOnload = iframe.onload;
-                iframe.onload = function() {
-                    // Revoca il blob URL dopo un delay per assicurarsi che tutto sia caricato
-                    setTimeout(function() {
-                        if (blobUrl) {
-                            try {
-                                URL.revokeObjectURL(blobUrl);
-                                blobUrl = null;
-                            } catch(e) {
-                                console.warn('Error revoking blob URL:', e);
-                            }
-                        }
-                    }, 1000);
-                    if (originalOnload) originalOnload.call(this);
-                };
-                return; // Blob URL impostato con successo
-            } catch(e) {
-                console.warn('Blob URL not available, trying srcdoc:', e);
+        // Funzione helper per caricare con Blob URL (fallback quando srcdoc è bloccato)
+        function loadWithBlobUrl() {
+            // Cancella il timeout di controllo srcdoc se ancora attivo
+            if (srcdocCheckTimeout) {
+                clearTimeout(srcdocCheckTimeout);
+                srcdocCheckTimeout = null;
             }
+            
+            if (typeof Blob !== 'undefined' && typeof URL !== 'undefined' && URL.createObjectURL) {
+                try {
+                    // Pulisci srcdoc se era stato impostato
+                    if ('srcdoc' in iframe && iframe.srcdoc) {
+                        iframe.srcdoc = '';
+                    }
+                    
+                    var blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+                    blobUrl = URL.createObjectURL(blob);
+                    iframe.src = blobUrl;
+                    
+                    // Cleanup del blob URL dopo il caricamento per liberare memoria
+                    var originalOnload = iframe.onload;
+                    iframe.onload = function() {
+                        setTimeout(function() {
+                            if (blobUrl) {
+                                try {
+                                    URL.revokeObjectURL(blobUrl);
+                                    blobUrl = null;
+                                } catch(e) {
+                                    console.warn('Error revoking blob URL:', e);
+                                }
+                            }
+                        }, 1000);
+                        if (originalOnload) originalOnload.call(this);
+                    };
+                    return true; // Blob URL impostato con successo
+                } catch(e) {
+                    console.warn('Blob URL failed, trying document.write:', e);
+                }
+            }
+            
+            // Fallback finale: document.write
+            if (isLocalhost || (iframe.contentWindow && iframe.contentWindow.document)) {
+                try {
+                    iframe.contentWindow.document.open();
+                    iframe.contentWindow.document.write(htmlContent);
+                    iframe.contentWindow.document.close();
+                    return true;
+                } catch(e) {
+                    console.error('All iframe loading methods failed:', e);
+                }
+            }
+            return false;
         }
         
-        // Metodo 2: srcdoc (fallback se Blob URL non disponibile)
+        // Metodo 1: srcdoc (metodo principale, preferito per browser moderni)
         // Skip per localhost (usa document.write per compatibilità sviluppo)
         if (!isLocalhost && 'srcdoc' in iframe) {
             try {
                 iframe.srcdoc = htmlContent;
-                return; // srcdoc impostato
+                
+                // Verifica se srcdoc è stato bloccato da CSP
+                // Se bloccato, il browser non caricherà il contenuto ma non lancerà eccezione
+                // Usiamo un timeout per rilevare se dobbiamo fare fallback
+                srcdocCheckTimeout = setTimeout(function() {
+                    if (srcdocWorked) {
+                        return; // srcdoc ha funzionato, non fare nulla
+                    }
+                    
+                    // Se dopo 500ms l'iframe non si è ancora caricato, probabilmente è bloccato
+                    try {
+                        if (iframe.contentWindow && iframe.contentWindow.document) {
+                            var docState = iframe.contentWindow.document.readyState;
+                            // Se il documento è ancora "uninitialized", srcdoc è probabilmente bloccato
+                            if (docState === 'uninitialized') {
+                                console.warn('srcdoc appears blocked by CSP, using Blob URL fallback');
+                                loadWithBlobUrl();
+                            }
+                        } else {
+                            // Se non possiamo accedere al contentWindow, potrebbe essere bloccato
+                            console.warn('srcdoc may be blocked, using Blob URL fallback');
+                            loadWithBlobUrl();
+                        }
+                    } catch(e) {
+                        // Cross-origin o altro errore - proviamo Blob URL
+                        console.warn('srcdoc check failed, using Blob URL fallback:', e);
+                        loadWithBlobUrl();
+                    }
+                }, 500);
+                
+                // Se l'iframe si carica correttamente, cancella il timeout
+                var originalOnload = iframe.onload;
+                iframe.onload = function() {
+                    srcdocWorked = true;
+                    if (srcdocCheckTimeout) {
+                        clearTimeout(srcdocCheckTimeout);
+                        srcdocCheckTimeout = null;
+                    }
+                    if (originalOnload) originalOnload.call(this);
+                };
+                
+                // Se l'iframe è già caricato, cancella il timeout
+                try {
+                    if (iframe.contentWindow && iframe.contentWindow.document && 
+                        iframe.contentWindow.document.readyState !== 'uninitialized') {
+                        srcdocWorked = true;
+                        if (srcdocCheckTimeout) {
+                            clearTimeout(srcdocCheckTimeout);
+                            srcdocCheckTimeout = null;
+                        }
+                    }
+                } catch(e) {
+                    // Cross-origin, è normale - il timeout controllerà se è bloccato
+                }
+                
+                // srcdoc è stato impostato, il timeout gestirà il fallback se necessario
+                return;
             } catch(e) {
-                console.warn('srcdoc not allowed, trying document.write:', e);
+                console.warn('srcdoc not allowed, using Blob URL fallback:', e);
+                loadWithBlobUrl();
+                return;
             }
         }
         
-        // Metodo 3: document.write (fallback finale, funziona su localhost e browser vecchi)
-        if (isLocalhost || (iframe.contentWindow && iframe.contentWindow.document)) {
-            try {
-                iframe.contentWindow.document.open();
-                iframe.contentWindow.document.write(htmlContent);
-                iframe.contentWindow.document.close();
-                return; // document.write completato
-            } catch(e) {
-                console.error('All iframe loading methods failed:', e);
-            }
-        }
+        // Se srcdoc non è disponibile o siamo su localhost, usa Blob URL o document.write
+        loadWithBlobUrl();
     }
     
     // Carica il contenuto dell'iframe con fallback automatico
