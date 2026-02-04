@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.22-rc2
+- **changed**: Changed the priority on the loading method in Launch.js
+
 # 5.1.22-rc1
 - **changed**: Launch.js update for Wix and Shopify removed scrdoc
 
