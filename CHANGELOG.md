@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.22-rc1
+- **changed**: Launch.js update for Wix and Shopify removed scrdoc
 
 # 5.1.21 
 - **bug fixed**: saved the widget's size state to local storage (in HP conversations)
