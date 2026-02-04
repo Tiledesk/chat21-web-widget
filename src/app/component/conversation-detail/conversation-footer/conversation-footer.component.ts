@@ -87,6 +87,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
+  isErrorNetwork: boolean = false;
 
 
   convertColorToRGBA = convertColorToRGBA;
@@ -316,7 +317,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       // });
       // this.resetLoadImage();
       
-      this.uploadService.upload(this.senderId, currentUpload).then(data => {
+      this.uploadService.uploadFile(this.senderId, currentUpload).then(data => {
         that.logger.log('[CONV-FOOTER] AppComponent::uploadSingle:: downloadURL', data);
         that.logger.log(`[CONV-FOOTER] Successfully uploaded file and got download link - ${data}`);
 
