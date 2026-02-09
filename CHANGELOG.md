@@ -6,6 +6,14 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.22
+- **changed**: Updated Launch.js for Wix and Shopify by bypassing scrdoc
+
+# 5.1.21 
+- **bug fixed**: saved the widget's size state to local storage (in HP conversations)
+
+# 5.1.20
+- **changed**: marked pipe do not render /n 
 
 # 5.1.19 
 - **bug fixed**: show bottom scroll button and unread message badge only when I'm not at the bottom of the page
