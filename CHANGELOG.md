@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.23
+- **changed**: API for upload a file/iamges
+
 # 5.1.22
 - **changed**: Updated Launch.js for Wix and Shopify by bypassing scrdoc
 
