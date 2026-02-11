@@ -3,9 +3,14 @@
     <button tabindex="1103" class="c21-item-conversation" (click)="openConversationByID(conversation)">
       <div class="c21-body-conv">
         <div class="c21-left-conv">
-          <div class="c21-ball" [ngStyle]="{'background': 'linear-gradient(rgb(255,255,255) -125%, ' + conversation.color + ')'}">
-            <span class="c21-ball-label">{{conversation?.avatar}}</span>
-            <div *ngIf="conversation?.image" #avatarImage class="c21-avatar-image" [style.background-image]="'url(' + conversation.image + ')'"></div>
+          <div class="c21-ball" [ngStyle]="{'background': isImageLoaded(conversation) ? 'transparent' : 'linear-gradient(rgb(255,255,255) -125%, ' + conversation.color + ')'}">
+            <span *ngIf="!isImageLoaded(conversation)" class="c21-ball-label">{{conversation?.avatar}}</span>
+            <img *ngIf="conversation?.image" 
+                 [src]="conversation.image" 
+                 style="display: none;"
+                 (load)="onImageLoad(conversation)"
+                 (error)="onImageError(conversation)">
+            <div *ngIf="isImageLoaded(conversation)" #avatarImage class="c21-avatar-image" [style.background-image]="'url(' + conversation.image + ')'"></div>
           </div>
         </div>
         <div class="c21-right-conv">
