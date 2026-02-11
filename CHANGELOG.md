@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.23-ar 
+- **changed**: API for upload a file/iamges
+- **changed**: marked pipe do not render /n
 
 # 5.1.14-ar 
 - **bug fixed**: show bottom scroll button and unread message badge only when I'm not at the bottom of the page
