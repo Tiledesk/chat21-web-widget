@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.24-rc2
+- **bug fixed**: minor fix in marked pipe to avoid rendering html tags
+
 # 5.1.24-rc1
 - **security**: hardened Markdown link rendering by blocking dangerous protocols (e.g. `javascript:`, `data:`, `vbscript:`) and preventing unsafe links from being rendered as anchors
 - **changed**: refactored `MarkedPipe` to simplify Markdown parsing, improve link rendering via a custom `marked` renderer, and streamline newline handling (`\\n` → `\n`)
