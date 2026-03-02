@@ -1,46 +1,66 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { marked } from 'marked';
+import { marked, Tokens } from 'marked';
 
 @Pipe({
   name: 'marked'
 })
 export class MarkedPipe implements PipeTransform {
 
-  transform(value: any): any {
-    // Convertiamo tutto in stringa sicura
+  transform(value: any): string {
+
     const input =
       typeof value === 'string'
         ? value
         : (value === null || value === undefined) ? '' : String(value);
 
-    // Converti \n letterali in newline reali
     const inputWithNewlines = input.replace(/\\n/g, '\n');
 
-    // Renderer custom solo per i link
     const renderer = new marked.Renderer();
+
+    /* --------------------------------------------------
+       🔐 1. NON renderizzare HTML raw
+    -------------------------------------------------- */
+    renderer.html = function(token: Tokens.HTML | Tokens.Tag): string {
+      const html = 'text' in token ? token.text : '';
+
+      return html
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    };
+
+    /* --------------------------------------------------
+       🔐 2. Link sicuri
+    -------------------------------------------------- */
     const originalLinkRenderer = renderer.link.bind(renderer);
 
-    // Lista protocolli / pattern pericolosi
-    const dangerousPatterns = [
+    const dangerousProtocols = [
       /^javascript:/i,
       /^data:/i,
       /^vbscript:/i
     ];
 
     renderer.link = function({ href, title, tokens }) {
+
       const normalized = (href || '').trim();
 
-      // Se il link è pericoloso, restituisci solo il testo
-      const isDangerous = dangerousPatterns.some(pattern => pattern.test(normalized));
+      const isDangerous = dangerousProtocols.some(pattern =>
+        pattern.test(normalized)
+      );
+
       if (isDangerous) {
         return tokens ? tokens.map(t => t.raw).join('') : href || '';
       }
 
-      // Altrimenti delega al renderer originale di marked
-      return originalLinkRenderer({ href, title, tokens });
+      const html = originalLinkRenderer({ href, title, tokens });
+
+      // aggiunge sicurezza ai link
+      return html.replace(
+        '<a ',
+        '<a target="_blank" rel="noopener noreferrer" '
+      );
     };
 
-    // Opzioni marked
     marked.setOptions({
       renderer,
       gfm: true,
@@ -48,9 +68,9 @@ export class MarkedPipe implements PipeTransform {
     });
 
     try {
-      return marked.parse(inputWithNewlines);
+      return marked.parse(inputWithNewlines) as string;
     } catch (err) {
-      console.error('Errore nel parsing markdown:', err);
+      console.error('Errore parsing markdown:', err);
       return inputWithNewlines;
     }
   }
