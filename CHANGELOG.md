@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.25-rc1
+
+- **bug fixed**: attachment buttons in messages now respect the container max width and wrap/break long labels instead of being clipped
+
 # 5.1.24-rc2
 - **bug fixed**: minor fix in marked pipe to avoid rendering html tags
 
