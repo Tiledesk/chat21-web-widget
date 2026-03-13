@@ -4,9 +4,11 @@
     // margin-right: 16px; //align attachment-buttons to bubble sent message
     height: auto;
     // width: 85%;
-    max-width: 95%;
+    width: 100%;
+    max-width: 100%;
     float: left;
     padding-left: calc(var(--avatar-width) + 10px);
+    box-sizing: border-box;
 
     .buttons-wrapper {
         margin-top: 0px;
@@ -16,6 +18,7 @@
         // justify-content: flex-end;
         justify-content: flex-start;
         width: 100%;
+        max-width: 100%;
         border: none;
     }
 
@@ -24,6 +27,8 @@
         // overflow: hidden;
         // text-overflow: ellipsis;
         // min-width: inherit;
+        max-width: 100%;
+        min-width: 0;
         .button-in-msg {
             padding: 8px 16px!important;
         }
