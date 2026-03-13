@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.24-ar
+- **changed**: attachment buttons in messages now respect the container max width and wrap/break long labels instead of being clipped
+
 # 5.1.22-ar 
 - **changed**: API for upload a file/iamges
 - **changed**: marked pipe do not render /n
