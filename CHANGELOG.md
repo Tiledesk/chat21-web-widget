@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.25
+- **bug fixed**: attachment buttons in messages now respect the container max width and wrap/break long labels instead of being clipped
+
 # 5.1.24
 - **security**: hardened Markdown link rendering by blocking dangerous protocols (e.g. `javascript:`, `data:`, `vbscript:`) and preventing unsafe links from being rendered as anchors
 - **changed**: refactored `MarkedPipe` to simplify Markdown parsing, improve link rendering via a custom `marked` renderer, and streamline newline handling (`\\n` → `\n`)
