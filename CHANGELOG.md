@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.26-ar
+- **bug fixed**: attachment buttons text alignment 
+
 # 5.1.24-ar
 - **changed**: attachment buttons in messages now respect the container max width and wrap/break long labels instead of being clipped
 
