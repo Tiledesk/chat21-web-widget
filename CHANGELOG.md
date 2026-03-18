@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.26-rc1
+- **bug fixed**: improved audio recording/upload flow by ignoring empty recorder chunks, preserving the recorder MIME type when creating the audio blob/file, and uploading audio directly without Base64 conversion
+
+
 # 5.1.25-rc1
 - **bug fixed**: attachment buttons in messages now respect the container max width and wrap/break long labels instead of being clipped
 
