@@ -452,6 +452,10 @@ export class GlobalSettingsService {
         try {
             const variables = response.project.widget;
             if (typeof variables !== 'undefined') {
+                const hasCalloutTimer = Object.prototype.hasOwnProperty.call(variables, 'calloutTimer');
+                const hasCalloutTitle = Object.prototype.hasOwnProperty.call(variables, 'calloutTitle');
+                const hasCalloutMsg = Object.prototype.hasOwnProperty.call(variables, 'calloutMsg');
+                this.globals.hasCalloutInWidgetConfig = hasCalloutTimer || hasCalloutTitle || hasCalloutMsg;
                 for (const key of Object.keys(variables)) {
                     if (key === 'align' && variables[key] === 'left') {
                         const divWidgetContainer = globals.windowContext.document.getElementById('tiledeskdiv');

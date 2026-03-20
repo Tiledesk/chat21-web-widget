@@ -9,6 +9,7 @@
 
 
 # this branch
+- **changed**: start with authentication if hasCalloutInWidgetConfig is true
 - **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
 - **changed**: Set the default autoStart value to false
 - **added**: Added the open widget loading spinner
