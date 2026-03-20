@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { getColorBck } from 'src/chat21-core/utils/utils-user';
 
 @Component({
   selector: 'chat-action-button-attachment',
@@ -26,9 +27,10 @@ export class ActionButtonComponent implements OnInit {
     //decomment if element should have same color of themeColor and fregroundColor
     if(this.fontSize) this.elementRef.nativeElement.querySelector('.action').style.setProperty('--buttonFontSize', this.fontSize);
     if(this.backgroundColor) this.elementRef.nativeElement.querySelector('.action').style.setProperty('--buttonBackgroundColor', this.backgroundColor);
-    if(this.textColor) this.elementRef.nativeElement.querySelector('.action').style.setProperty('--textColor', this.textColor);
+    if(this.textColor) this.elementRef.nativeElement.querySelector('.action').style.setProperty('--buttonTextColor', this.textColor);
     if(this.hoverBackgroundColor) this.elementRef.nativeElement.querySelector('.action').style.setProperty('--hoverBackgroundColor', this.hoverBackgroundColor);
     if(this.hoverTextColor) this.elementRef.nativeElement.querySelector('.action').style.setProperty('--hoverTextColor', this.hoverTextColor);
+    
   }
 
   onMouseOver(event){

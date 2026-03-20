@@ -7,8 +7,79 @@
 *Tiledesk SRL*
 
 
-# 5.1.7-rc14
+# 5.1.26-rc3
 - **changed**: start with authentication if hasCalloutInWidgetConfig is true
+
+# 5.1.26-rc1
+- **bug fixed**: improved audio recording/upload flow by ignoring empty recorder chunks, preserving the recorder MIME type when creating the audio blob/file, and uploading audio directly without Base64 conversion
+
+
+# 5.1.25-rc1
+- **bug fixed**: attachment buttons in messages now respect the container max width and wrap/break long labels instead of being clipped
+
+# 5.1.24-rc2
+- **bug fixed**: minor fix in marked pipe to avoid rendering html tags
+
+# 5.1.24-rc1
+- **security**: hardened Markdown link rendering by blocking dangerous protocols (e.g. `javascript:`, `data:`, `vbscript:`) and preventing unsafe links from being rendered as anchors
+- **changed**: refactored `MarkedPipe` to simplify Markdown parsing, improve link rendering via a custom `marked` renderer, and streamline newline handling (`\\n` → `\n`)
+
+# 5.1.20-rc3 
+- **bug fixed**: saved the widget's size state to local storage (in HP conversations)
+
+# 5.1.20-rc2
+- **changed**: API for upload a file/iamges
+- **changed**: marked pipe do not render /n 
+
+# 5.1.20-rc1
+- **changed**: API for upload a file/iamges
+
+# 5.1.19 
+
+# 5.1.19-rc1 
+- **bug fixed**: show bottom scroll button and unread message badge only when I'm not at the bottom of the page
+- **changed**: allow HTML code to be inserted into messages, but do not parse the code. Ensure coexistence with Markdown.
+- **bug fixed**: after sending a multi-line message, the text area remains open on multiple lines.
+- **bug fixed**: fixed widget animation when opened
+- **bug-fixed**: line-height in markdown
+- **bug-fixed**: when i move to top mode and close the widget, the balloon moves to the right
+- **changed**: saved the widget's size state to local storage. The parameter flow is (default → storage → settings → URL)
+
+# 5.1.18
+# 5.1.15-rc3
+- **added**: Implemented Shadow DOM in the text component to isolate HTML and Markdown rendering in a safe and protected context
+- **changed**: Adapted text component styles to support Shadow DOM (removed ::ng-deep, added styles for common markdown elements)
+- **security**: HTML/Markdown content is now rendered in an isolated Shadow DOM, improving security and preventing interference with the rest of the application
+
+# 5.1.17
+- **bug-fixed**: set the maximum width on a message with iframe
+
+# 5.1.16
+- **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
+
+# 5.1.15-rc2
+- **bug-fixed**: Bug fix for ifame message width
+ 
+# 5.1.15-rc1
+- **changed**: Load local translations before remote ones
+
+# 5.1.15 
+- **changed**: Load local translations before remote ones
+
+# 5.1.14 
+- **bug-fixed**: stopped loading local language json file
+
+# 5.1.13 
+- **bug-fixed**: set default widget size
+
+# 5.1.7-rc16
+- **bug-fixed**: set default widget size
+
+# 5.1.7-rc15
+- **bug-fixed**: set the color of the buttons with visibility control to the font color
+
+# 5.1.7-rc14
+- **bug-fixed**: departmentId and departmentName is incorrect in attributes
 
 # 5.1.7-rc13
 - **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
@@ -30,8 +101,21 @@
 - **removed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
 
 # 5.1.7-rc8
+# changes in the branch 
+- **changed**: Load local translations before remote ones
+- **bug-fixed**: set default widget size
 - **changed**: Updated the translations of the tooltips in the footer-component
 - **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
+
+# 5.1.7-rc7
+- **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
+
+# 5.1.7-rc6
+- **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
+
+# 5.1.12
+- **bug-fixed**: check showEmojiFooterButton to enable/disable emojii
+- **bug-fixed**: markdown is fired as an emojii and blocked by isEmojii check fn
 
 # 5.1.7-rc7
 - **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
@@ -58,6 +142,8 @@
 - **bug-fixed**: bug fixed button color
 - **bug-fixed**: bug fixed min-height message-receive
 - **bug-fixed**: bug-fixed css footer
+
+# 5.1.7
 
 # 5.1.6
 

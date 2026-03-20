@@ -116,77 +116,116 @@ export class TranslatorService {
       this.g.lang = browserLang;
     }
 
-
-
-    // const languageUrl = this.getTranslationFileUrl(browserLang);
-    // console.log(`»»»» browserLang `, browserLang, this.g.lang, this.getTranslationFileUrl(browserLang));
-
+    // URL del file di traduzione locale
+    const localUrlLang = this.baseLocation + `/assets/i18n/${browserLang}.json`;
+    const localUrlDefaultLang = this.baseLocation + `/assets/i18n/${defaultLanguage}.json`;
 
     // Try to load the I18N JSON file for the detected language
     return new Promise((resolve, reject) => {
       const that = this;
-      this.http.get(this.getTranslationFileUrl(browserLang))
-
-      // .catch((error: any) => {
-      //   // I18N File failed to load, fall back to default language
-      //   // console.log(`»»»» initI18n !!! Problem with '${browserLang}' language initialization from URL `, error.url, ` - ERROR: `, error);
-      //   this._translate.use(defaultLanguage);
-      //   this.http.get(this.getTranslationFileUrl(defaultLanguage)).subscribe((data) => {
-      //     this.translateWithBrowserLang(data['_body'], defaultLanguage);
-      //   }, (er) => {
-      //     // failed to load  default language from remote - fall back to local default language
-      //     this.logger.error('[TRANSLATOR-SERV] »»»» initI18n Get default language - ERROR ', er);
-      //     this.logger.error('[TRANSLATOR-SERV] »»»» initI18n - »»» loadRemoteTranslations IN ERROR ?', environment.loadRemoteTranslations);
-      //   }, () => {
-      //     resolve(true);
-      //     // console.log('»»»» initI18n Get default language * COMPLETE *');
-      //   });
-      //   return Observable.throw(error);
-      // })
-      .pipe(
-        catchError((error: any)=>{
-            // I18N File failed to load, fall back to default language
-            // console.log(`»»»» initI18n !!! Problem with '${browserLang}' language initialization from URL `, this.getTranslationFileUrl(browserLang), ` - ERROR: `, error);
-            this._translate.use(defaultLanguage);
-            this.http.get(this.getTranslationFileUrl(defaultLanguage)).subscribe((data) => {
-              this.translateWithBrowserLang(data['data'], defaultLanguage);
-            }, (er) => {
-              // failed to load  default language from remote - fall back to local default language
-              this.logger.error('[TRANSLATOR-SERV] »»»» initI18n Get default language - ERROR ', er);
-              this.logger.error('[TRANSLATOR-SERV] »»»» initI18n - »»» loadRemoteTranslations IN ERROR ?', environment.loadRemoteTranslations);
-            }, () => {
-              resolve(true);
-              // console.log('»»»» initI18n Get default language * COMPLETE *');
-            });
-            return observableThrowError(error);
+      
+      // STEP 1: Carica prima il file di traduzione locale della lingua selezionata
+      this.logger.debug(`[TRANSLATOR-SERV] »»»» initI18n Loading local translation file: ${localUrlLang}`);
+      let loadedFromDefault = false;
+      
+      this.http.get(localUrlLang).pipe(
+        catchError((error: any) => {
+          // Se il file locale della lingua selezionata non esiste, carica il file locale della lingua di default
+          this.logger.debug(`[TRANSLATOR-SERV] »»»» initI18n Local file '${browserLang}.json' not found, loading default language from local`);
+          loadedFromDefault = true;
+          return this.http.get(localUrlDefaultLang).pipe(
+            catchError((defaultError: any) => {
+              // Se anche il default fallisce, restituisci un Observable vuoto
+              this.logger.error(`[TRANSLATOR-SERV] »»»» initI18n Failed to load both '${browserLang}.json' and '${defaultLanguage}.json' - ERROR `, defaultError);
+              return observableThrowError(defaultError);
+            })
+          );
         })
-     )
-     .subscribe((data: any) => {
-        // I18N File loaded successfully, we can proceed
-        // console.log(`»»»» Successfully initialized '${browserLang}' language.'`, data.data);
-        this.logger.debug(`[TRANSLATOR-SERV] »»»» initI18n Successfully initialized '${browserLang}' language from URL'`, this.getTranslationFileUrl(browserLang));
-        if (!data.data || data.data === undefined || data.data === '') {
-          browserLang = defaultLanguage;
+      ).subscribe(
+        (localData: any) => {
+          // Estrai i dati di traduzione (gestisci sia formato con 'data' che formato diretto)
+          const translationData = localData['data'] || localData;
+          
+          // Imposta la lingua di base: se abbiamo caricato dal default locale, usa quello temporaneamente
+          const localLangToUse = loadedFromDefault ? defaultLanguage : browserLang;
+          this.language = localLangToUse.toLowerCase();
+          this.g.lang = localLangToUse;
+          this._translate.use(localLangToUse);
+          
+          this.logger.debug(`[TRANSLATOR-SERV] »»»» initI18n Local translation loaded successfully for '${localLangToUse}'`);
+          this.translateWithBrowserLang(translationData, this.language);
+          
+          // STEP 2: Carica da remoto il file della lingua selezionata (sempre browserLang, non il default)
+          // e sovrascrive le traduzioni locali
+          if (environment.loadRemoteTranslations) {
+            // Usa sempre browserLang per il caricamento remoto, non localLangToUse
+            const remoteUrl = this.getTranslationFileUrl(browserLang);
+            this.logger.debug(`[TRANSLATOR-SERV] »»»» initI18n Attempting to load remote translation for '${browserLang}' from: ${remoteUrl}`);
+            
+            this.http.get(remoteUrl).pipe(
+              catchError((remoteError: any) => {
+                // Se il caricamento remoto fallisce, mantieni le traduzioni locali già caricate
+                this.logger.debug(`[TRANSLATOR-SERV] »»»» initI18n Remote translation for '${browserLang}' failed, keeping local translations`, remoteError);
+                // Se avevamo caricato il default locale, mantieni la lingua selezionata comunque
+                if (loadedFromDefault) {
+                  this.language = browserLang.toLowerCase();
+                  this.g.lang = browserLang;
+                  this._translate.use(browserLang);
+                }
+                resolve(true);
+                return observableThrowError(remoteError);
+              })
+            ).subscribe(
+              (remoteData: any) => {
+                // Sovrascrivi le traduzioni con quelle remote della lingua selezionata
+                if (remoteData && remoteData['data']) {
+                  this.logger.debug(`[TRANSLATOR-SERV] »»»» initI18n Remote translation for '${browserLang}' loaded successfully, overwriting local translations`);
+                  // Usa sempre la lingua selezionata quando il remoto è disponibile
+                  this.language = browserLang.toLowerCase();
+                  this.g.lang = browserLang;
+                  this._translate.use(browserLang);
+                  // Usa merge=true per sovrascrivere le chiavi esistenti mantenendo quelle nuove del remoto
+                  this.translateWithBrowserLang(remoteData['data'], this.language);
+                } else if (remoteData && !remoteData['data']) {
+                  this.logger.debug(`[TRANSLATOR-SERV] »»»» initI18n Remote translation empty, keeping local translations`);
+                  // Se il remoto è vuoto, usa comunque la lingua selezionata se avevamo caricato il default
+                  if (loadedFromDefault) {
+                    this.language = browserLang.toLowerCase();
+                    this.g.lang = browserLang;
+                    this._translate.use(browserLang);
+                  }
+                }
+                resolve(true);
+              },
+              (remoteError) => {
+                // Questo non dovrebbe mai essere chiamato perché catchError risolve già la promise
+                // Ma per sicurezza risolvi comunque
+                this.logger.debug(`[TRANSLATOR-SERV] »»»» initI18n Remote translation error handler (should not reach here)`);
+                resolve(true);
+              },
+              () => {
+                resolve(true);
+              }
+            );
+          } else {
+            // Se le traduzioni remote non sono abilitate, usa la lingua selezionata se avevamo caricato il default
+            if (loadedFromDefault) {
+              this.language = browserLang.toLowerCase();
+              this.g.lang = browserLang;
+              this._translate.use(browserLang);
+            }
+            resolve(true);
+          }
+        },
+        (error) => {
+          // Fallback: se anche il file di default locale non esiste, usa solo la lingua di default senza traduzioni
+          this.logger.error(`[TRANSLATOR-SERV] »»»» initI18n Failed to load local translation files - ERROR `, error);
           this.language = defaultLanguage;
           this.g.lang = defaultLanguage;
           this._translate.use(defaultLanguage);
-          // console.log('»»»» translateWithBrowserLang ', this.getTranslationFileUrl(defaultLanguage));
-          this.http.get(this.getTranslationFileUrl(defaultLanguage)).subscribe((defaultdata) => {
-            // console.log(`»»»» Successfully initialized  '${browserLang}' language.'`, defaultdata);
-            this.translateWithBrowserLang(defaultdata['data'], browserLang);
-          });
-        } else {
-          // console.log(`»»»» translateWithBrowserLang '${browserLang}' language.'`);
-          this.language = data.lang.toLowerCase();;
-          this.translateWithBrowserLang(data.data, this.language);
+          resolve(true);
         }
-      }, (error) => {
-        this.logger.error(`[TRANSLATOR-SERV] »»»» initI18n Get '${browserLang}' language - ERROR `, error);
-      }, () => {
-        resolve(true);
-        // console.log(`»»»» initI18n Get '${browserLang}' language - COMPLETE`);
-      });
-
+      );
     });
   }
 

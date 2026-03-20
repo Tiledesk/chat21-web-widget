@@ -75,3 +75,12 @@
     }
 
 }
+
+/* Render raw HTML source safely */
+#htmlCode {
+    white-space: pre-wrap; /* preserve newlines, allow wrapping */
+    word-break: break-word;
+    margin: 0;
+    font-size: 1.4em;
+    line-height: 1.4em;
+}

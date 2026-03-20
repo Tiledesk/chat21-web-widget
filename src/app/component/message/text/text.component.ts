@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'chat-text',
   templateUrl: './text.component.html',
-  styleUrls: ['./text.component.scss']
+  styleUrls: ['./text.component.scss'],
+  encapsulation: ViewEncapsulation.ShadowDom
 })
 export class TextComponent implements OnInit {
 

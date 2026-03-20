@@ -35,6 +35,7 @@ export class ListConversationsComponent implements OnInit {
   arrayDiffer: any;
 
   uidConvSelected: string;
+  imageLoadedMap: Map<string, boolean> = new Map<string, boolean>();
   constructor(private iterableDiffers: IterableDiffers) {
       this.iterableDifferListConv = this.iterableDiffers.find([]).create(null);
       
@@ -65,6 +66,34 @@ export class ListConversationsComponent implements OnInit {
   ngDoCheck() {
     let changesListConversation = this.iterableDifferListConv.diff(this.listConversations);
 
+  }
+
+  /**
+   * Verifica se l'immagine esiste e si carica correttamente
+   */
+  isImageLoaded(conversation: ConversationModel): boolean {
+    if (!conversation?.image) {
+      return false;
+    }
+    return this.imageLoadedMap.get(conversation.uid) === true;
+  }
+
+  /**
+   * Gestisce il caricamento riuscito dell'immagine
+   */
+  onImageLoad(conversation: ConversationModel) {
+    if (conversation?.uid && conversation?.image) {
+      this.imageLoadedMap.set(conversation.uid, true);
+    }
+  }
+
+  /**
+   * Gestisce l'errore di caricamento dell'immagine
+   */
+  onImageError(conversation: ConversationModel) {
+    if (conversation?.uid) {
+      this.imageLoadedMap.set(conversation.uid, false);
+    }
   }
 
 

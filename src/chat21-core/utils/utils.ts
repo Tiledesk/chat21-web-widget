@@ -333,12 +333,15 @@ export function  replaceEndOfLine(text) {
 
 export function isEmoji(str: string) {
   // tslint:disable-next-line:max-line-length
-  const ranges = ['(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|[\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|[\ud83c[\ude32-\ude3a]|[\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])'];
-  if (str.match(ranges.join('|'))) {
-      return true;
-  } else {
-      return false;
-  }
+  // const ranges = ['(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|[\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|[\ud83c[\ude32-\ude3a]|[\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])'];
+  // if (str.match(ranges.join('|'))) {
+  //     return true;
+  // } else {
+  //     return false;
+  // }
+  const emojiRegex = /\p{Extended_Pictographic}/u;
+  return emojiRegex.test(str);
+
 }
 
 export function setColorFromString(str: string) {
@@ -384,6 +387,115 @@ export function convertColorToRGBA(color, opacity) {
   }
   // console.log('convertColorToRGBA' + color + result);
   return result;
+}
+
+export function normalizeColorToHex(input?: string): string | null {
+  if (!input) {
+    return null;
+  }
+  let color = input.trim();
+  if (color.toLowerCase().includes('gradient')) {
+    const match = color.match(/(#[0-9a-fA-F]{3,8}|rgba?\([^)]*\))/);
+    if (!match) {
+      return null;
+    }
+    color = match[0];
+  }
+  if (color.startsWith('#')) {
+    const hex = color.slice(1);
+    if (hex.length === 3) {
+      return (
+        '#' +
+        hex
+          .split('')
+          .map((char) => char + char)
+          .join('')
+          .toLowerCase()
+      );
+    }
+    if (hex.length === 4) {
+      return (
+        '#' +
+        hex
+          .slice(0, 3)
+          .split('')
+          .map((char) => char + char)
+          .join('')
+          .toLowerCase()
+      );
+    }
+    if (hex.length === 6 || hex.length === 8) {
+      return '#' + hex.slice(0, 6).toLowerCase();
+    }
+    return null;
+  }
+  const rgbaMatch = color.match(/rgba?\s*\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)/i);
+  if (rgbaMatch) {
+    const [, r, g, b] = rgbaMatch;
+    const toHex = (value: number) => {
+      const clamped = Math.max(0, Math.min(255, Math.round(value)));
+      return clamped.toString(16).padStart(2, '0');
+    };
+    return `#${toHex(parseFloat(r))}${toHex(parseFloat(g))}${toHex(parseFloat(b))}`;
+  }
+  return null;
+}
+
+export function ensureAccessibleTextColor(backgroundColor?: string, fontColor?: string, minContrast = 4.5): string | null {
+  const bgHex = normalizeColorToHex(backgroundColor);
+  if (!bgHex) {
+    return normalizeColorToHex(fontColor);
+  }
+
+  const fontHex = normalizeColorToHex(fontColor);
+  if (fontHex && getContrastRatio(bgHex, fontHex) >= minContrast) {
+    return fontHex;
+  }
+
+  const blackContrast = getContrastRatio(bgHex, '#000000');
+  const whiteContrast = getContrastRatio(bgHex, '#ffffff');
+  return blackContrast >= whiteContrast ? '#000000' : '#ffffff';
+}
+
+function getContrastRatio(backgroundHex: string, foregroundHex: string): number {
+  const bg = hexToRgb(backgroundHex);
+  const fg = hexToRgb(foregroundHex);
+  if (!bg || !fg) {
+    return 1;
+  }
+  const l1 = relativeLuminance(bg);
+  const l2 = relativeLuminance(fg);
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function relativeLuminance({ r, g, b }: { r: number; g: number; b: number }): number {
+  const srgb = [r, g, b].map((value) => {
+    const channel = value / 255;
+    return channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+}
+
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  let value = hex.replace('#', '');
+  if (value.length === 3) {
+    value = value
+      .split('')
+      .map((char) => char + char)
+      .join('');
+  }
+  if (value.length !== 6) {
+    return null;
+  }
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+  if ([r, g, b].some((channel) => Number.isNaN(channel))) {
+    return null;
+  }
+  return { r, g, b };
 }
 
 

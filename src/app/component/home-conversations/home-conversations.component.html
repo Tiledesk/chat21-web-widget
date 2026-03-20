@@ -38,9 +38,14 @@
     <!--CASE: no conversations EXIST - >1 agents is available -->
     <div *ngIf="(!listConversations || listConversations.length == 0) && availableAgents && availableAgents.length > 1 && g.showAvailableAgents === true" style="display: flex; margin: 20px 30px;"> 
       <div *ngFor="let agent of availableAgents" class="c21-pallozzo">
-          <div class="c21-ball" [ngStyle] = "{ 'background-color':setColorFromString(agent.firstname) }" >
-            <span class="c21-ball-label">{{avatarPlaceholder(agent.firstname)}}</span>
-            <div *ngIf="agent.imageurl" #avatarImage class="c21-avatar-image" [style.background-image]="'url(' + agent.imageurl + ')'"></div>
+          <div class="c21-ball" [ngStyle] = "{ 'background-color': isImageLoaded(agent) ? 'transparent' : setColorFromString(agent.firstname) }" >
+            <span *ngIf="!isImageLoaded(agent)" class="c21-ball-label">{{avatarPlaceholder(agent.firstname)}}</span>
+            <img *ngIf="agent.imageurl" 
+                 [src]="agent.imageurl" 
+                 style="display: none;"
+                 (load)="onImageLoad(agent)"
+                 (error)="onImageError(agent)">
+            <div *ngIf="isImageLoaded(agent)" #avatarImage class="c21-avatar-image" [style.background-image]="'url(' + agent.imageurl + ')'"></div>
           </div>
       </div>
     </div>
@@ -48,9 +53,14 @@
     <!--CASE: no conversations EXIST - 1 agents is available -->
     <div class="flex-container" *ngIf="(!listConversations || listConversations.length == 0) && availableAgents && availableAgents.length === 1 && g.showAvailableAgents === true">
       <div *ngFor="let agent of availableAgents" class="c21-pallozzo flex-inline-agent ">
-        <div class="c21-ball" [ngStyle] = "{ 'background-color':setColorFromString(agent.firstname) }" >
-          <span class="c21-ball-label">{{avatarPlaceholder(agent.firstname)}}</span>
-          <div *ngIf="agent.imageurl" #avatarImage class="c21-avatar-image" [style.background-image]="'url(' + agent.imageurl + ')'"></div>
+        <div class="c21-ball" [ngStyle] = "{ 'background-color': isImageLoaded(agent) ? 'transparent' : setColorFromString(agent.firstname) }" >
+          <span *ngIf="!isImageLoaded(agent)" class="c21-ball-label">{{avatarPlaceholder(agent.firstname)}}</span>
+          <img *ngIf="agent.imageurl" 
+               [src]="agent.imageurl" 
+               style="display: none;"
+               (load)="onImageLoad(agent)"
+               (error)="onImageError(agent)">
+          <div *ngIf="isImageLoaded(agent)" #avatarImage class="c21-avatar-image" [style.background-image]="'url(' + agent.imageurl + ')'"></div>
         </div>
       </div>
       <button tabindex="1040" aflistconv #aflistconv class="c21-button-primary" (click)="openNewConversation()" [ngStyle]="{'background-color': g.themeColor, 'border-color': g.themeColor, 'color': g.themeForegroundColor }">

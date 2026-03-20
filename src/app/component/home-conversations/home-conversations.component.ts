@@ -65,6 +65,7 @@ export class HomeConversationsComponent implements OnInit, OnDestroy {
   themeForegroundColor = '';
   LABEL_START_NW_CONV: string;
   availableAgents: Array<UserAgent> = [];
+  imageLoadedMap: Map<string, boolean> = new Map<string, boolean>();
   // ========= end:: variabili del componente ======== //
 
   waitingTime: number;
@@ -201,6 +202,34 @@ export class HomeConversationsComponent implements OnInit, OnDestroy {
 
   onConversationLoadedFN(conversation: ConversationModel){
     this.onConversationLoaded.emit(conversation)
+  }
+
+  /**
+   * Verifica se l'immagine dell'agente esiste e si carica correttamente
+   */
+  isImageLoaded(agent: UserAgent): boolean {
+    if (!agent?.imageurl) {
+      return false;
+    }
+    return this.imageLoadedMap.get(agent.id) === true;
+  }
+
+  /**
+   * Gestisce il caricamento riuscito dell'immagine
+   */
+  onImageLoad(agent: UserAgent) {
+    if (agent?.id && agent?.imageurl) {
+      this.imageLoadedMap.set(agent.id, true);
+    }
+  }
+
+  /**
+   * Gestisce l'errore di caricamento dell'immagine
+   */
+  onImageError(agent: UserAgent) {
+    if (agent?.id) {
+      this.imageLoadedMap.set(agent.id, false);
+    }
   }
 
   private openConversationByID(conversation) {

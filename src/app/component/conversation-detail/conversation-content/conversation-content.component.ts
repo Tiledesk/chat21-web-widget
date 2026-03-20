@@ -187,6 +187,10 @@ export class ConversationContentComponent implements OnInit {
       objDiv.parentElement.scrollTop = objDiv.scrollHeight;
       objDiv.style.opacity = '1';
       that.firstScroll = false;
+      // Keep parent state in sync even when scroll is programmatic.
+      // Without this, the "scroll to bottom" button/badge can remain visible
+      // because (scroll) event might not fire reliably for programmatic scrollTop.
+      that.onScrollContent.emit(true);
     }, 0);
   } catch (err) {
     this.logger.error('[CONV-CONTENT] scrollToBottom > Error :' + err);

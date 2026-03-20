@@ -317,7 +317,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       // });
       // this.resetLoadImage();
       
-      this.uploadService.upload(this.senderId, currentUpload).then(data => {
+      this.uploadService.uploadFile(this.senderId, currentUpload).then(data => {
         that.logger.log('[CONV-FOOTER] AppComponent::uploadSingle:: downloadURL', data);
         that.logger.log(`[CONV-FOOTER] Successfully uploaded file and got download link - ${data}`);
 
@@ -448,13 +448,11 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   }
 
   private restoreTextArea() {
-    // that.logger.log('[CONV-FOOTER] AppComponent:restoreTextArea::restoreTextArea');
-    this.resizeInputField();
     const textArea = (<HTMLInputElement>document.getElementById('chat21-main-message-context'));
-    this.textInputTextArea = ''; // clear the textarea
+    this.textInputTextArea = '';
     if (textArea) {
-      textArea.value = '';  // clear the textarea
-      textArea.placeholder = this.translationMap.get('LABEL_PLACEHOLDER');  // restore the placholder
+      textArea.value = '';
+      textArea.placeholder = this.translationMap.get('LABEL_PLACEHOLDER');
       if(textArea.style.height > this.HEIGHT_DEFAULT){
         document.getElementById('chat21-button-send').style.removeProperty('right')
       }
@@ -462,6 +460,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     }
     this.setFocusOnId('chat21-main-message-context');
     this.isStopRec= false;
+    this.resizeInputField();
   }
 
   /**
@@ -515,14 +514,46 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   onSendRecording(audioBlob: Blob | null) {
     this.isStartRec = false;
     if (audioBlob) {
-      this.convertBlobToBase64(audioBlob);
+      this.prepareAndUpload(audioBlob);
+      // this.convertBlobToBase64(audioBlob);
       this.isStopRec = false;
     } else {
       this.isStopRec = false;
     }
   }
 
+  prepareAndUpload(audioBlob: Blob) {
 
+    this.isFilePendingToUpload = true;
+    
+    // ⭐ NON modificare il MIME
+    const mimeType = audioBlob.type;
+
+    const size = audioBlob.size;
+    const uid = Date.now().toString(36);
+
+    // estensione coerente col MIME REALE
+    let ext = 'mp3';
+    const fileName = `audio-${uid}.${ext}`;
+  
+    const file = new File([audioBlob], fileName, {
+      type: mimeType,
+      lastModified: Date.now()
+    });
+  
+    // ✅ metadata SENZA base64
+    const metadata = {
+      name: fileName,
+      type: 'audio/mp3',
+      uid: uid,
+      size: size
+    };
+    
+    this.logger.log('[UPLOAD] metadata:', metadata);
+  
+    // stesso metodo che già usi
+    this.uploadSingle(metadata, file, '');
+  }
 
   // Funzione per convertire Blob in Base64 usando FileReader
   async convertBlobToBase64(audioBlob: Blob) {
@@ -570,7 +601,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   checkForEmojii(text){
     //remove emojii only if "emojii" exist and is set to false
-    if(this.project && this.project.settings?.allow_send_emoji === false){
+    if(!this.showEmojiFooterButton){
       this.showAlertEmoji = isEmoji(text);
       if(this.showAlertEmoji){
         return false
