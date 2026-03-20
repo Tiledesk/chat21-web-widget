@@ -493,8 +493,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 // that.hideWidget();
                 // that.g.setParameter('isShown', false, true);
                 that.triggerOnAuthStateChanged(that.stateLoggedUser);
-                if (autoStart || this.g.onPageChangeVisibilityDesktop === 'open' || this.g.onPageChangeVisibilityMobile === 'open') {
+                const shouldAutoAuthenticate = autoStart ||
+                    this.g.onPageChangeVisibilityDesktop === 'open' ||
+                    this.g.onPageChangeVisibilityMobile === 'open' ||
+                    this.g.hasCalloutInWidgetConfig;
+                if (shouldAutoAuthenticate) {
                     that.authenticate();
+                } else {
+                    that.logger.debug('[APP-COMP] Skip auto-auth: startup conditions not met, show launcher only');
                 }
             } else if(state && state === AUTH_STATE_CLOSE ){
                 that.logger.info('[APP-COMP] CLOSE - CHANNEL CLOSED: ', this.chatManager);
