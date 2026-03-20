@@ -23,6 +23,8 @@ export class ConversationContentComponent implements OnInit {
   @Input() idUserTypingNow: string;
   @Input() nameUserTypingNow: string;
   @Input() typingLocation: string;
+  @Input() showThinkingMessage: boolean;
+  @Input() thinkingMessageText: string;
   @Input() fullscreenMode: boolean;
   @Input() translationMap: Map< string, string>;
   @Input() stylesMap: Map<string, string>;

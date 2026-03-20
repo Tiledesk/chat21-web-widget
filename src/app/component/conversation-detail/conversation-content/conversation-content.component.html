@@ -13,7 +13,6 @@
           [nameUserTypingNow]="nameUserTypingNow">
         </user-typing>
       </span>
-      
     
       <div id="chat21-sheet-content" class="chat21-sheet-content">
           <div class="chat21-conversation-parts-container">
@@ -147,6 +146,12 @@
                           [nameUserTypingNow]="nameUserTypingNow">
                         </user-typing>
                       </div>
+
+                      <div *ngIf="showThinkingMessage" class="msg_container base_receive thinking_receive">
+                        <div class="messages msg_receive thinking_message">
+                          {{ thinkingMessageText || 'sto pensando...' }}
+                        </div>
+                      </div>
                       
                   </div>
               </div>
@@ -155,7 +160,6 @@
       </div>
     </div>  
   </div>
-
 </div>
 
 

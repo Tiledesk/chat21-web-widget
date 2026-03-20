@@ -122,6 +122,13 @@
                     text-align: center;
                     padding: 0px 0px 6px 0px
                 }
+                .thinking_receive {
+                    .thinking_message {
+                        margin-left: 40px;
+                        font-style: italic;
+                        opacity: 0.85;
+                    }
+                }
                 /* ====== SET MESSAGES ====== */
                 .messages {
                     border-radius: var(--border-radius-bubble-message);
