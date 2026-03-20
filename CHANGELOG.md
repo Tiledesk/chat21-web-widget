@@ -7,7 +7,7 @@
 *Tiledesk SRL*
 
 
-# 5.1.26-rc3
+# 5.1.26-rc2
 - **changed**: start with authentication if hasCalloutInWidgetConfig is true
 
 # 5.1.26-rc1
