@@ -460,7 +460,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 // this.initConversationsHandler(this.g.tenant, that.g.senderId);
                 /* If singleConversation mode is active wait to showWidget: do it later in initConversationsHandler */
-                if (autoStart && !that.g.singleConversation) { 
+                const hasBotsRules = Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0;
+                if ((autoStart || hasBotsRules) && !that.g.singleConversation) { 
                     that.showWidget();
                 }
 
@@ -491,7 +492,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 const shouldAutoAuthenticate = autoStart ||
                     this.g.onPageChangeVisibilityDesktop === 'open' ||
                     this.g.onPageChangeVisibilityMobile === 'open' ||
-                    this.g.hasCalloutInWidgetConfig;
+                    (Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0)
+                    // || this.g.hasCalloutInWidgetConfig;
                 if (shouldAutoAuthenticate) {
                     that.authenticate();
                 } else {
