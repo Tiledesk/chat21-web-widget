@@ -109,6 +109,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   //network status
   isOnline: boolean = true;
   loading: boolean = false;
+  private calloutScheduleTimeout: any = null;
   
   // alert error message 
   isShowErrorMessage: boolean = false;
@@ -328,6 +329,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 }
 
+                // STEP-2: schedule callout after settings are loaded,
+                // independently from auth/sign-in.
+                this.scheduleCalloutFromSettings();
+
 
                 /**CHECK IF JWT IS IN URL PARAMETERS */
                 this.logger.debug('[APP-COMP] check if token is passed throw url: ', this.g.jwt);
@@ -365,6 +370,24 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.subscriptions.push(obsSettingsService);
         this.globalSettingsService.initWidgetParamiters(this.g, this.el);
 
+    }
+
+    private scheduleCalloutFromSettings() {
+        if (this.calloutScheduleTimeout) {
+            clearTimeout(this.calloutScheduleTimeout);
+            this.calloutScheduleTimeout = null;
+        }
+
+        const calloutTimer = Number(this.g.calloutTimer);
+        if (isNaN(calloutTimer) || calloutTimer < 0) {
+            return;
+        }
+
+        const delayMs = calloutTimer * 1000;
+        this.calloutScheduleTimeout = setTimeout(() => {
+            this.calloutScheduleTimeout = null;
+            this.showCallout();
+        }, delayMs);
     }
 
     private initAll() {
@@ -1197,14 +1220,32 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.signOut();
     }
 
+    private canShowCalloutNow(): boolean {
+        if (this.g.isOpen !== false) {
+            return false;
+        }
+        if (this.g.isOpenNewMessage) {
+            return false;
+        }
+        if (!this.g.calloutStaus) {
+            return false;
+        }
+        if (!this.g.hasCalloutInWidgetConfig) {
+            return false;
+        }
+        return true;
+    }
+
     /** show callout */
     private showCallout() {
-        if (this.g.isOpen === false) {
-            // this.g.setParameter('calloutTimer', 1)
-            this.eyeeyeCatcherCardComponent.openEyeCatcher();
-            this.g.setParameter('displayEyeCatcherCard', 'block');
-            this.triggerOnOpenEyeCatcherEvent();
+        if (!this.canShowCalloutNow()) {
+            return;
         }
+        if (!this.eyeeyeCatcherCardComponent) {
+            return;
+        }
+        // Delegate visibility logic to the eye-catcher component.
+        this.eyeeyeCatcherCardComponent.openEyeCatcher();
     }
 
     /** open popup conversation */
@@ -2309,6 +2350,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     /** elimino tutte le sottoscrizioni */
     ngOnDestroy() {
         this.logger.debug('[APP-COMP] this.subscriptions', this.subscriptions);
+        if (this.calloutScheduleTimeout) {
+            clearTimeout(this.calloutScheduleTimeout);
+            this.calloutScheduleTimeout = null;
+        }
         const windowContext = this.g.windowContext;
         if (windowContext && windowContext['tiledesk']) {
             windowContext['tiledesk']['angularcomponent'] = null;
