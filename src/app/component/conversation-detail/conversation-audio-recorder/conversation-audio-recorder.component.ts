@@ -38,19 +38,32 @@ export class ConversationAudioRecorderComponent {
     this.startTime = Date.now();
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(stream => {
+
+        this.audioChunks = [];
+
         this.mediaRecorder = new MediaRecorder(stream);
         this.mediaRecorder.start();
         this.isRecording = true;
         this.startRecordingEvent.emit();
         this.mediaRecorder.addEventListener('dataavailable', (event) => {
-          this.audioChunks.push(event.data);
+          if (event.data && event.data.size > 0) {
+            this.audioChunks.push(event.data);
+          }
         });
 
         this.mediaRecorder.addEventListener('stop', () => {
-          this.audioBlob = new Blob(this.audioChunks, { type: 'audio/mpeg' });
+          // ✅ MIME REALE del recorder
+          const mimeType = this.mediaRecorder.mimeType;
+          this.audioBlob = new Blob(this.audioChunks, {
+            type: mimeType
+          });
+
+          // ⭐ chiude microfono
+          stream.getTracks().forEach(track => track.stop());
+
+          this.audioChunks = [];
           this.rawAudioUrl = URL.createObjectURL(this.audioBlob);
           this.audioUrl = this.sanitizer.bypassSecurityTrustUrl(this.rawAudioUrl);
-          this.audioChunks = []; 
           this.endRecordingEvent.emit(this.audioBlob);
         });
       })

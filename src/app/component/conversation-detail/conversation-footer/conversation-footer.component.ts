@@ -87,6 +87,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
+  isErrorNetwork: boolean = false;
 
 
   convertColorToRGBA = convertColorToRGBA;
@@ -513,14 +514,46 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   onSendRecording(audioBlob: Blob | null) {
     this.isStartRec = false;
     if (audioBlob) {
-      this.convertBlobToBase64(audioBlob);
+      this.prepareAndUpload(audioBlob);
+      // this.convertBlobToBase64(audioBlob);
       this.isStopRec = false;
     } else {
       this.isStopRec = false;
     }
   }
 
+  prepareAndUpload(audioBlob: Blob) {
 
+    this.isFilePendingToUpload = true;
+    
+    // ⭐ NON modificare il MIME
+    const mimeType = audioBlob.type;
+
+    const size = audioBlob.size;
+    const uid = Date.now().toString(36);
+
+    // estensione coerente col MIME REALE
+    let ext = 'mp3';
+    const fileName = `audio-${uid}.${ext}`;
+  
+    const file = new File([audioBlob], fileName, {
+      type: mimeType,
+      lastModified: Date.now()
+    });
+  
+    // ✅ metadata SENZA base64
+    const metadata = {
+      name: fileName,
+      type: 'audio/mp3',
+      uid: uid,
+      size: size
+    };
+    
+    this.logger.log('[UPLOAD] metadata:', metadata);
+  
+    // stesso metodo che già usi
+    this.uploadSingle(metadata, file, '');
+  }
 
   // Funzione per convertire Blob in Base64 usando FileReader
   async convertBlobToBase64(audioBlob: Blob) {

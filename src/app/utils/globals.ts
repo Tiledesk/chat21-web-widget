@@ -222,6 +222,7 @@ export class Globals {
 
   allowedOnSpecificUrl: boolean // *******  new ********
   allowedOnSpecificUrlList: Array<string> // *******  new ********
+  hasCalloutInWidgetConfig: boolean; // *******  new ********
 
   fontFamilySource: string; // *******  new ********
 
@@ -247,7 +248,7 @@ export class Globals {
 
     // ============ BEGIN: SET EXTERNAL PARAMETERS ==============//
     this.baseLocation = 'https://widget.tiledesk.com/v2';
-    this.autoStart = true;
+    this.autoStart = false;
     /** start Authentication and startUI */
     this.startHidden = false;
     /** show/hide all widget -> js call: showAllWidget */
@@ -438,6 +439,8 @@ export class Globals {
     this.allowedOnSpecificUrl = false
     /** set a list of pattern url able to load the widget */
     this.allowedOnSpecificUrlList = [];
+    /** true when server widget config has `callout` node */
+    this.hasCalloutInWidgetConfig = false;
     /** set widget size from 3 different positions: min, max, top */
     this.size = 'min';
 

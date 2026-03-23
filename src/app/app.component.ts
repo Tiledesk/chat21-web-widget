@@ -106,6 +106,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   
   forceDisconnect: boolean = false;
 
+  //network status
+  isOnline: boolean = true;
+  loading: boolean = false;
+  private calloutScheduleTimeout: any = null;
+  
   // alert error message 
   isShowErrorMessage: boolean = false;
   errorMessage: string = '';
@@ -149,7 +154,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.logger.info('[APP-CONF]---------------- ngAfterViewInit: APP.COMPONENT ---------------- ')
         
         // Initialize translation map and enable buttons
-        const keys = ['MAXIMIZE', 'MINIMIZE', 'CENTER', 'BUTTON_CLOSE_TO_ICON'];
+        const keys = ['MAXIMIZE', 'MINIMIZE', 'CENTER', 'BUTTON_CLOSE_TO_ICON', 'LABEL_LOADING'];
         this.translationMap = this.translateService.translateLanguage(keys);
         this.isButtonsDisabled = false;
         
@@ -316,8 +321,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.g.setIsOpen(isOpen)
                     this.appStorageService.setItem('isOpen', isOpen)
                 }
-                
-                
+
+                if(this.g.onPageChangeVisibilityDesktop === 'last'){
+                    this.logger.debug('[APP-COMP2] ------this.g.isOpen: ', this.g.isOpen)
+                    if(this.g.isOpen){
+                        this.g.autoStart = true;
+                    }
+                }
+
+                // STEP-2: schedule callout after settings are loaded,
+                // independently from auth/sign-in.
+                this.scheduleCalloutFromSettings();
+
+
                 /**CHECK IF JWT IS IN URL PARAMETERS */
                 this.logger.debug('[APP-COMP] check if token is passed throw url: ', this.g.jwt);
                 if (this.g.jwt) {
@@ -354,10 +370,24 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.subscriptions.push(obsSettingsService);
         this.globalSettingsService.initWidgetParamiters(this.g, this.el);
 
-        // SET AUDIO
-        this.audio = new Audio();
-        this.audio.src = this.g.baseLocation + URL_SOUND_LIST_CONVERSATION;
-        this.audio.load();
+    }
+
+    private scheduleCalloutFromSettings() {
+        if (this.calloutScheduleTimeout) {
+            clearTimeout(this.calloutScheduleTimeout);
+            this.calloutScheduleTimeout = null;
+        }
+
+        const calloutTimer = Number(this.g.calloutTimer);
+        if (isNaN(calloutTimer) || calloutTimer < 0) {
+            return;
+        }
+
+        const delayMs = calloutTimer * 1000;
+        this.calloutScheduleTimeout = setTimeout(() => {
+            this.calloutScheduleTimeout = null;
+            this.showCallout();
+        }, delayMs);
     }
 
     private initAll() {
@@ -448,7 +478,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 that.triggerOnAuthStateChanged(that.stateLoggedUser);
                 that.logger.debug('[APP-COMP]  1 - IMPOSTO STATO CONNESSO UTENTE ', autoStart);
                 
-                
+                this.initAudioNotification()
 
                 new Promise(async (resolve, reject)=> {
                     that.typingService.initialize(this.g.tenant);
@@ -460,7 +490,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 // this.initConversationsHandler(this.g.tenant, that.g.senderId);
                 /* If singleConversation mode is active wait to showWidget: do it later in initConversationsHandler */
-                if (autoStart && !that.g.singleConversation) { 
+                const hasBotsRules = Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0;
+                if ((autoStart || hasBotsRules) && !that.g.singleConversation) { 
                     that.showWidget();
                 }
 
@@ -474,26 +505,37 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     that.listenToWidgetClick()
                 }
 
+                /** DDP IF AUTOSTART IS FALSE, SHOW WIDGET */
+                if(!autoStart){
+                    that.logger.info('[APP-COMP] AUTOSTART IS FALSE AND LOGGED SUCCESSFULLY ');
+                    this.g.setParameter('isShown', true, true);
+                }
 
 
             } else if (state && state === AUTH_STATE_OFFLINE && !this.forceDisconnect) {
                 /** non sono loggato */
                 that.logger.info('[APP-COMP] OFFLINE - NO CURRENT USER AUTENTICATE: ');
                 that.g.setParameter('isLogged', false);
-                that.hideWidget();
+                // that.hideWidget();
                 // that.g.setParameter('isShown', false, true);
                 that.triggerOnAuthStateChanged(that.stateLoggedUser);
-                if (autoStart) {
+                const shouldAutoAuthenticate = autoStart ||
+                    this.g.onPageChangeVisibilityDesktop === 'open' ||
+                    this.g.onPageChangeVisibilityMobile === 'open' ||
+                    (Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0)
+                    // || this.g.hasCalloutInWidgetConfig;
+                if (shouldAutoAuthenticate) {
                     that.authenticate();
+                } else {
+                    that.logger.debug('[APP-COMP] Skip auto-auth: startup conditions not met, show launcher only');
                 }
-            }else if(state && state === AUTH_STATE_CLOSE ){
+            } else if(state && state === AUTH_STATE_CLOSE ){
                 that.logger.info('[APP-COMP] CLOSE - CHANNEL CLOSED: ', this.chatManager);
                 if(this.g.recipientId){
                     this.chatManager.removeConversationHandler(this.g.recipientId)
                     this.g.recipientId = null;
                 }
-            }
-
+            }  
 
         });
         this.subscriptions.push(subAuthStateChanged);
@@ -738,6 +780,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         //         divWidgetContainer.style.display = 'block';
         //     }
         // }, 500);
+
+        this.loading = false;
     }
     // ========= end:: START UI ============//
 
@@ -846,7 +890,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.appStorageService.setItem('attributes', JSON.stringify(attributes));
         return attributes;
     }
-
+    
+    // SET AUDIO
+    private initAudioNotification(){
+        this.audio = new Audio();
+        this.audio.src = this.g.baseLocation + URL_SOUND_LIST_CONVERSATION;
+        this.audio.load();
+    }
 
     private async initConversationsHandler(tenant: string, senderId: string) {
         this.logger.debug('[APP-COMP] initialize: ListConversationsComponent');
@@ -1170,14 +1220,32 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.signOut();
     }
 
+    private canShowCalloutNow(): boolean {
+        if (this.g.isOpen !== false) {
+            return false;
+        }
+        if (this.g.isOpenNewMessage) {
+            return false;
+        }
+        if (!this.g.calloutStaus) {
+            return false;
+        }
+        if (!this.g.hasCalloutInWidgetConfig) {
+            return false;
+        }
+        return true;
+    }
+
     /** show callout */
     private showCallout() {
-        if (this.g.isOpen === false) {
-            // this.g.setParameter('calloutTimer', 1)
-            this.eyeeyeCatcherCardComponent.openEyeCatcher();
-            this.g.setParameter('displayEyeCatcherCard', 'block');
-            this.triggerOnOpenEyeCatcherEvent();
+        if (!this.canShowCalloutNow()) {
+            return;
         }
+        if (!this.eyeeyeCatcherCardComponent) {
+            return;
+        }
+        // Delegate visibility logic to the eye-catcher component.
+        this.eyeeyeCatcherCardComponent.openEyeCatcher();
     }
 
     /** open popup conversation */
@@ -1605,23 +1673,46 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.f21_close();
     }
 
+
+    /** DDP reload widget */
+    async reloadWidget() { 
+        this.openCloseWidget();
+        this.logger.debug('[APP-COMP-1] AAA - hideWidget');
+        await Promise.all([
+                this.authenticate(),
+                // this.initAll()
+            ]);
+        this.logger.debug('[APP-COMP-1] CCC - showWidget');
+    }
+
+
     /**
      * LAUNCHER BUTTON:
      * onClick button open/close widget
      */
     onOpenCloseWidget($event) {
+        this.logger.debug('[APP-COMP] onOpenCloseWidget', $event, this.g.isLogged);
+        if(!this.g.isLogged){
+            this.reloadWidget();
+        } else {
+            this.openCloseWidget();
+        }
+    }
+
+    /** DDP show widget */
+    openCloseWidget() {
         this.g.setParameter('displayEyeCatcherCard', 'none');
         // const conversationActive: ConversationModel = JSON.parse(this.appStorageService.getItem('activeConversation'));
         const recipientId : string = this.appStorageService.getItem('recipientId')
         this.g.setParameter('recipientId', recipientId);
         this.logger.debug('[APP-COMP] openCloseWidget', recipientId, this.g.isOpen, this.g.startFromHome);
+
         if (this.g.isOpen === false) {
             if(this.forceDisconnect){
                 this.logger.log('[FORCE] onOpenCloseWidget --> reconnect', this.forceDisconnect)
                 this.messagingAuthService.createCustomToken(this.g.tiledeskToken)
                 this.forceDisconnect = false;
             }
-
             if (!recipientId) {
                 if(this.g.singleConversation){
                     this.isOpenHome = false;
@@ -1641,28 +1732,21 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.isOpenHome = false;
                 this.isOpenConversation = true;
                 this.startUI()
-                // this.isOpenSelectionDepartment = false;
             }
-            // if (!conversationActive && !this.g.startFromHome) {
-            //     this.isOpenHome = false;
-            //     this.isOpenConversation = true;
-            //     this.startNwConversation();
-            // } else if (conversationActive) {
-            //     this.isOpenHome = false;
-            //     this.isOpenConversation = true;
-            // }
-            // this.g.startFromHome = true;
             this.triggerOnOpenEvent();
-            
         } else {
             this.triggerOnCloseEvent();
         }
         //change status to the widget
         this.g.setIsOpen(!this.g.isOpen);
         this.appStorageService.setItem('isOpen', this.g.isOpen);
-
+        //show loading if widget is open and user is not logged
+        if(this.g.isOpen === true && !this.g.isLogged){
+            this.loading = true;
+        }
         // this.saveBadgeNewConverstionNumber();
     }
+
 
     /**
      * MODAL SELECTION DEPARTMENT:
@@ -2266,6 +2350,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     /** elimino tutte le sottoscrizioni */
     ngOnDestroy() {
         this.logger.debug('[APP-COMP] this.subscriptions', this.subscriptions);
+        if (this.calloutScheduleTimeout) {
+            clearTimeout(this.calloutScheduleTimeout);
+            this.calloutScheduleTimeout = null;
+        }
         const windowContext = this.g.windowContext;
         if (windowContext && windowContext['tiledesk']) {
             windowContext['tiledesk']['angularcomponent'] = null;
