@@ -16,6 +16,7 @@
     "GUEST_LABEL": "Huésped",
     "ALL_AGENTS_OFFLINE_LABEL": "Todos los operadores están desconectados en este momento.",
     "LABEL_LOADING": "Cargando...",
+    "LABEL_THINKING": "pensando",
     "CALLOUT_TITLE_PLACEHOLDER": "🖐 ¿Necesitas ayuda?",
     "CALLOUT_MSG_PLACEHOLDER": "¡Haz clic aquí y comienza a chatear con nosotros!",
     "CUSTOMER_SATISFACTION": "La satisfacción del cliente",

@@ -115,10 +115,6 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
 
   // Temporary "thinking" state after a client message is sent.
   public showThinkingMessage: boolean = false;
-  public thinkingMessageText: string = 'sto pensando...';
-  private thinkingStartedAt: number = 0;
-  private thinkingMinDurationMs: number = 5000;
-  private thinkingHideTimeout: any = null;
   private waitingServerReply: boolean = false;
 
   // Badge "ultimo messaggio ricevuto dal server" (bot/umano)
@@ -265,6 +261,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'LABEL_TODAY',
       'LABEL_TOMORROW',
       'LABEL_LOADING',
+      'LABEL_THINKING',
       'LABEL_TO',
       'ARRAY_DAYS',
     ];
@@ -470,35 +467,15 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
 
   private startThinkingMessage() {
     this.waitingServerReply = true;
-    this.thinkingStartedAt = Date.now();
     this.showThinkingMessage = true;
-    if (this.thinkingHideTimeout) {
-      clearTimeout(this.thinkingHideTimeout);
-      this.thinkingHideTimeout = null;
-    }
   }
 
-  private stopThinkingMessageWithMinDuration() {
+  private stopThinkingMessageImmediately() {
     if (!this.waitingServerReply) {
       return;
     }
     this.waitingServerReply = false;
-
-    const elapsed = Date.now() - this.thinkingStartedAt;
-    const remaining = Math.max(0, this.thinkingMinDurationMs - elapsed);
-
-    if (remaining === 0) {
-      this.showThinkingMessage = false;
-      return;
-    }
-
-    if (this.thinkingHideTimeout) {
-      clearTimeout(this.thinkingHideTimeout);
-    }
-    this.thinkingHideTimeout = setTimeout(() => {
-      this.showThinkingMessage = false;
-      this.thinkingHideTimeout = null;
-    }, remaining);
+    this.showThinkingMessage = false;
   }
 
   private shouldShowThinkingForBot(): boolean {
@@ -950,7 +927,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
         this.logger.debug('[CONV-COMP] ***** DETAIL messageAdded *****', msg);
         if (msg) {
           if (msg.sender !== this.senderId) {
-            this.stopThinkingMessageWithMinDuration();
+            this.stopThinkingMessageImmediately();
           }
 
           that.newMessageAdded(msg);
@@ -1462,11 +1439,15 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
   /** CALLED BY: conv-footer component */ 
   onAfterSendMessageFN(message: MessageModel){
-    if (message && message.sender === this.senderId && this.shouldShowThinkingForBot()) {
-      this.startThinkingMessage();
-    } else {
-      this.showThinkingMessage = false;
-      this.waitingServerReply = false;
+    // Manage thinking state only for messages sent by the current client.
+    // Do not force-hide here for other message types/events.
+    if (message && message.sender === this.senderId) {
+      if (this.shouldShowThinkingForBot()) {
+        this.startThinkingMessage();
+      } else {
+        this.showThinkingMessage = false;
+        this.waitingServerReply = false;
+      }
     }
     this.onAfterSendMessage.emit(message)
   }
@@ -1521,10 +1502,6 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.hideTextAreaContent = false;
     this.showThinkingMessage = false;
     this.waitingServerReply = false;
-    if (this.thinkingHideTimeout) {
-      clearTimeout(this.thinkingHideTimeout);
-      this.thinkingHideTimeout = null;
-    }
     this.conversationFooter.textInputTextArea='';
     this.hideFooterTextReply = false;
     this.footerMessagePlaceholder = '';

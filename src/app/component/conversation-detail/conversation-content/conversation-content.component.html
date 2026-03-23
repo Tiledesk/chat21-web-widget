@@ -119,25 +119,21 @@
 
                       <!-- FILE PENDING UPLOAD -->
                       <!--  -->
-                      <div *ngIf="showUploadProgress" class="msg_container base_sent" >
+                      <div *ngIf="showUploadProgress && !showThinkingMessage" class="msg_container base_sent" >
                         <div class="chat21-spinner active" id="chat21-spinner" style="margin: 0px 6px 0px;">
                           <div class="chat21-bounce1" [ngStyle]="{'background-color': stylesMap.get('iconColor')}"></div>
                           <div class="chat21-bounce2" [ngStyle]="{'background-color': stylesMap.get('iconColor'), 'opacity': 0.4}"></div>
                           <div class="chat21-bounce3" [ngStyle]="{'background-color': stylesMap.get('iconColor'), 'opacity': 0.6}"></div>
                         </div>
-
-                        
                       </div>
 
 
-                      <div *ngIf="isTypings && typingLocation==='content' " class="msg_container base_receive">
-                        <!-- !isSameSender(idUserTypingNow, i) -->
+                      <div *ngIf="isTypings && !showThinkingMessage && typingLocation==='content'" class="msg_container base_receive">
                         <chat-avatar-image *ngIf="idUserTypingNow " class="slide-in-left"  
                           [senderID]="idUserTypingNow"
                           [senderFullname]="nameUserTypingNow"
                           [baseLocation]="baseLocation">
                         </chat-avatar-image>
-
                         <user-typing
                           [ngClass]="{'userTypingNowExist': !idUserTypingNow}"
                           [color]="stylesMap?.get('iconColor')"
@@ -148,11 +144,14 @@
                       </div>
 
                       <div *ngIf="showThinkingMessage" class="msg_container base_receive thinking_receive">
-                        <div class="messages msg_receive thinking_message">
-                          {{ thinkingMessageText || 'sto pensando...' }}
+                        <div class="thinking_text">
+                          <p class="thinking_label">{{ translationMap?.get('LABEL_THINKING') }}</p>
+                          <span class="thinking_dots" aria-hidden="true">
+                             <span>.</span><span>.</span><span>.</span>
+                          </span>
                         </div>
                       </div>
-                      
+   
                   </div>
               </div>
           </div>

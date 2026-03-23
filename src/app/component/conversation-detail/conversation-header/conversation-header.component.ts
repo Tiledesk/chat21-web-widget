@@ -21,6 +21,7 @@ export class ConversationHeaderComponent implements OnInit, OnChanges {
   @Input() isTypings: boolean;
   @Input() nameUserTypingNow: string;
   @Input() typingLocation: string;
+  @Input() isMobile: boolean;
   @Input() isTrascriptDownloadEnabled: boolean;
   @Input() fullscreenMode: boolean;
   @Input() size: 'min' | 'max' | 'top';
