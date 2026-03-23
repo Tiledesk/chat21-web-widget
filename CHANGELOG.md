@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.26-rc3
+- **changed**: start with authentication if a proactive message has been set, so if a rule has been set on at one chatbot in the project
 
 # 5.1.26-rc2
 - **changed**: start with authentication if hasCalloutInWidgetConfig is true
