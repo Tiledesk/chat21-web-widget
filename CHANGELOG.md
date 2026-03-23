@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.26-rc4
+- **changed**: decoupled callout from signin
+
 # 5.1.26-rc3
 - **changed**: start with authentication if a proactive message has been set, so if a rule has been set on at one chatbot in the project
 
