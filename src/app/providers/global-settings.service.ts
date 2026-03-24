@@ -324,11 +324,13 @@ export class GlobalSettingsService {
         }
         /** set button colors */
         this.setButtonColors();
+        this.globals.setParameter('isMobile', detectIfIsMobile(this.globals.windowContext));
 
         this.setVariableFromStorage(this.globals);
         this.setVariablesFromSettings(this.globals);
         this.setVariablesFromAttributeHtml(this.globals, this.el);
         this.setVariablesFromUrlParameters(this.globals);
+        this.enforceMobileFullscreenPolicy(this.globals);
         
         this.setDepartmentFromExternal();
         /** set color with gradient from theme's colors */
@@ -338,6 +340,18 @@ export class GlobalSettingsService {
         /** set main style */
         this.setStyle();
         this.obsSettingsService.next(true);
+    }
+
+    /**
+     * On mobile devices we always open the widget fullscreen.
+     * This also neutralizes any legacy `size` stored from previous sessions.
+     */
+    private enforceMobileFullscreenPolicy(globals: Globals) {
+        if (!globals || globals.isMobile !== true) {
+            return;
+        }
+        globals.fullscreenMode = true;
+        globals.size = 'max';
     }
 
     private setButtonColors() {
@@ -1886,6 +1900,15 @@ export class GlobalSettingsService {
     setVariableFromStorage(globals: Globals) {
         this.logger.debug('[GLOBAL-SET] setVariableFromStorage :::::::: SET VARIABLE ---------->', Object.keys(globals));
         for (const key of Object.keys(globals)) {
+            if (globals.isMobile === true && key === 'size') {
+                // Backward compatibility: ignore legacy stored size on mobile.
+                try {
+                    this.appStorageService.removeItem('size');
+                } catch (e) {
+                    this.logger.warn('[GLOBAL-SET] setVariableFromStorage > cannot remove size from storage', e);
+                }
+                continue;
+            }
             const val = this.appStorageService.getItem(key);
             // this.logger.debug('[GLOBAL-SET] setVariableFromStorage SET globals KEY ---------->', key);
             // this.logger.debug('[GLOBAL-SET] setVariableFromStorage SET globals VAL ---------->', val);

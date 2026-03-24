@@ -6,6 +6,13 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# this branch
+- **changed**: mobile always opens fullscreen and ignores legacy stored size”.
+- **changed**: changed user-typing 
+- **changed**: Hide the resize-widget button when on mobile
+- **added**: added "I'm thinking" when the bot responds
+
 # 5.1.26-rc4
 - **changed**: decoupled callout from signin
 
