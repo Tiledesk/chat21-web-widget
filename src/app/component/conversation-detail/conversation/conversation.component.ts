@@ -235,7 +235,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'CONTINUE',
       'EMOJI_NOT_ELLOWED',
       'ATTACHMENT',
-      'EMOJI'
+      'EMOJI',
+      'CLOSE_CHAT'
     ];
 
     const keysContent = [
@@ -1324,6 +1325,12 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   onNewConversationButtonClickedFN(event){
     this.logger.debug('[CONV-COMP] floating onNewConversationButtonClicked')
     this.onNewConversationButtonClicked.emit()
+  }
+
+  /** CALLED BY: conv-footer component */
+  onCloseChatButtonClickedFN(event){
+    this.logger.debug('[CONV-COMP] onCloseChatButtonClicked::::', event)
+    this.onCloseChat()
   }
   // =========== END: event emitter function ====== //
 

@@ -128,6 +128,7 @@
             [isMobile]="g?.isMobile"
             [isEmojiiPickerShow]="isEmojiiPickerShow"
             [footerMessagePlaceholder]="footerMessagePlaceholder"
+            [closeChatInConversation]="g?.closeChatInConversation"
             [fileUploadAccept]="g?.fileUploadAccept"
             [dropEvent]="dropEvent"
             [poweredBy]="g?.poweredBy"
@@ -138,7 +139,8 @@
             (onAfterSendMessage)="onAfterSendMessageFN($event)"
             (onChangeTextArea)="onChangeTextArea($event)"
             (onAttachmentFileButtonClicked)="onAttachmentFileButtonClicked($event)"
-            (onNewConversationButtonClicked)="onNewConversationButtonClickedFN($event)">
+            (onNewConversationButtonClicked)="onNewConversationButtonClickedFN($event)"
+            (onCloseChatButtonClicked)="onCloseChatButtonClickedFN($event)">
         </chat-conversation-footer>
 
     </div>

@@ -226,6 +226,8 @@ export class Globals {
   fontFamilySource: string; // *******  new ********
 
   size: 'min' | 'max' | 'top'; // *******  new ********
+
+  closeChatInConversation: boolean; // *******  new ********
   constructor(
   ) { }
 
@@ -440,7 +442,8 @@ export class Globals {
     this.allowedOnSpecificUrlList = [];
     /** set widget size from 3 different positions: min, max, top */
     this.size = 'min';
-
+    /** enable to close the chat in conversation */
+    this.closeChatInConversation = true;
     // ============ END: SET EXTERNAL PARAMETERS ==============//
 
 
