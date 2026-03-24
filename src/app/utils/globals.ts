@@ -446,7 +446,7 @@ export class Globals {
     /** set widget size from 3 different positions: min, max, top */
     this.size = 'min';
     /** enable to close the chat in conversation */
-    this.closeChatInConversation = true;
+    this.closeChatInConversation = false;
     // ============ END: SET EXTERNAL PARAMETERS ==============//
 
 

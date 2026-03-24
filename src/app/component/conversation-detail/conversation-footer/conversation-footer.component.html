@@ -106,7 +106,7 @@
         </div>
     </div>
 
-    <div class="close-chat-container">
+    <div class="close-chat-container" *ngIf="closeChatInConversation">
         <button tabindex="1040" aflistconv #aflistconv  class="c21-button-primary c21-close" (click)="onCloseChat($event)" [ngStyle]="{'background-color': stylesMap.get('themeColor'), 'border-color': stylesMap.get('themeColor'), 'color': stylesMap?.get('foregroundColor')}">
             <span class="v-align-center">
                 <!-- <svg [ngStyle]="{'fill': 'yellow' }" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
