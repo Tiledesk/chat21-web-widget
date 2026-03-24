@@ -113,6 +113,15 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   // availableAgentsStatus = false; // indica quando è impostato lo stato degli agenti nel subscribe
   messages: Array<MessageModel> = [];
 
+  // Temporary "thinking" state after a client message is sent.
+  public showThinkingMessage: boolean = false;
+  private waitingServerReply: boolean = false;
+
+  // Badge "ultimo messaggio ricevuto dal server" (bot/umano)
+  public showLastServerSenderBadge: boolean = false;
+  public lastServerSenderKind: 'bot' | 'human' | null = null;
+  public lastServerSenderBadgeText: string = '';
+
 
   CLIENT_BROWSER: string = navigator.userAgent;
 
@@ -253,6 +262,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'LABEL_TODAY',
       'LABEL_TOMORROW',
       'LABEL_LOADING',
+      'LABEL_THINKING',
       'LABEL_TO',
       'ARRAY_DAYS',
     ];
@@ -357,6 +367,130 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
 
   }
 
+  private classifyMessageSenderKind(msg: MessageModel | null | undefined): 'bot' | 'human' | 'system' | 'unknown' {
+    if (!msg) return 'unknown';
+
+    const sender = msg.sender;
+    const senderFullname = msg.sender_fullname;
+    const senderFullnameLower = (senderFullname || '').toString().toLowerCase();
+
+    // System messages are always from "system".
+    if (sender === 'system' || senderFullnameLower === 'system') {
+      return 'system';
+    }
+
+    const chatbotId = msg?.attributes?.flowAttributes?.chatbot_id;
+    if (chatbotId && sender && String(chatbotId) === String(sender)) {
+      return 'bot';
+    }
+
+    // Fallback heuristics (used when chatbot_id is missing)
+    if (sender && String(sender).includes('bot_')) {
+      return 'bot';
+    }
+    if (senderFullnameLower.includes('bot')) {
+      return 'bot';
+    }
+
+    return 'human';
+  }
+
+  /**
+   * Detects explicit handoff-to-human system messages.
+   * Example:
+   * attributes.subtype = "info"
+   * attributes.updateconversation = true
+   * attributes.messagelabel.key = "MEMBER_JOINED_GROUP"
+   * attributes.messagelabel.parameters.member_id = "<human-agent-id>"
+   */
+  private isHumanHandoffSystemMessage(msg: MessageModel | null | undefined): boolean {
+    if (!msg) return false;
+    if (msg.sender !== 'system') return false;
+
+    const attrs: any = msg.attributes || {};
+    const key = attrs?.messagelabel?.key;
+    const memberId = attrs?.messagelabel?.parameters?.member_id;
+
+    if (attrs?.subtype !== 'info') return false;
+    if (attrs?.updateconversation !== true) return false;
+    if (key !== 'MEMBER_JOINED_GROUP') return false;
+    if (!memberId || typeof memberId !== 'string') return false;
+
+    // Exclude system/bot/self joins.
+    if (memberId === 'system') return false;
+    if (memberId.startsWith('bot_')) return false;
+    if (this.senderId && memberId === this.senderId) return false;
+
+    return true;
+  }
+
+  /**
+   * Finds the last server message (sender != client) and classifies it as bot/human.
+   * If the last server message is "system", it scans backward to find the last non-system server message.
+   */
+  private refreshLastServerSenderBadge() {
+    const senderId = this.senderId;
+    const msgs = this.messages || [];
+
+    let found: 'bot' | 'human' | null = null;
+    let latestServerMsg: MessageModel | null = null;
+
+    // messages are kept sorted by the handler, but we still scan from the end for "latest".
+    for (let i = msgs.length - 1; i >= 0; i--) {
+      const m = msgs[i];
+      if (!m) continue;
+
+      // Skip messages sent by the current client/user.
+      if (senderId && m.sender === senderId) continue;
+
+      if (!latestServerMsg) {
+        latestServerMsg = m;
+      }
+
+      const kind = this.classifyMessageSenderKind(m);
+      if (kind === 'system') continue;
+      if (kind === 'bot' || kind === 'human') {
+        found = kind;
+        break;
+      }
+    }
+
+    // Priority rule requested: if the latest server message is a system handoff message,
+    // consider the conversation as "human".
+    if (this.isHumanHandoffSystemMessage(latestServerMsg)) {
+      found = 'human';
+    }
+
+    this.lastServerSenderKind = found;
+    this.showLastServerSenderBadge = found !== null;
+    this.lastServerSenderBadgeText = found === 'bot' ? 'Bot' : (found === 'human' ? 'Umano' : '');
+  }
+
+  private startThinkingMessage() {
+    this.waitingServerReply = true;
+    this.showThinkingMessage = true;
+  }
+
+  private stopThinkingMessageImmediately() {
+    if (!this.waitingServerReply) {
+      return;
+    }
+    this.waitingServerReply = false;
+    this.showThinkingMessage = false;
+  }
+
+  private shouldShowThinkingForBot(): boolean {
+    // Primary source: latest server-side classification already computed.
+    if (this.lastServerSenderKind === 'bot') {
+      return true;
+    }
+    // Safe fallback for bot-targeted direct conversations.
+    if (this.conversationWith && this.conversationWith.includes('bot_')) {
+      return true;
+    }
+    return false;
+  }
+
   /**
    * do per scontato che this.userId esiste!!!
    */
@@ -368,6 +502,11 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.logger.debug('[CONV-COMP] ------ 3: connectConversation ------ ');
     // this.connectConversation();
     await this.initConversationHandler();
+
+    // After loading/connecting, compute "ultimo messaggio ricevuto dal server"
+    // (excluding messages sent by the client).
+    this.refreshLastServerSenderBadge();
+    setTimeout(() => this.refreshLastServerSenderBadge(), 300);
 
     this.logger.debug('[CONV-COMP] ------ 4: initializeChatManager ------ ');
     //this.initializeChatManager();
@@ -471,7 +610,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       return this.isConversationArchived;
     }
 
-    //FALLBACK TO TILEDESK
+    //   //FALLBACK TO TILEDESK
     const requests_list = await this.tiledeskRequestService.getMyRequests().catch(err => {
       this.logger.error('[CONV-COMP] getConversationDetail: error getting request from Tiledesk', err);
       this.isConversationArchived=true
@@ -489,9 +628,9 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       return this.isConversationArchived
     }
 
-    this.isConversationArchived = true;
-    return null;
-  }
+      this.isConversationArchived = false;
+      return null;
+    }
 
   /**
     * this.g.recipientId:
@@ -788,8 +927,14 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       subscribtion = this.conversationHandlerService.messageAdded.pipe(takeUntil(this.unsubscribe$)).subscribe((msg: MessageModel) => {
         this.logger.debug('[CONV-COMP] ***** DETAIL messageAdded *****', msg);
         if (msg) {
+          if (msg.sender !== this.senderId) {
+            this.stopThinkingMessageImmediately();
+          }
 
           that.newMessageAdded(msg);
+          // Update badge based on the latest message received from the server.
+          // We rely on `messages` being kept in-sync by the conversation handler.
+          that.refreshLastServerSenderBadge();
           this.checkMessagesLegntForTranscriptDownloadMenuOption();
           this.resetTimeout();
           
@@ -835,6 +980,20 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
             this.logger.debug('[CONV-COMP] updateConversationBadge...')
             that.updateConversationBadge();
           }
+        }
+      });
+      const subscribe = {key: subscribtionKey, value: subscribtion };
+      this.subscriptions.push(subscribe);
+    }
+
+    subscribtionKey = 'conversationsAdded';
+    subscribtion = this.subscriptions.find(item => item.key === subscribtionKey);
+    if(!subscribtion){
+
+      subscribtion = this.chatManager.conversationsHandlerService.conversationChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((conversation) => {
+        this.logger.debug('[CONV-COMP] ***** DATAIL conversationsChanged *****', conversation, this.conversationWith, this.isConversationArchived);
+        if(conversation && conversation.recipient === this.conversationId){
+          this.isConversationArchived = false
         }
       });
       const subscribe = {key: subscribtionKey, value: subscribtion };
@@ -1089,6 +1248,13 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
   /** CALLED BY: conv-header component */
   onWidgetSizeChange(mode: any){
+    if (this.g?.isMobile) {
+      this.g.fullscreenMode = true;
+      this.g.size = 'max';
+      this.isMenuShow = false;
+      return;
+    }
+
     const normalize = (val: any): 'min' | 'max' | 'top' => {
       const v = (typeof val === 'string') ? val.toLowerCase().trim() : '';
       return (v === 'min' || v === 'max' || v === 'top') ? (v as any) : 'min';
@@ -1295,6 +1461,16 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
   /** CALLED BY: conv-footer component */ 
   onAfterSendMessageFN(message: MessageModel){
+    // Manage thinking state only for messages sent by the current client.
+    // Do not force-hide here for other message types/events.
+    if (message && message.sender === this.senderId) {
+      if (this.shouldShowThinkingForBot()) {
+        this.startThinkingMessage();
+      } else {
+        this.showThinkingMessage = false;
+        this.waitingServerReply = false;
+      }
+    }
     this.onAfterSendMessage.emit(message)
   }
   /** CALLED BY: conv-footer component */ 
@@ -1352,6 +1528,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     //this.storageService.removeItem('activeConversation');
     this.isConversationArchived = false;
     this.hideTextAreaContent = false;
+    this.showThinkingMessage = false;
+    this.waitingServerReply = false;
     this.conversationFooter.textInputTextArea='';
     this.hideFooterTextReply = false;
     this.footerMessagePlaceholder = '';
