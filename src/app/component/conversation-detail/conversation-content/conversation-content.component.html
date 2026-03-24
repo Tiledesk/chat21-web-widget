@@ -144,12 +144,12 @@
                       </div>
 
                       <div *ngIf="showThinkingMessage" class="msg_container base_receive thinking_receive">
-                        <div class="thinking_text">
-                          <p class="thinking_label">{{ translationMap?.get('LABEL_THINKING') }}</p>
-                          <span class="thinking_dots" aria-hidden="true">
-                             <span>.</span><span>.</span><span>.</span>
-                          </span>
-                        </div>
+                        <user-typing class="loading thinking-dots"
+                          [color]="stylesMap?.get('iconColor')"
+                          [translationMap]="translationMap"
+                          [idUserTypingNow]="idUserTypingNow"
+                          [nameUserTypingNow]="nameUserTypingNow">
+                        </user-typing>
                       </div>
    
                   </div>

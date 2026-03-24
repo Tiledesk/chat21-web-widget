@@ -1233,6 +1233,13 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
   /** CALLED BY: conv-header component */
   onWidgetSizeChange(mode: any){
+    if (this.g?.isMobile) {
+      this.g.fullscreenMode = true;
+      this.g.size = 'max';
+      this.isMenuShow = false;
+      return;
+    }
+
     const normalize = (val: any): 'min' | 'max' | 'top' => {
       const v = (typeof val === 'string') ? val.toLowerCase().trim() : '';
       return (v === 'min' || v === 'max' || v === 'top') ? (v as any) : 'min';
