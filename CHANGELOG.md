@@ -65,6 +65,15 @@
 - **bug-fixed**: markdown is fired as an emojii and blocked by isEmojii check fn
 
 
+
+# this branch
+- **changed**: start with authentication if hasCalloutInWidgetConfig is true
+- **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
+- **changed**: Set the default autoStart value to false
+- **added**: Added the open widget loading spinner
+- **changed**: Load the widget without authentication and display the speech bubble
+
+
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES
 

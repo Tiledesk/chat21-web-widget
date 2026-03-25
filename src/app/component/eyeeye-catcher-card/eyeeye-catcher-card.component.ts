@@ -50,24 +50,6 @@ export class EyeeyeCatcherCardComponent implements OnInit {
     this.displayEyeCatcherCardCloseBtnWrapper = 'none';
     this.displayEyeCatcherCardCloseBtnIsMobileWrapper = 'none';
     this.displayEyeCatcherCardCloseBtn = 'none';
-    /* EYE-CATCHER CLOSE BUTTON SWITCH */
-    this.openIfCallOutTimer();
-  }
-
-
-  /**
-   * OPEN THE EYE-CATCHER CARD
-   * if calloutTimer >= 0
-   */
-  private openIfCallOutTimer() {
-    const that = this;
-    const calloutTimer = this.g.calloutTimer;
-    if (calloutTimer >= 0) {
-        const waitingTime = calloutTimer * 1000;
-        setTimeout(function () {
-            that.openEyeCatcher();
-        }, waitingTime);
-    }
   }
 
   /**
