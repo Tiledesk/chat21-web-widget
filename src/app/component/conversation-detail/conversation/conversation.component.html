@@ -30,11 +30,20 @@
         [isTypings]="isTypings"
         [nameUserTypingNow]="nameUserTypingNow"
         [typingLocation]="g?.typingLocation"
+        [isMobile]="g?.isMobile"
         (onBack)="onBackHomeFN()"
         (onCloseWidget)="onCloseWidgetFN()"
         (onMenuOptionClick)="onMenuOptionClick($event)"
         (onMenuOptionShow)="onMenuOption($event)">
     </chat-conversation-header>
+
+    <!-- Badge: natura dell'ultimo messaggio ricevuto dal server -->
+    <!-- <div
+      *ngIf="showLastServerSenderBadge"
+      id="chat21-last-server-sender-badge"
+      [ngClass]="lastServerSenderKind">
+      {{ lastServerSenderBadgeText }}
+    </div> -->
 
     <div id="dropZone_container" *ngIf="isHovering"
         [class.hideTextReply]="hideFooterTextReply && g?.poweredBy">
@@ -54,6 +63,7 @@
         [idUserTypingNow]="idUserTypingNow"
         [nameUserTypingNow]="nameUserTypingNow"
         [typingLocation]="g?.typingLocation"
+        [showThinkingMessage]="showThinkingMessage"
         [fullscreenMode]="g?.fullscreenMode"
         [translationMap]="translationMapContent"
         [stylesMap]="stylesMap"
@@ -68,7 +78,6 @@
         (dragleave)="drag($event)" >
     </chat-conversation-content>
 
-    
 
     <!-- INTERNAL FRAME FOR SELF ACTION LINK BUTTONS-->
     <chat-internal-frame *ngIf="isButtonUrl"

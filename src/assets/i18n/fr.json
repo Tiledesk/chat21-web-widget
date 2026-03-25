@@ -16,6 +16,7 @@
     "GUEST_LABEL": "Hôte",
     "ALL_AGENTS_OFFLINE_LABEL": "Tous les opérateurs sont actuellement hors ligne",
     "LABEL_LOADING": "Chargement en cours ...",
+    "LABEL_THINKING": "en train de reflechir",
     "CALLOUT_TITLE_PLACEHOLDER": "🖐 Besoin d'aide?",
     "CALLOUT_MSG_PLACEHOLDER": "Cliquez ici et commencez à discuter avec nous!",
     "CUSTOMER_SATISFACTION": "Évaluation des services",
