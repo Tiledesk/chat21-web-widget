@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.27-rc1
+- **added**: closeChatInConversation parameters
+- **added**: close chat button under textarea footer component
 
 # 5.1.26-rc6
 - **changed**: mobile always opens fullscreen and ignores legacy stored size”.

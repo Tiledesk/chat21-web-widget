@@ -1130,6 +1130,12 @@ export class GlobalSettingsService {
         if (TEMP !== undefined) {
             globals.size = TEMP;
         } 
+
+        TEMP = tiledeskSettings['closeChatInConversation'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > closeChatInConversation:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.closeChatInConversation = (TEMP === true) ? true : false;
+        }
     }
 
     /**
@@ -1875,6 +1881,11 @@ export class GlobalSettingsService {
         TEMP = getParameterByName(windowContext, 'tiledesk_size');
         if (TEMP) {
             globals.size = TEMP;
+        }
+
+        TEMP = getParameterByName(windowContext, 'tiledesk_closeChatInConversation');
+        if (TEMP) {
+            globals.closeChatInConversation = stringToBoolean(TEMP);
         }
         
     }
