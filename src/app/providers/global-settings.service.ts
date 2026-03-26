@@ -324,13 +324,13 @@ export class GlobalSettingsService {
         }
         /** set button colors */
         this.setButtonColors();
+        // Detect mobile before loading persisted values so storage policies can depend on it.
         this.globals.setParameter('isMobile', detectIfIsMobile(this.globals.windowContext));
 
         this.setVariableFromStorage(this.globals);
         this.setVariablesFromSettings(this.globals);
         this.setVariablesFromAttributeHtml(this.globals, this.el);
         this.setVariablesFromUrlParameters(this.globals);
-        this.enforceMobileFullscreenPolicy(this.globals);
         
         this.setDepartmentFromExternal();
         /** set color with gradient from theme's colors */
@@ -340,18 +340,6 @@ export class GlobalSettingsService {
         /** set main style */
         this.setStyle();
         this.obsSettingsService.next(true);
-    }
-
-    /**
-     * On mobile devices we always open the widget fullscreen.
-     * This also neutralizes any legacy `size` stored from previous sessions.
-     */
-    private enforceMobileFullscreenPolicy(globals: Globals) {
-        if (!globals || globals.isMobile !== true) {
-            return;
-        }
-        globals.fullscreenMode = true;
-        globals.size = 'max';
     }
 
     private setButtonColors() {
@@ -1901,7 +1889,7 @@ export class GlobalSettingsService {
         this.logger.debug('[GLOBAL-SET] setVariableFromStorage :::::::: SET VARIABLE ---------->', Object.keys(globals));
         for (const key of Object.keys(globals)) {
             if (globals.isMobile === true && key === 'size') {
-                // Backward compatibility: ignore legacy stored size on mobile.
+                // On mobile we always open fullscreen, so legacy/persisted widget size must be ignored.
                 try {
                     this.appStorageService.removeItem('size');
                 } catch (e) {

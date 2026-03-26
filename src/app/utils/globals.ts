@@ -613,13 +613,35 @@ export class Globals {
     }
 
 
-    //customize position for 'tiledeskdiv' for mobile
+    // On mobile, force fullscreen while open regardless of stored `size`.
     if(isOpen && this.isMobile && divTiledeskWidget){
+      divTiledeskWidget.classList.remove('min-size')
+      divTiledeskWidget.classList.remove('max-size')
+      divTiledeskWidget.classList.remove('top-size')
+      divTiledeskWidget.classList.add('fullscreen')
+      divTiledeskWidget.style.left = '0px'
       divTiledeskWidget.style.right = '0px'
+      divTiledeskWidget.style.top = '0px'
       divTiledeskWidget.style.bottom = '0px'
+      divTiledeskWidget.style.width = '100%'
+      divTiledeskWidget.style.height = '100%'
+      divTiledeskWidget.style.maxWidth = 'none'
+      divTiledeskWidget.style.maxHeight = 'none'
     } else if(!isOpen && this.isMobile && divTiledeskWidget){
-      divTiledeskWidget.style.bottom = this.marginY
-      this.align === 'left'?  divTiledeskWidget.style.left = this.mobileMarginX : divTiledeskWidget.style.right = this.mobileMarginX; 
+      divTiledeskWidget.classList.remove('fullscreen')
+      divTiledeskWidget.style.removeProperty('top')
+      divTiledeskWidget.style.removeProperty('width')
+      divTiledeskWidget.style.removeProperty('height')
+      divTiledeskWidget.style.removeProperty('max-width')
+      divTiledeskWidget.style.removeProperty('max-height')
+      divTiledeskWidget.style.bottom = this.mobileMarginY
+      if (this.align === 'left') {
+        divTiledeskWidget.style.left = this.mobileMarginX
+        divTiledeskWidget.style.removeProperty('right')
+      } else {
+        divTiledeskWidget.style.right = this.mobileMarginX
+        divTiledeskWidget.style.removeProperty('left')
+      }
     }
 
     //customize position for 'tiledeskdiv' for desktop if fullscreenMode is not active
