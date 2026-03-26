@@ -16,6 +16,7 @@
     "GUEST_LABEL": "Guest",
     "ALL_AGENTS_OFFLINE_LABEL": "All operators are offline at the moment",
     "LABEL_LOADING": "Loading...",
+    "LABEL_THINKING": "thinking",
     "CALLOUT_TITLE_PLACEHOLDER": "🖐 Need Help?",
     "CALLOUT_MSG_PLACEHOLDER": "Click here and start chatting with us!",
     "CUSTOMER_SATISFACTION": "Customer satisfaction",

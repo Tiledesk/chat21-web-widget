@@ -120,7 +120,7 @@
   ******* EYE-CATCHER (aka CALLOUT) *********
   *******************************************
   tabindex -> 20 -->
-  <chat-eyeeye-catcher-card *ngIf="g.senderId && !g.isOpenNewMessage"
+  <chat-eyeeye-catcher-card *ngIf="!g.isOpenNewMessage"
     (onOpenChat)="onOpenCloseWidget($event)"
     (onCloseEyeCatcherCard)="onCloseEyeCatcherCard($event)">
   </chat-eyeeye-catcher-card> 
@@ -145,5 +145,12 @@
   <chat-launcher-button *ngIf="isInitialized" 
     (onButtonClicked)="onOpenCloseWidget($event)">
   </chat-launcher-button>
-  
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="tiledesk-loading-overlay">
+    <div class="tiledesk-loading-spinner">
+      <div class="spinner-circle"></div>
+      <div class="loading-text">{{ translationMap.get('LABEL_LOADING') }}</div>
+    </div>
+  </div>
 </div>

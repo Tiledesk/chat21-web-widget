@@ -6,6 +6,17 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.27
+- **changed**: start with authentication if hasCalloutInWidgetConfig is true
+- **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
+- **changed**: Set the default autoStart value to false
+- **added**: Added the open widget loading spinner
+- **changed**: Load the widget without authentication and display the speech bubble
+- **changed**: mobile always opens fullscreen and ignores legacy stored size”.
+- **changed**: changed user-typing 
+- **changed**: Hide the resize-widget button when on mobile
+- **added**: added "I'm thinking" when the bot responds
+
 # 5.1.26
 - **bug fixed**: attachment buttons text alignment
 
