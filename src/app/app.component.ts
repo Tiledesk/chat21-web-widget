@@ -1185,6 +1185,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         const senderId = this.g.senderId;
         this.logger.debug('[APP-COMP] f21_open senderId: ', senderId);
         if (senderId) {
+            this.enforceMobileFullscreenOnOpen();
             // chiudo callout
             this.g.setParameter('displayEyeCatcherCard', 'none');
             // this.g.isOpen = true; // !this.isOpen;
@@ -1616,6 +1617,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.g.setParameter('recipientId', recipientId);
         this.logger.debug('[APP-COMP] openCloseWidget', recipientId, this.g.isOpen, this.g.startFromHome);
         if (this.g.isOpen === false) {
+            this.enforceMobileFullscreenOnOpen();
             if(this.forceDisconnect){
                 this.logger.log('[FORCE] onOpenCloseWidget --> reconnect', this.forceDisconnect)
                 this.messagingAuthService.createCustomToken(this.g.tiledeskToken)
@@ -2087,6 +2089,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.appStorageService.setItem('size', normalizedMode);
         } catch (e) {
             this.logger.warn('[APP-COMP] onWidgetSizeChange > cannot persist size', e);
+        }
+    }
+
+    private enforceMobileFullscreenOnOpen() {
+        if (this.g?.isMobile) {
+            this.g.fullscreenMode = true;
+            this.g.size = 'max';
         }
     }
 
