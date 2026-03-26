@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.27-rc2
+- **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
+
 # 5.1.27-rc1
 - **added**: closeChatInConversation parameters
 - **added**: close chat button under textarea footer component
