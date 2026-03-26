@@ -7,6 +7,7 @@
 *Tiledesk SRL*
 
 # 5.1.27
+- **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
 - **changed**: start with authentication if hasCalloutInWidgetConfig is true
 - **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
 - **changed**: Set the default autoStart value to false
