@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.27-rc3
+- **bug fixed**: fixed Bot/Human conversation detection by correctly classifying bot replies
+
 # 5.1.27-rc2
 - **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
 
