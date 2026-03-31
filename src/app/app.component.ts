@@ -169,13 +169,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     if (conversation.attributes && conversation.attributes['subtype'] === 'info') {
                         return;
                     }
-                    if (conversation.is_new && this.isInitialized) {
+                    if (conversation.is_new && that.isInitialized) {
                         that.manageTabNotification(false, 'conv-added')
                         // this.soundMessage(); 
                     }
-                    if(this.g.isOpen === false){
-                        that.lastConversation = conversation;
+                    if(this.g.isOpen === false && conversation.sender !== this.g.senderId && !isInfo(conversation)){
                         that.g.isOpenNewMessage = true;
+                        that.lastConversation = conversation;
                     }
                 } else {
                     //widget closed
@@ -223,6 +223,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                             that.lastConversation = conversation;
                             that.g.isOpenNewMessage = true;
                             that.logger.debug('[APP-COMP] lastconversationnn', that.lastConversation)
+                            that.logger.debug('[APP-COMP] lastconversationnn message' + JSON.stringify(that.lastConversation?.attributes?.commands))
                         }
                         let badgeNewConverstionNumber = that.conversationsHandlerService.countIsNew()
                         that.g.setParameter('conversationsBadge', badgeNewConverstionNumber);
