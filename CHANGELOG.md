@@ -7,6 +7,9 @@
 *Tiledesk SRL*
 
 # 5.1.28
+- **bug fixed**: header option menu is deactivated on mobile
+
+# 5.1.28
 - **bug fixed**: fixed Bot/Human conversation detection by correctly classifying bot replies
 
 # 5.1.27
