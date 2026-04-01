@@ -8,6 +8,9 @@
 
 
 # this branch
+- **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
+- **bug fixed**: refactor conversation header button to remove mobile condition for visibility
+
 - **changed**: mobile always opens fullscreen and ignores legacy stored size”.
 - **changed**: changed user-typing 
 - **changed**: Hide the resize-widget button when on mobile
