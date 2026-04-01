@@ -419,3 +419,28 @@ textarea:active{
     border: none;
     // margin: -2px -2px 0px;
 }
+
+
+// aggiungi un'animazione di fade in e fade out quando .star-rating-widget è visibile con transition
+.star-rating-widget {
+    transition: all 0.5s ease-in-out;
+}
+
+.star-rating-widget {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -52px;
+    height: 100%;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    background-color: rgb(255, 255, 255);
+    flex-wrap: nowrap;
+    &.active {
+        bottom: 0px;
+    }
+    &.inactive {
+        bottom: -52px;
+    }
+}

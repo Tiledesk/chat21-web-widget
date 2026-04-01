@@ -6,52 +6,25 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-
-# this branch
+# 5.1.27-ar
 - **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
 - **bug fixed**: refactor conversation header button to remove mobile condition for visibility
-
 - **changed**: mobile always opens fullscreen and ignores legacy stored size”.
 - **changed**: changed user-typing 
 - **changed**: Hide the resize-widget button when on mobile
 - **added**: added "I'm thinking" when the bot responds
 
-# 5.1.26-rc4
-- **changed**: decoupled callout from signin
+# 5.1.26-ar
+- **bug fixed**: attachment buttons text alignment 
 
-# 5.1.26-rc3
-- **changed**: start with authentication if a proactive message has been set, so if a rule has been set on at one chatbot in the project
+# 5.1.24-ar
+- **changed**: attachment buttons in messages now respect the container max width and wrap/break long labels instead of being clipped
 
-# 5.1.26-rc2
-- **changed**: start with authentication if hasCalloutInWidgetConfig is true
-
-# 5.1.26-rc1
-- **bug fixed**: improved audio recording/upload flow by ignoring empty recorder chunks, preserving the recorder MIME type when creating the audio blob/file, and uploading audio directly without Base64 conversion
-
-
-# 5.1.25-rc1
-- **bug fixed**: attachment buttons in messages now respect the container max width and wrap/break long labels instead of being clipped
-
-# 5.1.24-rc2
-- **bug fixed**: minor fix in marked pipe to avoid rendering html tags
-
-# 5.1.24-rc1
-- **security**: hardened Markdown link rendering by blocking dangerous protocols (e.g. `javascript:`, `data:`, `vbscript:`) and preventing unsafe links from being rendered as anchors
-- **changed**: refactored `MarkedPipe` to simplify Markdown parsing, improve link rendering via a custom `marked` renderer, and streamline newline handling (`\\n` → `\n`)
-
-# 5.1.20-rc3 
-- **bug fixed**: saved the widget's size state to local storage (in HP conversations)
-
-# 5.1.20-rc2
+# 5.1.22-ar 
 - **changed**: API for upload a file/iamges
-- **changed**: marked pipe do not render /n 
+- **changed**: marked pipe do not render /n
 
-# 5.1.20-rc1
-- **changed**: API for upload a file/iamges
-
-# 5.1.19 
-
-# 5.1.19-rc1 
+# 5.1.14-ar 
 - **bug fixed**: show bottom scroll button and unread message badge only when I'm not at the bottom of the page
 - **changed**: allow HTML code to be inserted into messages, but do not parse the code. Ensure coexistence with Markdown.
 - **bug fixed**: after sending a multi-line message, the text area remains open on multiple lines.
@@ -60,65 +33,32 @@
 - **bug-fixed**: when i move to top mode and close the widget, the balloon moves to the right
 - **changed**: saved the widget's size state to local storage. The parameter flow is (default → storage → settings → URL)
 
-# 5.1.18
-# 5.1.15-rc3
+# 5.1.13-ar
 - **added**: Implemented Shadow DOM in the text component to isolate HTML and Markdown rendering in a safe and protected context
 - **changed**: Adapted text component styles to support Shadow DOM (removed ::ng-deep, added styles for common markdown elements)
 - **security**: HTML/Markdown content is now rendered in an isolated Shadow DOM, improving security and preventing interference with the rest of the application
-
-# 5.1.17
+- **changed**: bootstrap version from 3 to 5.3.3
+- **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
 - **bug-fixed**: set the maximum width on a message with iframe
 
-# 5.1.16
-- **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
 
-# 5.1.15-rc2
-- **bug-fixed**: Bug fix for ifame message width
- 
-# 5.1.15-rc1
+# 5.1.11-ar
 - **changed**: Load local translations before remote ones
 
-# 5.1.15 
-- **changed**: Load local translations before remote ones
+# 5.1.10-ar
+- **bug-fixed**: set callout with correct message
 
-# 5.1.14 
-- **bug-fixed**: stopped loading local language json file
-
-# 5.1.13 
+# 5.1.9-ar
 - **bug-fixed**: set default widget size
 
-# 5.1.7-rc16
-- **bug-fixed**: set default widget size
-
-# 5.1.7-rc15
-- **bug-fixed**: set the color of the buttons with visibility control to the font color
-
-# 5.1.7-rc14
+# 5.1.8-ar
+- **changed**: update emoji detection logic in conversation-footer and utils
+- **bug-fixed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
 - **bug-fixed**: departmentId and departmentName is incorrect in attributes
 
-# 5.1.7-rc13
-- **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
-
-# 5.1.7-rc12
-- **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
-- **changed**: Set the default autoStart value to false
-- **added**: Added the open widget loading spinner
-- **changed**: Load the widget without authentication and display the speech bubble
-
-# 5.1.7-rc11
-- **changed**: set default value autoStart false
-- **added**:added loading spinner
-
-# 5.1.7-rc10
-- **changed**: load widget without authentication and display the balloon
-
-# 5.1.7-rc9
-- **removed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
+# 5.1.8
 
 # 5.1.7-rc8
-# changes in the branch 
-- **changed**: Load local translations before remote ones
-- **bug-fixed**: set default widget size
 - **changed**: Updated the translations of the tooltips in the footer-component
 - **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
 
@@ -127,6 +67,9 @@
 
 # 5.1.7-rc6
 - **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
+
+# this branch
+- **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
 
 # 5.1.12
 - **bug-fixed**: check showEmojiFooterButton to enable/disable emojii
@@ -157,8 +100,6 @@
 - **bug-fixed**: bug fixed button color
 - **bug-fixed**: bug fixed min-height message-receive
 - **bug-fixed**: bug-fixed css footer
-
-# 5.1.7
 
 # 5.1.6
 
