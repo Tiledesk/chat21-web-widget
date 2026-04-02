@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.30
+- **bug fixed**: startHidden is not working properly
+
 # 5.1.28
 - **bug fixed**: header option menu is deactivated on mobile
 
