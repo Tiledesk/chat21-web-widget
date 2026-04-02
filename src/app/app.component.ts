@@ -518,7 +518,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.g.onPageChangeVisibilityMobile === 'open' ||
                     (Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0)
                     // || this.g.hasCalloutInWidgetConfig;
-                console.log('[APP-COMP] shouldAutoAuthenticate', shouldAutoAuthenticate, startHidden)
                 if (shouldAutoAuthenticate) {
                     that.authenticate();
                     if(startHidden){ that.hideWidget(); }
