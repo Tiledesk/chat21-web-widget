@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.30-rc1
+- **bug fixed**: startHidden is not working properly
+
 # 5.1.27-rc3
 - **bug fixed**: fixed Bot/Human conversation detection by correctly classifying bot replies
 
