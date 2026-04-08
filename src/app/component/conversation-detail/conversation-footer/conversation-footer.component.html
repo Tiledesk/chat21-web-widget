@@ -12,6 +12,26 @@
         <div tabindex="-1" class="alertText">{{translationMap.get('EMOJI_NOT_ELLOWED')}}</div>
     </div>
 
+    <!-- STREAM AUDIO: cerchio con onde animate -->
+    <div id="streamAudioAlert" *ngIf="!hideTextAreaContent && isStreamAudioActive" class="fade-in-bottom stream-audio-alert" [class.hideTextReply]="hideTextReply" role="status" [attr.aria-label]="translationMap?.get('STREAM_AUDIO_LISTENING') || 'Stream audio attivo'">
+        <div class="stream-audio-alert__orb" [ngStyle]="{ color: stylesMap?.get('themeColor') }">
+            <svg class="stream-audio-alert__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="50" cy="50" r="46" fill="currentColor" opacity="0.14"/>
+                <g class="stream-audio-alert__waves" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <g class="stream-audio-alert__wave-layer stream-audio-alert__wave-layer--1">
+                        <path d="M6 42 Q24 32 42 42 T78 42 T98 42"/>
+                    </g>
+                    <g class="stream-audio-alert__wave-layer stream-audio-alert__wave-layer--2">
+                        <path d="M6 50 Q24 40 42 50 T78 50 T98 50"/>
+                    </g>
+                    <g class="stream-audio-alert__wave-layer stream-audio-alert__wave-layer--3">
+                        <path d="M6 58 Q24 48 42 58 T78 58 T98 58"/>
+                    </g>
+                </g>
+            </svg>
+        </div>
+    </div>
+
 </div>
 
 <!-- TEXTAREA + ICONS: conv active-->
@@ -102,6 +122,30 @@
             (sendRecordingEvent)="onSendRecording($event)"
             [stylesMap]="stylesMap">
         </chat-audio-recorder>
+    </div>
+
+    <!-- ICON STREAM / CHIUDI STREAM (cerchio, icone bianche su iconColor) -->
+    <div tabindex="-1"
+         class="chat21-textarea-button chat21-stream-button"
+         [class.active]="isStreamAudioActive || (!textInputTextArea && !hideTextReply)"
+         id="chat21-button-stream"
+         (click)="onStreamPressed($event)"
+         [attr.aria-label]="isStreamAudioActive ? (translationMap?.get('CLOSE') || 'Chiudi stream') : (translationMap?.get('STREAM_AUDIO') || 'Stream audio')"
+         [ngStyle]="{ 'background-color': stylesMap?.get('iconColor') || stylesMap?.get('themeColor') }">
+        <span class="v-align-center chat21-stream-button__icon" *ngIf="!isStreamAudioActive">
+            <svg role="img" xmlns="http://www.w3.org/2000/svg" version="1.1" width="24" height="24" viewBox="-5 -10 110 135" fill="#ffffff" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+                <!-- Solo contorni esterni: barre piene (stesso asset, senza vuoti interni) -->
+                <path d="m16.062 27.938c-4.2695 0-7.7695 3.4805-7.7695 7.7695v28.605c0 4.2695 3.4805 7.7695 7.7695 7.7695 4.293 0 7.7695-3.4805 7.7695-7.7695v-28.605c0-4.2695-3.4805-7.7695-7.7695-7.7695z"/>
+                <path d="m38.668 12.438c-4.2695 0-7.7695 3.4805-7.7695 7.7695v59.543c0 4.2695 3.4805 7.7695 7.7695 7.7695 4.293 0 7.7695-3.4805 7.7695-7.7695v-59.562c0-4.2695-3.4805-7.7695-7.7695-7.7695z"/>
+                <path d="m53.52 34.395v31.23c0 4.2695 3.4805 7.7695 7.7695 7.7695 4.293 0 7.7695-3.4805 7.7695-7.7695v-31.23c0-4.2695-3.4805-7.7695-7.7695-7.7695-4.293 0-7.7695 3.4805-7.7695 7.7695z"/>
+                <path d="m83.895 33.418c-4.2695 0-7.7695 3.4805-7.7695 7.7695v17.668c0 4.2695 3.4805 7.7695 7.7695 7.7695 4.293 0 7.7695-3.4805 7.7695-7.7695v-17.668c0-4.2695-3.4805-7.7695-7.7695-7.7695z"/>
+            </svg>
+        </span>
+        <span class="v-align-center chat21-stream-button__icon" *ngIf="isStreamAudioActive">
+            <svg role="img" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff" aria-hidden="true">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+            </svg>
+        </span>
     </div>
 </div>
 

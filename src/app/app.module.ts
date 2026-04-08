@@ -136,6 +136,11 @@ import { Rules } from './utils/rules';
 import { ScriptService } from 'src/chat21-core/providers/scripts/script.service';
 import { CarouselComponent } from './component/message/carousel/carousel.component';
 import { BrandService } from './providers/brand.service';
+import { OpenAiVoiceProviderService } from './providers/voice/STT&TTS/openai-voice.provider';
+import {
+  SpeechToTextProvider,
+  TextToSpeechProvider,
+} from './providers/voice/STT&TTS/speech-provider.abstract';
 import { ErrorAlertComponent } from './component/error-alert/error-alert.component';
 import { ConfirmCloseComponent } from './modals/confirm-close/confirm-close.component';
 
@@ -405,6 +410,8 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     WaitingService,
     ScriptService,
     BrandService,
+    { provide: SpeechToTextProvider, useExisting: OpenAiVoiceProviderService },
+    { provide: TextToSpeechProvider, useExisting: OpenAiVoiceProviderService },
     provideHttpClient(withInterceptorsFromDi())
   ],
   bootstrap: [AppComponent]
