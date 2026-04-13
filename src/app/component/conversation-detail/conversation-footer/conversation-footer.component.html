@@ -133,12 +133,12 @@
          [attr.aria-label]="isStreamAudioActive ? (translationMap?.get('CLOSE') || 'Chiudi stream') : (translationMap?.get('STREAM_AUDIO') || 'Stream audio')"
          [ngStyle]="{ 'background-color': stylesMap?.get('iconColor') || stylesMap?.get('themeColor') }">
         <span class="v-align-center chat21-stream-button__icon" *ngIf="!isStreamAudioActive">
-            <svg role="img" xmlns="http://www.w3.org/2000/svg" version="1.1" width="24" height="24" viewBox="-5 -10 110 135" fill="#ffffff" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+            <svg role="img" xmlns="http://www.w3.org/2000/svg" version="1.1" width="24" height="24" viewBox="0 0 30 30" fill="#ffffff" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
                 <!-- Solo contorni esterni: barre piene (stesso asset, senza vuoti interni) -->
-                <path d="m16.062 27.938c-4.2695 0-7.7695 3.4805-7.7695 7.7695v28.605c0 4.2695 3.4805 7.7695 7.7695 7.7695 4.293 0 7.7695-3.4805 7.7695-7.7695v-28.605c0-4.2695-3.4805-7.7695-7.7695-7.7695z"/>
-                <path d="m38.668 12.438c-4.2695 0-7.7695 3.4805-7.7695 7.7695v59.543c0 4.2695 3.4805 7.7695 7.7695 7.7695 4.293 0 7.7695-3.4805 7.7695-7.7695v-59.562c0-4.2695-3.4805-7.7695-7.7695-7.7695z"/>
-                <path d="m53.52 34.395v31.23c0 4.2695 3.4805 7.7695 7.7695 7.7695 4.293 0 7.7695-3.4805 7.7695-7.7695v-31.23c0-4.2695-3.4805-7.7695-7.7695-7.7695-4.293 0-7.7695 3.4805-7.7695 7.7695z"/>
-                <path d="m83.895 33.418c-4.2695 0-7.7695 3.4805-7.7695 7.7695v17.668c0 4.2695 3.4805 7.7695 7.7695 7.7695 4.293 0 7.7695-3.4805 7.7695-7.7695v-17.668c0-4.2695-3.4805-7.7695-7.7695-7.7695z"/>
+                <path class="s0" d="m5.21 7.41c-1.21 0-2.21 0.99-2.21 2.21v8.14c0 1.21 0.99 2.21 2.21 2.21 1.22 0 2.21-0.99 2.21-2.21v-8.14c0-1.21-0.99-2.21-2.21-2.21z"/>
+                <path class="s0" d="m11.64 3.01c-1.22 0-2.21 0.99-2.21 2.2v16.94c0 1.21 0.99 2.2 2.21 2.2 1.22 0 2.21-0.98 2.21-2.2v-16.94c0-1.21-0.99-2.21-2.21-2.21z"/>
+                <path class="s0" d="m15.86 9.25v8.88c0 1.21 0.99 2.21 2.21 2.21 1.22 0 2.21-0.99 2.21-2.21v-8.88c0-1.22-0.99-2.21-2.21-2.21-1.22 0-2.21 0.99-2.21 2.21z"/>
+                <path class="s0" d="m24.5 8.97c-1.22 0-2.21 0.99-2.21 2.21v5.02c0 1.22 0.99 2.21 2.21 2.21 1.22 0 2.21-0.99 2.21-2.21v-5.02c0-1.21-0.99-2.21-2.21-2.21z"/>
             </svg>
         </span>
         <span class="v-align-center chat21-stream-button__icon" *ngIf="isStreamAudioActive">

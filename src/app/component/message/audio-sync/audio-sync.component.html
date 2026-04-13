@@ -1,0 +1,18 @@
+<div class="audio-sync">
+
+    <audio
+      #audioPlayer
+      [src]="metadata?.src"
+      (timeupdate)="onTimeUpdate()"
+      style="display:none">
+    </audio>
+  
+    <div class="transcript message_innerhtml marked" #transcriptBox [style.color]="color">
+      <span  *ngFor="let w of words; let i = index"
+        class="transcript-word" [class.visible]="w.visible" [class.active]="isActive(i)">
+        {{ w.text }}
+      </span>
+  
+    </div>
+  
+  </div>
