@@ -5,7 +5,7 @@ import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { MAX_WIDTH_IMAGES, MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, MIN_WIDTH_IMAGES } from 'src/chat21-core/utils/constants';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
-import { isAudio, isFile, isFrame, isImage, messageType } from 'src/chat21-core/utils/utils-message';
+import { isAudio, isAudioTTS, isFile, isFrame, isImage, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
 
 @Component({
@@ -26,6 +26,7 @@ export class BubbleMessageComponent implements OnInit {
   isFile = isFile;
   isFrame = isFrame;
   isAudio = isAudio;
+  isAudioTTS=isAudioTTS;
   convertColorToRGBA = convertColorToRGBA
 
  // ========== begin:: check message type functions ======= //
