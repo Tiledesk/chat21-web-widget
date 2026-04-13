@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.30-rc2
+- **bug fixed**: bug fix disabled user-typing with human
+
 # 5.1.30-rc1
 - **bug fixed**: startHidden is not working properly
 
