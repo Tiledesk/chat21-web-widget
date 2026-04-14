@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.31-ar
+- **bug fixed**: bug fix disabled user-typing with human and user-typing with human is not available
+
 # 5.1.29-ar
 - **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
 - **bug fixed**: refactor conversation header button to remove mobile condition for visibility
