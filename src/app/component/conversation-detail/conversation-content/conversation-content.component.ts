@@ -24,6 +24,7 @@ export class ConversationContentComponent implements OnInit {
   @Input() nameUserTypingNow: string;
   @Input() typingLocation: string;
   @Input() showThinkingMessage: boolean;
+  @Input() lastServerSenderKind: 'bot' | 'human' | null;
   @Input() fullscreenMode: boolean;
   @Input() translationMap: Map< string, string>;
   @Input() stylesMap: Map<string, string>;
