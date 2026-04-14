@@ -3,67 +3,17 @@
 // `ng build2 --env=prod` then `environment.prod.ts` will be used instead.
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
-export const environment = {
-  production: false,
-  version: require('../../package.json').version, // https://stackoverflow.com/questions/34907682/how-to-display-app-version-in-angular2
-  // globalRemoteJSSrc:"/environments/real_data/segment_script-dev.js",
-  remoteConfig: true,
-  // remoteConfigUrl: '/widget-config.json',
-  remoteConfigUrl: '/environments/real_data/widget-config-aws-stage.json',
-  // remoteConfigUrl: '/environments/real_data/widget-config-native-prod.json',
-  // remoteConfigUrl: '/environments/real_data/widget-config-firebase.json',
-  loadRemoteTranslations: true,
-  remoteTranslationsUrl: 'https://api.tiledesk.com/v3/',
-  chatEngine: 'mqtt',
-  uploadEngine: 'native',
-  logLevel: 'ERROR',
-  // firebaseConfig: {
-  //   apiKey: 'AIzaSyDKfdKrlD7AYcbQ-U-xxgV-b3FUQ4xt7NM',
-  //   authDomain: 'tiledesk-prod-v2.firebaseapp.com',
-  //   databaseURL: 'https://tiledesk-prod-v2.firebaseio.com',
-  //   projectId: 'tiledesk-prod-v2',
-  //   storageBucket: 'tiledesk-prod-v2.appspot.com',
-  //   messagingSenderId: '92907897826',
-  //   appId: '1:92907897826:web:f255664014a7cc14ee2fbb',
-  //   tenant: 'tilechat',
-  // },
-  firebaseConfig : {
-    apiKey: "AIzaSyAxCiyHcqmaUkUxnVz8olZlcIjLNmGmMfk",
-    authDomain: "chat21-pre-01.firebaseapp.com",
-    databaseURL: "https://chat21-pre-01.firebaseio.com",
-    projectId: "chat21-pre-01",
-    storageBucket: "chat21-pre-01.appspot.com",
-    messagingSenderId: "269505353043",
-    appId: "1:269505353043:web:e216584d78d61f0f707da6",
-    tenant: 'tilechat',
-  },
-  chat21Config: {
-    appId: 'tilechat',
-    MQTTendpoint: 'wss://eu.chatv3.tiledesk.com/ws/', // MQTT endpoint
-    APIendpoint: 'https://eu.chathttpv3.tiledesk.com/api',
-    log: true
-  },
-  apiUrl: 'https://api.tiledesk.com/v3/',
-  baseImageUrl: 'https://firebasestorage.googleapis.com/v0/b/',
-  dashboardUrl: 'https://localhost:4000/',
-  defaultLang : 'en',
-  storage_prefix : 'widget_sv6',
-  authPersistence: 'LOCAL',
-  supportMode: true,
-  enbedJs: true,
-  brandSrc: ''
-};
 
-
+// -----> FIREBASE PROD V5 <----------
 // export const environment = {
 //   production: true,
 //   version: require('../../package.json').version, // https://stackoverflow.com/questions/34907682/how-to-display-app-version-in-angular2
 //   remoteConfig: false,
 //   remoteConfigUrl: '/widget-config.json',
 //   loadRemoteTranslations: true,
-//   remoteTranslationsUrl: 'https://api.tiledesk.com/v3/',
-//   chatEngine: 'mqtt',
-//   uploadEngine: 'native',
+//   remoteTranslationsUrl: 'https://api.tiledesk.com/v2/',
+//   chatEngine: 'firebase',
+//   uploadEngine: 'firebase',
 //   fileUploadAccept:"*/*",
 //   logLevel: 'ERROR',
 //   firebaseConfig: {
@@ -78,15 +28,54 @@ export const environment = {
 //   },
 //   chat21Config: {
 //     appId: 'tilechat',
-//     MQTTendpoint: 'wss://eu.rtmv3.tiledesk.com/mqws/ws', // MQTT endpoint
-//     APIendpoint: 'https://eu.rtmv3.tiledesk.com/chatapi/api',
-//     log: false
+//     MQTTendpoint: 'mqtt://localhost:15675/ws', // MQTT endpoint
+//     APIendpoint: 'http://localhost:8004/api'
 //   },
-//   apiUrl: 'https://api.tiledesk.com/v3/',
-//   baseImageUrl: 'https://eu.rtmv3.tiledesk.com/api/',
+//   apiUrl: 'https://api.tiledesk.com/v2/',
+//   baseImageUrl: 'https://firebasestorage.googleapis.com/v0/b/',
+//   dashboardUrl: 'https://console.tiledesk.com/v2/dashboard/',
 //   defaultLang : 'en',
 //   storage_prefix : 'widget_sv5',
 //   authPersistence: 'LOCAL',
 //   supportMode: true,
 //   enbedJs: true
 // };
+
+
+// // -----> MQTT PROD V6 <----------
+export const environment = {
+  production: true,
+  version: require('../../package.json').version, // https://stackoverflow.com/questions/34907682/how-to-display-app-version-in-angular2
+  // globalRemoteJSSrc:"https://widget.tiledesk.com/scripts/segment_script.js",
+  remoteConfig: false,
+  remoteConfigUrl: '/widget-config.json',
+  loadRemoteTranslations: true,
+  remoteTranslationsUrl: 'https://api.tiledesk.com/v3/',
+  chatEngine: 'mqtt',
+  uploadEngine: 'native',
+  logLevel: 'ERROR',
+  firebaseConfig: {
+    apiKey: 'AIzaSyDKfdKrlD7AYcbQ-U-xxgV-b3FUQ4xt7NM',
+    authDomain: 'tiledesk-prod-v2.firebaseapp.com',
+    databaseURL: 'https://tiledesk-prod-v2.firebaseio.com',
+    projectId: 'tiledesk-prod-v2',
+    storageBucket: 'tiledesk-prod-v2.appspot.com',
+    messagingSenderId: '92907897826',
+    appId: '1:92907897826:web:f255664014a7cc14ee2fbb',
+    tenant: 'tilechat',
+  },
+  chat21Config: {
+    appId: 'tilechat',
+    MQTTendpoint: 'wss://eu.rtmv3.tiledesk.com/mqws/ws', // MQTT endpoint
+    APIendpoint: 'https://eu.rtmv3.tiledesk.com/chatapi/api',
+    log: false
+  },
+  apiUrl: 'https://api.tiledesk.com/v3/',
+  baseImageUrl: 'https://eu.rtmv3.tiledesk.com/api/',
+  dashboardUrl: 'https://panel.tiledesk.com/v3/dashboard/',
+  defaultLang : 'en',
+  storage_prefix : 'widget_sv6',
+  authPersistence: 'LOCAL',
+  supportMode: true,
+  enbedJs: true,
+};
