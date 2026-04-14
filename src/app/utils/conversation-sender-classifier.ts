@@ -84,6 +84,14 @@ function isSystemMessage(msg: MessageModel | null | undefined): boolean {
   return sender === 'system' || senderFullnameLower === 'system';
 }
 
+function isAgentHandoffCommandClientMessage(msg: MessageModel | null | undefined, clientSenderId?: string): boolean {
+  if (!msg) return false;
+  if (!clientSenderId) return false;
+  if ((msg as any).sender !== clientSenderId) return false;
+  const text = ((msg as any).text || '').toString().trim().toLowerCase();
+  return text === '\\agent';
+}
+
 export function computeConversationBadgeState(messages: MessageModel[], clientSenderId?: string): ConversationBadgeState {
   const msgs = messages || [];
   const serverMsgs = msgs.filter(m => !!m && (!clientSenderId || (m as any).sender !== clientSenderId));
@@ -93,6 +101,19 @@ export function computeConversationBadgeState(messages: MessageModel[], clientSe
 
   let latestNonSystemResponderKind: 'bot' | 'human' | null = null;
 
+  // Priority rule: explicit client command "\agent" requests human handoff.
+  // If the latest messages are all from the client (i.e. after the last server message)
+  // and among those there is a "\agent" command, consider the conversation "human"
+  // even before any server-side system message (e.g. MEMBER_JOINED_GROUP) arrives.
+  const lastServerTs = getTimestamp(latestServerMsg);
+  const clientMsgsAfterLastServer = clientSenderId
+    ? msgs.filter(m => !!m && (m as any).sender === clientSenderId && getTimestamp(m) > lastServerTs)
+    : [];
+  const hasAgentCommandInPendingClientMsgs = clientMsgsAfterLastServer.some(m => isAgentHandoffCommandClientMessage(m, clientSenderId));
+
+  if (hasAgentCommandInPendingClientMsgs) {
+    latestNonSystemResponderKind = 'human';
+  } else
   // Priority rule: if the latest server message is a system handoff to a human, force "human".
   if (isHumanHandoffSystemMessage(latestServerMsg, clientSenderId)) {
     latestNonSystemResponderKind = 'human';

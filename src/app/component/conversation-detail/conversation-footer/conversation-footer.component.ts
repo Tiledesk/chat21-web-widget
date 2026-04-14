@@ -45,6 +45,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   @Input() isEmojiiPickerShow: boolean;
   @Input() footerMessagePlaceholder: string;
   @Input() fileUploadAccept: string;
+  @Input() closeChatInConversation: boolean;
   @Input() dropEvent: Event;
   @Input() poweredBy: string;
   @Input() stylesMap: Map<string, string>
@@ -56,6 +57,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   @Output() onAttachmentFileButtonClicked = new EventEmitter<any>();
   @Output() onNewConversationButtonClicked = new EventEmitter();
   @Output() onStreamAudioActiveChange = new EventEmitter<boolean>();
+  @Output() onCloseChatButtonClicked = new EventEmitter();
 
   @ViewChild('chat21_file') public chat21_file: ElementRef;
   // @ViewChild('emojii_container', {read: ViewContainerRef}) selector;
@@ -102,6 +104,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
 
   file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
+  isErrorNetwork: boolean = false;
 
 
   convertColorToRGBA = convertColorToRGBA;
@@ -801,6 +804,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
 
   openNewConversation(){
     this.onNewConversationButtonClicked.emit();
+  }
+
+  onCloseChat(event){
+    this.onCloseChatButtonClicked.emit();
   }
 
   // onContinueConversation(){

@@ -9,8 +9,14 @@
 # 5.1.30
 - **bug fixed**: startHidden is not working properly
 
-# 5.1.28
-- **bug fixed**: header option menu is deactivated on mobile
+# 5.1.30-rc3
+- **bug fixed**: bug fix user-typing with human is not available
+
+# 5.1.30-rc2
+- **bug fixed**: bug fix disabled user-typing with human
+
+# 5.1.30-rc1
+- **bug fixed**: startHidden is not working properly
 
 # 5.1.28
 - **bug fixed**: fixed Bot/Human conversation detection by correctly classifying bot replies
@@ -22,8 +28,22 @@
 - **changed**: Set the default autoStart value to false
 - **added**: Added the open widget loading spinner
 - **changed**: Load the widget without authentication and display the speech bubble
+
+# 5.1.27-rc3
+- **bug fixed**: fixed Bot/Human conversation detection by correctly classifying bot replies
+
+# 5.1.27-rc2
+- **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
+
+# 5.1.27-rc1
+- **added**: closeChatInConversation parameters
+- **added**: close chat button under textarea footer component
+
+# 5.1.26-rc6
 - **changed**: mobile always opens fullscreen and ignores legacy stored size”.
 - **changed**: changed user-typing 
+
+# 5.1.26-rc5
 - **changed**: Hide the resize-widget button when on mobile
 - **added**: added "I'm thinking" when the bot responds
 
@@ -85,6 +105,14 @@
 - **bug-fixed**: check showEmojiFooterButton to enable/disable emojii
 - **bug-fixed**: markdown is fired as an emojii and blocked by isEmojii check fn
 
+<<<<<<< HEAD
+=======
+# 5.1.7-rc7
+- **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
+
+# 5.1.7-rc6
+- **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
+>>>>>>> master-pre
 
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES

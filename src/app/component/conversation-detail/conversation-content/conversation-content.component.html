@@ -143,7 +143,7 @@
                         </user-typing>
                       </div>
 
-                      <div *ngIf="showThinkingMessage" class="msg_container base_receive thinking_receive">
+                      <div *ngIf="showThinkingMessage && lastServerSenderKind === 'bot'" class="msg_container base_receive thinking_receive">
                         <user-typing class="loading thinking-dots"
                           [color]="stylesMap?.get('iconColor')"
                           [translationMap]="translationMap"
