@@ -34,8 +34,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   @Input() userFullname: string;
   @Input() userEmail: string;
   @Input() showAttachmentFooterButton: boolean;
-  @Input() showEmojiFooterButton: boolean
-  @Input() showAudioRecorderFooterButton: boolean
+  @Input() showEmojiFooterButton: boolean;
+  @Input() showAudioRecorderFooterButton: boolean;
+  @Input() showAudioStreamFooterButton: boolean;
   // @Input() showContinueConversationButton: boolean;
   @Input() isConversationArchived: boolean;
   @Input() hideTextAreaContent: boolean;
