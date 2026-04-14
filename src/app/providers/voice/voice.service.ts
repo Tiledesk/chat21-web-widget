@@ -1,7 +1,7 @@
 import { Inject, Injectable, Optional } from '@angular/core';
 import type { MicVAD } from '@ricky0123/vad-web';
 import { getDefaultRealTimeVADOptions } from '@ricky0123/vad-web';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
 
@@ -33,6 +33,16 @@ export class VoiceService {
   /** Emesso a ogni fine segmento parlato: audio WebM + opzionalmente `transcript` / `transcriptionError`. */
   readonly audioSegment$: Observable<VoiceSegmentPayload> = this.audioSegmentSubject.asObservable();
 
+  // 🔊 REALTIME VOLUME STREAM
+  private readonly volumeSubject = new BehaviorSubject<number>(0);
+  readonly volume$: Observable<number> = this.volumeSubject.asObservable();
+
+  // 🎧 AUDIO ANALYSER
+  private audioContext?: AudioContext;
+  private analyser?: AnalyserNode;
+  /** Buffer dedicato (`ArrayBuffer`) per compatibilità con `getByteFrequencyData`. */
+  private dataArray?: Uint8Array;
+
   private readonly logger: LoggerService = LoggerInstance.getInstance();
 
   constructor(
@@ -58,6 +68,9 @@ export class VoiceService {
 
     this.stream = await navigator.mediaDevices.getUserMedia(this.sessionConstraints);
 
+    // 🎧 AUDIO ANALYSER INIT
+    this.initAudioAnalyser(this.stream);
+
     const vadDefaults = getDefaultRealTimeVADOptions('legacy');
 
     this.vad = await this.vadService.createMicVad({
@@ -65,13 +78,14 @@ export class VoiceService {
       pauseStream: vadDefaults.pauseStream,
       resumeStream: async () => {
         this.stream = await navigator.mediaDevices.getUserMedia(this.sessionConstraints);
+        this.initAudioAnalyser(this.stream);
         return this.stream;
       },
       onSpeechStart: () => {
         this.logger.log('[VoiceService] speech start');
         this.startMediaRecorderSegment();
       },
-      onSpeechEnd: (_pcm: Float32Array) => {
+      onSpeechEnd: () => {
         this.logger.log('[VoiceService] speech end');
         this.stopMediaRecorderSegment();
       },
@@ -81,12 +95,16 @@ export class VoiceService {
     });
 
     await this.vad.start();
+
+    // 🔁 start volume loop
+    this.startVolumeLoop();
   }
 
   async stopSession(): Promise<void> {
     if (this.mediaRecorder?.state === 'recording') {
       this.mediaRecorder.stop();
     }
+
     this.mediaRecorder = undefined;
     this.audioChunks = [];
 
@@ -105,16 +123,67 @@ export class VoiceService {
       this.stream = undefined;
     }
 
+    // 🎧 cleanup audio context
+    this.audioContext?.close();
+    this.audioContext = undefined;
+    this.analyser = undefined;
+    this.dataArray = undefined;
+
+    this.volumeSubject.next(0);
+
     this.onRecordingComplete = undefined;
   }
 
+  /**
+   * 🎧 AUDIO ANALYSER INIT
+   */
+  private initAudioAnalyser(stream: MediaStream): void {
+    this.audioContext = new AudioContext();
+
+    const source = this.audioContext.createMediaStreamSource(stream);
+
+    this.analyser = this.audioContext.createAnalyser();
+    this.analyser.fftSize = 256;
+
+    const bins = this.analyser.frequencyBinCount;
+    this.dataArray = new Uint8Array(new ArrayBuffer(bins));
+
+    source.connect(this.analyser);
+  }
+
+  /**
+   * 🔁 VOLUME LOOP
+   */
+  private startVolumeLoop(): void {
+    const tick = () => {
+      if (!this.analyser || !this.dataArray) {
+        requestAnimationFrame(tick);
+        return;
+      }
+
+      this.analyser.getByteFrequencyData(this.dataArray);
+
+      let sum = 0;
+      for (let i = 0; i < this.dataArray.length; i++) {
+        sum += this.dataArray[i];
+      }
+
+      const volume = sum / this.dataArray.length;
+
+      this.volumeSubject.next(volume);
+
+      requestAnimationFrame(tick);
+    };
+
+    tick();
+  }
+
+  /**
+   * 🎙️ RECORD SEGMENT START
+   */
   private startMediaRecorderSegment(): void {
-    if (this.mediaRecorder?.state === 'recording') {
-      return;
-    }
-    if (!this.stream) {
-      return;
-    }
+    if (this.mediaRecorder?.state === 'recording') return;
+    if (!this.stream) return;
 
     this.audioChunks = [];
 
@@ -131,22 +200,33 @@ export class VoiceService {
     this.mediaRecorder.start();
   }
 
+  /**
+   * 🛑 RECORD SEGMENT STOP
+   */
   private stopMediaRecorderSegment(): void {
-    if (!this.mediaRecorder) {
-      return;
-    }
+    if (!this.mediaRecorder) return;
 
     this.mediaRecorder.stop();
 
     this.mediaRecorder.onstop = () => {
-      const blob = new Blob(this.audioChunks, { type: VOICE_RECORDING_MIME });
+      const blob = new Blob(this.audioChunks, {
+        type: VOICE_RECORDING_MIME,
+      });
+
       void this.finalizeSegment(blob, VOICE_RECORDING_MIME);
     };
   }
 
+  /**
+   * 🧠 FINALIZE SEGMENT (STT optional)
+   */
   private async finalizeSegment(blob: Blob, mimeType: string): Promise<void> {
     const base: VoiceSegmentPayload = { blob, mimeType };
-    const runStt = this.enableTranscription && this.speechToText && blob.size > 0;
+
+    const runStt =
+      this.enableTranscription &&
+      !!this.speechToText &&
+      blob.size > 0;
 
     if (!runStt) {
       this.emitSegmentPayload(base);
@@ -154,21 +234,31 @@ export class VoiceService {
     }
 
     try {
-      const { text } = await this.speechToText.transcribe({ audio: blob, mimeType });
+      const { text } = await this.speechToText.transcribe({
+        audio: blob,
+        mimeType,
+      });
+
       this.emitSegmentPayload({ ...base, transcript: text });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       this.logger.log('[VoiceService] transcription failed', msg);
-      this.emitSegmentPayload({ ...base, transcriptionError: msg });
+
+      this.emitSegmentPayload({
+        ...base,
+        transcriptionError: msg,
+      });
     }
   }
 
+  /**
+   * 📡 EMIT RESULT
+   */
   private emitSegmentPayload(payload: VoiceSegmentPayload): void {
-    this.logger.log('[VoiceService] segment ready', payload.transcript ?? payload.transcriptionError ?? payload.blob.size);
+    this.logger.log( '[VoiceService] segment ready', payload.transcript ?? payload.transcriptionError ?? payload.blob.size);
+
     this.audioSegmentSubject.next(payload);
-    const cb = this.onRecordingComplete;
-    if (cb) {
-      cb(payload);
-    }
+
+    this.onRecordingComplete?.(payload);
   }
 }

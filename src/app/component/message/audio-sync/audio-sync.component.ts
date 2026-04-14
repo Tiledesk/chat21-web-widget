@@ -71,6 +71,9 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
         return;
       }
       this.markAllWordsPast();
+      if (this.message) {
+        this.message.isJustRecived = false;
+      }
       this.cdr.detectChanges();
     };
 

@@ -19,14 +19,16 @@
                 <circle cx="50" cy="50" r="46" fill="currentColor" opacity="0.14"/>
                 <g class="stream-audio-alert__waves" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                     <g class="stream-audio-alert__wave-layer stream-audio-alert__wave-layer--1">
-                        <path d="M6 42 Q24 32 42 42 T78 42 T98 42"/>
-                    </g>
-                    <g class="stream-audio-alert__wave-layer stream-audio-alert__wave-layer--2">
-                        <path d="M6 50 Q24 40 42 50 T78 50 T98 50"/>
-                    </g>
-                    <g class="stream-audio-alert__wave-layer stream-audio-alert__wave-layer--3">
-                        <path d="M6 58 Q24 48 42 58 T78 58 T98 58"/>
-                    </g>
+                        <path [attr.d]="wavePath1"></path>
+                      </g>
+                      
+                      <g class="stream-audio-alert__wave-layer stream-audio-alert__wave-layer--2">
+                        <path [attr.d]="wavePath2"></path>
+                      </g>
+                      
+                      <g class="stream-audio-alert__wave-layer stream-audio-alert__wave-layer--3">
+                        <path [attr.d]="wavePath3"></path>
+                      </g>
                 </g>
             </svg>
         </div>
@@ -134,7 +136,6 @@
          [ngStyle]="{ 'background-color': stylesMap?.get('iconColor') || stylesMap?.get('themeColor') }">
         <span class="v-align-center chat21-stream-button__icon" *ngIf="!isStreamAudioActive">
             <svg role="img" xmlns="http://www.w3.org/2000/svg" version="1.1" width="24" height="24" viewBox="0 0 30 30" fill="#ffffff" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
-                <!-- Solo contorni esterni: barre piene (stesso asset, senza vuoti interni) -->
                 <path class="s0" d="m5.21 7.41c-1.21 0-2.21 0.99-2.21 2.21v8.14c0 1.21 0.99 2.21 2.21 2.21 1.22 0 2.21-0.99 2.21-2.21v-8.14c0-1.21-0.99-2.21-2.21-2.21z"/>
                 <path class="s0" d="m11.64 3.01c-1.22 0-2.21 0.99-2.21 2.2v16.94c0 1.21 0.99 2.2 2.21 2.2 1.22 0 2.21-0.98 2.21-2.2v-16.94c0-1.21-0.99-2.21-2.21-2.21z"/>
                 <path class="s0" d="m15.86 9.25v8.88c0 1.21 0.99 2.21 2.21 2.21 1.22 0 2.21-0.99 2.21-2.21v-8.88c0-1.22-0.99-2.21-2.21-2.21-1.22 0-2.21 0.99-2.21 2.21z"/>

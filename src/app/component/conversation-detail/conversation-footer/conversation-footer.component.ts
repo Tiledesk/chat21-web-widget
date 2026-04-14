@@ -54,6 +54,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   @Output() onChangeTextArea = new EventEmitter<any>();
   @Output() onAttachmentFileButtonClicked = new EventEmitter<any>();
   @Output() onNewConversationButtonClicked = new EventEmitter();
+  @Output() onStreamAudioActiveChange = new EventEmitter<boolean>();
 
   @ViewChild('chat21_file') public chat21_file: ElementRef;
   // @ViewChild('emojii_container', {read: ViewContainerRef}) selector;
@@ -89,9 +90,14 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
 
   /** Stream audio UI: icona equalizer → X; alert con onde animate sopra il footer */
   isStreamAudioActive = false;
-
   /** Sottoscrizione ai segmenti audio (VAD → WebM) dal {@link VoiceService}. */
   private voiceAudioSubscription?: Subscription;
+  /** Sottoscrizione al volume audio (real-time) dal {@link VoiceService}. */
+  private voiceVolumeSubscription?: Subscription;
+  currentVolume = 0;
+  wavePath1 = '';
+  wavePath2 = '';
+  wavePath3 = '';
 
   file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
@@ -158,9 +164,15 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
    */
   async initVoice() {
     this.voiceAudioSubscription?.unsubscribe();
+    this.voiceVolumeSubscription?.unsubscribe();
+
     this.voiceAudioSubscription = this.voiceService.audioSegment$.subscribe((rec) => {
       console.log('[CONV-FOOTER] audioSegment$', rec);
       this.prepareAndUpload(rec.blob);
+    });
+    this.voiceVolumeSubscription = this.voiceService.volume$.subscribe((volume) => {
+      this.currentVolume = volume;
+      this.updateWave(volume);
     });
     await this.voiceService.startSession();
   }
@@ -168,7 +180,32 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   async stopVoice() {
     this.voiceAudioSubscription?.unsubscribe();
     this.voiceAudioSubscription = undefined;
+
+    this.voiceVolumeSubscription?.unsubscribe();
+    this.voiceVolumeSubscription = undefined;
+
     await this.voiceService.stopSession();
+  }
+
+  updateWave(volume: number) {
+    const intensity = Math.min(volume / 80, 1); // più sensibile
+  
+    const amp1 = 4 + intensity * 22;
+    const amp2 = 2 + intensity * 16;
+    const amp3 = 1 + intensity * 12;
+  
+    this.wavePath1 = this.buildWave(42, amp1);
+    this.wavePath2 = this.buildWave(50, amp2);
+    this.wavePath3 = this.buildWave(58, amp3);
+  }
+
+  buildWave(y: number, amp: number): string {
+    return `
+      M6 ${y}
+      Q24 ${y - amp} 42 ${y}
+      T78 ${y}
+      T98 ${y}
+    `;
   }
 
   ngOnDestroy() {
@@ -710,6 +747,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
       await this.stopVoice();
       this.isStreamAudioActive = false;
     }
+    this.onStreamAudioActiveChange.emit(this.isStreamAudioActive);
     this.logger.log('[CONV-FOOTER] isStreamAudioActive', this.isStreamAudioActive);
   }
 
