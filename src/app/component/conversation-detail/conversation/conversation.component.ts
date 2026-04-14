@@ -161,6 +161,10 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   membersConversation = ['SYSTEM'];
   // ========== end:: typying =======
 
+  // ========== begin:: stream audio ======= //
+  public isStreamAudioActive = false;
+  // ========== end:: stream audio ======= //
+
   @ViewChild(ConversationFooterComponent) conversationFooter: ConversationFooterComponent
   @ViewChild(ConversationContentComponent) conversationContent: ConversationContentComponent
   conversationHandlerService: ConversationHandlerService
@@ -1382,6 +1386,11 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   onNewConversationButtonClickedFN(event){
     this.logger.debug('[CONV-COMP] floating onNewConversationButtonClicked')
     this.onNewConversationButtonClicked.emit()
+  }
+
+  /** CALLED BY: conv-footer component */
+  onStreamAudioActiveChange(event: boolean){
+    this.isStreamAudioActive = event
   }
   // =========== END: event emitter function ====== //
 

@@ -26,6 +26,7 @@ export class ConversationContentComponent implements OnInit {
   @Input() showThinkingMessage: boolean;
   @Input() lastServerSenderKind: 'bot' | 'human' | null;
   @Input() fullscreenMode: boolean;
+  @Input() isStreamAudioActive: boolean;
   @Input() translationMap: Map< string, string>;
   @Input() stylesMap: Map<string, string>;
   @Output() onBeforeMessageRender = new EventEmitter();
