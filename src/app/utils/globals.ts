@@ -219,6 +219,7 @@ export class Globals {
   showEmojiFooterButton: boolean // *******  new ********
   showAttachmentFooterButton: boolean // *******  new ********
   showAudioRecorderFooterButton: boolean // *******  new ********
+  showAudioStreamFooterButton: boolean // *******  new ********
 
   allowedOnSpecificUrl: boolean // *******  new ********
   allowedOnSpecificUrlList: Array<string> // *******  new ********
@@ -435,6 +436,8 @@ export class Globals {
     this.showAttachmentFooterButton = true;
     /** show/hide rec audio option in footer chat-detail page */
     this.showAudioRecorderFooterButton = true;
+    /** show/hide stream audio option in footer chat-detail page */
+    this.showAudioStreamFooterButton = true;
     /** enabled to set a list of pattern url able to load the widget **/
     this.allowedOnSpecificUrl = false
     /** set a list of pattern url able to load the widget */
