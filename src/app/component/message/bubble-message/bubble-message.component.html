@@ -65,8 +65,7 @@
       </chat-audio>
 
       <chat-audio-sync *ngIf="isAudioTTS(message)"
-        [metadata]="message.metadata"
-        [text]="message.text"
+        [message]="message"
         [color]="fontColor">
       </chat-audio-sync>
 
