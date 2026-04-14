@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.30-rc3
+- **bug fixed**: bug fix user-typing with human is not available
 
 # 5.1.30-rc2
 - **bug fixed**: bug fix disabled user-typing with human
