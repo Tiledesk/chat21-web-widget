@@ -6,6 +6,15 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.30
+- **bug fixed**: startHidden is not working properly
+
+# 5.1.28
+- **bug fixed**: header option menu is deactivated on mobile
+
+# 5.1.28
+- **bug fixed**: fixed Bot/Human conversation detection by correctly classifying bot replies
+
 # 5.1.27
 - **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
 - **changed**: start with authentication if hasCalloutInWidgetConfig is true

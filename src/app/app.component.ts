@@ -453,6 +453,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             }
 
             const autoStart = this.g.autoStart;
+            const startHidden = this.g.startHidden;
             that.stateLoggedUser = state;
             if (state && state === AUTH_STATE_ONLINE) {
                 /** sono loggato */
@@ -527,6 +528,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     // || this.g.hasCalloutInWidgetConfig;
                 if (shouldAutoAuthenticate) {
                     that.authenticate();
+                    if(startHidden){ that.hideWidget(); }
                 } else {
                     that.logger.debug('[APP-COMP] Skip auto-auth: startup conditions not met, show launcher only');
                 }
