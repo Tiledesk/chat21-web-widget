@@ -8,7 +8,7 @@
 
 
 
-# this branch
+# 5.1.32-ar
 - **changed**: start with authentication if hasCalloutInWidgetConfig is true
 - **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
 - **changed**: Set the default autoStart value to false
