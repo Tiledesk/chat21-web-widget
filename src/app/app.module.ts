@@ -60,6 +60,8 @@ import { environment } from 'src/environments/environment';
 
 //THIRD-PART MODULES
 import { TranslateModule } from '@ngx-translate/core';
+// import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+// import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 // import { MomentModule } from 'ngx-moment';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { LoggerModule, NGXLogger, NgxLoggerLevel } from "ngx-logger";
@@ -134,7 +136,7 @@ import { Rules } from './utils/rules';
 import { ScriptService } from 'src/chat21-core/providers/scripts/script.service';
 import { CarouselComponent } from './component/message/carousel/carousel.component';
 import { BrandService } from './providers/brand.service';
-import { NetworkOfflineComponent } from './component/network-offline/network-offline.component';
+import { ErrorAlertComponent } from './component/error-alert/error-alert.component';
 import { ConfirmCloseComponent } from './modals/confirm-close/confirm-close.component';
 
 
@@ -203,6 +205,13 @@ export function conversationHandlerFactory(chat21Service: Chat21Service, appConf
     return new FirebaseConversationHandler(true);
   }
 }
+
+
+
+// ngx-translate Http loader factory
+// export function createTranslateLoader(http: HttpClient) {
+//   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+// }
 
 export function typingFactory(chat21Service: Chat21Service, appConfig: AppConfigService) {
   const config = appConfig.getConfig()
@@ -300,7 +309,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     LikeUnlikeComponent,
     TooltipDirective,
     CarouselComponent,
-    NetworkOfflineComponent,
+    ErrorAlertComponent,
     ConfirmCloseComponent
   ],
   imports: [BrowserModule,
@@ -308,13 +317,13 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     FormsModule,
     ReactiveFormsModule,
     PickerModule,
-    TranslateModule.forRoot(//),
-    {
-    // loader: {
-    //   provide: TranslateLoader,
-    //   useFactory: (createTranslateLoader),
-    //   deps: [HttpClient]
-    // }
+     TranslateModule.forRoot({
+    //   defaultLanguage: 'en',
+    //   loader: {
+    //     provide: TranslateLoader,
+    //     useFactory: (createTranslateLoader),
+    //     deps: [HttpClient]
+    //   }
     }),
     LoggerModule.forRoot({
       level: NgxLoggerLevel.DEBUG,

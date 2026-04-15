@@ -15,6 +15,83 @@
 - **added**: Added the open widget loading spinner
 - **changed**: Load the widget without authentication and display the speech bubble
 
+# 5.1.31-ar
+- **bug fixed**: bug fix disabled user-typing with human and user-typing with human is not available
+
+# 5.1.29-ar
+- **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
+- **bug fixed**: refactor conversation header button to remove mobile condition for visibility
+- **changed**: mobile always opens fullscreen and ignores legacy stored size”.
+- **changed**: changed user-typing 
+- **changed**: Hide the resize-widget button when on mobile
+- **added**: added "I'm thinking" when the bot responds
+
+# 5.1.26-ar
+- **bug fixed**: attachment buttons text alignment 
+
+# 5.1.24-ar
+- **changed**: attachment buttons in messages now respect the container max width and wrap/break long labels instead of being clipped
+
+# 5.1.22-ar 
+- **changed**: API for upload a file/iamges
+- **changed**: marked pipe do not render /n
+
+# 5.1.14-ar 
+- **bug fixed**: show bottom scroll button and unread message badge only when I'm not at the bottom of the page
+- **changed**: allow HTML code to be inserted into messages, but do not parse the code. Ensure coexistence with Markdown.
+- **bug fixed**: after sending a multi-line message, the text area remains open on multiple lines.
+- **bug fixed**: fixed widget animation when opened
+- **bug-fixed**: line-height in markdown
+- **bug-fixed**: when i move to top mode and close the widget, the balloon moves to the right
+- **changed**: saved the widget's size state to local storage. The parameter flow is (default → storage → settings → URL)
+
+# 5.1.13-ar
+- **added**: Implemented Shadow DOM in the text component to isolate HTML and Markdown rendering in a safe and protected context
+- **changed**: Adapted text component styles to support Shadow DOM (removed ::ng-deep, added styles for common markdown elements)
+- **security**: HTML/Markdown content is now rendered in an isolated Shadow DOM, improving security and preventing interference with the rest of the application
+- **changed**: bootstrap version from 3 to 5.3.3
+- **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
+- **bug-fixed**: set the maximum width on a message with iframe
+
+
+# 5.1.11-ar
+- **changed**: Load local translations before remote ones
+
+# 5.1.10-ar
+- **bug-fixed**: set callout with correct message
+
+# 5.1.9-ar
+- **bug-fixed**: set default widget size
+
+# 5.1.8-ar
+- **changed**: update emoji detection logic in conversation-footer and utils
+- **bug-fixed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
+- **bug-fixed**: departmentId and departmentName is incorrect in attributes
+
+# 5.1.8
+
+# 5.1.7-rc8
+- **changed**: Updated the translations of the tooltips in the footer-component
+- **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
+
+# 5.1.7-rc7
+- **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
+
+# 5.1.7-rc6
+- **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
+
+# this branch
+- **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
+
+# 5.1.12
+- **bug-fixed**: check showEmojiFooterButton to enable/disable emojii
+- **bug-fixed**: markdown is fired as an emojii and blocked by isEmojii check fn
+
+# 5.1.7-rc7
+- **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
+
+# 5.1.7-rc6
+- **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
 
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES
@@ -35,8 +112,6 @@
 - **bug-fixed**: bug fixed button color
 - **bug-fixed**: bug fixed min-height message-receive
 - **bug-fixed**: bug-fixed css footer
-
-# 5.1.7
 
 # 5.1.6
 

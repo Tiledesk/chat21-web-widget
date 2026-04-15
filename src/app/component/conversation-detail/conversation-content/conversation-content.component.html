@@ -13,7 +13,6 @@
           [nameUserTypingNow]="nameUserTypingNow">
         </user-typing>
       </span>
-      
     
       <div id="chat21-sheet-content" class="chat21-sheet-content">
           <div class="chat21-conversation-parts-container">
@@ -64,7 +63,7 @@
                               [class.no-background]="(isImage(message) || isFrame(message) || isCarousel(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"  
                               [class.emoticon]="isEmojii(message?.text)"
                               [style.margin-left]="isSameSender(message?.sender, i)? 'calc(var(--avatar-width) + 10px)': null"
-                              [ngStyle]="{'background': stylesMap.get('bubbleReceivedBackground'), 'color': stylesMap.get('bubbleReceivedTextColor')}"
+                              [ngStyle]="{'background': stylesMap.get('bubbleReceivedBackground'), 'color': stylesMap.get('bubbleReceivedTextColor'), 'width':isFrame(message) ?'100%' : null}"
                               [isSameSender]="isSameSender(message?.sender, i)"
                               [message]="message"
                               [fontColor]="stylesMap.get('bubbleReceivedTextColor')"
@@ -120,25 +119,21 @@
 
                       <!-- FILE PENDING UPLOAD -->
                       <!--  -->
-                      <div *ngIf="showUploadProgress" class="msg_container base_sent" >
+                      <div *ngIf="showUploadProgress && !showThinkingMessage" class="msg_container base_sent" >
                         <div class="chat21-spinner active" id="chat21-spinner" style="margin: 0px 6px 0px;">
                           <div class="chat21-bounce1" [ngStyle]="{'background-color': stylesMap.get('iconColor')}"></div>
                           <div class="chat21-bounce2" [ngStyle]="{'background-color': stylesMap.get('iconColor'), 'opacity': 0.4}"></div>
                           <div class="chat21-bounce3" [ngStyle]="{'background-color': stylesMap.get('iconColor'), 'opacity': 0.6}"></div>
                         </div>
-
-                        
                       </div>
 
 
-                      <div *ngIf="isTypings && typingLocation==='content' " class="msg_container base_receive">
-                        <!-- !isSameSender(idUserTypingNow, i) -->
+                      <div *ngIf="isTypings && !showThinkingMessage && typingLocation==='content'" class="msg_container base_receive">
                         <chat-avatar-image *ngIf="idUserTypingNow " class="slide-in-left"  
                           [senderID]="idUserTypingNow"
                           [senderFullname]="nameUserTypingNow"
                           [baseLocation]="baseLocation">
                         </chat-avatar-image>
-
                         <user-typing
                           [ngClass]="{'userTypingNowExist': !idUserTypingNow}"
                           [color]="stylesMap?.get('iconColor')"
@@ -147,7 +142,16 @@
                           [nameUserTypingNow]="nameUserTypingNow">
                         </user-typing>
                       </div>
-                      
+
+                      <div *ngIf="showThinkingMessage && lastServerSenderKind === 'bot'" class="msg_container base_receive thinking_receive">
+                        <user-typing class="loading thinking-dots"
+                          [color]="stylesMap?.get('iconColor')"
+                          [translationMap]="translationMap"
+                          [idUserTypingNow]="idUserTypingNow"
+                          [nameUserTypingNow]="nameUserTypingNow">
+                        </user-typing>
+                      </div>
+   
                   </div>
               </div>
           </div>
@@ -155,7 +159,6 @@
       </div>
     </div>  
   </div>
-
 </div>
 
 

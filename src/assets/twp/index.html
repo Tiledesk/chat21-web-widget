@@ -26,12 +26,8 @@
         #preloader {
             background: #fff;
             position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            height: 100%;
-            width: 100%;
+            top: 0; left: 0; bottom: 0; right: 0;
+            height: 100%; width: 100%;
             z-index: 999999;
             opacity: 1;
             filter: alpha(opacity=100);
@@ -170,6 +166,10 @@
         .navbar{
             display: flex;
         }
+        .navbar-collapse {
+            flex-basis: auto !important;
+            flex-grow: 0 !important;
+        }
 
         .row {
             margin-left: 0 !important;
@@ -245,12 +245,12 @@
     <meta property="og:locale" content="en">
     
     <link rel="icon" type="image/png" href="./tiledesk_widget_files/logo-short.png">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <!-- <link href="./tiledesk_widget_files/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Font Awesome 7 (latest version) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" />
+    <!-- Bootstrap 5.3.3 -->
     <link href="./tiledesk_widget_files/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="./tiledesk_widget_files/website-poly.min.css" rel="stylesheet" type="text/css">
-    <script defer="" src="./tiledesk_widget_files/jquery.min.js"></script>
-    <script defer="" src="./tiledesk_widget_files/bootstrap.min.js"></script>
+    <script defer="" src="./tiledesk_widget_files/bootstrap.bundle.min.js"></script>
 
 
     <script type="application/javascript">
@@ -495,11 +495,11 @@
 
     <div id="wrapper">
         <header id="header">
-            <nav class="navbar navbar-inverse" role="navigation">
-                <div class="container">
+            <!-- <nav class="navbar navbar-dark bg-dark">
+                <div class="container-fluid">
                     <div class="navbar-header">
 
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                             <span class="sr-only">Toggle navigation</span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
@@ -524,6 +524,38 @@
                         </ul>
                     </div>
                 </div>
+            </nav> -->
+            <nav class="navbar navbar-expand-lg navbar-inverse">
+                <div class="container-fluid">
+            
+                    <div class="navbar-header">
+                        <img src="tiledesk_widget_files/logo.png" id="header-logo" alt="Logo">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                            <span class="navbar-toggler-icon"></span>
+                            <span class="navbar-toggler-icon"></span>
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
+            
+                    <div class="collapse navbar-collapse" id="navbarContent">
+            
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0 docs">
+                            <li class="nav-item"><a class="nav-link" href="https://developer.tiledesk.com/widget/web-sdk">WEB SDK & Docs<span></span></a></li>
+                            <li class="nav-item"><a class="nav-link" href="https://www.tiledesk.com/pricing-cloud/">Pricing<span></span></a></li>
+                            <li class="nav-item"><a class="nav-link" href="https://www.tiledesk.com/blog/">Blog<span></span></a></li>
+                        </ul>
+            
+                        <ul class="navbar-nav navbar-right">
+                            <li class="nav-item sign-up"><a class="nav-link" onclick="goToConsole()">GO TO CONSOLE</a></li>
+                        </ul>
+                        <ul class="navbar-nav navbar-right">
+                            <li class="nav-item sign-up" id="testPageButton" style="display:none;">
+                                <a class="nav-link" onclick="goToTestPage()">GO TO TEST PAGE</a>
+                            </li>
+                        </ul>
+            
+                    </div>
+                </div>
             </nav>
         </header>
 
@@ -532,17 +564,17 @@
                 <h1 id="project_name" style="min-height: 39px;"></h1>
                 <h2></h2>
                 <div class="b_integrations_agent_links">
-                    <a href="" data-toggle="modal" data-target="#embedModal" id="enbed" style="display: none;"><em class="fa-code fa"></em>Embed</a>
-                    <a href="" data-toggle="modal" data-target="#shareModal" id="share"><em class="fa-reply fa"></em>Share</a>
+                    <a href="" data-bs-toggle="modal" data-bs-target="#embedModal" id="enbed" style="display: none;"><em class="fa-code fa"></em>Embed</a>
+                    <a href="" data-bs-toggle="modal" data-bs-target="#shareModal" id="share"><em class="fa-reply fa"></em>Share</a>
                 </div>
             </div>
 
-            <div class="modal fade" tabindex="-1" id="embedModal" role="dialog">
+            <div class="modal" tabindex="-1" id="embedModal" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             <h4 class="modal-title">Use following code to integrate the widget into your site:</h4>
+                            <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body" style="font-family: monospace;font-size: 12px;">
                             <span style="margin-bottom: 0px; border:none !important">
@@ -571,12 +603,12 @@
                 </div>
             </div>
 
-            <div class="modal fade" tabindex="-1" id="shareModal" role="dialog" style="display: none;">
+            <div class="modal" tabindex="-1" id="shareModal" role="dialog" style="display: none;">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             <h4 class="modal-title">Share this page via social networks:</h4>
+                            <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
 

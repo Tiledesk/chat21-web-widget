@@ -112,6 +112,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   loading: boolean = false;
   private calloutScheduleTimeout: any = null;
   
+  // alert error message 
+  isShowErrorMessage: boolean = false;
+  errorMessage: string = '';
+  errorKeyMessage: string = null;
+  errorParams: Record<string, any> = {};
+
   private logger: LoggerService = LoggerInstance.getInstance();
   constructor(
     private el: ElementRef,
@@ -262,7 +268,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.tiledeskRequestsService.initialize(this.appConfigService.getConfig().apiUrl, this.g.projectid)
         this.messagingAuthService.initialize();
         this.chatManager.initialize();
-        this.uploadService.initialize();
+        this.uploadService.initialize(this.g.projectid);
     }
 
 
@@ -426,9 +432,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.triggerLoadParamsEvent(); // first trigger
         //this.setAvailableAgentsStatus();
 
-
         /** NETWORK STATUS */
         this.listenToNetworkStatus();
+
+        /** SET WIDGET SIZE */
+        this.onWidgetSizeChange(this.g.size);
 
     }
 
@@ -766,7 +774,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         // visualizzo l'iframe!!!
         this.triggerOnViewInit();
         this.g.setParentBodyStyleMobile(this.g.isOpen, this.g.isMobile);
-        this.g.setElementStyle(this.g.isOpen)
+        this.g.setElementStyle(this.g.isOpen);
         // this.triggerOnAuthStateChanged(true)
         // mostro il widget
         // setTimeout(() => {
@@ -1248,6 +1256,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         const senderId = this.g.senderId;
         this.logger.debug('[APP-COMP] f21_open senderId: ', senderId);
         if (senderId) {
+            this.enforceMobileFullscreenOnOpen();
             // chiudo callout
             this.g.setParameter('displayEyeCatcherCard', 'none');
             // this.g.isOpen = true; // !this.isOpen;
@@ -1703,6 +1712,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.logger.debug('[APP-COMP] openCloseWidget', recipientId, this.g.isOpen, this.g.startFromHome);
 
         if (this.g.isOpen === false) {
+            this.enforceMobileFullscreenOnOpen();
             if(this.forceDisconnect){
                 this.logger.log('[FORCE] onOpenCloseWidget --> reconnect', this.forceDisconnect)
                 this.messagingAuthService.createCustomToken(this.g.tiledeskToken)
@@ -2117,26 +2127,62 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onWidgetSizeChange(mode: 'min' | 'max' | 'top') {
-        var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv');
-        this.g.size = mode;
+    onWidgetSizeChange(mode: any) {
+        if (this.g?.isMobile) {
+            this.g.fullscreenMode = true;
+            this.g.size = 'max';
+            return;
+        }
+
+        const normalize = (val: any): 'min' | 'max' | 'top' => {
+            const v = (typeof val === 'string') ? val.toLowerCase().trim() : '';
+            return (v === 'min' || v === 'max' || v === 'top') ? (v as any) : 'min';
+        };
+        const normalizedMode = normalize(mode);
+
+        const tiledeskDiv = this.g.windowContext?.window?.document?.getElementById('tiledeskdiv');
+        this.g.size = normalizedMode;
+        if (!tiledeskDiv) {
+            // Widget container not yet available; still persist choice for later restores.
+            try {
+                this.appStorageService.setItem('size', normalizedMode);
+            } catch (e) {
+                this.logger.warn('[APP-COMP] onWidgetSizeChange > cannot persist size', e);
+            }
+            return;
+        }
+
         let parent = tiledeskDiv.parentElement as HTMLElement | null;
 
-        if(mode==='max'){
+        if(normalizedMode==='max'){
             tiledeskDiv.classList.add('max-size')
             tiledeskDiv.classList.remove('min-size')
             tiledeskDiv.classList.remove('top-size')
             if(parent) parent.classList.remove('overlay--popup');
-        } else if(mode==='min'){
+        } else if(normalizedMode==='min'){
             tiledeskDiv.classList.add('min-size')
             tiledeskDiv.classList.remove('max-size')
             tiledeskDiv.classList.remove('top-size')
             if(parent) parent.classList.remove('overlay--popup');
-        } else if(mode=== 'top'){
+        } else if(normalizedMode=== 'top'){
             tiledeskDiv.classList.add('top-size')
             tiledeskDiv.classList.remove('max-size')
             tiledeskDiv.classList.remove('min-size')
             if(parent) parent.classList.add('overlay--popup');
+        }
+
+        // Persist size changes also from the home (conversations list) view.
+        try {
+            this.appStorageService.setItem('size', normalizedMode);
+        } catch (e) {
+            this.logger.warn('[APP-COMP] onWidgetSizeChange > cannot persist size', e);
+        }
+    }
+
+    private enforceMobileFullscreenOnOpen() {
+        if (this.g?.isMobile) {
+            this.g.fullscreenMode = true;
+            this.g.size = 'max';
         }
     }
 
@@ -2299,8 +2345,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private listenToNetworkStatus(){
-        window.addEventListener('online', () => this.isOnline = true);
-        window.addEventListener('offline', () =>  this.isOnline = false);
+        window.addEventListener('online', () => {
+            this.isShowErrorMessage = false;
+            this.errorMessage = null;
+            this.errorKeyMessage = null;
+        });
+        window.addEventListener('offline', () => {
+            this.isShowErrorMessage = true;
+            this.errorMessage = null;
+            this.errorKeyMessage = 'CONNECTION_NETWORK_ERROR';
+        });
+        window.addEventListener('tooltipErrorMessage', (event: CustomEvent) => {
+            // console.log('event-------------------> tooltipErrorMessage', event);
+            this.isShowErrorMessage = event.detail?.error;
+            this.errorKeyMessage = event.detail?.keyMessage || null;
+            this.errorMessage = event.detail?.message || null;
+            this.errorParams = event.detail?.params || {};                                        
+        });
     }
 
     // ========= begin:: DESTROY ALL SUBSCRIPTIONS ============//

@@ -23,11 +23,11 @@
     font-family: var(--font-family);
     font-size: var(--buttonFontSize);
     color: var(--buttonTextColor);
-    overflow: hidden;
-    -o-text-overflow: ellipsis;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    word-wrap: break-word;
+    max-width: 100%;
+    padding-right: 40px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
     -webkit-font-smoothing: antialiased;
     line-height: 16px;
     font-weight: 500;
@@ -42,15 +42,18 @@
     transition: background-color .6s ease;
     .icon-button-action {
         position: absolute;
-        top: -1px;
-        right: 1px;
+        top: 50%;
+        right: 8px;
+        transform: translateY(-50%);
         svg {
             fill: var(--textColor);
         }
     }
     .icon-button-action-self{
         position: absolute;
-        right: 1px;
+        top: 50%;
+        right: 8px;
+        transform: translateY(-50%);
         svg {
             fill: var(--textColor);
         }

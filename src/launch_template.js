@@ -218,13 +218,68 @@ function loadIframe(tiledeskScriptBaseLocation) {
 
     iDiv.appendChild(ifrm);
 
-    if(tiledeskScriptBaseLocation.includes('localhost')){
-      ifrm.contentWindow.document.open();
-      ifrm.contentWindow.document.write(srcTileDesk);
-      ifrm.contentWindow.document.close();
-    }else {
-      ifrm.srcdoc = srcTileDesk
+    // Funzione helper per caricare iframe con fallback per compatibilità CSP (Wix, etc.)
+    // Usa Blob URL come metodo principale (più compatibile con CSP) con fallback a srcdoc e document.write
+    function loadIframeContent(iframe, htmlContent, baseLocation) {
+        var isLocalhost = baseLocation.includes('localhost');
+        var blobUrl = null;
+        
+        // Metodo 1: Blob URL (più compatibile con CSP di Wix e altre piattaforme)
+        // Usa Blob URL come metodo principale perché è meno spesso bloccato da CSP rispetto a srcdoc
+        if (typeof Blob !== 'undefined' && typeof URL !== 'undefined' && URL.createObjectURL) {
+            try {
+                var blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+                blobUrl = URL.createObjectURL(blob);
+                iframe.src = blobUrl;
+                
+                // Cleanup del blob URL dopo il caricamento per liberare memoria
+                var originalOnload = iframe.onload;
+                iframe.onload = function() {
+                    // Revoca il blob URL dopo un delay per assicurarsi che tutto sia caricato
+                    setTimeout(function() {
+                        if (blobUrl) {
+                            try {
+                                URL.revokeObjectURL(blobUrl);
+                                blobUrl = null;
+                            } catch(e) {
+                                console.warn('Error revoking blob URL:', e);
+                            }
+                        }
+                    }, 1000);
+                    if (originalOnload) originalOnload.call(this);
+                };
+                return; // Blob URL impostato con successo
+            } catch(e) {
+                console.warn('Blob URL not available, trying srcdoc:', e);
+            }
+        }
+        
+        // Metodo 2: srcdoc (fallback se Blob URL non disponibile)
+        // Skip per localhost (usa document.write per compatibilità sviluppo)
+        if (!isLocalhost && 'srcdoc' in iframe) {
+            try {
+                iframe.srcdoc = htmlContent;
+                return; // srcdoc impostato
+            } catch(e) {
+                console.warn('srcdoc not allowed, trying document.write:', e);
+            }
+        }
+        
+        // Metodo 3: document.write (fallback finale, funziona su localhost e browser vecchi)
+        if (isLocalhost || (iframe.contentWindow && iframe.contentWindow.document)) {
+            try {
+                iframe.contentWindow.document.open();
+                iframe.contentWindow.document.write(htmlContent);
+                iframe.contentWindow.document.close();
+                return; // document.write completato
+            } catch(e) {
+                console.error('All iframe loading methods failed:', e);
+            }
+        }
     }
+    
+    // Carica il contenuto dell'iframe con fallback automatico
+    loadIframeContent(ifrm, srcTileDesk, tiledeskScriptBaseLocation);
 
 
 }

@@ -1,4 +1,6 @@
 import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
+import { error } from 'console';
+import { FILE_SIZE_LIMIT } from 'src/app/utils/constants';
 import { Globals } from 'src/app/utils/globals';
 import { checkAcceptedFile } from 'src/app/utils/utils';
 import { MessageModel } from 'src/chat21-core/models/message';
@@ -83,8 +85,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   showAlertEmoji: boolean = false
 
-  file_size_limit: number = 10;
+  file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
+  isErrorNetwork: boolean = false;
+
 
   convertColorToRGBA = convertColorToRGBA;
   private logger: LoggerService = LoggerInstance.getInstance()
@@ -93,7 +97,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
               private uploadService: UploadService) { }
 
   ngOnInit() {
-    this.updateAttachmentTooltip();
+    // this.updateAttachmentTooltip();
   }
 
 
@@ -109,9 +113,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       this.onDrop(this.dropEvent)
     }
 
-    if(changes['translationMap'] && changes['translationMap'].currentValue !== undefined){
-      this.updateAttachmentTooltip();
-    }
+    // if(changes['translationMap'] && changes['translationMap'].currentValue !== undefined){
+    //   this.updateAttachmentTooltip();
+    // }
 
   }
   
@@ -120,24 +124,24 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     // setTimeout(() => {
       this.showEmojiPicker = true
     // }, 500);
-    this.updateAttachmentTooltip();
+    // this.updateAttachmentTooltip();
   }
 
 
-  updateAttachmentTooltip() {
-    // Use setTimeout to wait for the async translation map to be populated
-    setTimeout(() => {
-      this.logger.log('[CONV-FOOTER] updateAttachmentTooltip - translationMap:', this.translationMap);
-      if (this.translationMap && this.translationMap.has('MAX_ATTACHMENT')) {
-        const template = this.translationMap.get('MAX_ATTACHMENT');
-        this.logger.log('[CONV-FOOTER] MAX_ATTACHMENT template:', template);
-        this.attachmentTooltip = template.replace('{{file_size_limit}}', this.file_size_limit.toString());
-        this.logger.log('[CONV-FOOTER] attachmentTooltip:', this.attachmentTooltip);
-      } else {
-        this.logger.log('[CONV-FOOTER] MAX_ATTACHMENT not found in translationMap');
-      }
-    }, 500);
-  }
+  // updateAttachmentTooltip() {
+  //   // Use setTimeout to wait for the async translation map to be populated
+  //   setTimeout(() => {
+  //     this.logger.log('[CONV-FOOTER] updateAttachmentTooltip - translationMap:', this.translationMap);
+  //     if (this.translationMap && this.translationMap.has('MAX_ATTACHMENT')) {
+  //       const template = this.translationMap.get('MAX_ATTACHMENT');
+  //       this.logger.log('[CONV-FOOTER] MAX_ATTACHMENT template:', template);
+  //       // this.attachmentTooltip = template.replace('{{file_size_limit}}', this.file_size_limit.toString());
+  //       this.logger.log('[CONV-FOOTER] attachmentTooltip:', this.attachmentTooltip);
+  //     } else {
+  //       this.logger.log('[CONV-FOOTER] MAX_ATTACHMENT not found in translationMap');
+  //     }
+  //   }, 500);
+  // }
 
   // ========= begin:: functions send image ======= //
   // START LOAD IMAGE //
@@ -227,7 +231,12 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
             const fileXLoad = this.arrayFilesLoad[0].file;
             const uid = this.arrayFilesLoad[0].uid;
             const type = this.arrayFilesLoad[0].type;
-            const size = this.arrayFilesLoad[0].size
+            const size = this.arrayFilesLoad[0].size;
+            if(size > this.file_size_limit * 1024 * 1024){
+              this.logger.error('[CONV-FOOTER] file size is greater than the limit: ', size, this.file_size_limit * 1024 * 1024);
+              this.showErrorNetwork();
+              return;
+            }
             this.logger.log('[CONV-FOOTER] that.fileXLoad: ', type);
             let metadata;
             if (type.startsWith('image') && !type.includes('svg')) {
@@ -264,6 +273,17 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     }
 
 
+    private showErrorNetwork() {
+      // posso anche passare solo keyMessage, nel caso non voglio passare un messaggio custom posso passare message e params(se il messaggio possiede dei parametri),
+      //window.dispatchEvent(new CustomEvent('tooltipErrorMessage', { detail: { error: true, message: 'File size is greater than the limit {{file_size_limit}}', keyMessage: null, params: { file_size_limit: this.file_size_limit } } }));
+      window.dispatchEvent(new CustomEvent('tooltipErrorMessage', { detail: { error: true,  keyMessage: 'MAX_ATTACHMENT' } }));
+      setTimeout(() => {
+        this.isFilePendingToUpload = false;
+        this.hideTextReply = false;
+        window.dispatchEvent(new CustomEvent('tooltipErrorMessage', { detail: { error: false, message: '', keyMessage: null } }));
+      }, 5000);
+    }
+
     uploadSingle(metadata, file, messageText?: string) {
       const that = this;
       try {
@@ -297,7 +317,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       // });
       // this.resetLoadImage();
       
-      this.uploadService.upload(this.senderId, currentUpload).then(data => {
+      this.uploadService.uploadFile(this.senderId, currentUpload).then(data => {
         that.logger.log('[CONV-FOOTER] AppComponent::uploadSingle:: downloadURL', data);
         that.logger.log(`[CONV-FOOTER] Successfully uploaded file and got download link - ${data}`);
 
@@ -428,13 +448,11 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   }
 
   private restoreTextArea() {
-    // that.logger.log('[CONV-FOOTER] AppComponent:restoreTextArea::restoreTextArea');
-    this.resizeInputField();
     const textArea = (<HTMLInputElement>document.getElementById('chat21-main-message-context'));
-    this.textInputTextArea = ''; // clear the textarea
+    this.textInputTextArea = '';
     if (textArea) {
-      textArea.value = '';  // clear the textarea
-      textArea.placeholder = this.translationMap.get('LABEL_PLACEHOLDER');  // restore the placholder
+      textArea.value = '';
+      textArea.placeholder = this.translationMap.get('LABEL_PLACEHOLDER');
       if(textArea.style.height > this.HEIGHT_DEFAULT){
         document.getElementById('chat21-button-send').style.removeProperty('right')
       }
@@ -442,6 +460,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     }
     this.setFocusOnId('chat21-main-message-context');
     this.isStopRec= false;
+    this.resizeInputField();
   }
 
   /**
@@ -495,14 +514,46 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   onSendRecording(audioBlob: Blob | null) {
     this.isStartRec = false;
     if (audioBlob) {
-      this.convertBlobToBase64(audioBlob);
+      this.prepareAndUpload(audioBlob);
+      // this.convertBlobToBase64(audioBlob);
       this.isStopRec = false;
     } else {
       this.isStopRec = false;
     }
   }
 
+  prepareAndUpload(audioBlob: Blob) {
 
+    this.isFilePendingToUpload = true;
+    
+    // ⭐ NON modificare il MIME
+    const mimeType = audioBlob.type;
+
+    const size = audioBlob.size;
+    const uid = Date.now().toString(36);
+
+    // estensione coerente col MIME REALE
+    let ext = 'mp3';
+    const fileName = `audio-${uid}.${ext}`;
+  
+    const file = new File([audioBlob], fileName, {
+      type: mimeType,
+      lastModified: Date.now()
+    });
+  
+    // ✅ metadata SENZA base64
+    const metadata = {
+      name: fileName,
+      type: 'audio/mp3',
+      uid: uid,
+      size: size
+    };
+    
+    this.logger.log('[UPLOAD] metadata:', metadata);
+  
+    // stesso metodo che già usi
+    this.uploadSingle(metadata, file, '');
+  }
 
   // Funzione per convertire Blob in Base64 usando FileReader
   async convertBlobToBase64(audioBlob: Blob) {
@@ -550,7 +601,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   checkForEmojii(text){
     //remove emojii only if "emojii" exist and is set to false
-    if(this.project && this.project.settings?.allow_send_emoji === false){
+    if(!this.showEmojiFooterButton){
       this.showAlertEmoji = isEmoji(text);
       if(this.showAlertEmoji){
         return false

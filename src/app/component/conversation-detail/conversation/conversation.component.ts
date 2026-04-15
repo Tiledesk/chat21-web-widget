@@ -40,6 +40,7 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
 import { TiledeskRequestsService } from 'src/chat21-core/providers/tiledesk/tiledesk-requests.service';
 import { ConversationContentComponent } from '../conversation-content/conversation-content.component';
 import { checkAcceptedFile } from 'src/app/utils/utils';
+import { computeConversationBadgeState } from 'src/app/utils/conversation-sender-classifier';
 // import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -112,6 +113,16 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
 
   // availableAgentsStatus = false; // indica quando è impostato lo stato degli agenti nel subscribe
   messages: Array<MessageModel> = [];
+
+  // Temporary "thinking" state after a client message is sent.
+  public showThinkingMessage: boolean = false;
+
+  // Badge "ultimo messaggio ricevuto dal server" (bot/umano)
+  public showLastServerSenderBadge: boolean = false;
+  public lastServerSenderKind: 'bot' | 'human' | null = null;
+  public lastServerSenderBadgeText: string = '';
+  // Diagnostics/internal state: kind of the latest *server* message (including system).
+  public latestServerMessageKind: 'bot' | 'human' | 'system' | 'unknown' = 'unknown';
 
 
   CLIENT_BROWSER: string = navigator.userAgent;
@@ -252,6 +263,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'LABEL_TODAY',
       'LABEL_TOMORROW',
       'LABEL_LOADING',
+      'LABEL_THINKING',
       'LABEL_TO',
       'ARRAY_DAYS',
     ];
@@ -298,6 +310,19 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       if (this.afConversationComponent) {
         this.afConversationComponent.nativeElement.focus();
       }
+      // Sync initial "scroll to bottom" button/badge visibility.
+      // The state is normally driven by real scroll events, but on first render
+      // we might not get any scroll event -> stale UI.
+      setTimeout(() => {
+        try {
+          const isAtBottom = this.conversationContent?.checkContentScrollPosition();
+          if (typeof isAtBottom === 'boolean') {
+            this.onScrollContent(isAtBottom);
+          }
+        } catch (e) {
+          this.logger.error('[CONV-COMP] initial scroll state sync error:', e);
+        }
+      }, 0);
       this.isButtonsDisabled = false;
     }, 300);
   }
@@ -344,6 +369,21 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
+   * Backward-compat wrappers: keep component API stable while delegating
+   * the sender classification logic to a pure utility module.
+   */
+  private refreshLastServerSenderBadge() {
+    const state = computeConversationBadgeState(this.messages || [], this.senderId);
+    this.latestServerMessageKind = state.latestServerMessageKind;
+    this.lastServerSenderKind = state.latestNonSystemResponderKind;
+    this.showLastServerSenderBadge = state.showBadge;
+    this.lastServerSenderBadgeText = state.badgeText;
+  }
+
+  // (Implementation moved to src/app/utils/conversation-sender-classifier.ts)
+
+
+  /**
    * do per scontato che this.userId esiste!!!
    */
   async initAll() {
@@ -354,6 +394,10 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.logger.debug('[CONV-COMP] ------ 3: connectConversation ------ ');
     // this.connectConversation();
     await this.initConversationHandler();
+
+    // After loading/connecting, compute "ultimo messaggio ricevuto dal server"
+    // (excluding messages sent by the client).
+    this.refreshLastServerSenderBadge();
 
     this.logger.debug('[CONV-COMP] ------ 4: initializeChatManager ------ ');
     //this.initializeChatManager();
@@ -457,7 +501,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       return this.isConversationArchived;
     }
 
-    //FALLBACK TO TILEDESK
+    //   //FALLBACK TO TILEDESK
     const requests_list = await this.tiledeskRequestService.getMyRequests().catch(err => {
       this.logger.error('[CONV-COMP] getConversationDetail: error getting request from Tiledesk', err);
       this.isConversationArchived=true
@@ -475,9 +519,9 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       return this.isConversationArchived
     }
 
-    this.isConversationArchived = true;
-    return null;
-  }
+      this.isConversationArchived = false;
+      return null;
+    }
 
   /**
     * this.g.recipientId:
@@ -774,8 +818,14 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       subscribtion = this.conversationHandlerService.messageAdded.pipe(takeUntil(this.unsubscribe$)).subscribe((msg: MessageModel) => {
         this.logger.debug('[CONV-COMP] ***** DETAIL messageAdded *****', msg);
         if (msg) {
+          if (msg.sender !== this.senderId) {
+            this.showThinkingMessage = false;
+          }
 
           that.newMessageAdded(msg);
+          // Update badge based on the latest message received from the server.
+          // We rely on `messages` being kept in-sync by the conversation handler.
+          that.refreshLastServerSenderBadge();
           this.checkMessagesLegntForTranscriptDownloadMenuOption();
           this.resetTimeout();
           
@@ -821,6 +871,20 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
             this.logger.debug('[CONV-COMP] updateConversationBadge...')
             that.updateConversationBadge();
           }
+        }
+      });
+      const subscribe = {key: subscribtionKey, value: subscribtion };
+      this.subscriptions.push(subscribe);
+    }
+
+    subscribtionKey = 'conversationsAdded';
+    subscribtion = this.subscriptions.find(item => item.key === subscribtionKey);
+    if(!subscribtion){
+
+      subscribtion = this.chatManager.conversationsHandlerService.conversationChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((conversation) => {
+        this.logger.debug('[CONV-COMP] ***** DATAIL conversationsChanged *****', conversation, this.conversationWith, this.isConversationArchived);
+        if(conversation && conversation.recipient === this.conversationId){
+          this.isConversationArchived = false
         }
       });
       const subscribe = {key: subscribtionKey, value: subscribtion };
@@ -1074,27 +1138,81 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     // this.hideTextAreaContent = true
   }
   /** CALLED BY: conv-header component */
-  onWidgetSizeChange(mode: 'min' | 'max' | 'top'){
-    var tiledeskDiv = this.g.windowContext.window.document.getElementById('tiledeskdiv');
-    this.g.size = mode 
+  onWidgetSizeChange(mode: any){
+    if (this.g?.isMobile) {
+      this.g.fullscreenMode = true;
+      this.g.size = 'max';
+      this.isMenuShow = false;
+      return;
+    }
+
+    const normalize = (val: any): 'min' | 'max' | 'top' => {
+      const v = (typeof val === 'string') ? val.toLowerCase().trim() : '';
+      return (v === 'min' || v === 'max' || v === 'top') ? (v as any) : 'min';
+    };
+
+    const normalizedMode = normalize(mode);
+    const tiledeskDiv = this.g.windowContext?.window?.document?.getElementById('tiledeskdiv');
+    if(!tiledeskDiv){
+      this.g.size = normalizedMode;
+      this.isMenuShow = false;
+      return;
+    }
+
+    this.g.size = normalizedMode;
     const parent = tiledeskDiv.parentElement as HTMLElement | null;
-    if(mode==='max'){
+    if(normalizedMode==='max'){
+        this.restoreInlinePositionStylesForPopup(tiledeskDiv);
         tiledeskDiv.classList.add('max-size')
         tiledeskDiv.classList.remove('min-size')
         tiledeskDiv.classList.remove('top-size')
         if(parent) parent.classList.remove('overlay--popup');
-    } else if(mode==='min'){
+    } else if(normalizedMode==='min'){
+        this.restoreInlinePositionStylesForPopup(tiledeskDiv);
         tiledeskDiv.classList.add('min-size')
         tiledeskDiv.classList.remove('max-size')
         tiledeskDiv.classList.remove('top-size')
         if(parent) parent.classList.remove('overlay--popup');
-    } else if(mode=== 'top'){
+    } else if(normalizedMode=== 'top'){
+        // Remove inline positioning so CSS can control centering without needing `!important`.
+        // this.clearInlinePositionStylesForPopup(tiledeskDiv);
         tiledeskDiv.classList.add('top-size')
         tiledeskDiv.classList.remove('max-size')
         tiledeskDiv.classList.remove('min-size')
         if(parent) parent.classList.add('overlay--popup');
     }
+
+    // Persist user-driven size changes so, when `size` is not specified via URL/settings,
+    // GlobalSettingsService can restore it from storage (it already loads `size` from storage).
+    try{
+      this.appStorageService.setItem('size', normalizedMode);
+    }catch(e){
+      this.logger.warn('[CONV-COMP] onWidgetSizeChange > cannot persist size', e);
+    }
+
     this.isMenuShow = false;
+  }
+
+  // private clearInlinePositionStylesForPopup(tiledeskDiv: HTMLElement) {
+  //   tiledeskDiv.style.removeProperty('left');
+  //   tiledeskDiv.style.removeProperty('right');
+  //   tiledeskDiv.style.removeProperty('top');
+  //   tiledeskDiv.style.removeProperty('bottom');
+  // }
+
+  private restoreInlinePositionStylesForPopup(tiledeskDiv: HTMLElement) {
+    const marginX = this.g.isMobile ? this.g.mobileMarginX : this.g.marginX;
+    const marginY = this.g.isMobile ? this.g.mobileMarginY : this.g.marginY;
+
+    if (this.g.align === 'left') {
+      tiledeskDiv.style.left = marginX;
+      tiledeskDiv.style.removeProperty('right');
+    } else {
+      tiledeskDiv.style.right = marginX;
+      tiledeskDiv.style.removeProperty('left');
+    }
+    tiledeskDiv.style.bottom = marginY;
+    tiledeskDiv.style.removeProperty('top');
   }
 
 
@@ -1234,6 +1352,20 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
   /** CALLED BY: conv-footer component */ 
   onAfterSendMessageFN(message: MessageModel){
+    // Manage thinking state only for messages sent by the current client.
+    // Do not force-hide here for other message types/events.
+    this.logger.debug('[CONV-COMP] onAfterSendMessageFN::::')
+    if (message && message.sender === this.senderId) {
+      this.logger.debug('[CONV-COMP] onAfterSendMessageFN:::: message', message)
+      // if (this.shouldShowThinkingForBot()) {
+      //   this.logger.debug('[CONV-COMP] shouldShowThinkingForBot::::', true)
+      //   this.startThinkingMessage();
+      // } else {
+      //   this.logger.debug('[CONV-COMP] shouldShowThinkingForBot::::', false)
+      //   this.showThinkingMessage = false;
+      // }
+      this.showThinkingMessage = true;
+    }
     this.onAfterSendMessage.emit(message)
   }
   /** CALLED BY: conv-footer component */ 
@@ -1285,6 +1417,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     //this.storageService.removeItem('activeConversation');
     this.isConversationArchived = false;
     this.hideTextAreaContent = false;
+    this.showThinkingMessage = false;
     this.conversationFooter.textInputTextArea='';
     this.hideFooterTextReply = false;
     this.footerMessagePlaceholder = '';
@@ -1428,4 +1561,3 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
 }
-
