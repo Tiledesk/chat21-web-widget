@@ -181,14 +181,30 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     await this.voiceService.startSession();
   }
 
-  async stopVoice() {
+  async stopVoice(options?: { discardInProgressSegment?: boolean }) {
     this.voiceAudioSubscription?.unsubscribe();
     this.voiceAudioSubscription = undefined;
 
     this.voiceVolumeSubscription?.unsubscribe();
     this.voiceVolumeSubscription = undefined;
 
-    await this.voiceService.stopSession();
+    await this.voiceService.stopSession(options);
+  }
+
+  /**
+   * Messaggio in arrivo da un altro mittente mentre lo stream è attivo: scarta solo il segmento
+   * registrato in quel momento (nessun upload); mic + VAD restano attivi, `isStreamAudioActive` true.
+   */
+  interruptStreamDueToPeerMessage(): void {
+    if (!this.isStreamAudioActive) {
+      return;
+    }
+    this.logger.log('[CONV-FOOTER] discard recording segment: incoming message from peer (stream stays on)');
+    try {
+      this.voiceService.discardCurrentRecordingSegment();
+    } catch (e) {
+      this.logger.error('[CONV-FOOTER] interruptStreamDueToPeerMessage', e);
+    }
   }
 
   updateWave(volume: number) {

@@ -827,6 +827,10 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
             this.showThinkingMessage = false;
           }
 
+          if (this.isStreamAudioActive && msg.sender !== this.senderId) {
+            this.conversationFooter?.interruptStreamDueToPeerMessage();
+          }
+
           that.newMessageAdded(msg);
           // Update badge based on the latest message received from the server.
           // We rely on `messages` being kept in-sync by the conversation handler.
@@ -1414,6 +1418,13 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
   // =========== END: event emitter function ====== //
 
+  /**
+   * True quando è visibile il pulsante chiudi stream (`.close-stream-button`, `isStreamAudioActive`).
+   * Solo in quel caso il bottom del foglio include `--chat-footer-stream-button-height`.
+   */
+  closeStreamButtonActiveForSheetBottom(): boolean {
+    return !!(this.g?.showAudioStreamFooterButton && this.isStreamAudioActive);
+  }
 
   openInputFiles() {
     alert('ok');
