@@ -100,9 +100,20 @@ export class VoiceService {
     this.startVolumeLoop();
   }
 
-  async stopSession(): Promise<void> {
-    if (this.mediaRecorder?.state === 'recording') {
-      this.mediaRecorder.stop();
+  /**
+   * @param options.discardInProgressSegment — non inviare STT/upload per il segmento WebM corrente (es. interruzione da messaggio in arrivo).
+   */
+  async stopSession(options?: { discardInProgressSegment?: boolean }): Promise<void> {
+    const discard = options?.discardInProgressSegment === true;
+
+    if (this.mediaRecorder) {
+      if (discard) {
+        this.mediaRecorder.onstop = null;
+        this.mediaRecorder.ondataavailable = null;
+      }
+      if (this.mediaRecorder.state === 'recording') {
+        this.mediaRecorder.stop();
+      }
     }
 
     this.mediaRecorder = undefined;
@@ -135,6 +146,23 @@ export class VoiceService {
   }
 
   /**
+   * Scarta il segmento WebM in corso (nessun upload/STT) senza chiudere VAD, mic o sessione.
+   * Lo stream resta in ascolto per il prossimo `onSpeechStart`.
+   */
+  discardCurrentRecordingSegment(): void {
+    if (this.mediaRecorder) {
+      this.mediaRecorder.onstop = null;
+      this.mediaRecorder.ondataavailable = null;
+      if (this.mediaRecorder.state === 'recording') {
+        this.mediaRecorder.stop();
+      }
+    }
+    this.mediaRecorder = undefined;
+    this.audioChunks = [];
+    this.logger.log('[VoiceService] discarded in-progress segment; VAD session unchanged');
+  }
+
+  /**
    * 🎧 AUDIO ANALYSER INIT
    */
   private initAudioAnalyser(stream: MediaStream): void {
@@ -161,7 +189,9 @@ export class VoiceService {
         return;
       }
 
-      this.analyser.getByteFrequencyData(this.dataArray);
+      this.analyser.getByteFrequencyData(
+        this.dataArray as Parameters<AnalyserNode['getByteFrequencyData']>[0],
+      );
 
       let sum = 0;
       for (let i = 0; i < this.dataArray.length; i++) {

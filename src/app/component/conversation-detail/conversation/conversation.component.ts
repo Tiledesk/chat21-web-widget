@@ -826,6 +826,10 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
             this.showThinkingMessage = false;
           }
 
+          if (this.isStreamAudioActive && msg.sender !== this.senderId) {
+            this.conversationFooter?.interruptStreamDueToPeerMessage();
+          }
+
           that.newMessageAdded(msg);
           // Update badge based on the latest message received from the server.
           // We rely on `messages` being kept in-sync by the conversation handler.
