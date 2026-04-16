@@ -6,6 +6,19 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.32-rc3
+
+# 5.1.32-rc2
+- **bug fixed**: minor streaming icon UI fixed
+
+# 5.1.32-rc1
+- **added**: Voice pipeline — VAD (`@ricky0123/vad-web`) with ONNX Runtime WASM served from `/assets/onnx` (`copy-onnx-wasm`), `VoiceService` with `audioSegment$` (WebM segments) and optional STT/TTS via unified OpenAI provider using `HttpClient`, transcript / error fields on segment payloads.
+- **added**: Stream audio UI in conversation footer — toggle, real-time volume stream and animated waveform (`volume$`); mic session lifecycle wired to upload segments on speech end.
+- **added**: `MessageModel.isJustRecived` — set when ingesting messages (MQTT/Firebase `addCommandMessage` for `command.type === "message"`, and default for non-command messages in `addedMessage` / `addedNew`) to distinguish “new in session” vs history.
+- **added**: `chat-audio-sync` for TTS messages — karaoke-style word sync to audio, full `message` input, typography aligned with text bubbles; skips animation when `isJustRecived === false`; after playback ends sets `message.isJustRecived = false` so replays show full text without re-animating.
+- **bug fixed**: `AnalyserNode.getByteFrequencyData` TypeScript error — `Uint8Array` created from an explicit `ArrayBuffer` for correct DOM typings.
+- **bug fixed**: `isStreamAudioActive` no longer derived from per-frame mic level (`volume > 1`), which caused the stream button / active state to flash continuously while listening.
+
 # 5.1.30
 - **bug fixed**: startHidden is not working properly
 
