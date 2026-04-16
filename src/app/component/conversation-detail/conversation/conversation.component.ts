@@ -1392,6 +1392,14 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   onStreamAudioActiveChange(event: boolean){
     this.isStreamAudioActive = event
   }
+
+  /**
+   * True quando è visibile il pulsante chiudi stream (`.close-stream-button`, `isStreamAudioActive`).
+   * Solo in quel caso il bottom del foglio include `--chat-footer-stream-button-height`.
+   */
+  closeStreamButtonActiveForSheetBottom(): boolean {
+    return !!(this.g?.showAudioStreamFooterButton && this.isStreamAudioActive);
+  }
   // =========== END: event emitter function ====== //
 
 

@@ -4,7 +4,8 @@
 <div id="chat21-conversation-component" 
     #afConversationComponent
     tabindex="1500" 
-    aria-modal="true">
+    aria-modal="true"
+    [class.chat21-conversation--close-stream-active]="closeStreamButtonActiveForSheetBottom()">
 
     <!-- HEADER -->
     <chat-conversation-header

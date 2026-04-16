@@ -283,6 +283,15 @@
     }// end c21-body-container
 }// end c21-body
 
+/* Solo con pulsante chiudi stream (stream in ascolto): altezza extra come #streamAudioAlert */
+:host-context(#chat21-conversation-component.chat21-conversation--close-stream-active) .c21-body .c21-body-container .c21-body-content .chat21-sheet-content {
+    bottom: calc(
+        var(--chat-footer-logo-height) +
+        var(--chat-footer-height) +
+        var(--chat-footer-stream-button-height)
+    );
+}
+
 @keyframes thinking-dot {
     0%, 80%, 100% {
         opacity: 0.2;
