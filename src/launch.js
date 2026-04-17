@@ -218,35 +218,31 @@ function loadIframe(tiledeskScriptBaseLocation) {
     iDiv.appendChild(ifrm);
 
     // Funzione helper per caricare iframe con fallback per compatibilità CSP (Wix, etc.)
-    // Priorità: document.write / srcdoc prima della Blob URL. Le Blob URL spesso danno origine opaca
-    // (blob:null): l'iframe non può leggere window.parent.tiledeskSettings → projectid mancante.
-    function loadIframeContent(iframe, htmlContent) {
+    // Usa Blob URL come metodo principale (più compatibile con CSP) con fallback a srcdoc e document.write
+    function loadIframeContent(iframe, htmlContent, baseLocation) {
+        // Stesso host dello script (es. http://localhost:4203): include 127.0.0.1 per ng serve
+        var isLocalhost = /localhost|127\.0\.0\.1/i.test(baseLocation);
         var blobUrl = null;
 
-        // 1) document.write: iframe stessa origine della pagina host → tiledeskSettings sul parent accessibile
-        try {
-            var cw = iframe.contentWindow;
-            if (cw && cw.document) {
-                cw.document.open();
-                cw.document.write(htmlContent);
-                cw.document.close();
-                return;
-            }
-        } catch (e) {
-            console.warn('[Tiledesk] iframe document.write failed, trying srcdoc/blob:', e);
-        }
-
-        // 2) srcdoc: stessa origine del parent (HTML5); utile se document.write è bloccato
-        if ('srcdoc' in iframe) {
+        // In locale: prima document.write così l'iframe è same-origin con la pagina che embedda launch.js.
+        // Le Blob URL spesso risultano origine opaca (blob:null): allora non si può leggere
+        // window.parent.tiledeskSettings e Globals non riceve projectid da tiledeskSettings.
+        if (isLocalhost) {
             try {
-                iframe.srcdoc = htmlContent;
-                return;
+                var cw = iframe.contentWindow;
+                if (cw && cw.document) {
+                    cw.document.open();
+                    cw.document.write(htmlContent);
+                    cw.document.close();
+                    return;
+                }
             } catch (e) {
-                console.warn('[Tiledesk] iframe srcdoc failed, trying blob:', e);
+                console.warn('[Tiledesk] localhost iframe document.write failed, using blob/srcdoc fallback:', e);
             }
         }
 
-        // 3) Blob URL (spesso permesso da CSP dove srcdoc/write no; può rompere lettura parent.tiledeskSettings)
+        // Metodo 1: Blob URL (più compatibile con CSP di Wix e altre piattaforme)
+        // Usa Blob URL come metodo principale perché è meno spesso bloccato da CSP rispetto a srcdoc
         if (typeof Blob !== 'undefined' && typeof URL !== 'undefined' && URL.createObjectURL) {
             try {
                 var blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
