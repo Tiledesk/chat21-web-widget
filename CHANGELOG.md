@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.33
+- **bug fixed**: widget not loaded because blob block loading in lauch.js
+
 # 5.1.31
 - **bug fixed**: bug fix disabled user-typing with human and user-typing with human is not available
 
