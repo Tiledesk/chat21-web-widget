@@ -6,7 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-
+# 5.1.33-ar
+- **bug fixed**: widget not loaded because blob block loading in lauch.js
 
 # 5.1.32-ar
 - **changed**: start with authentication if hasCalloutInWidgetConfig is true
