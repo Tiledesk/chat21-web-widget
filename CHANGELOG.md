@@ -6,10 +6,18 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.32-rc4
+- **added**: “Close stream” control (`.close-stream-button`) — content and sheet bottom offset in fullscreen using `--chat-footer-stream-button-height` only while the stream is listening (`isStreamAudioActive`); variables in `_variables.scss`.
+- **added**: `VoiceService.discardCurrentRecordingSegment()` — when a message arrives from another sender during streaming, the current WebM segment is discarded (no upload) without stopping mic/VAD; `interruptStreamDueToPeerMessage()` in the footer no longer clears `isStreamAudioActive`.
+- **changed**: `#streamAudioAlert` — band above the footer with a frosted-glass look (`backdrop-filter`, semi-transparent `color-mix`).
+
 # 5.1.32-rc3
+- **changed**: `nginx.conf` (Docker image) — explicit MIME types for `.mjs`, `.wasm`, `.onnx` and `default_type` at `http` level (avoids `text/plain` on ONNX/VAD modules behind containerized deploys).
+- **chore**: removed deprecated Amazon beta/prod deploy scripts from the repository.
 
 # 5.1.32-rc2
 - **bug fixed**: minor streaming icon UI fixed
+- **changed**: Refactor stream audio button UI in the conversation footer (layout / classes).
 
 # 5.1.32-rc1
 - **added**: Voice pipeline — VAD (`@ricky0123/vad-web`) with ONNX Runtime WASM served from `/assets/onnx` (`copy-onnx-wasm`), `VoiceService` with `audioSegment$` (WebM segments) and optional STT/TTS via unified OpenAI provider using `HttpClient`, transcript / error fields on segment payloads.
