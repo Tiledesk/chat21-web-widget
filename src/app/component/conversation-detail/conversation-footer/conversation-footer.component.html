@@ -14,24 +14,10 @@
 
     <!-- STREAM AUDIO: cerchio con onde animate -->
     <div id="streamAudioAlert" *ngIf="!hideTextAreaContent && isStreamAudioActive" class="fade-in-bottom stream-audio-alert" [class.hideTextReply]="hideTextReply" role="status" [attr.aria-label]="translationMap?.get('STREAM_AUDIO_LISTENING') || 'Stream audio attivo'">
-        <div class="stream-audio-alert__orb" [ngStyle]="{ color: stylesMap?.get('themeColor') }">
-            <svg class="stream-audio-alert__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <circle cx="50" cy="50" r="46" fill="currentColor" opacity="0.14"/>
-                <g class="stream-audio-alert__waves" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                    <g class="stream-audio-alert__wave-layer stream-audio-alert__wave-layer--1">
-                        <path [attr.d]="wavePath1"></path>
-                      </g>
-                      
-                      <g class="stream-audio-alert__wave-layer stream-audio-alert__wave-layer--2">
-                        <path [attr.d]="wavePath2"></path>
-                      </g>
-                      
-                      <g class="stream-audio-alert__wave-layer stream-audio-alert__wave-layer--3">
-                        <path [attr.d]="wavePath3"></path>
-                      </g>
-                </g>
-            </svg>
-        </div>
+        <chat-stream-audio-spectrum
+            [volume]="currentVolume"
+            [accentColor]="stylesMap?.get('themeColor')">
+        </chat-stream-audio-spectrum>
     </div>
 
 </div>

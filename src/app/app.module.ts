@@ -16,6 +16,7 @@ import { ConversationFooterComponent } from './component/conversation-detail/con
 import { ConversationInternalFrameComponent } from './component/conversation-detail/conversation-internal-frame/conversation-internal-frame.component';
 import { ConversationPreviewComponent } from './component/conversation-detail/conversation-preview/conversation-preview.component';
 import { ConversationAudioRecorderComponent } from './component/conversation-detail/conversation-audio-recorder/conversation-audio-recorder.component';
+import { StreamAudioSpectrumComponent } from './component/conversation-detail/stream-audio-spectrum/stream-audio-spectrum.component';
 /** CONVERSATION-DETAIL COMPONENTS */
 import { BubbleMessageComponent } from './component/message/bubble-message/bubble-message.component';
 import { AvatarComponent } from './component/message/avatar/avatar.component';
@@ -295,6 +296,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     ConversationPreviewComponent,
     ConversationInternalFrameComponent,
     ConversationAudioRecorderComponent,
+    StreamAudioSpectrumComponent,
     BubbleMessageComponent,
     AvatarComponent,
     FrameComponent,
