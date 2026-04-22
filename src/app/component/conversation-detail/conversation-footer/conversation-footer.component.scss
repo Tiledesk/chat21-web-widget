@@ -416,54 +416,6 @@ textarea:active{
     }
 }
 
-.stream-audio-alert__orb {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 88px;
-    height: 88px;
-    border-radius: 50%;
-    border: 2px solid currentColor;
-    background: var(--content-background-color);
-    box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.04);
-}
-
-.stream-audio-alert__svg {
-    width: 72px;
-    height: 72px;
-    display: block;
-}
-
-.stream-audio-alert__wave-layer {
-    transform-origin: 50px 50px;
-    transform-box: fill-box;
-    animation: stream-wave-float 1.35s ease-in-out infinite;
-}
-
-.stream-audio-alert__wave-layer--1 {
-    animation-delay: 0s;
-}
-
-.stream-audio-alert__wave-layer--2 {
-    animation-delay: 0.18s;
-}
-
-.stream-audio-alert__wave-layer--3 {
-    animation-delay: 0.36s;
-}
-
-@keyframes stream-wave-float {
-    0%,
-    100% {
-        transform: translateY(0);
-        opacity: 0.85;
-    }
-    50% {
-        transform: translateY(-6px);
-        opacity: 1;
-    }
-}
-
 #textAlert{
     bottom: 100%;
     width: 100%;

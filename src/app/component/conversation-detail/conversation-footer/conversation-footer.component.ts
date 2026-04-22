@@ -95,10 +95,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   private voiceAudioSubscription?: Subscription;
   /** Sottoscrizione al volume audio (real-time) dal {@link VoiceService}. */
   private voiceVolumeSubscription?: Subscription;
+  /** Passato a {@link StreamAudioSpectrumComponent} per disegnare la linea spettro. */
   currentVolume = 0;
-  wavePath1 = '';
-  wavePath2 = '';
-  wavePath3 = '';
 
   file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
@@ -114,7 +112,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   ngOnInit() {
     // this.updateAttachmentTooltip();
   }
-
 
   ngOnChanges(changes: SimpleChanges){
     if(changes['conversationWith'] && changes['conversationWith'].currentValue !== undefined){
@@ -173,7 +170,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     });
     this.voiceVolumeSubscription = this.voiceService.volume$.subscribe((volume) => {
       this.currentVolume = volume;
-      this.updateWave(volume);
     });
     await this.voiceService.startSession();
   }
@@ -186,6 +182,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     this.voiceVolumeSubscription = undefined;
 
     await this.voiceService.stopSession(options);
+    this.currentVolume = 0;
   }
 
   /**
@@ -202,27 +199,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     } catch (e) {
       this.logger.error('[CONV-FOOTER] interruptStreamDueToPeerMessage', e);
     }
-  }
-
-  updateWave(volume: number) {
-    const intensity = Math.min(volume / 80, 1); // più sensibile
-  
-    const amp1 = 4 + intensity * 22;
-    const amp2 = 2 + intensity * 16;
-    const amp3 = 1 + intensity * 12;
-  
-    this.wavePath1 = this.buildWave(42, amp1);
-    this.wavePath2 = this.buildWave(50, amp2);
-    this.wavePath3 = this.buildWave(58, amp3);
-  }
-
-  buildWave(y: number, amp: number): string {
-    return `
-      M6 ${y}
-      Q24 ${y - amp} 42 ${y}
-      T78 ${y}
-      T98 ${y}
-    `;
   }
 
   ngOnDestroy() {
@@ -754,6 +730,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     const turningOn = !this.isStreamAudioActive;
     if (turningOn) {
       try {
+        this.currentVolume = 0;
         await this.initVoice();
         this.isStreamAudioActive = true;
       } catch (e) {
