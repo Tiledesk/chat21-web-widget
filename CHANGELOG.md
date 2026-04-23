@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.32-rc8
+- **changed**: updated the dev environment defaults to align with the stage setup (remote config URL, API endpoints, logging level, storage prefix, and related settings)
+
 # 5.1.32-rc7
 - **added**: `StreamAudioSpectrum` component for audio visualization in the streaming footer UI
 - **added**: TTS playback coordinator queue — ensures TTS messages play sequentially without interrupting the previous one
