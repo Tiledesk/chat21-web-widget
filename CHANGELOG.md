@@ -6,12 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# 5.1.32-rc5
+# 5.1.32-rc7
 - **added**: `StreamAudioSpectrum` component for audio visualization in the streaming footer UI
 - **added**: TTS playback coordinator queue — ensures TTS messages play sequentially without interrupting the previous one
 - **changed**: `chat-audio-sync` — updated TTS audio handling to support streaming playback and improved autoplay/animation timing
 - **changed**: iframe loader (`launch.js`, `launch_template.js`) — streamlined loading logic and improved error handling, with fixes for localhost environments
-
 
 # 5.1.32-rc4
 - **added**: “Close stream” control (`.close-stream-button`) — content and sheet bottom offset in fullscreen using `--chat-footer-stream-button-height` only while the stream is listening (`isStreamAudioActive`); variables in `_variables.scss`.
