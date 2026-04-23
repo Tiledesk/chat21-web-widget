@@ -1,22 +1,21 @@
 :host {
   display: block;
+  width: 100%;
+  flex: 1 1 auto;
 }
 
-.stream-audio-spectrum__orb {
+.stream-audio-spectrum {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 88px;
-  height: 88px;
-  border-radius: 50%;
-  border: 2px solid currentColor;
-  background: var(--content-background-color);
-  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .stream-audio-spectrum__svg {
-  width: 72px;
-  height: 72px;
+  width: 100%;
+  height: 32px;
   display: block;
 }
 

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 
 /**
  * Garantisce un solo messaggio TTS in riproduzione alla volta.
@@ -8,6 +9,10 @@ import { Injectable } from '@angular/core';
 export class TtsAudioPlaybackCoordinator {
   private currentOwnerId: string | null = null;
   private readonly queue: Array<{ ownerId: string; start: () => void }> = [];
+
+  private readonly cancelAllSource = new Subject<void>();
+  /** Emesso quando la riproduzione TTS va interrotta globalmente (es. l’utente parla al microfono). */
+  readonly cancelAll$: Observable<void> = this.cancelAllSource.asObservable();
 
   /**
    * Richiede l'avvio della riproduzione TTS per `ownerId`.
@@ -67,5 +72,15 @@ export class TtsAudioPlaybackCoordinator {
   /** Distruzione componente o stop esplicito. */
   release(ownerId: string): void {
     this.releaseIfCurrent(ownerId);
+  }
+
+  /**
+   * Interrompe TUTTA la riproduzione TTS (corrente + coda) e notifica i componenti.
+   * I componenti devono fermare l’audio e mostrare il testo per intero.
+   */
+  cancelAll(): void {
+    this.queue.splice(0, this.queue.length);
+    this.currentOwnerId = null;
+    this.cancelAllSource.next();
   }
 }
