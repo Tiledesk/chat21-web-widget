@@ -6,6 +6,14 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.32-rc9
+- **added**: mic-triggered TTS interruption — when VAD detects user speech, stop current TTS playback, clear the queue, and reveal the full message text
+- **added**: global TTS cancel API (`TtsAudioPlaybackCoordinator.cancelAll()` + `cancelAll$`) to stop current + queued TTS playback from UI/events (e.g. close stream)
+- **changed**: `chat-audio-sync` TTS playback now streams audio via authenticated POST to `message.metadata.src`, sending `voiceSettings` + `text` and `streaming: true`
+- **changed**: stream UI spectrum — removed circular orb and stretched the spectrum line to fill the `#streamAudioAlert` width with 10px side padding
+- **changed**: conversation content layout while streaming — adjusted received bubble left margin and loading spinner margins for full-size mode
+
+
 # 5.1.32-rc8
 - **changed**: updated the dev environment defaults to align with the stage setup (remote config URL, API endpoints, logging level, storage prefix, and related settings)
 
