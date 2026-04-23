@@ -17,6 +17,7 @@ import { findAndRemoveEmoji, isImage } from 'src/chat21-core/utils/utils-message
 import { ProjectModel } from 'src/models/project';
 import { Subscription } from 'rxjs';
 import { VoiceService } from 'src/app/providers/voice/voice.service';
+import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
 
 @Component({
   selector: 'chat-conversation-footer',
@@ -107,7 +108,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   constructor(private chatManager: ChatManager,
               private typingService: TypingService,
               private uploadService: UploadService,
-              private voiceService: VoiceService) { }
+              private voiceService: VoiceService,
+              private ttsPlayback: TtsAudioPlaybackCoordinator) { }
 
   ngOnInit() {
     // this.updateAttachmentTooltip();
@@ -117,6 +119,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     if(changes['conversationWith'] && changes['conversationWith'].currentValue !== undefined){
       this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
       this.isStreamAudioActive = false;
+      this.ttsPlayback.cancelAll();
       void this.stopVoice();
     }
     if(changes['hideTextReply'] && changes['hideTextReply'].currentValue !== undefined){
@@ -736,10 +739,13 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
       } catch (e) {
         this.logger.error('[CONV-FOOTER] onStreamPressed: initVoice failed', e);
         this.isStreamAudioActive = false;
+        this.ttsPlayback.cancelAll();
       }
     } else {
       await this.stopVoice();
       this.isStreamAudioActive = false;
+      // Close-stream-button clicked: stop any playing/queued TTS audio.
+      this.ttsPlayback.cancelAll();
     }
     this.onStreamAudioActiveChange.emit(this.isStreamAudioActive);
     this.logger.log('[CONV-FOOTER] isStreamAudioActive', this.isStreamAudioActive);
