@@ -9,9 +9,11 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
 import { Globals } from 'src/app/utils/globals';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
 
 /** HAVE_METADATA: metadati già disponibili (tipico audio servito da cache). */
 const HAVE_METADATA = 1;
@@ -48,13 +50,17 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   private destroyed = false;
   private playbackRequested = false;
   private playbackStarted = false;
+  private micInterrupted = false;
   private streamAbort?: AbortController;
   private mediaSourceObjectUrl?: string;
+  private cancelAllSub?: Subscription;
+  private micSpeechSub?: Subscription;
 
   constructor(
     private readonly cdr: ChangeDetectorRef,
     private readonly ttsPlayback: TtsAudioPlaybackCoordinator,
     private readonly globals: Globals,
+    private readonly voiceService: VoiceService,
   ) {}
 
   /** `false` = messaggio già in storico: niente autoplay / karaoke. Da `message.isJustRecived`. */
@@ -86,6 +92,28 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.playbackOwnerId =
       (this.message?.uid && String(this.message.uid).trim()) ||
       `tts-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+
+    // Se l’utente parla al microfono mentre sta ascoltando, interrompi TUTTO (corrente + coda).
+    this.micSpeechSub = this.voiceService.speechStart$.subscribe(() => {
+      if (this.destroyed) {
+        return;
+      }
+      // interrompi solo se questo messaggio era in riproduzione o in attesa
+      if (this.playbackStarted || this.playbackRequested) {
+        this.micInterrupted = true;
+        this.ttsPlayback.cancelAll();
+        this.interruptPlaybackAndRevealText();
+      }
+    });
+
+    // Stop globale (es. mic) notificato dal coordinatore: ogni istanza deve fermarsi e mostrare testo intero.
+    this.cancelAllSub = this.ttsPlayback.cancelAll$.subscribe(() => {
+      if (this.destroyed) {
+        return;
+      }
+      this.micInterrupted = true;
+      this.interruptPlaybackAndRevealText();
+    });
 
     this.onPlaybackEnded = () => {
       this.playbackStarted = false;
@@ -138,12 +166,19 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.cdr.detectChanges();
 
     setTimeout(() => {
-      if (this.playbackRequested || this.destroyed) {
+      if (this.playbackRequested || this.destroyed || this.micInterrupted) {
+        if (this.micInterrupted) {
+          this.markAllWordsPast();
+          if (this.message) {
+            this.message.isJustRecived = false;
+          }
+          this.cdr.detectChanges();
+        }
         return;
       }
       this.playbackRequested = true;
       this.ttsPlayback.requestStart(this.playbackOwnerId, () => {
-        if (this.destroyed) {
+        if (this.destroyed || this.micInterrupted) {
           this.ttsPlayback.releaseIfCurrent(this.playbackOwnerId);
           return;
         }
@@ -159,6 +194,8 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.destroyed = true;
     this.playbackStarted = false;
     this.cleanupStreaming();
+    this.cancelAllSub?.unsubscribe();
+    this.micSpeechSub?.unsubscribe();
 
     const audio = this.audioRef?.nativeElement;
     if (audio) {
@@ -180,6 +217,31 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (this.onPlaybackEnded) {
       audio.removeEventListener('ended', this.onPlaybackEnded);
     }
+  }
+
+  private interruptPlaybackAndRevealText(): void {
+    this.playbackStarted = false;
+    this.cleanupStreaming();
+
+    const audio = this.audioRef?.nativeElement;
+    if (audio) {
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
+    }
+
+    // Rimuove se era in coda (o rilascia se era corrente).
+    this.ttsPlayback.releaseIfCurrent(this.playbackOwnerId);
+
+    // Mostra tutto il testo (niente "future" invisibili).
+    this.markAllWordsPast();
+    if (this.message) {
+      this.message.isJustRecived = false;
+    }
+    this.cdr.detectChanges();
   }
 
   private startPlayback(audio: HTMLAudioElement): void {
@@ -236,8 +298,10 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
       try {
         const headers: Record<string, string> = {
           'Content-Type': 'application/json',
-          'Authorization': `${jwt}`
         };
+        if (jwt) {
+          headers['Authorization'] = jwt;
+        }
         
         const response = await fetch(endpoint, {
           method: 'POST',
@@ -399,11 +463,10 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     try {
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        'Authorization': `${jwt}`
       };
-
-      console.log('headers', headers);
-      console.log('requestBody', requestBody);
+      if (jwt) {
+        headers['Authorization'] = jwt;
+      }
 
       const response = await fetch(endpoint, {
         method: 'POST',

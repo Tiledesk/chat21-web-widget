@@ -18,7 +18,7 @@ export class StreamAudioSpectrumComponent implements OnInit, OnChanges {
   /** Colore tema (stroke / gradient); opzionale. */
   @Input() accentColor?: string;
 
-  spectrumLinePath = 'M12,50 L88,50';
+  spectrumLinePath = 'M0,16 L100,16';
 
   ngOnInit(): void {
     this.refreshPath();
@@ -37,11 +37,11 @@ export class StreamAudioSpectrumComponent implements OnInit, OnChanges {
   }
 
   private buildSpectrumLinePath(intensity: number, t: number): string {
-    const x0 = 12;
-    const x1 = 88;
-    const cy = 50;
-    const segments = 80;
-    const amp = 1.2 + intensity * 16;
+    const x0 = 0;
+    const x1 = 100;
+    const cy = 16;
+    const segments = 100;
+    const amp = 0.8 + intensity * 6.5;
     const parts: string[] = [];
     for (let i = 0; i <= segments; i++) {
       const p = i / segments;
@@ -54,7 +54,7 @@ export class StreamAudioSpectrumComponent implements OnInit, OnChanges {
         Math.sin(u * 6.8 + t * 1.05) * 0.14 +
         Math.sin(u * 9.1 + t * 0.88) * 0.1;
       const y = cy + amp * wobble;
-      const yClamped = Math.min(68, Math.max(32, y));
+      const yClamped = Math.min(30, Math.max(2, y));
       parts.push(i === 0 ? `M${x.toFixed(2)},${yClamped.toFixed(2)}` : `L${x.toFixed(2)},${yClamped.toFixed(2)}`);
     }
     return parts.join('');
