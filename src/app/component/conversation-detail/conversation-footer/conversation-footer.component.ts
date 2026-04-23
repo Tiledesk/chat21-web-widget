@@ -186,6 +186,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   }
 
   /**
+   * CHIAMATO DA: conversation.component.ts
    * Messaggio in arrivo da un altro mittente mentre lo stream è attivo: scarta solo il segmento
    * registrato in quel momento (nessun upload); mic + VAD restano attivi, `isStreamAudioActive` true.
    */
