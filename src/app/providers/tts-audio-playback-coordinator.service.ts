@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 /**
  * Garantisce un solo messaggio TTS in riproduzione alla volta.
@@ -13,6 +13,10 @@ export class TtsAudioPlaybackCoordinator {
   /** Emits true while any TTS is playing or queued; false when the queue is fully drained. */
   private readonly _isTTSPlaying$ = new BehaviorSubject<boolean>(false);
   readonly isTTSPlaying$ = this._isTTSPlaying$.asObservable();
+
+  /** Emits once when stopAll() is called — signals every AudioSyncComponent to abort immediately. */
+  private readonly _stopAll$ = new Subject<void>();
+  readonly stopAllPlayback$: Observable<void> = this._stopAll$.asObservable();
 
   /**
    * Richiede l'avvio della riproduzione TTS per `ownerId`.
@@ -74,5 +78,16 @@ export class TtsAudioPlaybackCoordinator {
   /** Distruzione componente o stop esplicito. */
   release(ownerId: string): void {
     this.releaseIfCurrent(ownerId);
+  }
+
+  /**
+   * Stops all TTS playback immediately and clears the queue.
+   * Broadcasts on stopAllPlayback$ so every AudioSyncComponent can abort its stream and reveal all text.
+   */
+  stopAll(): void {
+    this.queue.length = 0;
+    this.currentOwnerId = null;
+    this._isTTSPlaying$.next(false);
+    this._stopAll$.next();
   }
 }

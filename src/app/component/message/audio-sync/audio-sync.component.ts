@@ -9,6 +9,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
 import { Globals } from 'src/app/utils/globals';
@@ -50,6 +51,7 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   private playbackStarted = false;
   private streamAbort?: AbortController;
   private mediaSourceObjectUrl?: string;
+  private stopAllSub?: Subscription;
 
   constructor(
     private readonly cdr: ChangeDetectorRef,
@@ -153,12 +155,35 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.startPlayback(audio);
       });
     }, 200);
+
+    // Stop signal: user pressed X while this TTS was playing or queued.
+    this.stopAllSub = this.ttsPlayback.stopAllPlayback$.subscribe(() => {
+      if (!this.playbackRequested && !this.playbackStarted) {
+        return;
+      }
+      this.destroyed = true;
+      this.playbackStarted = false;
+      this.cleanupStreaming();
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
+      this.markAllWordsPast();
+      if (this.message) {
+        this.message.isJustRecived = false;
+      }
+      this.cdr.detectChanges();
+    });
   }
 
   ngOnDestroy(): void {
     this.destroyed = true;
     this.playbackStarted = false;
     this.cleanupStreaming();
+    this.stopAllSub?.unsubscribe();
+    this.stopAllSub = undefined;
 
     const audio = this.audioRef?.nativeElement;
     if (audio) {
