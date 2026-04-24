@@ -17,6 +17,7 @@ import { findAndRemoveEmoji, isImage } from 'src/chat21-core/utils/utils-message
 import { ProjectModel } from 'src/models/project';
 import { Subscription } from 'rxjs';
 import { VoiceService } from 'src/app/providers/voice/voice.service';
+import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
 
 @Component({
   selector: 'chat-conversation-footer',
@@ -93,10 +94,14 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
 
   /** Stream audio UI: icona equalizer → X; alert con onde animate sopra il footer */
   isStreamAudioActive = false;
+  /** True while the bot's TTS audio is playing — mic segments are suppressed, spectrum turns grey. */
+  isBotSpeaking = false;
   /** Sottoscrizione ai segmenti audio (VAD → WebM) dal {@link VoiceService}. */
   private voiceAudioSubscription?: Subscription;
   /** Sottoscrizione al volume audio (real-time) dal {@link VoiceService}. */
   private voiceVolumeSubscription?: Subscription;
+  /** Sottoscrizione allo stato TTS (bot sta parlando). */
+  private botSpeakingSub?: Subscription;
   /** Passato a {@link StreamAudioSpectrumComponent} per disegnare la linea spettro. */
   currentVolume = 0;
 
@@ -110,7 +115,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   constructor(private chatManager: ChatManager,
               private typingService: TypingService,
               private uploadService: UploadService,
-              private voiceService: VoiceService) { }
+              private voiceService: VoiceService,
+              private ttsPlayback: TtsAudioPlaybackCoordinator) { }
 
   ngOnInit() {
     // this.updateAttachmentTooltip();
@@ -166,6 +172,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   async initVoice() {
     this.voiceAudioSubscription?.unsubscribe();
     this.voiceVolumeSubscription?.unsubscribe();
+    this.botSpeakingSub?.unsubscribe();
 
     this.voiceAudioSubscription = this.voiceService.audioSegment$.subscribe((rec) => {
       console.log('[CONV-FOOTER] audioSegment$', rec);
@@ -173,6 +180,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     });
     this.voiceVolumeSubscription = this.voiceService.volume$.subscribe((volume) => {
       this.currentVolume = volume;
+    });
+    this.botSpeakingSub = this.ttsPlayback.isTTSPlaying$.subscribe((playing) => {
+      this.isBotSpeaking = playing;
     });
     await this.voiceService.startSession();
   }
@@ -183,6 +193,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
 
     this.voiceVolumeSubscription?.unsubscribe();
     this.voiceVolumeSubscription = undefined;
+
+    this.botSpeakingSub?.unsubscribe();
+    this.botSpeakingSub = undefined;
+    this.isBotSpeaking = false;
 
     await this.voiceService.stopSession(options);
     this.currentVolume = 0;

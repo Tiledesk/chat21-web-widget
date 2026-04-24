@@ -16,7 +16,7 @@
     <div id="streamAudioAlert" *ngIf="!hideTextAreaContent && isStreamAudioActive" class="fade-in-bottom stream-audio-alert" [class.hideTextReply]="hideTextReply" role="status" [attr.aria-label]="translationMap?.get('STREAM_AUDIO_LISTENING') || 'Stream audio attivo'">
         <chat-stream-audio-spectrum
             [volume]="currentVolume"
-            [accentColor]="stylesMap?.get('themeColor')">
+            [accentColor]="isBotSpeaking ? '#b0b0b0' : stylesMap?.get('themeColor')">
         </chat-stream-audio-spectrum>
     </div>
 

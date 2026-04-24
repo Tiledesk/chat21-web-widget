@@ -1,7 +1,7 @@
 import { Inject, Injectable, Optional } from '@angular/core';
 import type { MicVAD } from '@ricky0123/vad-web';
 import { getDefaultRealTimeVADOptions } from '@ricky0123/vad-web';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
 
@@ -12,6 +12,7 @@ import {
 } from './audio.types';
 import { SpeechToTextProvider } from './STT&TTS/speech-provider.abstract';
 import { VadService } from './vad.service';
+import { TtsAudioPlaybackCoordinator } from '../tts-audio-playback-coordinator.service';
 
 const VOICE_RECORDING_MIME = 'audio/webm';
 
@@ -37,6 +38,10 @@ export class VoiceService {
   private readonly volumeSubject = new BehaviorSubject<number>(0);
   readonly volume$: Observable<number> = this.volumeSubject.asObservable();
 
+  // 🎙️ TTS GATE — suppresses segment emission while TTS is playing
+  private isTTSActive = false;
+  private ttsGateSub?: Subscription;
+
   // 🎧 AUDIO ANALYSER
   private audioContext?: AudioContext;
   private analyser?: AnalyserNode;
@@ -47,6 +52,7 @@ export class VoiceService {
 
   constructor(
     private readonly vadService: VadService,
+    private readonly ttsPlayback: TtsAudioPlaybackCoordinator,
     @Optional() @Inject(SpeechToTextProvider) private readonly speechToText: SpeechToTextProvider | null,
   ) {}
 
@@ -98,6 +104,12 @@ export class VoiceService {
 
     // 🔁 start volume loop
     this.startVolumeLoop();
+
+    // 🎙️ gate segments while TTS is playing
+    this.ttsGateSub = this.ttsPlayback.isTTSPlaying$.subscribe((playing) => {
+      this.isTTSActive = playing;
+      this.logger.log('[VoiceService] TTS gate', playing ? 'closed (bot speaking)' : 'open (listening)');
+    });
   }
 
   /**
@@ -143,6 +155,11 @@ export class VoiceService {
     this.volumeSubject.next(0);
 
     this.onRecordingComplete = undefined;
+
+    // 🎙️ release TTS gate subscription
+    this.ttsGateSub?.unsubscribe();
+    this.ttsGateSub = undefined;
+    this.isTTSActive = false;
   }
 
   /**
@@ -285,6 +302,11 @@ export class VoiceService {
    * 📡 EMIT RESULT
    */
   private emitSegmentPayload(payload: VoiceSegmentPayload): void {
+    if (this.isTTSActive) {
+      this.logger.log('[VoiceService] segment suppressed — TTS is playing');
+      return;
+    }
+
     this.logger.log( '[VoiceService] segment ready', payload.transcript ?? payload.transcriptionError ?? payload.blob.size);
 
     this.audioSegmentSubject.next(payload);
