@@ -250,7 +250,9 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'CONTINUE',
       'EMOJI_NOT_ELLOWED',
       'ATTACHMENT',
-      'EMOJI'
+      'EMOJI',
+      'CLOSE_CHAT',
+      'CLOSE'
     ];
 
     const keysContent = [

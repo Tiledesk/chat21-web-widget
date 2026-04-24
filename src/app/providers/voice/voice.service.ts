@@ -38,6 +38,11 @@ export class VoiceService {
   /** Emesso quando il microfono intercetta parlato (VAD speech start). */
   readonly speechStart$: Observable<void> = this.speechStartSubject.asObservable();
 
+  private readonly speechEndSubject = new Subject<void>();
+  /** Emesso quando il parlato termina (VAD speech end). */
+  readonly speechEnd$: Observable<void> = this.speechEndSubject.asObservable();
+
+
   // 🔊 REALTIME VOLUME STREAM
   private readonly volumeSubject = new BehaviorSubject<number>(0);
   readonly volume$: Observable<number> = this.volumeSubject.asObservable();
@@ -105,6 +110,7 @@ export class VoiceService {
       },
       onSpeechEnd: () => {
         this.logger.log('[VoiceService] speech end');
+        this.speechEndSubject.next();
         this.stopMediaRecorderSegment();
         // Pause VAD immediately — new recordings are blocked until the TTS response cycle completes.
         this.isWaitingForResponse = true;

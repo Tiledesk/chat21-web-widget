@@ -8,6 +8,14 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+}
+
+.close-chat-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 
     //if attachment icon OR emoji icon is not in DOM -> increment textarea width
     &:has(:not(#chat21-start-upload-doc), :not(#chat21-emoticon-picker)) .visible-text-area {
@@ -39,6 +47,10 @@
     }
     &.hasError{
         box-shadow: 0 0 0 1px var(--chat-footer-border-color-error) inset;
+    }
+
+    &.stream-active {
+        width: 50%;
     }
 }
 
@@ -91,6 +103,10 @@
     box-sizing: border-box;
     flex-shrink: 0;
     color: #ffffff;
+    transition:
+        width 180ms ease,
+        border-radius 180ms ease,
+        padding 180ms ease;
 
     .chat21-stream-button__icon svg {
         width: 20px;
@@ -103,6 +119,22 @@
     &.chat21-textarea-button span svg:hover {
         background: rgba(255, 255, 255, 0.2) !important;
         border-radius: 50%;
+    }
+
+    &.chat21-stream-button--expanded {
+        width: auto;
+        // min-width: 150px;
+        max-width: 100%;
+        border-radius: 999px;
+        padding: 0 14px;
+        gap: 12px;
+        justify-content: center;
+
+        // stop the circle-hover background from looking odd on pill
+        &.chat21-textarea-button span svg:hover {
+            background: transparent !important;
+            border-radius: 0;
+        }
     }
 }
 

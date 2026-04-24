@@ -1,7 +1,8 @@
 :host {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  flex: 1 1 auto;
 }
 
 .stream-audio-spectrum {
@@ -22,4 +23,57 @@
 .stream-audio-spectrum__line {
   pointer-events: none;
   filter: drop-shadow(0 0 1px color-mix(in srgb, currentColor 35%, transparent));
+}
+
+/* ===========================
+ * BUTTON (pill content)
+ * =========================== */
+.stream-audio-button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.stream-audio-button__icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.stream-audio-button__expanded {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  user-select: none;
+}
+
+.stream-audio-button__label {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.stream-audio-button__bars {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 26px;
+  height: 18px;
+  transform-origin: center;
+  margin: 0;
+  line-height: 0;
+}
+
+.stream-audio-button__bars .bar {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.92);
+  transform-origin: center;
 }
