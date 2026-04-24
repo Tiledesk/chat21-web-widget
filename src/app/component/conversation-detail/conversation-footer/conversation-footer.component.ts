@@ -186,6 +186,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   }
 
   async stopVoice(options?: { discardInProgressSegment?: boolean }) {
+    // Stop all active TTS audio immediately and reveal all text.
+    this.ttsPlayback.stopAll();
+
     this.voiceAudioSubscription?.unsubscribe();
     this.voiceAudioSubscription = undefined;
 

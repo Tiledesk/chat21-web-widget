@@ -55,6 +55,7 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   private mediaSourceObjectUrl?: string;
   private cancelAllSub?: Subscription;
   private micSpeechSub?: Subscription;
+  private stopAllSub?: Subscription;
 
   constructor(
     private readonly cdr: ChangeDetectorRef,
@@ -188,6 +189,27 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.startPlayback(audio);
       });
     }, 200);
+
+    // Stop signal: user pressed X while this TTS was playing or queued.
+    this.stopAllSub = this.ttsPlayback.stopAllPlayback$.subscribe(() => {
+      if (!this.playbackRequested && !this.playbackStarted) {
+        return;
+      }
+      this.destroyed = true;
+      this.playbackStarted = false;
+      this.cleanupStreaming();
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
+      this.markAllWordsPast();
+      if (this.message) {
+        this.message.isJustRecived = false;
+      }
+      this.cdr.detectChanges();
+    });
   }
 
   ngOnDestroy(): void {
@@ -196,6 +218,8 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.cleanupStreaming();
     this.cancelAllSub?.unsubscribe();
     this.micSpeechSub?.unsubscribe();
+    this.stopAllSub?.unsubscribe();
+    this.stopAllSub = undefined;
 
     const audio = this.audioRef?.nativeElement;
     if (audio) {

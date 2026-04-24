@@ -18,6 +18,10 @@ export class TtsAudioPlaybackCoordinator {
   private readonly _isTTSPlaying$ = new BehaviorSubject<boolean>(false);
   readonly isTTSPlaying$ = this._isTTSPlaying$.asObservable();
 
+  /** Emits once when stopAll() is called — signals every AudioSyncComponent to abort immediately. */
+  private readonly _stopAll$ = new Subject<void>();
+  readonly stopAllPlayback$: Observable<void> = this._stopAll$.asObservable();
+
   /**
    * Richiede l'avvio della riproduzione TTS per `ownerId`.
    * Se non c'è nessun TTS attivo, parte subito; altrimenti viene messo in coda.
@@ -85,8 +89,18 @@ export class TtsAudioPlaybackCoordinator {
    * I componenti devono fermare l’audio e mostrare il testo per intero.
    */
   cancelAll(): void {
-    this.queue.splice(0, this.queue.length);
-    this.currentOwnerId = null;
+    this.stopAll();
     this.cancelAllSource.next();
+  }
+
+  /**
+   * Stops all TTS playback immediately and clears the queue.
+   * Broadcasts on stopAllPlayback$ so every AudioSyncComponent can abort its stream and reveal all text.
+   */
+  stopAll(): void {
+    this.queue.length = 0;
+    this.currentOwnerId = null;
+    this._isTTSPlaying$.next(false);
+    this._stopAll$.next();
   }
 }
