@@ -164,6 +164,9 @@
                         min-width: 14px;
                         border: 0.1px solid #0000000f;
                     }
+                    .msg_sent.json-resources{
+                        border: 0 !important;
+                    }
                     .message_innerhtml {
                         padding: 8px;
                     }
@@ -236,6 +239,10 @@
                         height: fit-content;
                         width: auto;
 
+                    }
+                    .msg_receive.json-resources{
+                        min-height: unset;
+                        padding: 0;
                     }
                     
 

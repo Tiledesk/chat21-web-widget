@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
@@ -7,6 +7,7 @@ import { MAX_WIDTH_IMAGES, MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, MIN_WIDTH_IMA
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 import { isAudio, isFile, isFrame, isImage, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
+import { JsonSourceItem } from '../json-sources/json-sources.component';
 
 @Component({
   selector: 'chat-bubble-message',
@@ -36,6 +37,15 @@ export class BubbleMessageComponent implements OnInit {
  // ========== end:: check message type functions ======= //
   sizeImage : { width: number, height: number}
   fullnameColor: string;
+  jsonSources: JsonSourceItem[] | null = null;
+  @HostBinding('class.no-background') get hostNoBackground() {
+    // When rendering json_resources we want the inner panel to define visuals,
+    // not the standard chat bubble background.
+    return this.jsonSources !== null;
+  }
+  @HostBinding('class.json-resources') get hostIsJsonResources() {
+    return this.jsonSources !== null;
+  }
   private logger: LoggerService = LoggerInstance.getInstance()
   constructor(public sanitizer: DomSanitizer) { }
 
@@ -55,6 +65,71 @@ export class BubbleMessageComponent implements OnInit {
       this.fullnameColor = getColorBck(this.message.sender_fullname)
     }
 
+    this.jsonSources = this.parseJsonSources(this.message?.text);
+
+  }
+
+  private parseJsonSources(text?: string): JsonSourceItem[] | null {
+    if (!text) return null;
+    try {
+      const parsed = this.parseJsonLenient(text);
+
+      // Supported formats:
+      // 1) Legacy: [ { title, link, ... }, ... ]
+      // 2) Envelope: { kind: "json_resources", version: 1, resources: [ ... ] }
+      let resources: any[] | null = null;
+      if (Array.isArray(parsed)) {
+        resources = parsed;
+      } else if (
+        parsed &&
+        typeof parsed === 'object' &&
+        (parsed as any).kind === 'json_resources' &&
+        Array.isArray((parsed as any).resources)
+      ) {
+        resources = (parsed as any).resources;
+      }
+
+      // Necessary and sufficient condition (as requested):
+      // kind === "json_resources" AND resources is an array (even empty).
+      // For legacy arrays we still support them, but they must contain at least one object.
+      if (parsed && typeof parsed === 'object' && (parsed as any).kind === 'json_resources') {
+        return resources ? this.mapResources(resources) : null;
+      }
+      if (!resources || resources.length === 0) return null;
+      return this.mapResources(resources);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  private parseJsonLenient(input: string): any {
+    const trimmed = (input || '').trim();
+    try {
+      return JSON.parse(trimmed);
+    } catch {
+      // common cases in chat messages:
+      // - markdown code fences ```json ... ```
+      // - trailing commas before } or ]
+      const withoutFences = trimmed
+        .replace(/^```(?:json)?\s*/i, '')
+        .replace(/```$/i, '')
+        .trim();
+      const withoutTrailingCommas = withoutFences.replace(/,\s*([}\]])/g, '$1');
+      return JSON.parse(withoutTrailingCommas);
+    }
+  }
+
+  private mapResources(resources: any[]): JsonSourceItem[] {
+    return (resources || [])
+      .filter((x: any) => x && typeof x === 'object')
+      .map((x: any) => ({
+        title: typeof x.title === 'string' ? x.title : undefined,
+        link: typeof x.link === 'string' ? x.link : undefined,
+        description: typeof x.description === 'string' ? x.description : undefined,
+        favicon: typeof x.favicon === 'string' ? x.favicon : undefined,
+        favicon_hd: typeof x.favicon_hd === 'string' ? x.favicon_hd : undefined,
+        image: typeof x.image === 'string' ? x.image : undefined,
+      }));
   }
 
   /**
