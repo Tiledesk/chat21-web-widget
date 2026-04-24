@@ -135,9 +135,10 @@
                           [senderFullname]="nameUserTypingNow"
                           [baseLocation]="baseLocation">
                         </chat-avatar-image>
+                        
                         <user-typing
-                          [ngClass]="{'userTypingNowExist': !idUserTypingNow}"
                           [color]="stylesMap?.get('iconColor')"
+                          [ngClass]="{'userTypingNowExist': !idUserTypingNow}"
                           [translationMap]="translationMap"
                           [idUserTypingNow]="idUserTypingNow"
                           [nameUserTypingNow]="nameUserTypingNow">
@@ -146,6 +147,7 @@
 
                       <div *ngIf="showThinkingMessage && lastServerSenderKind === 'bot'" class="msg_container base_receive thinking_receive">
                         <user-typing class="loading thinking-dots"
+                          [class.fullSize]="isStreamAudioActive"
                           [color]="stylesMap?.get('iconColor')"
                           [class.fullSize]="isStreamAudioActive"
                           [translationMap]="translationMap"
