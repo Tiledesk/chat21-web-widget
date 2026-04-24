@@ -1,26 +1,79 @@
 :host {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
-.stream-audio-spectrum__orb {
+.stream-audio-spectrum {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 88px;
-  height: 88px;
-  border-radius: 50%;
-  border: 2px solid currentColor;
-  background: var(--content-background-color);
-  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .stream-audio-spectrum__svg {
-  width: 72px;
-  height: 72px;
+  width: 100%;
+  height: 32px;
   display: block;
 }
 
 .stream-audio-spectrum__line {
   pointer-events: none;
   filter: drop-shadow(0 0 1px color-mix(in srgb, currentColor 35%, transparent));
+}
+
+/* ===========================
+ * BUTTON (pill content)
+ * =========================== */
+.stream-audio-button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.stream-audio-button__icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.stream-audio-button__expanded {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  user-select: none;
+}
+
+.stream-audio-button__label {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.stream-audio-button__bars {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 26px;
+  height: 18px;
+  transform-origin: center;
+  margin: 0;
+  line-height: 0;
+}
+
+.stream-audio-button__bars .bar {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.92);
+  transform-origin: center;
 }
