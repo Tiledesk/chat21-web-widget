@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 /**
  * Garantisce un solo messaggio TTS in riproduzione alla volta.
@@ -13,6 +13,10 @@ export class TtsAudioPlaybackCoordinator {
   private readonly cancelAllSource = new Subject<void>();
   /** Emesso quando la riproduzione TTS va interrotta globalmente (es. l’utente parla al microfono). */
   readonly cancelAll$: Observable<void> = this.cancelAllSource.asObservable();
+
+  /** Emits true while any TTS is playing or queued; false when the queue is fully drained. */
+  private readonly _isTTSPlaying$ = new BehaviorSubject<boolean>(false);
+  readonly isTTSPlaying$ = this._isTTSPlaying$.asObservable();
 
   /**
    * Richiede l'avvio della riproduzione TTS per `ownerId`.
@@ -34,6 +38,7 @@ export class TtsAudioPlaybackCoordinator {
       return;
     }
     this.currentOwnerId = id;
+    this._isTTSPlaying$.next(true);
     try {
       start();
     } catch {
@@ -59,6 +64,7 @@ export class TtsAudioPlaybackCoordinator {
     this.currentOwnerId = null;
     const next = this.queue.shift();
     if (!next) {
+      this._isTTSPlaying$.next(false);
       return;
     }
     this.currentOwnerId = next.ownerId;
