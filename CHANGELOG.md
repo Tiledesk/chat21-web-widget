@@ -6,9 +6,30 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.32-rc13
+- **changed**: stream audio footer UI — stream button expands into a “Terminate” pill with animated level bars driven by mic intensity; recorder icon hidden while streaming; textarea width adjusted while streaming
+- **changed**: `StreamAudioSpectrum` — consolidated stream spectrum + stream button visuals into a single component with improved silence vs speaking handling and volume-driven bar heights
+- **changed**: conversation layout while streaming — adjusted received bubble sizing (`fullSizeMessage`) and loading spinner spacing (`fullSize`) for full-width stream mode
+- **added**: VAD speech state events (`speechStart$`, `speechEnd$`) to improve UI/state transitions around user speech
+
+
+# 5.1.32-rc12
+- **changed**: voice acquisition blocking during TTS response — pause VAD after user speech ends until the TTS response cycle completes; added safety timeout and `isAcquisitionBlocked$` to drive UI (e.g. greyed spectrum)
+- **chore**: version bump to `5.1.32-rc12`
+
+# 5.1.32-rc11
+- **added**: global TTS stop — `TtsAudioPlaybackCoordinator.stopAll()` + `stopAllPlayback$` to abort current and queued TTS playback and reveal full message text
+- **changed**: stop TTS playback when closing stream audio
+- **chore**: version bump to `5.1.32-rc11`
+
+# 5.1.32-rc10
+- **added**: TTS playback state (`isTTSPlaying$`) to coordinate voice UI and suppress mic segment emission while the bot is speaking
+- **changed**: stream spectrum theme color turns grey while TTS is playing
+
+
 # 5.1.32-rc9
 - **added**: mic-triggered TTS interruption — when VAD detects user speech, stop current TTS playback, clear the queue, and reveal the full message text
-- **added**: global TTS cancel API (`TtsAudioPlaybackCoordinator.cancelAll()` + `cancelAll$`) to stop current + queued TTS playback from UI/events (e.g. close stream)
+- **added**: global TTS stop API (`TtsAudioPlaybackCoordinator.stopAll()` + `stopAllPlayback$`) to stop current + queued TTS playback from UI/events (e.g. close stream)
 - **changed**: `chat-audio-sync` TTS playback now streams audio via authenticated POST to `message.metadata.src`, sending `voiceSettings` + `text` and `streaming: true`
 - **changed**: stream UI spectrum — removed circular orb and stretched the spectrum line to fill the `#streamAudioAlert` width with 10px side padding
 - **changed**: conversation content layout while streaming — adjusted received bubble left margin and loading spinner margins for full-size mode
