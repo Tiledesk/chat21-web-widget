@@ -46,6 +46,13 @@ export class VoiceService {
   private isTTSActive = false;
   private ttsGateSub?: Subscription;
 
+  // 🚫 ACQUISITION GATE — pauses VAD from speech-end until TTS response cycle completes
+  private isWaitingForResponse = false;
+  private responseTimeoutId?: ReturnType<typeof setTimeout>;
+  private readonly _isAcquisitionBlocked$ = new BehaviorSubject<boolean>(false);
+  /** Emits `true` from user speech-end until VAD resumes after TTS finishes; drives the grey orb. */
+  readonly isAcquisitionBlocked$: Observable<boolean> = this._isAcquisitionBlocked$.asObservable();
+
   // 🎧 AUDIO ANALYSER
   private audioContext?: AudioContext;
   private analyser?: AnalyserNode;
@@ -99,6 +106,11 @@ export class VoiceService {
       onSpeechEnd: () => {
         this.logger.log('[VoiceService] speech end');
         this.stopMediaRecorderSegment();
+        // Pause VAD immediately — new recordings are blocked until the TTS response cycle completes.
+        this.isWaitingForResponse = true;
+        this._isAcquisitionBlocked$.next(true);
+        this.setResponseSafetyTimeout();
+        void this.vad?.pause();
       },
       minSpeechMs: 480,
       redemptionMs: 1920,
@@ -110,10 +122,13 @@ export class VoiceService {
     // 🔁 start volume loop
     this.startVolumeLoop();
 
-    // 🎙️ gate segments while TTS is playing
+    // 🎙️ gate segments while TTS is playing; resume VAD when TTS cycle completes
     this.ttsGateSub = this.ttsPlayback.isTTSPlaying$.subscribe((playing) => {
       this.isTTSActive = playing;
       this.logger.log('[VoiceService] TTS gate', playing ? 'closed (bot speaking)' : 'open (listening)');
+      if (!playing && this.isWaitingForResponse) {
+        this.resumeVadAfterResponse();
+      }
     });
   }
 
@@ -165,6 +180,12 @@ export class VoiceService {
     this.ttsGateSub?.unsubscribe();
     this.ttsGateSub = undefined;
     this.isTTSActive = false;
+
+    // 🚫 clear acquisition gate
+    clearTimeout(this.responseTimeoutId);
+    this.responseTimeoutId = undefined;
+    this.isWaitingForResponse = false;
+    this._isAcquisitionBlocked$.next(false);
   }
 
   /**
@@ -182,6 +203,35 @@ export class VoiceService {
     this.mediaRecorder = undefined;
     this.audioChunks = [];
     this.logger.log('[VoiceService] discarded in-progress segment; VAD session unchanged');
+  }
+
+  /**
+   * 🔄 RESUME VAD AFTER RESPONSE
+   * Called when isTTSPlaying$ goes false while isWaitingForResponse is true,
+   * or by the safety timeout if no TTS response arrives within 30 s.
+   */
+  private resumeVadAfterResponse(): void {
+    this.isWaitingForResponse = false;
+    clearTimeout(this.responseTimeoutId);
+    this.responseTimeoutId = undefined;
+    this._isAcquisitionBlocked$.next(false);
+    if (this.vad) {
+      this.vad.start().catch((e) =>
+        this.logger.log('[VoiceService] VAD resume error', e),
+      );
+    }
+  }
+
+  /**
+   * ⏱️ SAFETY TIMEOUT
+   * Forces VAD re-enable after 30 s in case no TTS response ever arrives.
+   */
+  private setResponseSafetyTimeout(): void {
+    clearTimeout(this.responseTimeoutId);
+    this.responseTimeoutId = setTimeout(() => {
+      this.logger.log('[VoiceService] safety timeout: re-enabling VAD acquisition');
+      this.resumeVadAfterResponse();
+    }, 30_000);
   }
 
   /**

@@ -179,8 +179,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     this.voiceVolumeSubscription = this.voiceService.volume$.subscribe((volume) => {
       this.currentVolume = volume;
     });
-    this.botSpeakingSub = this.ttsPlayback.isTTSPlaying$.subscribe((playing) => {
-      this.isBotSpeaking = playing;
+    this.botSpeakingSub = this.voiceService.isAcquisitionBlocked$.subscribe((blocked) => {
+      this.isBotSpeaking = blocked;
     });
     await this.voiceService.startSession();
   }
