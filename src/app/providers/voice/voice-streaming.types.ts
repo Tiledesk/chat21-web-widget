@@ -1,14 +1,18 @@
-import { MessageModel } from "src/chat21-core/models/message";
-
 /**
- * Configurazione sessione WSS /ws/voice — token JWT e project obbligatori; resto opzionale come da proxy.
+ * Configurazione sessione WSS /ws/voice.
+ *
+ * L'URL di connessione porta solo: token, mimeType, sttProvider, ttsProvider (ADR-002).
+ * I campi di identità di sessione viaggiano nel config frame JSON inviato subito dopo onopen.
  */
 export interface VoiceStreamingSessionConfig {
+  /** JWT auth token — finisce in `?token=` nell'URL. */
   token: string;
-  projectId: string;
-  user_id: string;
-  message?: MessageModel;
-  requestId?: string;
+  /** Chat21 userId — campo `sender` del config frame. */
+  sender: string;
+  /** Chat21 conversationId, es. `support-group-<projectId>-<requestId>` — campo `recipient` del config frame. */
+  recipient: string;
+  /** Codice lingua BCP-47, default `'en'` — campo `lang` del config frame. */
+  lang?: string;
   sttProvider?: string;
   ttsProvider?: string;
   /**
