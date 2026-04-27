@@ -4,12 +4,11 @@ import { MessageModel } from "src/chat21-core/models/message";
  * Configurazione sessione WSS /ws/voice — token JWT e project obbligatori; resto opzionale come da proxy.
  */
 export interface VoiceStreamingSessionConfig {
-  /** JWT Tiledesk (es. "JWT …") */
   token: string;
   projectId: string;
+  user_id: string;
   message?: MessageModel;
   requestId?: string;
-  lang?: string;
   sttProvider?: string;
   ttsProvider?: string;
   /**
