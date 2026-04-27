@@ -12,13 +12,17 @@ import {
 } from './audio.types';
 import { SpeechToTextProvider } from './STT&TTS/speech-provider.abstract';
 import { VadService } from './vad.service';
+import { VoiceStreamingService } from './voice-streaming.service';
+import { VoiceStreamingSessionConfig, VoiceWsControlMessage } from './voice-streaming.types';
 import { TtsAudioPlaybackCoordinator } from '../tts-audio-playback-coordinator.service';
 
 const VOICE_RECORDING_MIME = 'audio/webm';
 
 /**
- * Voce: VadService (ONNX WASM) → MicVAD → MediaRecorder su ogni segmento parlato.
- * Opzionalmente STT (`SpeechToTextProvider`) arricchisce il payload con `transcript`.
+ * Due modalità:
+ * - **Ingresso WSS** (`voiceIngressStream`): microfono → proxy in streaming; niente VAD locale — silenzio/turni gestiti dal server.
+ *   Eventi `transcript` / TTS binario arrivano sulla WSS.
+ * - **Legacy**: MicVAD + segmenti WebM (upload/STT client-side) se non passi `voiceIngressStream`.
  */
 @Injectable({ providedIn: 'root' })
 export class VoiceService {
@@ -29,11 +33,10 @@ export class VoiceService {
   private sessionConstraints: MediaStreamConstraints = DEFAULT_VOICE_MEDIA_STREAM_CONSTRAINTS;
   private onRecordingComplete?: (result: VoiceSegmentPayload) => void;
   private enableTranscription = true;
+  private voiceIngressConfig: VoiceStreamingSessionConfig | null = null;
 
   private readonly audioSegmentSubject = new Subject<VoiceSegmentPayload>();
-  /** Emesso a ogni fine segmento parlato: audio WebM + opzionalmente `transcript` / `transcriptionError`. */
-  readonly audioSegment$: Observable<VoiceSegmentPayload> = this.audioSegmentSubject.asObservable();
-
+  
   private readonly speechStartSubject = new Subject<void>();
   /** Emesso quando il microfono intercetta parlato (VAD speech start). */
   readonly speechStart$: Observable<void> = this.speechStartSubject.asObservable();
@@ -42,6 +45,9 @@ export class VoiceService {
   /** Emesso quando il parlato termina (VAD speech end). */
   readonly speechEnd$: Observable<void> = this.speechEndSubject.asObservable();
 
+  /** Trascrizione dall’evento WSS `transcript` (proxy). */
+  private readonly voiceTranscriptSubject = new Subject<{ text: string; isFinal: boolean }>();
+  readonly voiceTranscript$: Observable<{ text: string; isFinal: boolean }> = this.voiceTranscriptSubject.asObservable();
 
   // 🔊 REALTIME VOLUME STREAM
   private readonly volumeSubject = new BehaviorSubject<number>(0);
@@ -50,6 +56,8 @@ export class VoiceService {
   // 🎙️ TTS GATE — suppresses segment emission while TTS is playing
   private isTTSActive = false;
   private ttsGateSub?: Subscription;
+  private wsControlSub?: Subscription;
+  private ttsChunkSub?: Subscription;
 
   // 🚫 ACQUISITION GATE — pauses VAD from speech-end until TTS response cycle completes
   private isWaitingForResponse = false;
@@ -64,11 +72,16 @@ export class VoiceService {
   /** Buffer dedicato (`ArrayBuffer`) per compatibilità con `getByteFrequencyData`. */
   private dataArray?: Uint8Array;
 
+  /** Riproduzione chunk TTS binari dal proxy (Web Audio). */
+  private ttsPlayContext?: AudioContext;
+  private ttsNextPlayTime = 0;
+
   private readonly logger: LoggerService = LoggerInstance.getInstance();
 
   constructor(
     private readonly vadService: VadService,
     private readonly ttsPlayback: TtsAudioPlaybackCoordinator,
+    private readonly voiceStreaming: VoiceStreamingService,
     @Optional() @Inject(SpeechToTextProvider) private readonly speechToText: SpeechToTextProvider | null,
   ) {}
 
@@ -85,12 +98,49 @@ export class VoiceService {
     this.sessionConstraints = options.constraints ?? DEFAULT_VOICE_MEDIA_STREAM_CONSTRAINTS;
     this.onRecordingComplete = options.onRecordingComplete;
     this.enableTranscription = options.enableTranscription !== false;
+    this.voiceIngressConfig = options.voiceIngressStream;
 
-    await this.vadService.ensureOnnxRuntimeEnv();
+    if (this.voiceIngressConfig) {
+      await this.startWssVoiceSession();
+      return;
+    }
 
+    await this.startLegacyVadSession(options);
+  }
+
+  /** Sessione guidata dal proxy: solo mic + volume + WSS (mic in upload, eventi + TTS in download). */
+  private async startWssVoiceSession(): Promise<void> {
     this.stream = await navigator.mediaDevices.getUserMedia(this.sessionConstraints);
 
     // 🎧 AUDIO ANALYSER INIT
+    this.initAudioAnalyser(this.stream);
+    this.startVolumeLoop();
+
+    try {
+      await this.voiceStreaming.start(this.voiceIngressConfig!, { sharedMediaStream: this.stream });
+      this.logger.log('[VoiceService] sessione WSS (nessun VAD locale)');
+    } catch (e) {
+      this.voiceIngressConfig = null;
+      if (this.stream) {
+        this.stream.getTracks().forEach((t) => t.stop());
+        this.stream = undefined;
+      }
+      this.audioContext?.close();
+      this.audioContext = undefined;
+      this.analyser = undefined;
+      this.dataArray = undefined;
+      throw e;
+    }
+
+    this.wsControlSub = this.voiceStreaming.wsControl$.subscribe((msg) => this.onWsControl(msg));
+    this.ttsChunkSub = this.voiceStreaming.ttsBinaryChunk$.subscribe((buf) => void this.playWsTtsChunk(buf));
+  }
+
+  /** VAD + segmenti (nessun ingresso WSS). */
+  private async startLegacyVadSession(options: VoiceSessionStartOptions): Promise<void> {
+    await this.vadService.ensureOnnxRuntimeEnv();
+
+    this.stream = await navigator.mediaDevices.getUserMedia(this.sessionConstraints);
     this.initAudioAnalyser(this.stream);
 
     const vadDefaults = getDefaultRealTimeVADOptions('legacy');
@@ -138,11 +188,85 @@ export class VoiceService {
     });
   }
 
-  /**
-   * @param options.discardInProgressSegment — non inviare STT/upload per il segmento WebM corrente (es. interruzione da messaggio in arrivo).
-   */
-  async stopSession(options?: { discardInProgressSegment?: boolean }): Promise<void> {
+  private onWsControl(msg: VoiceWsControlMessage): void {
+    console.log('[VoiceService] onWsControl', msg);
+    switch (msg.event) {
+      case 'session_started':
+        this.logger.log('[VoiceService] WSS session_started', msg.requestId ?? '');
+        break;
+      case 'listening':
+        this._isAcquisitionBlocked$.next(false);
+        break;
+      case 'transcript': {
+        const text = typeof msg.text === 'string' ? msg.text : '';
+        this.voiceTranscriptSubject.next({ text, isFinal: !!msg.isFinal });
+        break;
+      }
+      case 'thinking':
+        this._isAcquisitionBlocked$.next(true);
+        break;
+      case 'speaking':
+        this._isAcquisitionBlocked$.next(true);
+        break;
+      case 'done':
+        this._isAcquisitionBlocked$.next(false);
+        break;
+      case 'error':
+        this.logger.log('[VoiceService] WSS error', msg.message ?? msg);
+        break;
+      default:
+        break;
+    }
+  }
+
+  /** Chunk TTS: ogni buffer deve essere decodificabile da `decodeAudioData` (es. segmento WebM/Opus completo). */
+  private async playWsTtsChunk(buf: ArrayBuffer): Promise<void> {
+    try {
+      if (!this.ttsPlayContext || this.ttsPlayContext.state === 'closed') {
+        this.ttsPlayContext = new AudioContext();
+        this.ttsNextPlayTime = this.ttsPlayContext.currentTime;
+      }
+      const ctx = this.ttsPlayContext;
+      const audioBuf = await ctx.decodeAudioData(buf.slice(0));
+      const src = ctx.createBufferSource();
+      src.buffer = audioBuf;
+      src.connect(ctx.destination);
+      const t0 = Math.max(ctx.currentTime, this.ttsNextPlayTime);
+      src.start(t0);
+      this.ttsNextPlayTime = t0 + audioBuf.duration;
+    } catch (e) {
+      this.logger.log('[VoiceService] chunk TTS non decodificabile (formato chunk?)', e);
+    }
+  }
+
+  async stopSession(options?: { discardInProgressSegment?: boolean}): Promise<{ voiceIngressResultUrl: string | null }> {
     const discard = options?.discardInProgressSegment === true;
+
+    this.wsControlSub?.unsubscribe();
+    this.wsControlSub = undefined;
+    this.ttsChunkSub?.unsubscribe();
+    this.ttsChunkSub = undefined;
+
+    try {
+      if (this.ttsPlayContext && this.ttsPlayContext.state !== 'closed') {
+        await this.ttsPlayContext.close();
+      }
+    } catch {
+      /* ignore */
+    }
+    this.ttsPlayContext = undefined;
+    this.ttsNextPlayTime = 0;
+
+    let voiceIngressResultUrl: string | null = null;
+    if (this.voiceIngressConfig) {
+      try {
+        const { resultUrl } = await this.voiceStreaming.stop({discard: true, awaitServerResultUrl: true});
+        voiceIngressResultUrl = resultUrl ?? null;
+      } catch (e) {
+        this.logger.log('[VoiceService] stopSession voiceStreaming.stop', e);
+      }
+      this.voiceIngressConfig = null;
+    }
 
     if (this.mediaRecorder) {
       if (discard) {
@@ -192,6 +316,8 @@ export class VoiceService {
     this.responseTimeoutId = undefined;
     this.isWaitingForResponse = false;
     this._isAcquisitionBlocked$.next(false);
+
+    return { voiceIngressResultUrl };
   }
 
   /**
@@ -199,6 +325,9 @@ export class VoiceService {
    * Lo stream resta in ascolto per il prossimo `onSpeechStart`.
    */
   discardCurrentRecordingSegment(): void {
+    if (!this.vad) {
+      return;
+    }
     if (this.mediaRecorder) {
       this.mediaRecorder.onstop = null;
       this.mediaRecorder.ondataavailable = null;
@@ -208,7 +337,7 @@ export class VoiceService {
     }
     this.mediaRecorder = undefined;
     this.audioChunks = [];
-    this.logger.log('[VoiceService] discarded in-progress segment; VAD session unchanged');
+    this.logger.log('[VoiceService] discarded in-progress segment (legacy VAD)');
   }
 
   /**
@@ -222,9 +351,7 @@ export class VoiceService {
     this.responseTimeoutId = undefined;
     this._isAcquisitionBlocked$.next(false);
     if (this.vad) {
-      this.vad.start().catch((e) =>
-        this.logger.log('[VoiceService] VAD resume error', e),
-      );
+      this.vad.start().catch((e) => this.logger.log('[VoiceService] VAD resume error', e));
     }
   }
 
@@ -368,10 +495,11 @@ export class VoiceService {
       return;
     }
 
-    this.logger.log( '[VoiceService] segment ready', payload.transcript ?? payload.transcriptionError ?? payload.blob.size);
+    this.logger.log('[VoiceService] segment ready', payload.transcript ?? payload.transcriptionError ?? payload.blob.size);
 
     this.audioSegmentSubject.next(payload);
 
     this.onRecordingComplete?.(payload);
   }
+
 }

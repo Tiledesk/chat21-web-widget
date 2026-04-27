@@ -1,6 +1,7 @@
 /**
  * Tipi condivisi per cattura microfono, VAD e registrazione (WebM).
  */
+import type { VoiceStreamingSessionConfig } from './voice-streaming.types';
 
 export const DEFAULT_VOICE_AUDIO_CONSTRAINTS: MediaTrackConstraints = {
   echoCancellation: true,
@@ -31,4 +32,9 @@ export interface VoiceSessionStartOptions {
   constraints?: MediaStreamConstraints;
   /** Default `true`. Se `false`, non viene chiamato lo STT sul segmento. */
   enableTranscription?: boolean;
+  /**
+   * Con `voiceIngressStream`: solo streaming WSS — niente VAD locale; transcript e TTS dal server.
+   * Senza: MicVAD + segmenti e upload/STT lato client.
+   */
+  voiceIngressStream?: VoiceStreamingSessionConfig | null;
 }
