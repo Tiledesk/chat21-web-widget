@@ -38,6 +38,5 @@ export const environment = {
   authPersistence: 'LOCAL',
   supportMode: true,
   enbedJs: true,
-  voiceProxyWsUrl: '',
-  voiceProxyApiBaseUrl: '',
+  voiceProxyWsBaseUrl: '',
 };
