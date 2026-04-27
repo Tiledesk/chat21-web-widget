@@ -7,10 +7,11 @@
 *Tiledesk SRL*
 
 # 5.1.32-rc13
+- **added**: VAD speech state events (`speechStart$`, `speechEnd$`) to improve UI/state transitions around user speech
 - **changed**: stream audio footer UI — stream button expands into a “Terminate” pill with animated level bars driven by mic intensity; recorder icon hidden while streaming; textarea width adjusted while streaming
 - **changed**: `StreamAudioSpectrum` — consolidated stream spectrum + stream button visuals into a single component with improved silence vs speaking handling and volume-driven bar heights
 - **changed**: conversation layout while streaming — adjusted received bubble sizing (`fullSizeMessage`) and loading spinner spacing (`fullSize`) for full-width stream mode
-- **added**: VAD speech state events (`speechStart$`, `speechEnd$`) to improve UI/state transitions around user speech
+
 
 
 # 5.1.32-rc12
