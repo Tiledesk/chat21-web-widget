@@ -200,11 +200,27 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
 
   private buildVoiceIngressStreamConfig(): VoiceStreamingSessionConfig | null {
     let projectId = '';
+    let message = {
+      text: '',
+      type: TYPE_MSG_FILE,
+      metadata: {
+        name: `audio-file-${(new Date().getTime()).toString(36)}`,
+        src: '',
+        type: 'audio/webm',
+        uid: (new Date().getTime()).toString(36),
+        size: 0
+      },
+      recipient_fullname: this.buildSendMessageContext().conversationWith,
+      sender_fullname: this.buildSendMessageContext().recipientFullname,
+      attributes: {...this.buildSendMessageContext().attributes, ...{tempUID: (new Date().getTime()).toString(36)}, language: document.documentElement.lang || undefined},
+      channel_type: this.buildSendMessageContext().channelType,
+    } as MessageModel;
     return {
+      user_id: this.tiledeskAuthService.getCurrentUser().uid,
+      message: message,
       requestId: this.conversationWith || undefined,
       token: this.tiledeskAuthService.getTiledeskToken() ?? '',
       projectId: projectId,
-      lang: document.documentElement.lang || undefined,
     };
   }
 

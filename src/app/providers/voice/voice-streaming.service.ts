@@ -364,11 +364,14 @@ export class VoiceStreamingService {
     const params = new URLSearchParams();
     params.set('token', config.token);
     params.set('projectId', config.projectId);
+    if (config.user_id) {
+      params.set('user_id', config.user_id);
+    }
+    if (config.message) { 
+      params.set('message', JSON.stringify(config.message));
+    }
     if (config.requestId) {
       params.set('requestId', config.requestId);
-    }
-    if (config.lang) {
-      params.set('lang', config.lang);
     }
     if (config.sttProvider) {
       params.set('sttProvider', config.sttProvider);
