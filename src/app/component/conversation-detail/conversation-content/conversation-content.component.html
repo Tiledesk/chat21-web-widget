@@ -69,6 +69,7 @@
                               [message]="message"
                               [fontColor]="stylesMap.get('bubbleReceivedTextColor')"
                               [stylesMap]="stylesMap"
+                              [streamOnArrival]="isStreamAudioActive"
                               (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
                               (onAfterMessageRender)="onAfterMessageRenderFN($event)"
                               (onElementRendered)="onElementRenderedFN($event)">

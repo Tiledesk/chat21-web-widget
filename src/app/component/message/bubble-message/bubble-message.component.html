@@ -89,8 +89,15 @@
       <!-- tooltip="{{message.timestamp | dateAgo}} ({{message.timestamp | date:'shortDate'}} {{message.timestamp | date:'HH:mm:ss'}})" placement="bottom" -->
       <div *ngIf="(message?.text && !isAudio(message) && !isAudioTTS(message)) && !isJsonSources(message)">
 
+        <!-- Word-by-word streaming reveal during an active voice session -->
+        <p *ngIf="_isStreaming" class="streaming-text" [style.color]="fontColor">
+          <span *ngFor="let w of _streamingWords; trackBy: trackWord"
+                class="stream-word"
+                [style.animation-delay]="(w.index * 80) + 'ms'">{{w.word}} </span>
+        </p>
+
         <!-- [htmlEnabled]="(message?.type==='html')? true : false" -->
-        <chat-text *ngIf="jsonSources === null && message?.type !=='html'"
+        <chat-text *ngIf="jsonSources === null && message?.type !=='html' && !_isStreaming"
           [text]="message?.text"
           [color]="fontColor"
           (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"

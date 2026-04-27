@@ -20,6 +20,12 @@ export class BubbleMessageComponent {
   @Input() fontColor: string;
   @Input() stylesMap: Map<string, string>;
 
+  /** When true, a newly-arrived bot text message reveals its words one by one. */
+  @Input() streamOnArrival = false;
+  /** One-shot flag: set once in ngOnChanges, never reverts so animation isn't replayed. */
+  _isStreaming = false;
+  /** Precomputed word list; rebuilt only when the message text changes. */
+  _streamingWords: Array<{ word: string; index: number }> = [];
   @Output() onBeforeMessageRender = new EventEmitter();
   @Output() onAfterMessageRender = new EventEmitter();
   @Output() onElementRendered = new EventEmitter<{ element: string; status: boolean }>();
@@ -77,6 +83,26 @@ export class BubbleMessageComponent {
       this.fullnameColor = getColorBck(this.message.sender_fullname);
     }
 
+    // One-shot: activate word streaming for newly-arrived bot text messages during a voice session.
+    // Reset isJustRecived so the animation never replays on subsequent change detection cycles.
+    if (
+      !this._isStreaming &&
+      this.streamOnArrival &&
+      this.message?.isJustRecived === true &&
+      this.messageType(this.MESSAGE_TYPE_OTHERS, this.message) &&
+      !this.isAudio(this.message) &&
+      !this.isAudioTTS(this.message) &&
+      this.message?.type !== 'html'
+    ) {
+      this._isStreaming = true;
+      this._streamingWords = (this.message.text ?? '')
+        .trim()
+        .split(/\s+/)
+        .filter(w => w.length > 0)
+        .map((word, index) => ({ word, index }));
+      this.message.isJustRecived = false;
+    }
+
     // Reset on every message change: we must not "leak" sources across different messages.
     this.jsonSources = null;
     this.jsonSourcesDisplayFields = undefined;
@@ -90,6 +116,10 @@ export class BubbleMessageComponent {
       this.jsonSourcesBackgroundColor = urlPreviewPayload.previewBackgroundColor;
       this.loadJsonSourcesFromUrlPreviewMessage();
     }
+  }
+
+  trackWord(_index: number, item: { word: string; index: number }): number {
+    return item.index;
   }
 
   private async loadJsonSourcesFromUrlPreviewMessage(): Promise<void> {
