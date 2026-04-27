@@ -71,7 +71,7 @@ describe('VoiceService', () => {
     spyOn(navigator.mediaDevices, 'getUserMedia').and.returnValue(Promise.resolve(stream));
 
     await service.startSession({
-      voiceIngressStream: { token: 'JWT x', projectId: 'p1' },
+      voiceIngressStream: { token: 'JWT x', sender: 'user1', recipient: 'support-group-p1-req1' },
     });
 
     expect(vadService.ensureOnnxRuntimeEnv).not.toHaveBeenCalled();

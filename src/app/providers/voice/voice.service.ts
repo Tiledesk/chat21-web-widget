@@ -49,6 +49,10 @@ export class VoiceService {
   private readonly voiceTranscriptSubject = new Subject<{ text: string; isFinal: boolean }>();
   readonly voiceTranscript$: Observable<{ text: string; isFinal: boolean }> = this.voiceTranscriptSubject.asObservable();
 
+  /** Errore applicativo dal proxy (evento `error`): testo descrittivo del problema. */
+  private readonly _wsError$ = new Subject<string>();
+  readonly wsError$: Observable<string> = this._wsError$.asObservable();
+
   // 🔊 REALTIME VOLUME STREAM
   private readonly volumeSubject = new BehaviorSubject<number>(0);
   readonly volume$: Observable<number> = this.volumeSubject.asObservable();
@@ -117,9 +121,16 @@ export class VoiceService {
     this.startVolumeLoop();
 
     try {
+      // Subscribe before start() so early events (e.g. proxy 'error') are not lost.
+      this.wsControlSub = this.voiceStreaming.wsControl$.subscribe((msg) => this.onWsControl(msg));
+      this.ttsChunkSub = this.voiceStreaming.ttsBinaryChunk$.subscribe((buf) => void this.playWsTtsChunk(buf));
       await this.voiceStreaming.start(this.voiceIngressConfig!, { sharedMediaStream: this.stream });
       this.logger.log('[VoiceService] sessione WSS (nessun VAD locale)');
     } catch (e) {
+      this.wsControlSub?.unsubscribe();
+      this.wsControlSub = undefined;
+      this.ttsChunkSub?.unsubscribe();
+      this.ttsChunkSub = undefined;
       this.voiceIngressConfig = null;
       if (this.stream) {
         this.stream.getTracks().forEach((t) => t.stop());
@@ -131,9 +142,6 @@ export class VoiceService {
       this.dataArray = undefined;
       throw e;
     }
-
-    this.wsControlSub = this.voiceStreaming.wsControl$.subscribe((msg) => this.onWsControl(msg));
-    this.ttsChunkSub = this.voiceStreaming.ttsBinaryChunk$.subscribe((buf) => void this.playWsTtsChunk(buf));
   }
 
   /** VAD + segmenti (nessun ingresso WSS). */
@@ -207,13 +215,18 @@ export class VoiceService {
         break;
       case 'speaking':
         this._isAcquisitionBlocked$.next(true);
+        // Reset TTS scheduling so new chunks play from now, not a stale future time.
+        this.ttsNextPlayTime = this.ttsPlayContext?.currentTime ?? 0;
         break;
       case 'done':
         this._isAcquisitionBlocked$.next(false);
         break;
-      case 'error':
-        this.logger.log('[VoiceService] WSS error', msg.message ?? msg);
+      case 'error': {
+        const errorMsg = typeof msg.message === 'string' ? msg.message : 'Voice session error';
+        this.logger.log('[VoiceService] WSS error', errorMsg);
+        this._wsError$.next(errorMsg);
         break;
+      }
       default:
         break;
     }

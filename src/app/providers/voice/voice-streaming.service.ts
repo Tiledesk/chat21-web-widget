@@ -14,7 +14,15 @@ import {
 } from './voice-streaming.types';
 
 const DEFAULT_TIMESLICE_MS = 250;
-const PREFERRED_MIME_CANDIDATES = ['audio/webm;codecs=opus', 'audio/webm'] as const;
+const SESSION_STARTED_TIMEOUT_MS = 10_000;
+
+/** Ordered by preference; covers Chrome (webm), Firefox (ogg), Safari ≥14.1 (mp4). */
+const PREFERRED_MIME_CANDIDATES = [
+  'audio/webm;codecs=opus',
+  'audio/ogg;codecs=opus',
+  'audio/mp4',
+  'audio/webm',
+] as const;
 
 /**
  * Connette al proxy voce (WSS), invia in streaming i chunk `MediaRecorder` (binario) come da contratto.
@@ -28,6 +36,7 @@ export class VoiceStreamingService {
   private readonly _wsControl$ = new Subject<VoiceWsControlMessage>();
   private readonly _ttsBinaryChunk$ = new Subject<ArrayBuffer>();
   private readonly _lastError$ = new Subject<unknown>();
+  private readonly _closeCode$ = new Subject<number>();
 
   private ws: WebSocket | null = null;
   private mediaStream: MediaStream | null = null;
@@ -38,6 +47,7 @@ export class VoiceStreamingService {
   /** Stream esterno: non fermare le tracce in `cleanup` (le gestisce il chiamante, es. VoiceService). */
   private streamSharedWithIngress = false;
   private pendingSharedStream?: MediaStream;
+  private pendingConfig?: VoiceStreamingSessionConfig;
 
   constructor(private readonly appConfig: AppConfigService) {}
 
@@ -48,6 +58,8 @@ export class VoiceStreamingService {
   /** Chunk audio TTS in arrivo (ArrayBuffer) — da decodificare / riprodurre. */
   readonly ttsBinaryChunk$: Observable<ArrayBuffer> = this._ttsBinaryChunk$.asObservable();
   readonly lastError$: Observable<unknown> = this._lastError$.asObservable();
+  /** Emette il close code WebSocket a ogni disconnessione (4401 = auth, 4400 = config, 1001 = server down, 1006 = network). */
+  readonly closeCode$: Observable<number> = this._closeCode$.asObservable();
 
   get connectionState(): VoiceStreamingConnectionState {
     return this._currentState;
@@ -72,6 +84,7 @@ export class VoiceStreamingService {
     this.localChunks = [];
     this.currentMimeType = '';
     this.pendingSharedStream = opts?.sharedMediaStream;
+    this.pendingConfig = config;
     this.streamSharedWithIngress = !!opts?.sharedMediaStream;
 
     const baseUrl = this.resolveBaseUrl(config.wsBaseUrl);
@@ -103,9 +116,20 @@ export class VoiceStreamingService {
         }
       };
 
-      socket.onclose = () => {
+      socket.onclose = (ev: CloseEvent) => {
         if (this.ws === socket) {
           this.ws = null;
+          this._closeCode$.next(ev.code);
+          if (ev.code === 4401) {
+            this._lastError$.next(new Error('auth_failed'));
+          } else if (ev.code === 4400) {
+            this._lastError$.next(new Error('config_error'));
+          }
+          // Stop the recorder if the socket closes while we are already streaming.
+          if (this._currentState === 'streaming') {
+            this.cleanup();
+            this.setState('closed');
+          }
         }
       };
 
@@ -132,19 +156,35 @@ export class VoiceStreamingService {
           return;
         }
         this.setState('open');
-        void this.beginRecordingAfterOpen(socket, mime, timeslice, resolve, fail);
+        const cfg = this.pendingConfig!;
+        this.pendingConfig = undefined;
+        void this.beginRecordingAfterOpen(socket, cfg, mime, timeslice, resolve, fail);
       };
     });
   }
 
   private async beginRecordingAfterOpen(
     socket: WebSocket,
+    config: VoiceStreamingSessionConfig,
     mime: string,
     timeslice: number,
     resolve: () => void,
     fail: (e: unknown) => void,
   ): Promise<void> {
     try {
+      // 1. Register the session_started waiter BEFORE sending (defensive ordering).
+      const sessionReady = this.waitForSessionStarted(socket);
+
+      // 2. Send config frame (spec §3) — must be the first message after onopen.
+      socket.send(JSON.stringify({
+        sender:    config.sender,
+        recipient: config.recipient,
+        lang:      config.lang ?? 'en',
+      }));
+
+      // 3. Wait for session_started before opening the mic/recorder.
+      await sessionReady;
+
       const shared = this.pendingSharedStream;
       this.pendingSharedStream = undefined;
       this.mediaStream = shared
@@ -174,6 +214,53 @@ export class VoiceStreamingService {
     } catch (e) {
       fail(e);
     }
+  }
+
+  /** Resolves when the proxy sends `session_started`; rejects on socket close or timeout. */
+  private waitForSessionStarted(socket: WebSocket): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      let settled = false;
+
+      const timer = setTimeout(() => {
+        if (!settled) {
+          settled = true;
+          cleanup();
+          reject(new Error('[VoiceStreaming] session_started timeout'));
+        }
+      }, SESSION_STARTED_TIMEOUT_MS);
+
+      const onMessage = (ev: MessageEvent) => {
+        if (settled || typeof ev.data !== 'string') return;
+        try {
+          const msg = JSON.parse(ev.data) as Record<string, unknown>;
+          if (msg.event === 'session_started') {
+            settled = true;
+            cleanup();
+            resolve();
+          } else if (msg.event === 'error') {
+            settled = true;
+            cleanup();
+            reject(new Error(`[VoiceStreaming] proxy error before session_started: ${msg.message ?? msg.code ?? 'unknown'}`));
+          }
+        } catch { /* non-JSON */ }
+      };
+
+      const onClose = (ev: CloseEvent) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        reject(new Error(`[VoiceStreaming] socket closed before session_started (code ${ev.code})`));
+      };
+
+      const cleanup = () => {
+        clearTimeout(timer);
+        socket.removeEventListener('message', onMessage);
+        socket.removeEventListener('close', onClose);
+      };
+
+      socket.addEventListener('message', onMessage);
+      socket.addEventListener('close', onClose);
+    });
   }
 
   /**
@@ -363,16 +450,6 @@ export class VoiceStreamingService {
   private buildWebSocketUrl(base: string, config: VoiceStreamingSessionConfig & { mimeType: string }): string {
     const params = new URLSearchParams();
     params.set('token', config.token);
-    params.set('projectId', config.projectId);
-    if (config.user_id) {
-      params.set('user_id', config.user_id);
-    }
-    if (config.message) { 
-      params.set('message', JSON.stringify(config.message));
-    }
-    if (config.requestId) {
-      params.set('requestId', config.requestId);
-    }
     if (config.sttProvider) {
       params.set('sttProvider', config.sttProvider);
     }
