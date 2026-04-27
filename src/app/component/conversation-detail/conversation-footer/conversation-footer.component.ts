@@ -186,8 +186,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     const voiceIngress = this.buildVoiceIngressStreamConfig();
     this.voiceAudioSubscription = undefined;
     this.voiceTranscriptSubscription = this.voiceService.voiceTranscript$.subscribe(({ text, isFinal }) => {
-      if (isFinal && text && text.trim()) {
-        console.log('[CONV-FOOTER] voiceTranscript$', text);
+      // Guard: stop accepting transcript text once the proxy is processing (thinking/speaking)
+      if (text && !this.isBotSpeaking) {
+        this.textInputTextArea = text;
       }
     });
 
@@ -196,6 +197,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     });
     this.botSpeakingSub = this.voiceService.isAcquisitionBlocked$.subscribe((blocked) => {
       this.isBotSpeaking = blocked;
+      if (blocked) {
+        // Proxy has processed the transcript and published it — clear the preview
+        this.textInputTextArea = '';
+      }
     });
     await this.voiceService.startSession(voiceIngress ? { voiceIngressStream: voiceIngress } : {});
   }
@@ -275,13 +280,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     this.botSpeakingSub = undefined;
     this.isBotSpeaking = false;
 
-    const { voiceIngressResultUrl } = await this.voiceService.stopSession(options);
-    console.log('[CONV-FOOTER] stopVoice: voiceIngressResultUrl', voiceIngressResultUrl);
+    await this.voiceService.stopSession(options);
     this.currentVolume = 0;
-    if (voiceIngressResultUrl) {
-      this.logger.log('[CONV-FOOTER] stream voce: URL dal server WSS', voiceIngressResultUrl);
-      this.sendMessage(voiceIngressResultUrl, TYPE_MSG_TEXT, undefined, undefined);
-    }
+    this.textInputTextArea = '';
   }
 
   /**
