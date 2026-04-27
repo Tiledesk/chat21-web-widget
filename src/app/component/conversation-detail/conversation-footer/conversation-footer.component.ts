@@ -17,7 +17,9 @@ import { findAndRemoveEmoji, isImage } from 'src/chat21-core/utils/utils-message
 import { ProjectModel } from 'src/models/project';
 import { Subscription } from 'rxjs';
 import { VoiceService } from 'src/app/providers/voice/voice.service';
+import { VoiceStreamingSessionConfig } from 'src/app/providers/voice/voice-streaming.types';
 import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
+import { TiledeskAuthService } from 'src/chat21-core/providers/tiledesk/tiledesk-auth.service';
 
 @Component({
   selector: 'chat-conversation-footer',
@@ -98,6 +100,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   isBotSpeaking = false;
   /** Sottoscrizione ai segmenti audio (VAD → WebM) dal {@link VoiceService}. */
   private voiceAudioSubscription?: Subscription;
+  /** Sottoscrizione a `transcript` finale dalla WSS. */
+  private voiceTranscriptSubscription?: Subscription;
   /** Sottoscrizione al volume audio (real-time) dal {@link VoiceService}. */
   private voiceVolumeSubscription?: Subscription;
   /** Sottoscrizione allo stato TTS (bot sta parlando). */
@@ -112,11 +116,14 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
 
   convertColorToRGBA = convertColorToRGBA;
   private logger: LoggerService = LoggerInstance.getInstance()
-  constructor(private chatManager: ChatManager,
-              private typingService: TypingService,
-              private uploadService: UploadService,
-              private voiceService: VoiceService,
-              private ttsPlayback: TtsAudioPlaybackCoordinator) { }
+  constructor(
+    private chatManager: ChatManager,
+    private typingService: TypingService,
+    private uploadService: UploadService,
+    private voiceService: VoiceService,
+    private ttsPlayback: TtsAudioPlaybackCoordinator,
+    private tiledeskAuthService: TiledeskAuthService,
+  ) {}
 
   ngOnInit() {
     // this.updateAttachmentTooltip();
@@ -167,32 +174,94 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   // }
 
   /**
-   * Microfono + VAD: ogni fine parlato il servizio emette su `audioSegment$` → upload.
+   * Stream voce: con `voiceIngress` solo WSS (no VAD) — transcript + TTS dal server.
+   * Senza ingresso WSS: VAD + upload per segmento.
    */
   async initVoice() {
     this.voiceAudioSubscription?.unsubscribe();
     this.voiceVolumeSubscription?.unsubscribe();
     this.botSpeakingSub?.unsubscribe();
+    this.voiceTranscriptSubscription?.unsubscribe();
 
-    this.voiceAudioSubscription = this.voiceService.audioSegment$.subscribe((rec) => {
-      console.log('[CONV-FOOTER] audioSegment$', rec);
-      this.prepareAndUpload(rec.blob);
+    const voiceIngress = this.buildVoiceIngressStreamConfig();
+    this.voiceAudioSubscription = undefined;
+    this.voiceTranscriptSubscription = this.voiceService.voiceTranscript$.subscribe(({ text, isFinal }) => {
+      if (isFinal && text && text.trim()) {
+        console.log('[CONV-FOOTER] voiceTranscript$', text);
+      }
     });
+
     this.voiceVolumeSubscription = this.voiceService.volume$.subscribe((volume) => {
       this.currentVolume = volume;
     });
     this.botSpeakingSub = this.voiceService.isAcquisitionBlocked$.subscribe((blocked) => {
       this.isBotSpeaking = blocked;
     });
-    await this.voiceService.startSession();
+    await this.voiceService.startSession(voiceIngress ? { voiceIngressStream: voiceIngress } : {});
   }
 
+  private buildVoiceIngressStreamConfig(): VoiceStreamingSessionConfig | null {
+    let projectId = '';
+    return {
+      requestId: this.conversationWith || undefined,
+      token: this.tiledeskAuthService.getTiledeskToken() ?? '',
+      projectId: projectId,
+      lang: document.documentElement.lang || undefined,
+    };
+  }
+
+  /**
+   * Merge `attributes` di componente con `additional_attributes` e risolve `recipientFullname` come in sendMessage.
+   */
+  private buildSendMessageContext(additional_attributes?: any) {
+    let recipientFullname = this.translationMap.get('GUEST_LABEL');
+    const g_attributes = this.attributes;
+    const attributes = <any>{};
+    if (g_attributes) {
+      for (const [key, value] of Object.entries(g_attributes)) {
+        attributes[key] = value;
+      }
+    }
+    if (additional_attributes) {
+      for (const [key, value] of Object.entries(additional_attributes)) {
+        attributes[key] = value;
+      }
+    }
+    const senderId = this.senderId;
+    const projectid = this.project.id;
+    const channelType = this.channelType;
+    const userFullname = this.userFullname;
+    const userEmail = this.userEmail;
+    const conversationWith = this.conversationWith;
+
+    if (userFullname) {
+      recipientFullname = userFullname;
+    } else if (userEmail) {
+      recipientFullname = userEmail;
+    } else if (attributes && attributes['userFullname']) {
+      recipientFullname = attributes['userFullname'];
+    } else {
+      recipientFullname = this.translationMap.get('GUEST_LABEL');
+    }
+
+    return {
+      recipientFullname,
+      attributes,
+      senderId,
+      projectid,
+      channelType,
+      conversationWith,
+    };
+  }
   async stopVoice(options?: { discardInProgressSegment?: boolean }) {
     // Stop all active TTS audio immediately and reveal all text.
     this.ttsPlayback.stopAll();
 
     this.voiceAudioSubscription?.unsubscribe();
     this.voiceAudioSubscription = undefined;
+
+    this.voiceTranscriptSubscription?.unsubscribe();
+    this.voiceTranscriptSubscription = undefined;
 
     this.voiceVolumeSubscription?.unsubscribe();
     this.voiceVolumeSubscription = undefined;
@@ -201,14 +270,18 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     this.botSpeakingSub = undefined;
     this.isBotSpeaking = false;
 
-    await this.voiceService.stopSession(options);
+    const { voiceIngressResultUrl } = await this.voiceService.stopSession(options);
+    console.log('[CONV-FOOTER] stopVoice: voiceIngressResultUrl', voiceIngressResultUrl);
     this.currentVolume = 0;
+    if (voiceIngressResultUrl) {
+      this.logger.log('[CONV-FOOTER] stream voce: URL dal server WSS', voiceIngressResultUrl);
+      this.sendMessage(voiceIngressResultUrl, TYPE_MSG_TEXT, undefined, undefined);
+    }
   }
 
   /**
-   * CHIAMATO DA: conversation.component.ts
-   * Messaggio in arrivo da un altro mittente mentre lo stream è attivo: scarta solo il segmento
-   * registrato in quel momento (nessun upload); mic + VAD restano attivi, `isStreamAudioActive` true.
+   * Messaggio in arrivo da un altro mittente mentre lo stream è attivo: con VAD legacy scarta il segmento in corso.
+   * Con sola sessione WSS non ha effetto sul mic (nessun recorder a segmenti locale).
    */
   interruptStreamDueToPeerMessage(): void {
     if (!this.isStreamAudioActive) {
@@ -463,40 +536,14 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
       // msg = replaceEndOfLine(msg);
       // msg = msg.trim();
 
-      let recipientFullname = this.translationMap.get('GUEST_LABEL');
-        // sponziello: adds ADDITIONAL ATTRIBUTES TO THE MESSAGE
-      const g_attributes = this.attributes;
-      // added <any> to resolve the Error occurred during the npm installation: Property 'userFullname' does not exist on type '{}'
-      const attributes = <any>{};
-      if (g_attributes) {
-        for (const [key, value] of Object.entries(g_attributes)) {
-          attributes[key] = value;
-        }
-      }
-      if (additional_attributes) {
-        for (const [key, value] of Object.entries(additional_attributes)) {
-          attributes[key] = value;
-        }
-      }
-        // fine-sponziello
-      // this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith)
-      const senderId = this.senderId;
-      const projectid = this.project.id;
-      const channelType = this.channelType;
-      const userFullname = this.userFullname;
-      const userEmail = this.userEmail;
-      const conversationWith = this.conversationWith;
-        
-
-      if (userFullname) {
-        recipientFullname = userFullname;
-      } else if (userEmail) {
-        recipientFullname = userEmail;
-      } else if (attributes && attributes['userFullname']) {
-        recipientFullname = attributes['userFullname'];
-      } else {
-        recipientFullname = this.translationMap.get('GUEST_LABEL');
-      }
+      const {
+        recipientFullname,
+        attributes,
+        senderId,
+        projectid,
+        channelType,
+        conversationWith,
+      } = this.buildSendMessageContext(additional_attributes);
 
       this.onBeforeMessageSent.emit({
         senderFullname: recipientFullname,
@@ -749,6 +796,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
       return;
     }
     const turningOn = !this.isStreamAudioActive;
+    console.log('[CONV-FOOTER] onStreamPressed: turningOn', turningOn);
     if (turningOn) {
       try {
         this.currentVolume = 0;
