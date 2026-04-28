@@ -242,7 +242,10 @@ export class VoiceService {
         this.logger.log('[VoiceService] WSS session_started', msg.requestId ?? '');
         break;
       case 'listening':
-        this.voiceStreaming.resumeRecording();
+        // Proxy confirmed it is in LISTENING state — safe to forward audio now.
+        // Using setAudioMuted instead of resumeRecording so MediaRecorder keeps
+        // running continuously (no WebM timestamp gaps that could confuse Flux).
+        this.voiceStreaming.setAudioMuted(false);
         this._isAcquisitionBlocked$.next(false);
         break;
       case 'transcript': {
@@ -252,9 +255,10 @@ export class VoiceService {
       }
       case 'thinking':
         this._isAcquisitionBlocked$.next(true);
-        // Stop encoding and forwarding audio while the bot processes the utterance.
-        // Resumed on the next 'listening' event from the proxy.
-        this.voiceStreaming.pauseRecording();
+        // Mute (but don't pause) the recorder while the bot processes the utterance.
+        // MediaRecorder keeps running so the WebM stream has no timestamp gaps;
+        // chunks are simply not forwarded to the proxy until 'listening' arrives.
+        this.voiceStreaming.setAudioMuted(true);
         break;
       case 'speaking':
         this._isAcquisitionBlocked$.next(true);
@@ -278,8 +282,8 @@ export class VoiceService {
           this._unblockSafetyTimer = setTimeout(() => this._flushTtsUnblock(), 15000);
         } else {
           // No audio sources pending — playback was already complete (or audio was empty).
-          // Unmute and signal the proxy synchronously.
-          this.voiceStreaming.setAudioMuted(false);
+          // Signal the proxy synchronously; mic stays muted until the proxy confirms
+          // LISTENING via the 'listening' event.
           this.voiceStreaming.sendPlaybackComplete();
           this._isAcquisitionBlocked$.next(false);
         }
@@ -334,9 +338,9 @@ export class VoiceService {
       clearTimeout(this._unblockSafetyTimer);
       this._unblockSafetyTimer = null;
     }
-    // TTS playback is complete — unmute mic and notify the proxy so it can
-    // transition to LISTENING and start accepting the next user utterance.
-    this.voiceStreaming.setAudioMuted(false);
+    // Signal the proxy that TTS playback is complete.  The proxy will transition
+    // to LISTENING and send a 'listening' event back; the mic is unmuted there
+    // (not here) so it is live only when the proxy is confirmed ready.
     this.voiceStreaming.sendPlaybackComplete();
     this._isAcquisitionBlocked$.next(false);
   }

@@ -1,0 +1,27 @@
+[      57ms] [LOG] DOM is ready, call initWidget @ http://localhost:4200/launch.js:2
+[      57ms] [LOG] INIT ASYNC EVENTS @ http://localhost:4200/launch.js:296
+[     285ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:19339
+[    1295ms] [LOG] onLoadParams Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:288
+[    1296ms] [LOG] onBeforeInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:295
+[    1298ms] [LOG] AUTHENTICATED! CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:330
+[   19698ms] [LOG] onInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:320
+[   20354ms] [LOG] onInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:320
+[   20355ms] [LOG] AUTHENTICATED! CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:330
+[   20367ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[   20374ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[   37829ms] [LOG] [CONV-FOOTER] onStreamPressed: turningOn true @ http://localhost:4200/main.js:19227
+[   38131ms] [LOG] [VoiceService] onWsControl {event: ready} @ http://localhost:4200/main.js:17550
+[   38869ms] [LOG] [VoiceService] onWsControl {event: session_started, sessionId: a32151c1} @ http://localhost:4200/main.js:17550
+[   40555ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[   41101ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Oh, shit., isFinal: false} @ http://localhost:4200/main.js:17550
+[   41909ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Oh, shit. It was just like So you, isFinal: false} @ http://localhost:4200/main.js:17550
+[   42968ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Oh, shit. It's just, isFinal: false} @ http://localhost:4200/main.js:17550
+[   42996ms] [LOG] [CONV-FOOTER] onStreamPressed: turningOn false @ http://localhost:4200/main.js:19227
+[ 1046739ms] [LOG] DOM is ready, call initWidget @ http://localhost:4200/launch.js:2
+[ 1046740ms] [LOG] INIT ASYNC EVENTS @ http://localhost:4200/launch.js:296
+[ 1046935ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:19339
+[ 1046952ms] [INFO] Slow network is detected. See https://www.chromestatus.com/feature/5636954674692096 for more details. Fallback font will be used while loading: https://fonts.gstatic.com/s/roboto/v51/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBHMdazQ.woff2 @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:0
+[ 1047801ms] [LOG] onLoadParams Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:288
+[ 1047801ms] [LOG] onBeforeInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:295
+[ 1047803ms] [LOG] AUTHENTICATED! CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:330
+[ 1049748ms] [LOG] onInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:320
