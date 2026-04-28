@@ -44,6 +44,8 @@ export class VoiceStreamingService {
   private localChunks: Blob[] = [];
   private currentMimeType = '';
   private stopResolver: (() => void) | null = null;
+  /** Reject callback for a pending start() promise; called by cleanup() if cancelled mid-connect. */
+  private pendingStartFail: ((err: Error) => void) | null = null;
   /** Stream esterno: non fermare le tracce in `cleanup` (le gestisce il chiamante, es. VoiceService). */
   private streamSharedWithIngress = false;
   private pendingSharedStream?: MediaStream;
@@ -101,14 +103,27 @@ export class VoiceStreamingService {
       const socket = new WebSocket(url);
       this.ws = socket;
       socket.binaryType = 'arraybuffer';
+      let startSettled = false;
 
       const fail = (err: unknown) => {
+        if (startSettled) return;
+        startSettled = true;
+        this.pendingStartFail = null;
         this._lastError$.next(err);
         this.setState('error');
         this.logger.log('[VoiceStreaming] start failed', err);
         this.cleanup();
         reject(err instanceof Error ? err : new Error(String(err)));
       };
+
+      const succeed = () => {
+        if (startSettled) return;
+        startSettled = true;
+        this.pendingStartFail = null;
+        resolve();
+      };
+
+      this.pendingStartFail = (err: Error) => fail(err);
 
       socket.onerror = (ev) => {
         if (this.ws === socket) {
@@ -120,15 +135,16 @@ export class VoiceStreamingService {
         if (this.ws === socket) {
           this.ws = null;
           this._closeCode$.next(ev.code);
-          if (ev.code === 4401) {
-            this._lastError$.next(new Error('auth_failed'));
-          } else if (ev.code === 4400) {
-            this._lastError$.next(new Error('config_error'));
-          }
-          // Stop the recorder if the socket closes while we are already streaming.
           if (this._currentState === 'streaming') {
+            // Socket closed while already streaming — stop the recorder and clean up.
             this.cleanup();
             this.setState('closed');
+          } else {
+            // Socket closed before streaming started (connecting/open state) — reject start().
+            const msg = ev.code === 4401 ? 'auth_failed'
+                      : ev.code === 4400 ? 'config_error'
+                      : `socket closed before streaming (code ${ev.code})`;
+            fail(new Error(msg));
           }
         }
       };
@@ -158,7 +174,7 @@ export class VoiceStreamingService {
         this.setState('open');
         const cfg = this.pendingConfig!;
         this.pendingConfig = undefined;
-        void this.beginRecordingAfterOpen(socket, cfg, mime, timeslice, resolve, fail);
+        void this.beginRecordingAfterOpen(socket, cfg, mime, timeslice, succeed, fail);
       };
     });
   }
@@ -397,6 +413,13 @@ export class VoiceStreamingService {
   }
 
   private cleanup(): void {
+    // If cleanup() is called externally while start() is still pending (e.g. stop() during
+    // a mid-connect state), reject the stranded start() promise so the caller isn't hung.
+    if (this.pendingStartFail) {
+      const f = this.pendingStartFail;
+      this.pendingStartFail = null;
+      f(new Error('start cancelled'));
+    }
     if (this.mediaStream) {
       if (!this.streamSharedWithIngress) {
         this.mediaStream.getTracks().forEach((t) => t.stop());
