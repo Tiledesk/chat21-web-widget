@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
 import { error } from 'console';
 import { FILE_SIZE_LIMIT } from 'src/app/utils/constants';
 import { Globals } from 'src/app/utils/globals';
@@ -15,13 +15,16 @@ import { TYPE_MSG_FILE, TYPE_MSG_IMAGE, TYPE_MSG_TEXT } from 'src/chat21-core/ut
 import { convertColorToRGBA, isAllowedUrlInText, isEmoji } from 'src/chat21-core/utils/utils';
 import { findAndRemoveEmoji, isImage } from 'src/chat21-core/utils/utils-message';
 import { ProjectModel } from 'src/models/project';
+import { Subscription } from 'rxjs';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
+import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
 
 @Component({
   selector: 'chat-conversation-footer',
   templateUrl: './conversation-footer.component.html',
   styleUrls: ['./conversation-footer.component.scss']
 })
-export class ConversationFooterComponent implements OnInit, OnChanges {
+export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() conversationWith: string;
   @Input() attributes: string;
@@ -32,8 +35,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   @Input() userFullname: string;
   @Input() userEmail: string;
   @Input() showAttachmentFooterButton: boolean;
-  @Input() showEmojiFooterButton: boolean
-  @Input() showAudioRecorderFooterButton: boolean
+  @Input() showEmojiFooterButton: boolean;
+  @Input() showAudioRecorderFooterButton: boolean;
+  @Input() showAudioStreamFooterButton: boolean;
   // @Input() showContinueConversationButton: boolean;
   @Input() isConversationArchived: boolean;
   @Input() hideTextAreaContent: boolean;
@@ -42,6 +46,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   @Input() isEmojiiPickerShow: boolean;
   @Input() footerMessagePlaceholder: string;
   @Input() fileUploadAccept: string;
+  @Input() closeChatInConversation: boolean;
   @Input() dropEvent: Event;
   @Input() poweredBy: string;
   @Input() stylesMap: Map<string, string>
@@ -52,6 +57,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   @Output() onChangeTextArea = new EventEmitter<any>();
   @Output() onAttachmentFileButtonClicked = new EventEmitter<any>();
   @Output() onNewConversationButtonClicked = new EventEmitter();
+  @Output() onStreamAudioActiveChange = new EventEmitter<boolean>();
+  @Output() onCloseChatButtonClicked = new EventEmitter();
 
   @ViewChild('chat21_file') public chat21_file: ElementRef;
   // @ViewChild('emojii_container', {read: ViewContainerRef}) selector;
@@ -85,24 +92,41 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   showAlertEmoji: boolean = false
 
+  /** Stream audio UI: icona equalizer → X; alert con onde animate sopra il footer */
+  isStreamAudioActive = false;
+  /** True while the bot's TTS audio is playing — mic segments are suppressed, spectrum turns grey. */
+  isBotSpeaking = false;
+  /** Sottoscrizione ai segmenti audio (VAD → WebM) dal {@link VoiceService}. */
+  private voiceAudioSubscription?: Subscription;
+  /** Sottoscrizione al volume audio (real-time) dal {@link VoiceService}. */
+  private voiceVolumeSubscription?: Subscription;
+  /** Sottoscrizione allo stato TTS (bot sta parlando). */
+  private botSpeakingSub?: Subscription;
+  /** Passato a {@link StreamAudioSpectrumComponent} per disegnare la linea spettro. */
+  currentVolume = 0;
+
   file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
+  isErrorNetwork: boolean = false;
 
 
   convertColorToRGBA = convertColorToRGBA;
   private logger: LoggerService = LoggerInstance.getInstance()
   constructor(private chatManager: ChatManager,
               private typingService: TypingService,
-              private uploadService: UploadService) { }
+              private uploadService: UploadService,
+              private voiceService: VoiceService,
+              private ttsPlayback: TtsAudioPlaybackCoordinator) { }
 
   ngOnInit() {
     // this.updateAttachmentTooltip();
   }
 
-
   ngOnChanges(changes: SimpleChanges){
     if(changes['conversationWith'] && changes['conversationWith'].currentValue !== undefined){
       this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
+      this.isStreamAudioActive = false;
+      void this.stopVoice();
     }
     if(changes['hideTextReply'] && changes['hideTextReply'].currentValue !== undefined){
       this.restoreTextArea();
@@ -141,6 +165,66 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   //     }
   //   }, 500);
   // }
+
+  /**
+   * Microfono + VAD: ogni fine parlato il servizio emette su `audioSegment$` → upload.
+   */
+  async initVoice() {
+    this.voiceAudioSubscription?.unsubscribe();
+    this.voiceVolumeSubscription?.unsubscribe();
+    this.botSpeakingSub?.unsubscribe();
+
+    this.voiceAudioSubscription = this.voiceService.audioSegment$.subscribe((rec) => {
+      console.log('[CONV-FOOTER] audioSegment$', rec);
+      this.prepareAndUpload(rec.blob);
+    });
+    this.voiceVolumeSubscription = this.voiceService.volume$.subscribe((volume) => {
+      this.currentVolume = volume;
+    });
+    this.botSpeakingSub = this.voiceService.isAcquisitionBlocked$.subscribe((blocked) => {
+      this.isBotSpeaking = blocked;
+    });
+    await this.voiceService.startSession();
+  }
+
+  async stopVoice(options?: { discardInProgressSegment?: boolean }) {
+    // Stop all active TTS audio immediately and reveal all text.
+    this.ttsPlayback.stopAll();
+
+    this.voiceAudioSubscription?.unsubscribe();
+    this.voiceAudioSubscription = undefined;
+
+    this.voiceVolumeSubscription?.unsubscribe();
+    this.voiceVolumeSubscription = undefined;
+
+    this.botSpeakingSub?.unsubscribe();
+    this.botSpeakingSub = undefined;
+    this.isBotSpeaking = false;
+
+    await this.voiceService.stopSession(options);
+    this.currentVolume = 0;
+  }
+
+  /**
+   * CHIAMATO DA: conversation.component.ts
+   * Messaggio in arrivo da un altro mittente mentre lo stream è attivo: scarta solo il segmento
+   * registrato in quel momento (nessun upload); mic + VAD restano attivi, `isStreamAudioActive` true.
+   */
+  interruptStreamDueToPeerMessage(): void {
+    if (!this.isStreamAudioActive) {
+      return;
+    }
+    this.logger.log('[CONV-FOOTER] discard recording segment: incoming message from peer (stream stays on)');
+    try {
+      this.voiceService.discardCurrentRecordingSegment();
+    } catch (e) {
+      this.logger.error('[CONV-FOOTER] interruptStreamDueToPeerMessage', e);
+    }
+  }
+
+  ngOnDestroy() {
+    void this.stopVoice();
+  }
 
   // ========= begin:: functions send image ======= //
   // START LOAD IMAGE //
@@ -521,7 +605,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     }
   }
 
-  prepareAndUpload(audioBlob: Blob) {
+  prepareAndUpload(audioBlob: Blob, text: string = '') {
 
     this.isFilePendingToUpload = true;
     
@@ -551,7 +635,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     this.logger.log('[UPLOAD] metadata:', metadata);
   
     // stesso metodo che già usi
-    this.uploadSingle(metadata, file, '');
+    this.uploadSingle(metadata, file, text);
   }
 
   // Funzione per convertire Blob in Base64 usando FileReader
@@ -658,6 +742,30 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     }
   }
 
+  async onStreamPressed(event: Event) {
+    this.logger.log('[CONV-FOOTER] onStreamPressed:event', event);
+    event.preventDefault();
+    if (this.showAlertEmoji) {
+      return;
+    }
+    const turningOn = !this.isStreamAudioActive;
+    if (turningOn) {
+      try {
+        this.currentVolume = 0;
+        await this.initVoice();
+        this.isStreamAudioActive = true;
+      } catch (e) {
+        this.logger.error('[CONV-FOOTER] onStreamPressed: initVoice failed', e);
+        this.isStreamAudioActive = false;
+      }
+    } else {
+      await this.stopVoice();
+      this.isStreamAudioActive = false;
+    }
+    this.onStreamAudioActiveChange.emit(this.isStreamAudioActive);
+    this.logger.log('[CONV-FOOTER] isStreamAudioActive', this.isStreamAudioActive);
+  }
+
   async onEmojiiPickerClicked(){
     // if(this.loadPickerModule){
     //   this.loadPickerModule = false;
@@ -707,6 +815,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   openNewConversation(){
     this.onNewConversationButtonClicked.emit();
+  }
+
+  onCloseChat(event){
+    this.onCloseChatButtonClicked.emit();
   }
 
   // onContinueConversation(){

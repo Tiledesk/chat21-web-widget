@@ -48,6 +48,13 @@ export function isAudio(message: any) {
   return false;
 }
 
+export function isAudioTTS(message: any) {
+  if (message && message.type && message.type === 'tts' && message.metadata && message.metadata.src && message.metadata.type.includes('audio') ) {
+    return true;
+  }
+  return false;
+}
+
 /** */
 export function isInfo(message: any) {
     if (message && message.attributes && (message.attributes.subtype === 'info' || message.attributes.subtype === 'info/support')) {

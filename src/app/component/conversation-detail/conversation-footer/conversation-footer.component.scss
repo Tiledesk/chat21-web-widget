@@ -1,23 +1,26 @@
-
-.textarea-container{
-    // padding: 8px 34px;
-    // padding-left: 70px;
-    // padding-right: 45px;
+.textarea-container-wrapper{
     display: flex;
-    // width: 100%;
+    flex-direction: column;
+    gap: 8px;
+}
+.textarea-container{
+    display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+}
 
-    //if attachment icon OR emoji icon is not in DOM -> increment textarea width
-    &:has(:not(#chat21-start-upload-doc), :not(#chat21-emoticon-picker)) .visible-text-area {
-        width: 80%;
+.close-chat-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    .c21-close{
+        height: 30px !important;
+        margin: 0px !important;
     }
-    //if attachment icon AND emoji icon is not in DOM -> increment textarea width
-    &:has(:not(#chat21-start-upload-doc)):has(:not(#chat21-emoticon-picker)) .visible-text-area {
-        width: 90%;
-      }
-
 }
 
 .icons-container{
@@ -39,6 +42,10 @@
     }
     &.hasError{
         box-shadow: 0 0 0 1px var(--chat-footer-border-color-error) inset;
+    }
+
+    &.stream-active {
+        width: 50%;
     }
 }
 
@@ -80,6 +87,50 @@
     padding: 0px;
     margin: 0px;
     border-radius: 50%;
+}
+
+/** Stream audio: cerchio pieno, glyph bianco su sfondo iconColor (stylesMap) */
+.chat21-stream-button.chat21-textarea-button {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    color: #ffffff;
+    transition:
+        width 180ms ease,
+        border-radius 180ms ease,
+        padding 180ms ease;
+
+    .chat21-stream-button__icon svg {
+        width: 20px;
+        height: 20px;
+        path {
+            fill: #ffffff;
+        }
+    }
+
+    &.chat21-textarea-button span svg:hover {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border-radius: 50%;
+    }
+
+    &.chat21-stream-button--expanded {
+        width: auto;
+        // min-width: 150px;
+        max-width: 100%;
+        border-radius: 999px;
+        padding: 0 14px;
+        gap: 12px;
+        justify-content: center;
+
+        // stop the circle-hover background from looking odd on pill
+        &.chat21-textarea-button span svg:hover {
+            background: transparent !important;
+            border-radius: 0;
+        }
+    }
 }
 
 textarea,
@@ -364,6 +415,34 @@ textarea:active{
     }
 }
 
+#streamAudioAlert {
+    bottom: 100%;
+    width: 100%;
+    min-height: var(--chat-footer-stream-button-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    padding: var(--chat-footer-stream-button-padding);
+    /* Satinato / vetro: più trasparenza, blur più marcato */
+    background-color: color-mix(in srgb, var(--content-background-color) 34%, transparent);
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        0 1px 0 rgba(0, 0, 0, 0.05);
+
+    &.hideTextReply {
+        position: unset;
+        min-height: auto;
+        padding: 16px 0;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background-color: var(--content-background-color);
+    }
+}
+
 #textAlert{
     bottom: 100%;
     width: 100%;
@@ -418,4 +497,29 @@ textarea:active{
     // left: 10px;
     border: none;
     // margin: -2px -2px 0px;
+}
+
+
+// aggiungi un'animazione di fade in e fade out quando .star-rating-widget è visibile con transition
+.star-rating-widget {
+    transition: all 0.5s ease-in-out;
+}
+
+.star-rating-widget {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -52px;
+    height: 100%;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    background-color: rgb(255, 255, 255);
+    flex-wrap: nowrap;
+    &.active {
+        bottom: 0px;
+    }
+    &.inactive {
+        bottom: -52px;
+    }
 }

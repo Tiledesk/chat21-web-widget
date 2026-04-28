@@ -6,17 +6,83 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# 5.1.33
-- **bug fixed**: widget not loaded because blob block loading in lauch.js
+# 5.1.32-rc15
+- **changed**: redemptionMs: 800
 
-# 5.1.31
-- **bug fixed**: bug fix disabled user-typing with human and user-typing with human is not available
+# 5.1.32-rc14
+- **changed**: minor ui fixed
+
+# 5.1.32-rc13
+- **added**: VAD speech state events (`speechStart$`, `speechEnd$`) to improve UI/state transitions around user speech
+- **changed**: stream audio footer UI — stream button expands into a “Terminate” pill with animated level bars driven by mic intensity; recorder icon hidden while streaming; textarea width adjusted while streaming
+- **changed**: `StreamAudioSpectrum` — consolidated stream spectrum + stream button visuals into a single component with improved silence vs speaking handling and volume-driven bar heights
+- **changed**: conversation layout while streaming — adjusted received bubble sizing (`fullSizeMessage`) and loading spinner spacing (`fullSize`) for full-width stream mode
+
+
+
+# 5.1.32-rc12
+- **changed**: voice acquisition blocking during TTS response — pause VAD after user speech ends until the TTS response cycle completes; added safety timeout and `isAcquisitionBlocked$` to drive UI (e.g. greyed spectrum)
+- **chore**: version bump to `5.1.32-rc12`
+
+# 5.1.32-rc11
+- **added**: global TTS stop — `TtsAudioPlaybackCoordinator.stopAll()` + `stopAllPlayback$` to abort current and queued TTS playback and reveal full message text
+- **changed**: stop TTS playback when closing stream audio
+- **chore**: version bump to `5.1.32-rc11`
+
+# 5.1.32-rc10
+- **added**: TTS playback state (`isTTSPlaying$`) to coordinate voice UI and suppress mic segment emission while the bot is speaking
+- **changed**: stream spectrum theme color turns grey while TTS is playing
+
+
+# 5.1.32-rc9
+- **added**: mic-triggered TTS interruption — when VAD detects user speech, stop current TTS playback, clear the queue, and reveal the full message text
+- **added**: global TTS stop API (`TtsAudioPlaybackCoordinator.stopAll()` + `stopAllPlayback$`) to stop current + queued TTS playback from UI/events (e.g. close stream)
+- **changed**: `chat-audio-sync` TTS playback now streams audio via authenticated POST to `message.metadata.src`, sending `voiceSettings` + `text` and `streaming: true`
+- **changed**: stream UI spectrum — removed circular orb and stretched the spectrum line to fill the `#streamAudioAlert` width with 10px side padding
+- **changed**: conversation content layout while streaming — adjusted received bubble left margin and loading spinner margins for full-size mode
+
+
+# 5.1.32-rc8
+- **changed**: updated the dev environment defaults to align with the stage setup (remote config URL, API endpoints, logging level, storage prefix, and related settings)
+
+# 5.1.32-rc7
+- **added**: `StreamAudioSpectrum` component for audio visualization in the streaming footer UI
+- **added**: TTS playback coordinator queue — ensures TTS messages play sequentially without interrupting the previous one
+- **changed**: `chat-audio-sync` — updated TTS audio handling to support streaming playback and improved autoplay/animation timing
+- **changed**: iframe loader (`launch.js`, `launch_template.js`) — streamlined loading logic and improved error handling, with fixes for localhost environments
+
+# 5.1.32-rc4
+- **added**: “Close stream” control (`.close-stream-button`) — content and sheet bottom offset in fullscreen using `--chat-footer-stream-button-height` only while the stream is listening (`isStreamAudioActive`); variables in `_variables.scss`.
+- **added**: `VoiceService.discardCurrentRecordingSegment()` — when a message arrives from another sender during streaming, the current WebM segment is discarded (no upload) without stopping mic/VAD; `interruptStreamDueToPeerMessage()` in the footer no longer clears `isStreamAudioActive`.
+- **changed**: `#streamAudioAlert` — band above the footer with a frosted-glass look (`backdrop-filter`, semi-transparent `color-mix`).
+
+# 5.1.32-rc3
+- **changed**: `nginx.conf` (Docker image) — explicit MIME types for `.mjs`, `.wasm`, `.onnx` and `default_type` at `http` level (avoids `text/plain` on ONNX/VAD modules behind containerized deploys).
+- **chore**: removed deprecated Amazon beta/prod deploy scripts from the repository.
+
+# 5.1.32-rc2
+- **bug fixed**: minor streaming icon UI fixed
+- **changed**: Refactor stream audio button UI in the conversation footer (layout / classes).
+
+# 5.1.32-rc1
+- **added**: Voice pipeline — VAD (`@ricky0123/vad-web`) with ONNX Runtime WASM served from `/assets/onnx` (`copy-onnx-wasm`), `VoiceService` with `audioSegment$` (WebM segments) and optional STT/TTS via unified OpenAI provider using `HttpClient`, transcript / error fields on segment payloads.
+- **added**: Stream audio UI in conversation footer — toggle, real-time volume stream and animated waveform (`volume$`); mic session lifecycle wired to upload segments on speech end.
+- **added**: `MessageModel.isJustRecived` — set when ingesting messages (MQTT/Firebase `addCommandMessage` for `command.type === "message"`, and default for non-command messages in `addedMessage` / `addedNew`) to distinguish “new in session” vs history.
+- **added**: `chat-audio-sync` for TTS messages — karaoke-style word sync to audio, full `message` input, typography aligned with text bubbles; skips animation when `isJustRecived === false`; after playback ends sets `message.isJustRecived = false` so replays show full text without re-animating.
+- **bug fixed**: `AnalyserNode.getByteFrequencyData` TypeScript error — `Uint8Array` created from an explicit `ArrayBuffer` for correct DOM typings.
+- **bug fixed**: `isStreamAudioActive` no longer derived from per-frame mic level (`volume > 1`), which caused the stream button / active state to flash continuously while listening.
 
 # 5.1.30
 - **bug fixed**: startHidden is not working properly
 
-# 5.1.28
-- **bug fixed**: header option menu is deactivated on mobile
+# 5.1.30-rc3
+- **bug fixed**: bug fix user-typing with human is not available
+
+# 5.1.30-rc2
+- **bug fixed**: bug fix disabled user-typing with human
+
+# 5.1.30-rc1
+- **bug fixed**: startHidden is not working properly
 
 # 5.1.28
 - **bug fixed**: fixed Bot/Human conversation detection by correctly classifying bot replies
@@ -28,8 +94,22 @@
 - **changed**: Set the default autoStart value to false
 - **added**: Added the open widget loading spinner
 - **changed**: Load the widget without authentication and display the speech bubble
+
+# 5.1.27-rc3
+- **bug fixed**: fixed Bot/Human conversation detection by correctly classifying bot replies
+
+# 5.1.27-rc2
+- **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
+
+# 5.1.27-rc1
+- **added**: closeChatInConversation parameters
+- **added**: close chat button under textarea footer component
+
+# 5.1.26-rc6
 - **changed**: mobile always opens fullscreen and ignores legacy stored size”.
 - **changed**: changed user-typing 
+
+# 5.1.26-rc5
 - **changed**: Hide the resize-widget button when on mobile
 - **added**: added "I'm thinking" when the bot responds
 
@@ -91,6 +171,11 @@
 - **bug-fixed**: check showEmojiFooterButton to enable/disable emojii
 - **bug-fixed**: markdown is fired as an emojii and blocked by isEmojii check fn
 
+# 5.1.7-rc7
+- **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
+
+# 5.1.7-rc6
+- **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
 
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES

@@ -273,6 +273,16 @@ export class MQTTConversationHandler extends ConversationHandlerService {
         if(isInfoMessage){
             this.messageInfo.next(msg)
         }
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         if(isInfoMessage && hideInfoMessage(msg, this.showInfoMessage)){
             //if showBubbleInfoMessage array keys not includes msg.attributes.messagelabel['key'] exclude CURRENT INFO MESSAGE
@@ -491,6 +501,8 @@ export class MQTTConversationHandler extends ConversationHandlerService {
                             commands[i+1]? commands[i+1].time = 0 : null
                         }
                     }
+
+                    command.message.isJustRecived = isJustRecived( that.startTime.getTime(), msg.timestamp );
 
                     that.generateMessageObject(msg, command.message, i, function () {
                         i += 1
