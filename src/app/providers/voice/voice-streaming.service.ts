@@ -13,7 +13,7 @@ import {
   VoiceWsControlMessage,
 } from './voice-streaming.types';
 
-const DEFAULT_TIMESLICE_MS = 250;
+const DEFAULT_TIMESLICE_MS = 1000;
 const READY_TIMEOUT_MS = 10_000;
 const SESSION_STARTED_TIMEOUT_MS = 10_000;
 
@@ -216,12 +216,12 @@ export class VoiceStreamingService {
       this.logger.info('[VoiceStreaming] step 2/5: sending config frame', {
         sender: config.sender,
         recipient: config.recipient,
-        lang: config.lang ?? 'en',
+        lang: config.lang ?? 'it',
       });
       socket.send(JSON.stringify({
         sender:            config.sender,
         recipient:         config.recipient,
-        lang:              config.lang ?? 'en',
+        lang:              config.lang ?? 'it',
         text:              config.text ?? '',
         type:              config.type ?? 'text',
         recipient_fullname: config.recipient_fullname ?? '',

@@ -26,7 +26,7 @@ export interface VoiceStreamingSessionConfig {
    * Se assente, si usa `voiceProxyWsBaseUrl` dal widget config caricato con `AppConfigService.getConfig()`.
    */
   wsBaseUrl?: string;
-  /** Default 250 — intervallo `MediaRecorder.start(timeslice)` in ms */
+  /** Default 1000 — intervallo `MediaRecorder.start(timeslice)` in ms */
   timesliceMs?: number;
   /** Se valorizzato, ha precedenza sulle euristiche (es. `audio/webm;codecs=opus`) */
   mimeType?: string;
