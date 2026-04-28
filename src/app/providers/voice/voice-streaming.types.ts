@@ -79,6 +79,7 @@ export interface VoiceStreamingStopResult {
 
 /** Messaggio di controllo JSON dal proxy voce (`msg.event`). */
 export type VoiceWsServerEventName =
+  | 'ready'
   | 'session_started'
   | 'listening'
   | 'transcript'
