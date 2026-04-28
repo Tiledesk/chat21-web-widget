@@ -237,10 +237,10 @@ export class VoiceService {
   }
 
   private onWsControl(msg: VoiceWsControlMessage): void {
-    console.log('[VoiceService] onWsControl', msg);
+    this.logger.log('[VoiceService] ← ws-control', msg.event, msg);
     switch (msg.event) {
       case 'session_started':
-        this.logger.log('[VoiceService] WSS session_started', msg.requestId ?? '');
+        this.logger.log('[VoiceService] session_started', { requestId: msg.requestId ?? '' });
         break;
       case 'listening':
         // Proxy confirmed it is in LISTENING state — safe to forward audio now.
@@ -248,10 +248,13 @@ export class VoiceService {
         // running continuously (no WebM timestamp gaps that could confuse Flux).
         this.voiceStreaming.setAudioMuted(false);
         this._isAcquisitionBlocked$.next(false);
+        this.logger.log('[VoiceService] listening – mic unmuted, acquisition unblocked');
         break;
       case 'transcript': {
         const text = typeof msg.text === 'string' ? msg.text : '';
-        this.voiceTranscriptSubject.next({ text, isFinal: !!msg.isFinal });
+        const isFinal = !!msg.isFinal;
+        this.logger.log('[VoiceService] transcript', { text, isFinal });
+        this.voiceTranscriptSubject.next({ text, isFinal });
         break;
       }
       case 'thinking':
@@ -260,19 +263,23 @@ export class VoiceService {
         // MediaRecorder keeps running so the WebM stream has no timestamp gaps;
         // chunks are simply not forwarded to the proxy until 'listening' arrives.
         this.voiceStreaming.setAudioMuted(true);
+        this.logger.log('[VoiceService] thinking – mic muted, acquisition blocked', { activeTtsSources: this._activeTtsSources });
         break;
-      case 'speaking':
+      case 'speaking': {
         this._isAcquisitionBlocked$.next(true);
         // Mute microphone to prevent echo: while the bot is speaking, mic audio
         // must not be forwarded to the proxy (no AEC available).
         this.voiceStreaming.setAudioMuted(true);
         // Reset TTS scheduling so new chunks play from now, not a stale future time.
         this.ttsNextPlayTime = this.ttsPlayContext?.currentTime ?? 0;
+        const preview = typeof msg.text === 'string' ? msg.text.slice(0, 80) : '';
+        this.logger.log('[VoiceService] speaking – mic muted, TTS text preview', { preview });
         // Emit the text being spoken so UI can display it alongside the audio.
         if (typeof msg.text === 'string' && msg.text) {
           this.voiceTtsTextSubject.next(msg.text);
         }
         break;
+      }
       case 'done':
         // Do not unblock immediately — the audio binary may still be decoding/playing.
         // _activeTtsSources tracks pending sources; when the last one ends, acquisition unblocks.
@@ -280,22 +287,25 @@ export class VoiceService {
           this._unblockAfterTts = true;
           // Safety: force-unblock after 15 s in case onended never fires.
           if (this._unblockSafetyTimer !== null) clearTimeout(this._unblockSafetyTimer);
-          this._unblockSafetyTimer = setTimeout(() => this._flushTtsUnblock(), 15000);
+          this._unblockSafetyTimer = setTimeout(() => this._flushTtsUnblock(true), 15000);
+          this.logger.log('[VoiceService] done – TTS still pending, waiting for all sources to end', { activeTtsSources: this._activeTtsSources });
         } else {
           // No audio sources pending — playback was already complete (or audio was empty).
           // Signal the proxy synchronously; mic stays muted until the proxy confirms
           // LISTENING via the 'listening' event.
+          this.logger.log('[VoiceService] done – no pending TTS, sending playback complete immediately');
           this.voiceStreaming.sendPlaybackComplete();
           this._isAcquisitionBlocked$.next(false);
         }
         break;
       case 'error': {
         const errorMsg = typeof msg.message === 'string' ? msg.message : 'Voice session error';
-        this.logger.log('[VoiceService] WSS error', errorMsg);
+        this.logger.error('[VoiceService] WSS error', errorMsg);
         this._wsError$.next(errorMsg);
         break;
       }
       default:
+        this.logger.warn('[VoiceService] unhandled ws-control event', msg.event);
         break;
     }
   }
@@ -305,6 +315,7 @@ export class VoiceService {
     // Increment SYNCHRONOUSLY before any await so the 'done' event handler (which arrives
     // on the next WebSocket message — a different event-loop tick) sees a non-zero count.
     this._activeTtsSources++;
+    this.logger.log('[VoiceService] TTS chunk received', { bytes: buf.byteLength, activeTtsSources: this._activeTtsSources });
     try {
       if (!this.ttsPlayContext || this.ttsPlayContext.state === 'closed') {
         this.ttsPlayContext = new AudioContext();
@@ -318,26 +329,33 @@ export class VoiceService {
       const t0 = Math.max(ctx.currentTime, this.ttsNextPlayTime);
       src.start(t0);
       this.ttsNextPlayTime = t0 + audioBuf.duration;
+      this.logger.log('[VoiceService] TTS chunk scheduled', { durationS: audioBuf.duration.toFixed(3), startsAtS: t0.toFixed(3), activeTtsSources: this._activeTtsSources });
       src.onended = () => this._onTtsSourceEnded();
     } catch (e) {
       this._onTtsSourceEnded();
-      this.logger.log('[VoiceService] chunk TTS non decodificabile (formato chunk?)', e);
+      this.logger.warn('[VoiceService] TTS chunk decode failed', e);
     }
   }
 
   private _onTtsSourceEnded(): void {
     this._activeTtsSources = Math.max(0, this._activeTtsSources - 1);
+    this.logger.log('[VoiceService] TTS source ended', { activeTtsSources: this._activeTtsSources, unblockPending: this._unblockAfterTts });
     if (this._unblockAfterTts && this._activeTtsSources === 0) {
-      this._flushTtsUnblock();
+      this._flushTtsUnblock(false);
     }
   }
 
-  private _flushTtsUnblock(): void {
+  private _flushTtsUnblock(fromSafetyTimer = false): void {
     this._unblockAfterTts = false;
     this._activeTtsSources = 0;
     if (this._unblockSafetyTimer !== null) {
       clearTimeout(this._unblockSafetyTimer);
       this._unblockSafetyTimer = null;
+    }
+    if (fromSafetyTimer) {
+      this.logger.warn('[VoiceService] TTS unblock: safety timer fired – forcing playback complete');
+    } else {
+      this.logger.log('[VoiceService] TTS unblock: all sources ended, sending playback complete');
     }
     // Signal the proxy that TTS playback is complete.  The proxy will transition
     // to LISTENING and send a 'listening' event back; the mic is unmuted there
