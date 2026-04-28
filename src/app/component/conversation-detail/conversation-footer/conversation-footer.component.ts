@@ -187,15 +187,12 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
 
     const voiceIngress = this.buildVoiceIngressStreamConfig();
     this.voiceAudioSubscription = undefined;
-    this.voiceTranscriptSubscription = this.voiceService.voiceTranscript$.subscribe(({ text, isFinal }) => {
+    this.voiceTranscriptSubscription = this.voiceService.voiceTranscript$.subscribe(({ text }) => {
       // Guard: stop accepting transcript text once the proxy is processing (thinking/speaking)
       if (text && !this.isBotSpeaking) {
         this.textInputTextArea = text;
-        if (isFinal) {
-          // Publish the transcribed user message to the Chat21 conversation.
-          // The proxy only publishes the bot reply; the user-side message must be sent explicitly.
-          this.sendMessage(text, TYPE_MSG_TEXT);
-        }
+        // The proxy publishes the user utterance to Chat21 via AMQP on utterance-end;
+        // no sendMessage call is needed here — doing so would produce duplicate messages.
       }
     });
 
