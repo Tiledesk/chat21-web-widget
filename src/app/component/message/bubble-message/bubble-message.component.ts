@@ -7,6 +7,7 @@ import { MAX_WIDTH_IMAGES, MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, MIN_WIDTH_IMA
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 import { isAudio, isAudioTTS, isFile, isFrame, isImage, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
 
 @Component({
   selector: 'chat-bubble-message',
@@ -44,7 +45,7 @@ export class BubbleMessageComponent implements OnInit {
   sizeImage : { width: number, height: number}
   fullnameColor: string;
   private logger: LoggerService = LoggerInstance.getInstance()
-  constructor(public sanitizer: DomSanitizer) { }
+  constructor(public sanitizer: DomSanitizer, public voiceService: VoiceService) { }
 
   ngOnInit() {
     // console.log("---- > MSG:", this.message);
