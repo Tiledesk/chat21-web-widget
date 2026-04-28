@@ -3,6 +3,11 @@
  *
  * L'URL di connessione porta solo: token, mimeType, sttProvider, ttsProvider (ADR-002).
  * I campi di identità di sessione viaggiano nel config frame JSON inviato subito dopo onopen.
+ *
+ * Il config frame fonde i campi di routing Chat21 (`sender`, `recipient`, `lang`) con la struttura
+ * prodotta da `chat21client.js#sendMessage` (`text`, `type`, `recipient_fullname`, `sender_fullname`,
+ * `attributes`, `metadata`, `channel_type`), così il proxy riceve lo stesso payload di un normale
+ * messaggio Chat21.
  */
 export interface VoiceStreamingSessionConfig {
   /** JWT auth token — finisce in `?token=` nell'URL. */
@@ -25,6 +30,22 @@ export interface VoiceStreamingSessionConfig {
   timesliceMs?: number;
   /** Se valorizzato, ha precedenza sulle euristiche (es. `audio/webm;codecs=opus`) */
   mimeType?: string;
+
+  // ── Campi sendMessage (chat21client.js#sendMessage outgoing_message) ──────────────────────────
+  /** Testo del messaggio — default `""` per il config frame. Corrisponde a `text` in `sendMessage`. */
+  text?: string;
+  /** Tipo del messaggio — default `"text"`. Corrisponde a `type` in `sendMessage`. */
+  type?: string;
+  /** Nome completo del destinatario. Corrisponde a `recipient_fullname` in `sendMessage`. */
+  recipient_fullname?: string;
+  /** Nome completo del mittente. Corrisponde a `sender_fullname` in `sendMessage`. */
+  sender_fullname?: string;
+  /** Attributi del messaggio (es. lingua, info utente). Corrisponde a `attributes` in `sendMessage`. */
+  attributes?: Record<string, unknown>;
+  /** Metadata del messaggio — default `""`. Corrisponde a `metadata` in `sendMessage`. */
+  metadata?: unknown;
+  /** Tipo di canale (es. `"direct"`). Corrisponde a `channel_type` in `sendMessage`. */
+  channel_type?: string;
 }
 
 export type VoiceStreamingConnectionState =
