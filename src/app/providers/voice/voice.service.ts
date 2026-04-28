@@ -243,6 +243,7 @@ export class VoiceService {
         this.logger.log('[VoiceService] WSS session_started', msg.requestId ?? '');
         break;
       case 'listening':
+        this.voiceStreaming.resumeRecording();
         this._isAcquisitionBlocked$.next(false);
         break;
       case 'transcript': {
@@ -252,6 +253,9 @@ export class VoiceService {
       }
       case 'thinking':
         this._isAcquisitionBlocked$.next(true);
+        // Stop encoding and forwarding audio while the bot processes the utterance.
+        // Resumed on the next 'listening' event from the proxy.
+        this.voiceStreaming.pauseRecording();
         break;
       case 'speaking':
         this._isAcquisitionBlocked$.next(true);

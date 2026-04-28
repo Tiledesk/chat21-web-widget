@@ -524,6 +524,31 @@ export class VoiceStreamingService {
   }
 
   /**
+   * Pause the MediaRecorder to stop encoding and sending audio chunks to the proxy.
+   * Safe to call when the recorder is already paused or not yet started.
+   * Use when the proxy enters a non-listening state (thinking, speaking) to save
+   * bandwidth and reduce load on the STT service.
+   */
+  pauseRecording(): void {
+    if (this.mediaRecorder?.state === 'recording') {
+      this.mediaRecorder.pause();
+      this.logger.info('[VoiceStreaming] recording paused');
+    }
+  }
+
+  /**
+   * Resume the MediaRecorder after a `pauseRecording()` call.
+   * Safe to call when the recorder is not paused (no-op).
+   * Use when the proxy transitions back to LISTENING.
+   */
+  resumeRecording(): void {
+    if (this.mediaRecorder?.state === 'paused') {
+      this.mediaRecorder.resume();
+      this.logger.info('[VoiceStreaming] recording resumed');
+    }
+  }
+
+  /**
    * Send `{ event: "tts_playback_complete" }` to the proxy, signalling that TTS
    * playback has finished and the microphone is ready to receive user speech.
    */
