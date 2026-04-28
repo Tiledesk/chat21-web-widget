@@ -60,6 +60,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   @Output() onAttachmentFileButtonClicked = new EventEmitter<any>();
   @Output() onNewConversationButtonClicked = new EventEmitter();
   @Output() onStreamAudioActiveChange = new EventEmitter<boolean>();
+  @Output() onStreamAudioConnectingChange = new EventEmitter<boolean>();
   @Output() onCloseChatButtonClicked = new EventEmitter();
 
   @ViewChild('chat21_file') public chat21_file: ElementRef;
@@ -110,6 +111,18 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   private botSpeakingSub?: Subscription;
   /** Passato a {@link StreamAudioSpectrumComponent} per disegnare la linea spettro. */
   currentVolume = 0;
+  /** Last user utterance transcribed — persists during bot processing to show in voice panel. */
+  lastVoiceTranscript = '';
+
+  get voiceStatusLabel(): string {
+    if (this.isStreamAudioConnecting && !this.isStreamAudioActive) {
+      return this.translationMap?.get('VOICE_CONNECTING') || 'Connecting...';
+    }
+    if (this.isStreamAudioActive && this.isBotSpeaking) {
+      return this.translationMap?.get('VOICE_PROCESSING') || 'Processing...';
+    }
+    return this.translationMap?.get('VOICE_LISTENING') || 'Listening...';
+  }
 
   file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
@@ -191,6 +204,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
       // Guard: stop accepting transcript text once the proxy is processing (thinking/speaking)
       if (text && !this.isBotSpeaking) {
         this.textInputTextArea = text;
+        this.lastVoiceTranscript = text;
         // The proxy publishes the user utterance to Chat21 via AMQP on utterance-end;
         // no sendMessage call is needed here — doing so would produce duplicate messages.
       }
@@ -295,6 +309,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     await this.voiceService.stopSession(options);
     this.currentVolume = 0;
     this.textInputTextArea = '';
+    this.lastVoiceTranscript = '';
   }
 
   /**
@@ -818,6 +833,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     console.log('[CONV-FOOTER] onStreamPressed: turningOn', turningOn);
     if (turningOn) {
       this.isStreamAudioConnecting = true;
+      this.onStreamAudioConnectingChange.emit(true);
       try {
         this.currentVolume = 0;
         await this.initVoice();
@@ -827,11 +843,13 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
         this.isStreamAudioActive = false;
       } finally {
         this.isStreamAudioConnecting = false;
+        this.onStreamAudioConnectingChange.emit(false);
       }
     } else {
       await this.stopVoice();
       this.isStreamAudioActive = false;
       this.isStreamAudioConnecting = false;
+      this.onStreamAudioConnectingChange.emit(false);
     }
     this.onStreamAudioActiveChange.emit(this.isStreamAudioActive);
     this.logger.log('[CONV-FOOTER] isStreamAudioActive', this.isStreamAudioActive);
