@@ -46,6 +46,14 @@ export class BubbleMessageComponent {
     return !!(msg.text && String(msg.text).trim().length > 0);
   }
 
+  ngOnInit() {
+    // If this TTS message arrived while the voice proxy was active, mark it so
+    // audio-sync never replays it after the session ends.
+    if (isAudioTTS(this.message) && this.voiceService.isWssVoiceActive && this.message?.uid) {
+      this.voiceService.markProxyHandled(this.message.uid);
+    }
+  }
+
   readonly isImage = isImage;
   readonly isFile = isFile;
   readonly isFrame = isFrame;

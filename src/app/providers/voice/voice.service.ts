@@ -71,6 +71,22 @@ export class VoiceService {
   readonly isWssVoiceActive$: Observable<boolean> = this._isWssVoiceActive$.asObservable();
   get isWssVoiceActive(): boolean { return this._isWssVoiceActive$.getValue(); }
 
+  /**
+   * UIDs of TTS messages that were played by the speech-proxy during an active voice session.
+   * These messages must never be replayed by audio-sync after the session ends.
+   */
+  private readonly _proxyHandledTtsIds = new Set<string>();
+
+  /** Register a TTS message UID as having been played by the proxy. */
+  markProxyHandled(uid: string): void {
+    if (uid) { this._proxyHandledTtsIds.add(uid); }
+  }
+
+  /** Returns true if the message was already played by the proxy and should not be replayed. */
+  wasProxyHandled(uid: string | undefined): boolean {
+    return !!uid && this._proxyHandledTtsIds.has(uid);
+  }
+
   // 🎙️ TTS GATE — suppresses segment emission while TTS is playing
   private isTTSActive = false;
   private ttsGateSub?: Subscription;
