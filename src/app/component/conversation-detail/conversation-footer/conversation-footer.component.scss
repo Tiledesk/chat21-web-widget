@@ -38,6 +38,7 @@
 
 .visible-text-area {
     width: 70%;
+    transition: width 220ms ease;
     // margin: 12px 0px;
     pointer-events: auto;
     border-radius: var(--chat-footer-border-radius);
@@ -100,11 +101,12 @@
     height: 36px;
     min-width: 36px;
     border-radius: 50%;
+    overflow: hidden;
     box-sizing: border-box;
     flex-shrink: 0;
     color: #ffffff;
     transition:
-        width 180ms ease,
+        min-width 220ms ease,
         border-radius 180ms ease,
         padding 180ms ease;
 
@@ -122,12 +124,9 @@
     }
 
     &.chat21-stream-button--expanded {
-        width: auto;
-        // min-width: 150px;
-        max-width: 100%;
+        min-width: 120px;
         border-radius: 999px;
         padding: 0 14px;
-        gap: 12px;
         justify-content: center;
 
         // stop the circle-hover background from looking odd on pill
