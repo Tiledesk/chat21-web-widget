@@ -13,7 +13,10 @@ import {
   VoiceWsControlMessage,
 } from './voice-streaming.types';
 
-const DEFAULT_TIMESLICE_MS = 1000;
+// Flux docs recommend 80ms chunks for optimal latency; 250ms is a practical
+// balance for WebM containerization overhead in the browser.
+// Source: https://developers.deepgram.com/docs/flux/quickstart
+const DEFAULT_TIMESLICE_MS = 250;
 const READY_TIMEOUT_MS = 10_000;
 const SESSION_STARTED_TIMEOUT_MS = 10_000;
 
