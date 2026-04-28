@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.32-rc15
+- **changed**: redemptionMs: 800
+
 # 5.1.32-rc14
 - **changed**: minor ui fixed
 
