@@ -77,7 +77,7 @@
       <!-- tooltip="{{message.timestamp | dateAgo}} ({{message.timestamp | date:'shortDate'}} {{message.timestamp | date:'HH:mm:ss'}})" placement="bottom" -->
       <div *ngIf="message?.text && !isAudio(message)" >
 
-        <chat-json-sources *ngIf="jsonSources !== null"
+        <chat-json-sources *ngIf="jsonSources !== null && jsonSources.length > 0"
           [items]="jsonSources"
           (onElementRendered)="onElementRenderedFN($event)">
         </chat-json-sources>
