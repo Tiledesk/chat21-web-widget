@@ -1,0 +1,44 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - img [ref=e9]
+          - generic [ref=e10]:
+            - list [ref=e11]:
+              - listitem [ref=e12]:
+                - link "WEB SDK & Docs" [ref=e13] [cursor=pointer]:
+                  - /url: https://developer.tiledesk.com/widget/web-sdk
+                  - text: WEB SDK & Docs
+              - listitem [ref=e14]:
+                - link "Pricing" [ref=e15] [cursor=pointer]:
+                  - /url: https://www.tiledesk.com/pricing-cloud/
+                  - text: Pricing
+              - listitem [ref=e16]:
+                - link "Blog" [ref=e17] [cursor=pointer]:
+                  - /url: https://www.tiledesk.com/blog/
+                  - text: Blog
+            - list [ref=e18]:
+              - listitem [ref=e19]:
+                - link "GO TO CONSOLE" [ref=e20] [cursor=pointer]:
+                  - /url: "#"
+            - list [ref=e21]:
+              - listitem [ref=e22]:
+                - link "GO TO TEST PAGE" [ref=e23] [cursor=pointer]:
+                  - /url: "#"
+    - generic [ref=e25]:
+      - heading "Lamborghini" [level=1] [ref=e26]
+      - heading [level=2]
+      - generic [ref=e27]:
+        - text: 
+        - link " Share" [ref=e28] [cursor=pointer]:
+          - /url: ""
+          - emphasis [ref=e29]: 
+          - text: Share
+  - contentinfo [ref=e30]:
+    - link "Powered by Tiledesk" [ref=e32] [cursor=pointer]:
+      - /url: https://tiledesk.com/
+      - generic [ref=e33]: Powered by
+      - img "Tiledesk" [ref=e34]
+  - iframe [ref=e36]:
+    

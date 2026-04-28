@@ -1,0 +1,140 @@
+[ 4984777ms] [LOG] DOM is ready, call initWidget @ http://localhost:4200/launch.js:2
+[ 4984777ms] [LOG] INIT ASYNC EVENTS @ http://localhost:4200/launch.js:296
+[ 4985013ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:19339
+[ 4985226ms] [LOG] onLoadParams Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:288
+[ 4985226ms] [LOG] onBeforeInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:295
+[ 4985227ms] [LOG] AUTHENTICATED! CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:330
+[ 4987378ms] [LOG] onInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:320
+[ 4988113ms] [LOG] onInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:320
+[ 4988114ms] [LOG] AUTHENTICATED! CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:330
+[ 4988124ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[ 4988132ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[ 4994318ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[ 5005092ms] [LOG] [CONV-FOOTER] onStreamPressed: turningOn true @ http://localhost:4200/main.js:19192
+[ 5005391ms] [LOG] [VoiceService] onWsControl {event: ready} @ http://localhost:4200/main.js:17543
+[ 5005695ms] [LOG] [VoiceService] onWsControl {event: session_started, sessionId: f3e27853} @ http://localhost:4200/main.js:17543
+[ 5008028ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5008754ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Hello. I want, isFinal: false} @ http://localhost:4200/main.js:17543
+[ 5009823ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Hello. I want to have information, isFinal: false} @ http://localhost:4200/main.js:17543
+[ 5010423ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Hello. I want to have information about Lamborghini., isFinal: false} @ http://localhost:4200/main.js:17543
+[ 5010759ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Hello. I want to have information about Lamborghini., isFinal: true} @ http://localhost:4200/main.js:17543
+[ 5010856ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5011633ms] [LOG] [VoiceService] onWsControl {event: thinking} @ http://localhost:4200/main.js:17543
+[ 5014752ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5017822ms] [LOG] [VoiceService] onWsControl {event: speaking} @ http://localhost:4200/main.js:17543
+[ 5018814ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://stage.eks.tiledesk.com/api/69cb80ffe5013700148a4584/llm/speech/d233bab7-7238-4d49-be97-38394dbdaae3:0
+[ 5019476ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://stage.eks.tiledesk.com/api/69cb80ffe5013700148a4584/llm/speech/531ca10d-f4a2-445f-929c-c23869feef85:0
+[ 5042808ms] [LOG] [VoiceService] onWsControl {event: done} @ http://localhost:4200/main.js:17543
+[ 5044725ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5045706ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5048020ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5049415ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5051155ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5051385ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5053609ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5055546ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5057800ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5058064ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5058981ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5060872ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5062510ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5063903ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5067131ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5068629ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17543
+[ 5072177ms] [LOG] [CONV-FOOTER] onStreamPressed: turningOn false @ http://localhost:4200/main.js:19192
+[ 5074516ms] [LOG] DOM is ready, call initWidget @ http://localhost:4200/launch.js:2
+[ 5074516ms] [LOG] INIT ASYNC EVENTS @ http://localhost:4200/launch.js:296
+[ 5074738ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:19339
+[ 5074931ms] [LOG] onLoadParams Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:288
+[ 5074931ms] [LOG] onBeforeInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:295
+[ 5074932ms] [LOG] AUTHENTICATED! CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:330
+[ 5077993ms] [LOG] onInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:320
+[ 5078576ms] [LOG] onInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:320
+[ 5078577ms] [LOG] AUTHENTICATED! CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:330
+[ 5078590ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[ 5078600ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[ 6120704ms] [LOG] DOM is ready, call initWidget @ http://localhost:4200/launch.js:2
+[ 6120704ms] [LOG] INIT ASYNC EVENTS @ http://localhost:4200/launch.js:296
+[ 6120935ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:19339
+[ 6121786ms] [LOG] onLoadParams Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:288
+[ 6121787ms] [LOG] onBeforeInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:295
+[ 6121789ms] [LOG] AUTHENTICATED! CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:330
+[ 6237335ms] [LOG] DOM is ready, call initWidget @ http://localhost:4200/launch.js:2
+[ 6237335ms] [LOG] INIT ASYNC EVENTS @ http://localhost:4200/launch.js:296
+[ 6237565ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:19339
+[ 6237766ms] [LOG] onLoadParams Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:288
+[ 6237767ms] [LOG] onBeforeInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:295
+[ 6237768ms] [LOG] AUTHENTICATED! CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:330
+[ 6240244ms] [LOG] onInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:320
+[ 6241101ms] [LOG] onInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:320
+[ 6241105ms] [LOG] AUTHENTICATED! CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:330
+[ 6241124ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[ 6241132ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[ 6245064ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[ 6253576ms] [LOG] [CONV-FOOTER] onStreamPressed: turningOn true @ http://localhost:4200/main.js:19227
+[ 6253863ms] [LOG] [VoiceService] onWsControl {event: ready} @ http://localhost:4200/main.js:17550
+[ 6254165ms] [LOG] [VoiceService] onWsControl {event: session_started, sessionId: 818258f8} @ http://localhost:4200/main.js:17550
+[ 6255089ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6255824ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Ciao bonjour., isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6256779ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Ciao Bonjorno., isFinal: true} @ http://localhost:4200/main.js:17550
+[ 6257876ms] [LOG] [VoiceService] onWsControl {event: thinking} @ http://localhost:4200/main.js:17550
+[ 6258053ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6260327ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6261123ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://stage.eks.tiledesk.com/api/69cb80ffe5013700148a4584/llm/speech/aed51ed4-f2bb-459c-a8b1-e77129463a79:0
+[ 6265611ms] [LOG] [VoiceService] onWsControl {event: speaking} @ http://localhost:4200/main.js:17550
+[ 6265619ms] [LOG] [VoiceService] onWsControl {event: done} @ http://localhost:4200/main.js:17550
+[ 6268513ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6276938ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6280161ms] [LOG] [VoiceService] onWsControl {event: transcript, text: What is a bear rate?, isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6280478ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Verizabeth, red., isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6280764ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6280803ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Verizabeth, red., isFinal: true} @ http://localhost:4200/main.js:17550
+[ 6280806ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Qualys on., isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6281692ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Qualyson or Lespeci, isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6284393ms] [LOG] [VoiceService] onWsControl {event: transcript, text: A, isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6284658ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6287365ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6290309ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6293944ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6296941ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Borrevier in four, isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6297126ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6297146ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Borrevere informazion, isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6299360ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6303750ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6308292ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6310623ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Vireya wearing for, isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6310974ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6310995ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Vireya wearing, isFinal: true} @ http://localhost:4200/main.js:17550
+[ 6312556ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6317371ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6317732ms] [LOG] [CONV-FOOTER] onStreamPressed: turningOn false @ http://localhost:4200/main.js:19227
+[ 6690242ms] [LOG] DOM is ready, call initWidget @ http://localhost:4200/launch.js:2
+[ 6690242ms] [LOG] INIT ASYNC EVENTS @ http://localhost:4200/launch.js:296
+[ 6690472ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:19339
+[ 6691175ms] [LOG] onLoadParams Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:288
+[ 6691176ms] [LOG] onBeforeInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:295
+[ 6691178ms] [LOG] AUTHENTICATED! CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:330
+[ 6693543ms] [LOG] onInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:320
+[ 6694233ms] [LOG] onInit Tiledesk FN CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:320
+[ 6694234ms] [LOG] AUTHENTICATED! CustomEvent @ http://localhost:4200/assets/twp/index.html?tiledesk_projectid=69cb80ffe5013700148a4584&project_name=Lamborghini&role=admin:330
+[ 6694248ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[ 6694256ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[ 6698746ms] [WARNING] WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss @ http://localhost:4200/@fs/Users/nicocardone/Desktop/DEV/TILEDESK/chat21-web-widget/.angular/cache/18.2.19/widget/vite/deps/chunk-F5RXB2CY.js?v=7004fccf:7322
+[ 6703005ms] [LOG] [CONV-FOOTER] onStreamPressed: turningOn true @ http://localhost:4200/main.js:19227
+[ 6703306ms] [LOG] [VoiceService] onWsControl {event: ready} @ http://localhost:4200/main.js:17550
+[ 6703757ms] [LOG] [VoiceService] onWsControl {event: session_started, sessionId: a7d97f1e} @ http://localhost:4200/main.js:17550
+[ 6705027ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6705691ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Ciao bunjo, isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6706200ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Ciao bunjorno, isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6707290ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Ciao bunjorno, isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6709742ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Ciao Bonjourno., isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6710217ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6715753ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6716227ms] [LOG] [CONV-FOOTER] onStreamPressed: turningOn false @ http://localhost:4200/main.js:19227
+[ 6717892ms] [LOG] [CONV-FOOTER] onStreamPressed: turningOn true @ http://localhost:4200/main.js:19227
+[ 6718168ms] [LOG] [VoiceService] onWsControl {event: ready} @ http://localhost:4200/main.js:17550
+[ 6718597ms] [LOG] [VoiceService] onWsControl {event: session_started, sessionId: 43eea7f3} @ http://localhost:4200/main.js:17550
+[ 6719672ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6720978ms] [LOG] [VoiceService] onWsControl {event: transcript, text: Bonjourna, isFinal: false} @ http://localhost:4200/main.js:17550
+[ 6725463ms] [LOG] [VoiceService] onWsControl {event: listening} @ http://localhost:4200/main.js:17550
+[ 6728859ms] [LOG] [CONV-FOOTER] onStreamPressed: turningOn false @ http://localhost:4200/main.js:19227

@@ -136,6 +136,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     private voiceService: VoiceService,
     private ttsPlayback: TtsAudioPlaybackCoordinator,
     private tiledeskAuthService: TiledeskAuthService,
+    public g: Globals,
   ) {}
 
   ngOnInit() {
@@ -234,7 +235,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
       token,
       sender,
       recipient,
-      lang: document.documentElement.lang || 'en',
+      // Use Deepgram multilingual code-switching so the model detects the spoken
+      // language from the audio stream regardless of browser locale.
+      // Source: https://developers.deepgram.com/docs/multilingual-code-switching
+      lang: 'multi',
       text: '',
       type: 'text',
       recipient_fullname: recipientFullname ?? '',
