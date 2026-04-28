@@ -56,6 +56,7 @@ export const TYPE_MSG_FILE = 'file';
 export const TYPE_MSG_BUTTON = 'button';
 export const TYPE_MSG_EMAIL = 'email';
 export const TYPE_MSG_FORM = 'form';
+export const TYPE_MSG_URL_PREVIEW = 'url_preview';
 
 export const MAX_WIDTH_IMAGES = 230;
 export const MIN_WIDTH_IMAGES = 130;

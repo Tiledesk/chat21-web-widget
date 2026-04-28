@@ -3,7 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
-import { MAX_WIDTH_IMAGES, MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, MIN_WIDTH_IMAGES } from 'src/chat21-core/utils/constants';
+import { MAX_WIDTH_IMAGES, MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, MIN_WIDTH_IMAGES, TYPE_MSG_URL_PREVIEW } from 'src/chat21-core/utils/constants';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 import { isAudio, isFile, isFrame, isImage, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
@@ -70,6 +70,11 @@ export class BubbleMessageComponent implements OnInit {
     }
     if(this.message && this.message.sender_fullname && this.message.sender_fullname.trim() !== ''){
       this.fullnameColor = getColorBck(this.message.sender_fullname)
+    }
+
+    if (this.message?.type !== TYPE_MSG_URL_PREVIEW) {
+      this.jsonSources = null;
+      return;
     }
 
     const parsedSources = this.parseJsonSources(this.message?.text);

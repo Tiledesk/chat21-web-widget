@@ -27,7 +27,7 @@
     </div>
 
     <div class="thumb" *ngIf="item.image">
-      <img [src]="item.image" alt="" loading="lazy" />
+      <img [src]="item.image" alt="" loading="lazy" (error)="$event.target.closest('.thumb').remove()" />
     </div>
   </a>
 
