@@ -64,7 +64,8 @@
         [stylesMap]="stylesMap">
       </chat-audio>
 
-      <chat-audio-sync *ngIf="isAudioTTS(message)"
+      <!-- TTS player: only when voice proxy is NOT active (avoids double playback) -->
+      <chat-audio-sync *ngIf="isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async)"
         [message]="message"
         [color]="fontColor">
       </chat-audio-sync>
@@ -75,6 +76,12 @@
         [backgroundColor]="jsonSourcesBackgroundColor"
         (onElementRendered)="onElementRenderedFN($event)">
       </chat-json-sources>
+
+      <!-- Text fallback for TTS messages when voice proxy is handling audio -->
+      <chat-text *ngIf="isAudioTTS(message) && (voiceService.isWssVoiceActive$ | async) && message?.text"
+        [text]="message?.text"
+        [color]="fontColor">
+      </chat-text>
 
 
       <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"

@@ -7,6 +7,7 @@ import { calcImageSize, isAudio, isAudioTTS, isFile, isFrame, isImage, isJsonSou
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
 import { JsonSourcesParserService, UrlPreviewDisplayFields } from 'src/app/providers/json-sources-parser.service';
 import { JsonSourceItem } from '../json-sources/json-sources.component';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
 
 @Component({
   selector: 'chat-bubble-message',
@@ -67,7 +68,8 @@ export class BubbleMessageComponent {
 
   constructor(
     public sanitizer: DomSanitizer,
-    private jsonSourcesParser: JsonSourcesParserService
+    private jsonSourcesParser: JsonSourcesParserService,
+    public voiceService: VoiceService,
   ) {}
 
   ngOnChanges(): void {

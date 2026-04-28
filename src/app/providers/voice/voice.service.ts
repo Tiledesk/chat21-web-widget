@@ -49,6 +49,11 @@ export class VoiceService {
   private readonly voiceTranscriptSubject = new Subject<{ text: string; isFinal: boolean }>();
   readonly voiceTranscript$: Observable<{ text: string; isFinal: boolean }> = this.voiceTranscriptSubject.asObservable();
 
+  /** Testo TTS in riproduzione, emesso dall'evento WSS `speaking` (proxy). */
+  private readonly voiceTtsTextSubject = new Subject<string>();
+  /** Emette il testo del bot che sta per essere riprodotto come audio TTS. */
+  readonly voiceTtsText$: Observable<string> = this.voiceTtsTextSubject.asObservable();
+
   /** Errore applicativo dal proxy (evento `error`): testo descrittivo del problema. */
   private readonly _wsError$ = new Subject<string>();
   readonly wsError$: Observable<string> = this._wsError$.asObservable();
@@ -56,6 +61,15 @@ export class VoiceService {
   // 🔊 REALTIME VOLUME STREAM
   private readonly volumeSubject = new BehaviorSubject<number>(0);
   readonly volume$: Observable<number> = this.volumeSubject.asObservable();
+
+  /**
+   * Emits `true` while a WSS voice-proxy session is active.
+   * Used to suppress the tiledesk-server TTS playback path (audio-sync component)
+   * when the speech-proxy is already handling TTS over the WebSocket binary channel.
+   */
+  private readonly _isWssVoiceActive$ = new BehaviorSubject<boolean>(false);
+  readonly isWssVoiceActive$: Observable<boolean> = this._isWssVoiceActive$.asObservable();
+  get isWssVoiceActive(): boolean { return this._isWssVoiceActive$.getValue(); }
 
   // 🎙️ TTS GATE — suppresses segment emission while TTS is playing
   private isTTSActive = false;
@@ -133,6 +147,8 @@ export class VoiceService {
       this.wsControlSub = this.voiceStreaming.wsControl$.subscribe((msg) => this.onWsControl(msg));
       this.ttsChunkSub = this.voiceStreaming.ttsBinaryChunk$.subscribe((buf) => void this.playWsTtsChunk(buf));
       await this.voiceStreaming.start(this.voiceIngressConfig!, { sharedMediaStream: this.stream });
+      // Signal that the voice proxy is now live — suppresses tiledesk-server TTS.
+      this._isWssVoiceActive$.next(true);
       this.logger.log('[VoiceService] sessione WSS (nessun VAD locale)');
     } catch (e) {
       this.wsControlSub?.unsubscribe();
@@ -225,6 +241,10 @@ export class VoiceService {
         this._isAcquisitionBlocked$.next(true);
         // Reset TTS scheduling so new chunks play from now, not a stale future time.
         this.ttsNextPlayTime = this.ttsPlayContext?.currentTime ?? 0;
+        // Emit the text being spoken so UI can display it alongside the audio.
+        if (typeof msg.text === 'string' && msg.text) {
+          this.voiceTtsTextSubject.next(msg.text);
+        }
         break;
       case 'done':
         // Do not unblock immediately — the audio binary may still be decoding/playing.
@@ -323,6 +343,7 @@ export class VoiceService {
       } catch (e) {
         this.logger.log('[VoiceService] stopSession voiceStreaming.stop', e);
       }
+      this._isWssVoiceActive$.next(false);
       this.voiceIngressConfig = null;
     }
 
