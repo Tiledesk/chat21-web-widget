@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.32-rc16
+- **added**: added chat-json-sources to preview URLs
+
 # 5.1.32-rc15
 - **changed**: redemptionMs: 800
 
