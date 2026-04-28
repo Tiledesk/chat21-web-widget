@@ -3,7 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, TYPE_MSG_URL_PREVIEW } from 'src/chat21-core/utils/constants';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
-import { calcImageSize, isAudio, isAudioTTS, isFile, isFrame, isImage, messageType } from 'src/chat21-core/utils/utils-message';
+import { calcImageSize, isAudio, isFile, isFrame, isImage, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
 import { UrlPreviewService } from 'src/app/providers/url-preview.service';
 import { extractUrlsFromText } from 'src/app/utils/url-utils';
@@ -33,7 +33,6 @@ export class BubbleMessageComponent {
   readonly isFile = isFile;
   readonly isFrame = isFrame;
   readonly isAudio = isAudio;
-  readonly isAudioTTS = isAudioTTS;
   readonly messageType = messageType;
   readonly convertColorToRGBA = convertColorToRGBA;
   readonly MESSAGE_TYPE_MINE = MESSAGE_TYPE_MINE;
