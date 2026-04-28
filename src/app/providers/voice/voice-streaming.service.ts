@@ -62,6 +62,8 @@ export class VoiceStreamingService {
   private audioChunkCount = 0;
   /** Total bytes sent — reset on each new session. */
   private totalAudioBytesSent = 0;
+  /** Emits one debug log when the first chunk is dropped due to muting; reset on unmute. */
+  private _mutedDropLogged = false;
 
   constructor(private readonly appConfig: AppConfigService) {}
 
@@ -257,7 +259,13 @@ export class VoiceStreamingService {
         if (e.data && e.data.size > 0) {
           this.localChunks.push(e.data);
           if (!this._audioMuted) {
+            this._mutedDropLogged = false;
             this.sendChunkIfOpen(socket, e.data);
+          } else {
+            if (!this._mutedDropLogged) {
+              this.logger.debug('[VoiceStreaming] audio chunk dropped (muted) – suppressing further drops until unmuted');
+              this._mutedDropLogged = true;
+            }
           }
         }
       };
@@ -520,6 +528,9 @@ export class VoiceStreamingService {
    */
   setAudioMuted(muted: boolean): void {
     this._audioMuted = muted;
+    if (!muted) {
+      this._mutedDropLogged = false;
+    }
     this.logger.info(`[VoiceStreaming] audio ${muted ? 'muted' : 'unmuted'}`);
   }
 
@@ -565,6 +576,7 @@ export class VoiceStreamingService {
     this.totalAudioBytesSent = 0;
     this.currentSessionId = undefined;
     this._audioMuted = false;
+    this._mutedDropLogged = false;
     // If cleanup() is called externally while start() is still pending (e.g. stop() during
     // a mid-connect state), reject the stranded start() promise so the caller isn't hung.
     if (this.pendingStartFail) {

@@ -229,9 +229,15 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     const sender = this.tiledeskAuthService.getCurrentUser()?.uid ?? '';
     const recipient = this.conversationWith ?? '';
     if (!token || !sender || !recipient) {
+      this.logger.warn('[CONV-FOOTER] buildVoiceIngressStreamConfig: missing required fields', {
+        hasToken: !!token,
+        hasSender: !!sender,
+        hasRecipient: !!recipient,
+      });
       return null;
     }
     const { recipientFullname, attributes, channelType } = this.buildSendMessageContext();
+    this.logger.log('[CONV-FOOTER] buildVoiceIngressStreamConfig', { sender, recipient, channelType });
     return {
       token,
       sender,
@@ -834,7 +840,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     }
     // Treat a click during connecting as a cancel request (same as turning off).
     const turningOn = !this.isStreamAudioActive && !this.isStreamAudioConnecting;
-    console.log('[CONV-FOOTER] onStreamPressed: turningOn', turningOn);
+    this.logger.log('[CONV-FOOTER] onStreamPressed', { turningOn });
     if (turningOn) {
       this.isStreamAudioConnecting = true;
       this.onStreamAudioConnectingChange.emit(true);
