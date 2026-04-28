@@ -26,8 +26,8 @@ export class BubbleMessageComponent {
   @Output() onAfterMessageRender = new EventEmitter();
   @Output() onElementRendered = new EventEmitter<{ element: string; status: boolean }>();
 
-  @HostBinding('class.no-background') get hostNoBackground() { return this.jsonSources !== null; }
-  @HostBinding('class.json-resources') get hostIsJsonResources() { return this.jsonSources !== null; }
+  @HostBinding('class.no-background') get hostNoBackground() { return this.jsonSources !== null && this.jsonSources.length > 0; }
+  @HostBinding('class.json-resources') get hostIsJsonResources() { return this.jsonSources !== null && this.jsonSources.length > 0; }
 
   readonly isImage = isImage;
   readonly isFile = isFile;
