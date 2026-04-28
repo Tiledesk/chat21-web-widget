@@ -31,11 +31,19 @@ export class JsonSourcesComponent {
   }
 
   getFavicon(item: JsonSourceItem): string | null {
-    const explicit = (item?.favicon_hd || item?.favicon || '').trim();
-    if (explicit) return explicit;
     const domain = getTopLevelDomainFromUrl(item?.link || '');
     if (!domain) return null;
-    return `https://${domain}/favicon.ico`;
+    const explicit = (item?.favicon_hd || item?.favicon || '').trim();
+    if (explicit) {
+      try {
+        const faviconDomain = getTopLevelDomainFromUrl(explicit);
+        return faviconDomain ? explicit.replace(new URL(explicit).hostname, faviconDomain) : explicit;
+      } catch {
+        return explicit;
+      }
+    }
+    return `https://favicon.im/${domain}`;
+    //return `https://${domain}/favicon.ico`;
   }
 
   getHostname(item: JsonSourceItem): string {
@@ -58,7 +66,15 @@ export class JsonSourcesComponent {
   }
 
   get headerFavicons(): JsonSourceItem[] {
-    return (this.items || []).filter(i => this.getFavicon(i)).slice(0, 3);
+    const seen = new Set<string>();
+    return (this.items || []).reduce<JsonSourceItem[]>((acc, item) => {
+      const url = this.getFavicon(item);
+      if (url && !seen.has(url)) {
+        seen.add(url);
+        acc.push(item);
+      }
+      return acc;
+    }, []).slice(0, 3);
   }
 
   get canExpand(): boolean {
