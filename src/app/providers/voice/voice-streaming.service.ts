@@ -14,6 +14,7 @@ import {
 } from './voice-streaming.types';
 
 const DEFAULT_TIMESLICE_MS = 250;
+const READY_TIMEOUT_MS = 10_000;
 const SESSION_STARTED_TIMEOUT_MS = 10_000;
 
 /** Ordered by preference; covers Chrome (webm), Firefox (ogg), Safari ≥14.1 (mp4). */
@@ -50,6 +51,12 @@ export class VoiceStreamingService {
   private streamSharedWithIngress = false;
   private pendingSharedStream?: MediaStream;
   private pendingConfig?: VoiceStreamingSessionConfig;
+  /** Session ID assigned by the proxy (from session_started payload). Used for log correlation. */
+  private currentSessionId: string | undefined;
+  /** Audio chunk counter — reset on each new session. */
+  private audioChunkCount = 0;
+  /** Total bytes sent — reset on each new session. */
+  private totalAudioBytesSent = 0;
 
   constructor(private readonly appConfig: AppConfigService) {}
 
@@ -97,7 +104,7 @@ export class VoiceStreamingService {
       ...config,
       mimeType: mime,
     });
-    this.logger.log('[VoiceStreaming] connecting...');
+    this.logger.info('[VoiceStreaming] connecting', { url: this.redactQuery(url), mime: mime || '(auto)', timeslice });
 
     return new Promise<void>((resolve, reject) => {
       const socket = new WebSocket(url);
@@ -111,7 +118,7 @@ export class VoiceStreamingService {
         this.pendingStartFail = null;
         this._lastError$.next(err);
         this.setState('error');
-        this.logger.log('[VoiceStreaming] start failed', err);
+        this.logger.error('[VoiceStreaming] start failed', err);
         this.cleanup();
         reject(err instanceof Error ? err : new Error(String(err)));
       };
@@ -127,12 +134,14 @@ export class VoiceStreamingService {
 
       socket.onerror = (ev) => {
         if (this.ws === socket) {
+          this.logger.warn('[VoiceStreaming] socket error', ev);
           fail(ev);
         }
       };
 
       socket.onclose = (ev: CloseEvent) => {
         if (this.ws === socket) {
+          this.logger.info('[VoiceStreaming] socket closed', { code: ev.code, reason: ev.reason || '(none)' });
           this.ws = null;
           this._closeCode$.next(ev.code);
           if (this._currentState === 'streaming') {
@@ -151,6 +160,7 @@ export class VoiceStreamingService {
 
       socket.onmessage = (ev: MessageEvent) => {
         if (ev.data instanceof ArrayBuffer) {
+          this.logger.debug('[VoiceStreaming] TTS binary chunk received', ev.data.byteLength, 'bytes');
           this._ttsBinaryChunk$.next(ev.data);
           return;
         }
@@ -158,6 +168,11 @@ export class VoiceStreamingService {
           try {
             const msg = JSON.parse(ev.data) as Record<string, unknown>;
             if (typeof msg.event === 'string') {
+              this.logger.info('[VoiceStreaming] ←', msg.event);
+              if (msg.event === 'session_started' && typeof msg.sessionId === 'string') {
+                this.currentSessionId = msg.sessionId;
+                this.logger.info('[VoiceStreaming] proxy session ID:', this.currentSessionId);
+              }
               this._wsControl$.next(msg as VoiceWsControlMessage);
             }
           } catch {
@@ -171,6 +186,7 @@ export class VoiceStreamingService {
         if (this.ws !== socket) {
           return;
         }
+        this.logger.info('[VoiceStreaming] socket open');
         this.setState('open');
         const cfg = this.pendingConfig!;
         this.pendingConfig = undefined;
@@ -188,10 +204,20 @@ export class VoiceStreamingService {
     fail: (e: unknown) => void,
   ): Promise<void> {
     try {
-      // 1. Register the session_started waiter BEFORE sending (defensive ordering).
+      // 1. Wait for the proxy's "ready" signal before sending anything.
+      //    The proxy emits this once all server-side handlers are registered.
+      this.logger.info('[VoiceStreaming] step 1/5: waiting for proxy ready signal');
+      await this.waitForReady(socket);
+
+      // 2. Register the session_started waiter BEFORE sending (defensive ordering).
       const sessionReady = this.waitForSessionStarted(socket);
 
-      // 2. Send config frame (spec §3) — must be the first message after onopen.
+      // 3. Send config frame (spec §3) — must be sent after "ready", before audio.
+      this.logger.info('[VoiceStreaming] step 2/5: sending config frame', {
+        sender: config.sender,
+        recipient: config.recipient,
+        lang: config.lang ?? 'en',
+      });
       socket.send(JSON.stringify({
         sender:            config.sender,
         recipient:         config.recipient,
@@ -205,8 +231,10 @@ export class VoiceStreamingService {
         channel_type:      config.channel_type ?? '',
       }));
 
-      // 3. Wait for session_started before opening the mic/recorder.
+      // 4. Wait for session_started before opening the mic/recorder.
+      this.logger.info('[VoiceStreaming] step 3/5: waiting for session_started');
       await sessionReady;
+      this.logger.info('[VoiceStreaming] step 4/5: session ready – opening microphone');
 
       const shared = this.pendingSharedStream;
       this.pendingSharedStream = undefined;
@@ -228,19 +256,25 @@ export class VoiceStreamingService {
       };
 
       this.mediaRecorder.onerror = (ev) => {
-        this.logger.log('[VoiceStreaming] MediaRecorder error', ev);
+        this.logger.error('[VoiceStreaming] MediaRecorder error', ev);
       };
 
       this.mediaRecorder.start(timeslice);
+      this.logger.info('[VoiceStreaming] step 5/5: recorder started', {
+        mimeType: this.currentMimeType,
+        timeslice,
+      });
       this.setState('streaming');
       resolve();
     } catch (e) {
+      this.logger.error('[VoiceStreaming] beginRecordingAfterOpen failed', e);
       fail(e);
     }
   }
 
-  /** Resolves when the proxy sends `session_started`; rejects on socket close or timeout. */
-  private waitForSessionStarted(socket: WebSocket): Promise<void> {
+  /** Resolves when the proxy sends `ready`; rejects on socket close or timeout. */
+  private waitForReady(socket: WebSocket): Promise<void> {
+    this.logger.info('[VoiceStreaming] waiting for ready...');
     return new Promise<void>((resolve, reject) => {
       let settled = false;
 
@@ -248,6 +282,58 @@ export class VoiceStreamingService {
         if (!settled) {
           settled = true;
           cleanup();
+          this.logger.warn('[VoiceStreaming] ready timeout after', READY_TIMEOUT_MS, 'ms');
+          reject(new Error('[VoiceStreaming] ready timeout'));
+        }
+      }, READY_TIMEOUT_MS);
+
+      const onMessage = (ev: MessageEvent) => {
+        if (settled || typeof ev.data !== 'string') return;
+        try {
+          const msg = JSON.parse(ev.data) as Record<string, unknown>;
+          if (msg.event === 'ready') {
+            settled = true;
+            cleanup();
+            this.logger.info('[VoiceStreaming] ready received');
+            resolve();
+          } else if (msg.event === 'error') {
+            settled = true;
+            cleanup();
+            this.logger.warn('[VoiceStreaming] proxy error before ready:', msg.message ?? msg.code ?? 'unknown');
+            reject(new Error(`[VoiceStreaming] proxy error before ready: ${msg.message ?? msg.code ?? 'unknown'}`));
+          }
+        } catch { /* non-JSON */ }
+      };
+
+      const onClose = (ev: CloseEvent) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        reject(new Error(`[VoiceStreaming] socket closed before ready (code ${ev.code})`));
+      };
+
+      const cleanup = () => {
+        clearTimeout(timer);
+        socket.removeEventListener('message', onMessage);
+        socket.removeEventListener('close', onClose);
+      };
+
+      socket.addEventListener('message', onMessage);
+      socket.addEventListener('close', onClose);
+    });
+  }
+
+  /** Resolves when the proxy sends `session_started`; rejects on socket close or timeout. */
+  private waitForSessionStarted(socket: WebSocket): Promise<void> {
+    this.logger.info('[VoiceStreaming] waiting for session_started...');
+    return new Promise<void>((resolve, reject) => {
+      let settled = false;
+
+      const timer = setTimeout(() => {
+        if (!settled) {
+          settled = true;
+          cleanup();
+          this.logger.warn('[VoiceStreaming] session_started timeout after', SESSION_STARTED_TIMEOUT_MS, 'ms');
           reject(new Error('[VoiceStreaming] session_started timeout'));
         }
       }, SESSION_STARTED_TIMEOUT_MS);
@@ -259,10 +345,12 @@ export class VoiceStreamingService {
           if (msg.event === 'session_started') {
             settled = true;
             cleanup();
+            this.logger.info('[VoiceStreaming] session_started received');
             resolve();
           } else if (msg.event === 'error') {
             settled = true;
             cleanup();
+            this.logger.warn('[VoiceStreaming] proxy error before session_started:', msg.message ?? msg.code ?? 'unknown');
             reject(new Error(`[VoiceStreaming] proxy error before session_started: ${msg.message ?? msg.code ?? 'unknown'}`));
           }
         } catch { /* non-JSON */ }
@@ -297,6 +385,12 @@ export class VoiceStreamingService {
       this.setState('idle');
       return Promise.resolve({ blob: null, mimeType: '', resultUrl: null });
     }
+    this.logger.info('[VoiceStreaming] stop', {
+      chunks: this.audioChunkCount,
+      totalBytes: this.totalAudioBytesSent,
+      discard,
+      sessionId: this.currentSessionId,
+    });
     this.setState('stopping');
     return new Promise((resolve) => {
       const finalize = (resultUrl: string | null) => {
@@ -413,6 +507,10 @@ export class VoiceStreamingService {
   }
 
   private cleanup(): void {
+    this.logger.info('[VoiceStreaming] cleanup', { state: this._currentState, sessionId: this.currentSessionId });
+    this.audioChunkCount = 0;
+    this.totalAudioBytesSent = 0;
+    this.currentSessionId = undefined;
     // If cleanup() is called externally while start() is still pending (e.g. stop() during
     // a mid-connect state), reject the stranded start() promise so the caller isn't hung.
     if (this.pendingStartFail) {
@@ -443,14 +541,22 @@ export class VoiceStreamingService {
 
   private sendChunkIfOpen(socket: WebSocket, data: Blob): void {
     if (socket.readyState !== WebSocket.OPEN) {
+      this.logger.warn('[VoiceStreaming] sendChunk skipped – socket not open', { readyState: socket.readyState });
       return;
     }
     void data.arrayBuffer().then((buf) => {
       if (socket.readyState === WebSocket.OPEN) {
         try {
           socket.send(buf);
+          this.audioChunkCount++;
+          this.totalAudioBytesSent += buf.byteLength;
+          if (this.audioChunkCount === 1) {
+            this.logger.info('[VoiceStreaming] first audio chunk sent', { bytes: buf.byteLength, sessionId: this.currentSessionId });
+          } else if (this.audioChunkCount % 40 === 0) {
+            this.logger.debug('[VoiceStreaming] audio streaming', { chunks: this.audioChunkCount, totalBytes: this.totalAudioBytesSent });
+          }
         } catch (e) {
-          this.logger.log('[VoiceStreaming] send chunk error', e);
+          this.logger.error('[VoiceStreaming] send chunk error', e);
         }
       }
     });
