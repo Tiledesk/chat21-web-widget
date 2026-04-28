@@ -212,11 +212,19 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     if (!token || !sender || !recipient) {
       return null;
     }
+    const { recipientFullname, attributes, channelType } = this.buildSendMessageContext();
     return {
       token,
       sender,
       recipient,
       lang: document.documentElement.lang || 'en',
+      text: '',
+      type: 'text',
+      recipient_fullname: recipientFullname ?? '',
+      sender_fullname: recipientFullname ?? '',
+      attributes: attributes ?? {},
+      metadata: '',
+      channel_type: channelType ?? '',
     };
   }
 

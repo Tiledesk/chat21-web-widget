@@ -177,9 +177,16 @@ export class VoiceStreamingService {
 
       // 2. Send config frame (spec §3) — must be the first message after onopen.
       socket.send(JSON.stringify({
-        sender:    config.sender,
-        recipient: config.recipient,
-        lang:      config.lang ?? 'en',
+        sender:            config.sender,
+        recipient:         config.recipient,
+        lang:              config.lang ?? 'en',
+        text:              config.text ?? '',
+        type:              config.type ?? 'text',
+        recipient_fullname: config.recipient_fullname ?? '',
+        sender_fullname:   config.sender_fullname ?? '',
+        attributes:        config.attributes ?? {},
+        metadata:          config.metadata ?? '',
+        channel_type:      config.channel_type ?? '',
       }));
 
       // 3. Wait for session_started before opening the mic/recorder.
