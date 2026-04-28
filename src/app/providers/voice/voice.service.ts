@@ -255,6 +255,9 @@ export class VoiceService {
         break;
       case 'speaking':
         this._isAcquisitionBlocked$.next(true);
+        // Mute microphone to prevent echo: while the bot is speaking, mic audio
+        // must not be forwarded to the proxy (no AEC available).
+        this.voiceStreaming.setAudioMuted(true);
         // Reset TTS scheduling so new chunks play from now, not a stale future time.
         this.ttsNextPlayTime = this.ttsPlayContext?.currentTime ?? 0;
         // Emit the text being spoken so UI can display it alongside the audio.
@@ -271,6 +274,10 @@ export class VoiceService {
           if (this._unblockSafetyTimer !== null) clearTimeout(this._unblockSafetyTimer);
           this._unblockSafetyTimer = setTimeout(() => this._flushTtsUnblock(), 15000);
         } else {
+          // No audio sources pending — playback was already complete (or audio was empty).
+          // Unmute and signal the proxy synchronously.
+          this.voiceStreaming.setAudioMuted(false);
+          this.voiceStreaming.sendPlaybackComplete();
           this._isAcquisitionBlocked$.next(false);
         }
         break;
@@ -324,6 +331,10 @@ export class VoiceService {
       clearTimeout(this._unblockSafetyTimer);
       this._unblockSafetyTimer = null;
     }
+    // TTS playback is complete — unmute mic and notify the proxy so it can
+    // transition to LISTENING and start accepting the next user utterance.
+    this.voiceStreaming.setAudioMuted(false);
+    this.voiceStreaming.sendPlaybackComplete();
     this._isAcquisitionBlocked$.next(false);
   }
 

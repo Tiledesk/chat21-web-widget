@@ -52,6 +52,8 @@ export class VoiceStreamingService {
   private pendingStartFail: ((err: Error) => void) | null = null;
   /** Stream esterno: non fermare le tracce in `cleanup` (le gestisce il chiamante, es. VoiceService). */
   private streamSharedWithIngress = false;
+  /** When true, mic audio chunks are not forwarded to the proxy WebSocket. */
+  private _audioMuted = false;
   private pendingSharedStream?: MediaStream;
   private pendingConfig?: VoiceStreamingSessionConfig;
   /** Session ID assigned by the proxy (from session_started payload). Used for log correlation. */
@@ -254,7 +256,9 @@ export class VoiceStreamingService {
       this.mediaRecorder.ondataavailable = (e: BlobEvent) => {
         if (e.data && e.data.size > 0) {
           this.localChunks.push(e.data);
-          this.sendChunkIfOpen(socket, e.data);
+          if (!this._audioMuted) {
+            this.sendChunkIfOpen(socket, e.data);
+          }
         }
       };
 
@@ -509,11 +513,33 @@ export class VoiceStreamingService {
     );
   }
 
+  /**
+   * Mute or unmute microphone audio forwarding to the proxy.
+   * Call `setAudioMuted(true)` when the proxy starts speaking (to prevent echo),
+   * and `setAudioMuted(false)` after TTS playback ends.
+   */
+  setAudioMuted(muted: boolean): void {
+    this._audioMuted = muted;
+    this.logger.info(`[VoiceStreaming] audio ${muted ? 'muted' : 'unmuted'}`);
+  }
+
+  /**
+   * Send `{ event: "tts_playback_complete" }` to the proxy, signalling that TTS
+   * playback has finished and the microphone is ready to receive user speech.
+   */
+  sendPlaybackComplete(): void {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify({ event: 'tts_playback_complete' }));
+      this.logger.info('[VoiceStreaming] tts_playback_complete sent');
+    }
+  }
+
   private cleanup(): void {
     this.logger.info('[VoiceStreaming] cleanup', { state: this._currentState, sessionId: this.currentSessionId });
     this.audioChunkCount = 0;
     this.totalAudioBytesSent = 0;
     this.currentSessionId = undefined;
+    this._audioMuted = false;
     // If cleanup() is called externally while start() is still pending (e.g. stop() during
     // a mid-connect state), reject the stranded start() promise so the caller isn't hung.
     if (this.pendingStartFail) {
