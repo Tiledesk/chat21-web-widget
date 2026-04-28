@@ -479,7 +479,7 @@ export class VoiceStreamingService {
 
   private buildWebSocketUrl(base: string, config: VoiceStreamingSessionConfig & { mimeType: string }): string {
     const params = new URLSearchParams();
-    params.set('token', config.token);
+    params.set('token', config.token.replace(/^JWT\s+/i, ''));
     if (config.sttProvider) {
       params.set('sttProvider', config.sttProvider);
     }
