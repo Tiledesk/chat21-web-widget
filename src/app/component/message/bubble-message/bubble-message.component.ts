@@ -48,7 +48,11 @@ export class BubbleMessageComponent implements OnInit {
   constructor(public sanitizer: DomSanitizer, public voiceService: VoiceService) { }
 
   ngOnInit() {
-    // console.log("---- > MSG:", this.message);
+    // If this TTS message arrived while the voice proxy was active, mark it so
+    // audio-sync never replays it after the session ends.
+    if (isAudioTTS(this.message) && this.voiceService.isWssVoiceActive && this.message?.uid) {
+      this.voiceService.markProxyHandled(this.message.uid);
+    }
   }
 
   ngOnChanges() {

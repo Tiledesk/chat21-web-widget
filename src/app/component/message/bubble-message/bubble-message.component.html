@@ -64,14 +64,15 @@
         [stylesMap]="stylesMap">
       </chat-audio>
 
-      <!-- TTS player: only when voice proxy is NOT active (avoids double playback) -->
-      <chat-audio-sync *ngIf="isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async)"
+      <!-- TTS player: only when voice proxy is NOT active (avoids double playback)
+           and the message was not already played by the proxy (avoids replay on session end) -->
+      <chat-audio-sync *ngIf="isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && !voiceService.wasProxyHandled(message?.uid)"
         [message]="message"
         [color]="fontColor">
       </chat-audio-sync>
 
-      <!-- Text fallback for TTS messages when voice proxy is handling audio -->
-      <chat-text *ngIf="isAudioTTS(message) && (voiceService.isWssVoiceActive$ | async) && message?.text"
+      <!-- Text fallback for TTS messages that were (or are being) handled by the voice proxy -->
+      <chat-text *ngIf="isAudioTTS(message) && ((voiceService.isWssVoiceActive$ | async) || voiceService.wasProxyHandled(message?.uid)) && message?.text"
         [text]="message?.text"
         [color]="fontColor">
       </chat-text>
