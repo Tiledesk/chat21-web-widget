@@ -191,6 +191,11 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
       // Guard: stop accepting transcript text once the proxy is processing (thinking/speaking)
       if (text && !this.isBotSpeaking) {
         this.textInputTextArea = text;
+        if (isFinal) {
+          // Publish the transcribed user message to the Chat21 conversation.
+          // The proxy only publishes the bot reply; the user-side message must be sent explicitly.
+          this.sendMessage(text, TYPE_MSG_TEXT);
+        }
       }
     });
 
@@ -200,7 +205,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     this.botSpeakingSub = this.voiceService.isAcquisitionBlocked$.subscribe((blocked) => {
       this.isBotSpeaking = blocked;
       if (blocked) {
-        // Proxy has processed the transcript and published it — clear the preview
+        // Proxy has started thinking/speaking — clear the textarea preview
         this.textInputTextArea = '';
       }
     });
