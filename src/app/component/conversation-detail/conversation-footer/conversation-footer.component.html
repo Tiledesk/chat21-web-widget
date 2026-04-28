@@ -67,11 +67,11 @@
 
 
 
-        <div *ngIf="!isStopRec" class="visible-text-area" [class.stream-active]="isStreamAudioActive" [class.hasError]="showAlertEmoji" [class.disabled] = "( isConversationArchived || hideTextReply)? true : null">
+        <div *ngIf="!isStopRec" class="visible-text-area" [class.stream-active]="isStreamAudioActive || isStreamAudioConnecting" [class.hasError]="showAlertEmoji" [class.disabled] = "( isConversationArchived || hideTextReply)? true : null">
             <!-- isFilePendingToUpload || -->
         <textarea
             [attr.disabled] = "(hideTextReply)? true : null"
-            [attr.readonly]="isStreamAudioActive ? true : null"
+            [attr.readonly]="(isStreamAudioActive || isStreamAudioConnecting) ? true : null"
             [class.voice-preview]="isStreamAudioActive && !!textInputTextArea"
             [attr.placeholder] ="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
             start-focus-chat21-conversation-component
@@ -114,13 +114,13 @@
         <!-- ICON STREAM / CHIUDI STREAM (cerchio, icone bianche su iconColor) -->
         <div *ngIf="showAudioStreamFooterButton" tabindex="-1" id="chat21-button-stream"
             class="chat21-textarea-button chat21-stream-button"
-            [class.active]="isStreamAudioActive || (!textInputTextArea && !hideTextReply)"
-            [class.chat21-stream-button--expanded]="isStreamAudioActive"
-            (click)="onStreamPressed($event)" [attr.aria-label]="isStreamAudioActive ? (translationMap?.get('CLOSE') || 'Chiudi stream') : (translationMap?.get('STREAM_AUDIO') || 'Stream audio')"
+            [class.active]="isStreamAudioActive || isStreamAudioConnecting || (!textInputTextArea && !hideTextReply)"
+            [class.chat21-stream-button--expanded]="isStreamAudioActive || isStreamAudioConnecting"
+            (click)="onStreamPressed($event)" [attr.aria-label]="(isStreamAudioActive || isStreamAudioConnecting) ? (translationMap?.get('CLOSE') || 'Chiudi stream') : (translationMap?.get('STREAM_AUDIO') || 'Stream audio')"
             [ngStyle]="{ 'background-color': stylesMap?.get('iconColor') || stylesMap?.get('themeColor') }">
             <chat-stream-audio-spectrum
                 mode="button"
-                [active]="isStreamAudioActive"
+                [active]="isStreamAudioActive || isStreamAudioConnecting"
                 [volume]="currentVolume"
                 [translationMap]="translationMap">
             </chat-stream-audio-spectrum>

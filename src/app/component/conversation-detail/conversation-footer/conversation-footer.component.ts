@@ -94,6 +94,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
 
   /** Stream audio UI: icona equalizer → X; alert con onde animate sopra il footer */
   isStreamAudioActive = false;
+  /** True while the WebSocket session is being established (between click and session_started). */
+  isStreamAudioConnecting = false;
   /** True while the bot's TTS audio is playing — mic segments are suppressed, spectrum turns grey. */
   isBotSpeaking = false;
   /** Sottoscrizione ai segmenti audio (VAD → WebM) dal {@link VoiceService}. */
@@ -807,9 +809,11 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     if (this.showAlertEmoji) {
       return;
     }
-    const turningOn = !this.isStreamAudioActive;
+    // Treat a click during connecting as a cancel request (same as turning off).
+    const turningOn = !this.isStreamAudioActive && !this.isStreamAudioConnecting;
     console.log('[CONV-FOOTER] onStreamPressed: turningOn', turningOn);
     if (turningOn) {
+      this.isStreamAudioConnecting = true;
       try {
         this.currentVolume = 0;
         await this.initVoice();
@@ -818,12 +822,15 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
         this.logger.error('[CONV-FOOTER] onStreamPressed: initVoice failed', e);
         this.isStreamAudioActive = false;
         this.ttsPlayback.cancelAll();
+      } finally {
+        this.isStreamAudioConnecting = false;
       }
     } else {
       await this.stopVoice();
       this.isStreamAudioActive = false;
       // Close-stream-button clicked: stop any playing/queued TTS audio.
       this.ttsPlayback.cancelAll();
+      this.isStreamAudioConnecting = false;
     }
     this.onStreamAudioActiveChange.emit(this.isStreamAudioActive);
     this.logger.log('[CONV-FOOTER] isStreamAudioActive', this.isStreamAudioActive);
