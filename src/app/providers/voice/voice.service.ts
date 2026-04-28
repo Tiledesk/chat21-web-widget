@@ -80,6 +80,14 @@ export class VoiceService {
   private ttsPlayContext?: AudioContext;
   private ttsNextPlayTime = 0;
 
+  // Tracks how many TTS audio sources are still decoding or playing.
+  // Incremented synchronously when a binary chunk arrives (before decodeAudioData).
+  // Decremented in src.onended (or on decode error).
+  private _activeTtsSources = 0;
+  // Set to true by the 'done' event; triggers acquisition unblock once all sources end.
+  private _unblockAfterTts = false;
+  private _unblockSafetyTimer: ReturnType<typeof setTimeout> | null = null;
+
   private readonly logger: LoggerService = LoggerInstance.getInstance();
 
   constructor(
@@ -219,7 +227,16 @@ export class VoiceService {
         this.ttsNextPlayTime = this.ttsPlayContext?.currentTime ?? 0;
         break;
       case 'done':
-        this._isAcquisitionBlocked$.next(false);
+        // Do not unblock immediately — the audio binary may still be decoding/playing.
+        // _activeTtsSources tracks pending sources; when the last one ends, acquisition unblocks.
+        if (this._activeTtsSources > 0) {
+          this._unblockAfterTts = true;
+          // Safety: force-unblock after 15 s in case onended never fires.
+          if (this._unblockSafetyTimer !== null) clearTimeout(this._unblockSafetyTimer);
+          this._unblockSafetyTimer = setTimeout(() => this._flushTtsUnblock(), 15000);
+        } else {
+          this._isAcquisitionBlocked$.next(false);
+        }
         break;
       case 'error': {
         const errorMsg = typeof msg.message === 'string' ? msg.message : 'Voice session error';
@@ -234,6 +251,9 @@ export class VoiceService {
 
   /** Chunk TTS: ogni buffer deve essere decodificabile da `decodeAudioData` (es. segmento WebM/Opus completo). */
   private async playWsTtsChunk(buf: ArrayBuffer): Promise<void> {
+    // Increment SYNCHRONOUSLY before any await so the 'done' event handler (which arrives
+    // on the next WebSocket message — a different event-loop tick) sees a non-zero count.
+    this._activeTtsSources++;
     try {
       if (!this.ttsPlayContext || this.ttsPlayContext.state === 'closed') {
         this.ttsPlayContext = new AudioContext();
@@ -247,9 +267,28 @@ export class VoiceService {
       const t0 = Math.max(ctx.currentTime, this.ttsNextPlayTime);
       src.start(t0);
       this.ttsNextPlayTime = t0 + audioBuf.duration;
+      src.onended = () => this._onTtsSourceEnded();
     } catch (e) {
+      this._onTtsSourceEnded();
       this.logger.log('[VoiceService] chunk TTS non decodificabile (formato chunk?)', e);
     }
+  }
+
+  private _onTtsSourceEnded(): void {
+    this._activeTtsSources = Math.max(0, this._activeTtsSources - 1);
+    if (this._unblockAfterTts && this._activeTtsSources === 0) {
+      this._flushTtsUnblock();
+    }
+  }
+
+  private _flushTtsUnblock(): void {
+    this._unblockAfterTts = false;
+    this._activeTtsSources = 0;
+    if (this._unblockSafetyTimer !== null) {
+      clearTimeout(this._unblockSafetyTimer);
+      this._unblockSafetyTimer = null;
+    }
+    this._isAcquisitionBlocked$.next(false);
   }
 
   async stopSession(options?: { discardInProgressSegment?: boolean}): Promise<{ voiceIngressResultUrl: string | null }> {
@@ -269,6 +308,12 @@ export class VoiceService {
     }
     this.ttsPlayContext = undefined;
     this.ttsNextPlayTime = 0;
+    this._activeTtsSources = 0;
+    this._unblockAfterTts = false;
+    if (this._unblockSafetyTimer !== null) {
+      clearTimeout(this._unblockSafetyTimer);
+      this._unblockSafetyTimer = null;
+    }
 
     let voiceIngressResultUrl: string | null = null;
     if (this.voiceIngressConfig) {
