@@ -163,6 +163,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
 
   // ========== begin:: stream audio ======= //
   public isStreamAudioActive = false;
+  public isStreamAudioConnecting = false;
   // ========== end:: stream audio ======= //
 
   @ViewChild(ConversationFooterComponent) conversationFooter: ConversationFooterComponent
@@ -252,7 +253,10 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'ATTACHMENT',
       'EMOJI',
       'CLOSE_CHAT',
-      'CLOSE'
+      'CLOSE',
+      'VOICE_CONNECTING',
+      'VOICE_LISTENING',
+      'VOICE_PROCESSING'
     ];
 
     const keysContent = [
@@ -1398,13 +1402,22 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   onStreamAudioActiveChange(event: boolean){
     this.isStreamAudioActive = event
   }
+  /** CALLED BY: conv-footer when connecting state changes */
+  onStreamAudioConnectingChange(event: boolean){
+    this.isStreamAudioConnecting = event
+  }
+  /** CALLED BY: conv-footer component */
+  onCloseChatButtonClickedFN(event){
+    this.logger.debug('[CONV-COMP] onCloseChatButtonClicked::::', event)
+    this.onCloseChat()
+  }
 
   /**
    * True quando è visibile il pulsante chiudi stream (`.close-stream-button`, `isStreamAudioActive`).
    * Solo in quel caso il bottom del foglio include `--chat-footer-stream-button-height`.
    */
   closeStreamButtonActiveForSheetBottom(): boolean {
-    return !!(this.g?.showAudioStreamFooterButton && this.isStreamAudioActive);
+    return !!(this.g?.showAudioStreamFooterButton && (this.isStreamAudioActive || this.isStreamAudioConnecting));
   }
   // =========== END: event emitter function ====== //
 
