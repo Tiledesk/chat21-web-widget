@@ -4,8 +4,10 @@ import { MessageModel } from 'src/chat21-core/models/message';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
 import { UploadService } from 'src/chat21-core/providers/abstract/upload.service';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
-import { MESSAGE_TYPE_INFO, MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS } from 'src/chat21-core/utils/constants';
+import { MESSAGE_TYPE_INFO, MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, TYPE_MSG_URL_PREVIEW } from 'src/chat21-core/utils/constants';
 import { isCarousel, isEmojii, isFirstMessage, isFrame, isImage, isInfo, isLastMessage, isMine, isSameSender, messageType } from 'src/chat21-core/utils/utils-message';
+import { extractUrlsFromText } from 'src/app/utils/url-utils';
+import { extractUrlsFromJsonSources, parseJsonSources } from 'src/app/utils/json-sources-utils';
 
 @Component({
   selector: 'chat-conversation-content',
@@ -92,6 +94,14 @@ export class ConversationContentComponent implements OnInit {
 
   }
 
+
+  isEmptyUrlPreview(message: MessageModel): boolean {
+    if (message?.type !== TYPE_MSG_URL_PREVIEW) return false;
+    const parsedSources = parseJsonSources(message.text);
+    const sourcesUrls = extractUrlsFromJsonSources(parsedSources);
+    const textUrls = sourcesUrls.length > 0 ? sourcesUrls : extractUrlsFromText(message.text);
+    return textUrls.length === 0;
+  }
 
   /**
    *
