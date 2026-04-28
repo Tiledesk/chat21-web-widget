@@ -8,6 +8,9 @@ import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 import { isAudio, isFile, isFrame, isImage, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
 import { JsonSourceItem } from '../json-sources/json-sources.component';
+import { UrlPreviewService } from 'src/app/providers/url-preview.service';
+import { extractUrlsFromText } from 'src/app/utils/url-utils';
+import { extractUrlsFromJsonSources, mergeJsonSourcesMissingFields } from 'src/app/utils/json-sources-utils';
 
 @Component({
   selector: 'chat-bubble-message',
@@ -38,6 +41,7 @@ export class BubbleMessageComponent implements OnInit {
   sizeImage : { width: number, height: number}
   fullnameColor: string;
   jsonSources: JsonSourceItem[] | null = null;
+  private urlPreviewReqId = 0;
   @HostBinding('class.no-background') get hostNoBackground() {
     // When rendering json_resources we want the inner panel to define visuals,
     // not the standard chat bubble background.
@@ -47,7 +51,10 @@ export class BubbleMessageComponent implements OnInit {
     return this.jsonSources !== null;
   }
   private logger: LoggerService = LoggerInstance.getInstance()
-  constructor(public sanitizer: DomSanitizer) { }
+  constructor(
+    public sanitizer: DomSanitizer,
+    private urlPreviewService: UrlPreviewService
+  ) { }
 
   ngOnInit() {
     // console.log("---- > MSG:", this.message);
@@ -65,8 +72,54 @@ export class BubbleMessageComponent implements OnInit {
       this.fullnameColor = getColorBck(this.message.sender_fullname)
     }
 
-    this.jsonSources = this.parseJsonSources(this.message?.text);
+    const parsedSources = this.parseJsonSources(this.message?.text);
+    this.jsonSources = parsedSources;
 
+    // 1) extract urls from parsed jsonSources (if any)
+    const urlsFromJsonSources = extractUrlsFromJsonSources(parsedSources).slice(0, 10);
+
+    // 2) fallback: extract urls from raw text
+    const urls = urlsFromJsonSources.length > 0
+      ? urlsFromJsonSources
+      : extractUrlsFromText(this.message?.text, 10);
+
+    // 3) async enrich via service and merge into jsonSources
+    this.tryUrlPreviewFromMessage(urls, parsedSources);
+
+  }
+
+  private async tryUrlPreviewFromMessage(urls: string[], baseSources: JsonSourceItem[] | null): Promise<void> {
+    if (urls.length === 0) return;
+
+    const reqId = ++this.urlPreviewReqId;
+    const previewItems = await this.fetchUrlPreviewObjects(urls);
+    if (reqId !== this.urlPreviewReqId) return; // stale response
+
+    if (previewItems.length > 0) {
+      const current = baseSources && baseSources.length > 0 ? baseSources : null;
+      if (current) {
+        this.jsonSources = mergeJsonSourcesMissingFields(current, previewItems);
+      } else if (this.jsonSources === null) {
+        // If message wasn't a jsonSources payload, show preview results as sources.
+        this.jsonSources = previewItems;
+      }
+    }
+  }
+
+  /**
+   * Given a list of URLs, calls POST {{base_url}}/{{id_project}}/url-preview
+   * and maps the response to JsonSourceItem[] for the UI component.
+   */
+  private async fetchUrlPreviewObjects(urls: string[]): Promise<JsonSourceItem[]> {
+    const items = await this.urlPreviewService.previewUrls(urls);
+    return (items || []).map((x) => ({
+      title: x.title || x.siteName || x.url,
+      link: x.url,
+      description: x.description,
+      image: x.image,
+      favicon: x.favicon,
+      favicon_hd: x.favicon_hd
+    }));
   }
 
   private parseJsonSources(text?: string): JsonSourceItem[] | null {
@@ -96,7 +149,8 @@ export class BubbleMessageComponent implements OnInit {
         return resources ? this.mapResources(resources) : null;
       }
       if (!resources || resources.length === 0) return null;
-      return this.mapResources(resources);
+      const mapped = this.mapResources(resources);
+      return mapped.length > 0 ? mapped : null;
     } catch (e) {
       return null;
     }
@@ -105,7 +159,19 @@ export class BubbleMessageComponent implements OnInit {
   private parseJsonLenient(input: string): any {
     const trimmed = (input || '').trim();
     try {
-      return JSON.parse(trimmed);
+      const parsed = JSON.parse(trimmed);
+      // Sometimes JSON arrives as a *stringified JSON* (escaped quotes), e.g. "\"[{...}]\"".
+      // If so, parse one more time (best-effort).
+      if (typeof parsed === 'string') {
+        const inner = parsed.trim();
+        if (
+          (inner.startsWith('[') && inner.endsWith(']')) ||
+          (inner.startsWith('{') && inner.endsWith('}'))
+        ) {
+          return this.parseJsonLenient(inner);
+        }
+      }
+      return parsed;
     } catch {
       // common cases in chat messages:
       // - markdown code fences ```json ... ```
@@ -115,21 +181,44 @@ export class BubbleMessageComponent implements OnInit {
         .replace(/```$/i, '')
         .trim();
       const withoutTrailingCommas = withoutFences.replace(/,\s*([}\]])/g, '$1');
-      return JSON.parse(withoutTrailingCommas);
+      const parsed = JSON.parse(withoutTrailingCommas);
+      if (typeof parsed === 'string') {
+        const inner = parsed.trim();
+        if (
+          (inner.startsWith('[') && inner.endsWith(']')) ||
+          (inner.startsWith('{') && inner.endsWith('}'))
+        ) {
+          return this.parseJsonLenient(inner);
+        }
+      }
+      return parsed;
     }
   }
 
   private mapResources(resources: any[]): JsonSourceItem[] {
     return (resources || [])
       .filter((x: any) => x && typeof x === 'object')
-      .map((x: any) => ({
-        title: typeof x.title === 'string' ? x.title : undefined,
-        link: typeof x.link === 'string' ? x.link : undefined,
-        description: typeof x.description === 'string' ? x.description : undefined,
-        favicon: typeof x.favicon === 'string' ? x.favicon : undefined,
-        favicon_hd: typeof x.favicon_hd === 'string' ? x.favicon_hd : undefined,
-        image: typeof x.image === 'string' ? x.image : undefined,
-      }));
+      .map((x: any) => {
+        // Support alternative schema:
+        // [{ source_name: <url>, source_file_name: <title> }, ...]
+        const sourceName = typeof x.source_name === 'string' ? x.source_name : undefined;
+        const sourceFileName = typeof x.source_file_name === 'string' ? x.source_file_name : undefined;
+        if (sourceName && sourceFileName) {
+          return {
+            title: sourceFileName,
+            link: sourceName
+          } as JsonSourceItem;
+        }
+        return {
+          title: typeof x.title === 'string' ? x.title : undefined,
+          link: typeof x.link === 'string' ? x.link : undefined,
+          description: typeof x.description === 'string' ? x.description : undefined,
+          favicon: typeof x.favicon === 'string' ? x.favicon : undefined,
+          favicon_hd: typeof x.favicon_hd === 'string' ? x.favicon_hd : undefined,
+          image: typeof x.image === 'string' ? x.image : undefined,
+        } as JsonSourceItem;
+      })
+      .filter((it: JsonSourceItem) => !!it.link && !!it.title);
   }
 
   /**

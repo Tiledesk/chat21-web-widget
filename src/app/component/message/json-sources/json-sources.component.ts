@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { getTopLevelDomainFromUrl } from 'src/app/utils/url-utils';
 
 export type JsonSourceItem = {
   title?: string;
@@ -32,9 +33,9 @@ export class JsonSourcesComponent {
   getFavicon(item: JsonSourceItem): string | null {
     const explicit = (item?.favicon_hd || item?.favicon || '').trim();
     if (explicit) return explicit;
-    const hostname = this.safeHostname(item?.link || '');
-    if (!hostname) return null;
-    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostname)}&sz=128`;
+    const domain = getTopLevelDomainFromUrl(item?.link || '');
+    if (!domain) return null;
+    return `https://${domain}/favicon.ico`;
   }
 
   getHostname(item: JsonSourceItem): string {
@@ -54,6 +55,10 @@ export class JsonSourcesComponent {
     if (!this.items) return [];
     const normalizedLimit = Math.max(1, this.limit || 1);
     return this.showAll ? this.items : this.items.slice(0, normalizedLimit);
+  }
+
+  get headerFavicons(): JsonSourceItem[] {
+    return (this.items || []).filter(i => this.getFavicon(i)).slice(0, 3);
   }
 
   get canExpand(): boolean {
