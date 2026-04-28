@@ -58,6 +58,9 @@ export const TYPE_MSG_EMAIL = 'email';
 export const TYPE_MSG_FORM = 'form';
 export const TYPE_MSG_URL_PREVIEW = 'url_preview';
 
+export const JSON_SOURCE_FIELD_URL   = 'source_name';
+export const JSON_SOURCE_FIELD_TITLE = 'source_file_name';
+
 export const MAX_WIDTH_IMAGES = 230;
 export const MIN_WIDTH_IMAGES = 130;
 export const TIME_TYPING_MESSAGE = 2000;
