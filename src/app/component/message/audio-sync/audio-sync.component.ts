@@ -52,6 +52,7 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   private streamAbort?: AbortController;
   private mediaSourceObjectUrl?: string;
   private stopAllSub?: Subscription;
+  private preemptSub?: Subscription;
 
   constructor(
     private readonly cdr: ChangeDetectorRef,
@@ -176,6 +177,28 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
       }
       this.cdr.detectChanges();
     });
+
+    // Preempt signal: a newer message requested start while this one was playing.
+    // Only react when the emitted id matches this component's own ownerId.
+    this.preemptSub = this.ttsPlayback.preemptPlayback$.subscribe((stoppedId) => {
+      if (stoppedId !== this.playbackOwnerId) {
+        return;
+      }
+      this.playbackStarted = false;
+      this.cleanupStreaming();
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
+      this.markAllWordsPast();
+      if (this.message) {
+        this.message.isJustRecived = false;
+      }
+      this.cdr.detectChanges();
+      // No releaseIfCurrent call — the coordinator already cleared currentOwnerId before emitting.
+    });
   }
 
   ngOnDestroy(): void {
@@ -184,6 +207,8 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.cleanupStreaming();
     this.stopAllSub?.unsubscribe();
     this.stopAllSub = undefined;
+    this.preemptSub?.unsubscribe();
+    this.preemptSub = undefined;
 
     const audio = this.audioRef?.nativeElement;
     if (audio) {

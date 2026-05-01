@@ -113,6 +113,8 @@ export class VoiceService {
   // Incremented synchronously when a binary chunk arrives (before decodeAudioData).
   // Decremented in src.onended (or on decode error).
   private _activeTtsSources = 0;
+  // References to active AudioBufferSourceNodes so they can be stopped on preemption.
+  private _activeTtsSourceNodes: AudioBufferSourceNode[] = [];
   // Set to true by the 'done' event; triggers acquisition unblock once all sources end.
   private _unblockAfterTts = false;
   private _unblockSafetyTimer: ReturnType<typeof setTimeout> | null = null;
@@ -269,6 +271,8 @@ export class VoiceService {
         // Mute microphone to prevent echo: while the bot is speaking, mic audio
         // must not be forwarded to the proxy (no AEC available).
         this.voiceStreaming.setAudioMuted(true);
+        // Cancel any audio still playing from a previous turn before scheduling new chunks.
+        this._cancelAllTtsAudio();
         // Reset TTS scheduling so new chunks play from now, not a stale future time.
         this.ttsNextPlayTime = this.ttsPlayContext?.currentTime ?? 0;
         const preview = typeof msg.text === 'string' ? msg.text.slice(0, 80) : '';
@@ -294,7 +298,8 @@ export class VoiceService {
           // LISTENING via the 'listening' event.
           this.logger.log('[VoiceService] done – no pending TTS, sending playback complete immediately');
           this.voiceStreaming.sendPlaybackComplete();
-          this._isAcquisitionBlocked$.next(false);
+          // Do NOT unblock acquisition here — proxy will send 'listening' which is
+          // the single source of truth for unblocking both UI and mic.
         }
         break;
       case 'error': {
@@ -328,20 +333,47 @@ export class VoiceService {
       const t0 = Math.max(ctx.currentTime, this.ttsNextPlayTime);
       src.start(t0);
       this.ttsNextPlayTime = t0 + audioBuf.duration;
+      this._activeTtsSourceNodes.push(src);
       this.logger.log('[VoiceService] TTS chunk scheduled', { durationS: audioBuf.duration.toFixed(3), startsAtS: t0.toFixed(3), activeTtsSources: this._activeTtsSources });
-      src.onended = () => this._onTtsSourceEnded();
+      src.onended = () => this._onTtsSourceEnded(src);
     } catch (e) {
       this._onTtsSourceEnded();
       this.logger.warn('[VoiceService] TTS chunk decode failed', e);
     }
   }
 
-  private _onTtsSourceEnded(): void {
+  private _onTtsSourceEnded(src?: AudioBufferSourceNode): void {
     this._activeTtsSources = Math.max(0, this._activeTtsSources - 1);
+    if (src) {
+      const idx = this._activeTtsSourceNodes.indexOf(src);
+      if (idx !== -1) { this._activeTtsSourceNodes.splice(idx, 1); }
+    }
     this.logger.log('[VoiceService] TTS source ended', { activeTtsSources: this._activeTtsSources, unblockPending: this._unblockAfterTts });
     if (this._unblockAfterTts && this._activeTtsSources === 0) {
       this._flushTtsUnblock(false);
     }
+  }
+
+  /**
+   * Immediately stops all currently playing/scheduled TTS audio sources.
+   * Called when a new `speaking` event arrives (new bot turn) to prevent overlap with
+   * the previous turn's audio, and during `stopSession`.
+   * Clears `onended` callbacks BEFORE stopping so that `_onTtsSourceEnded` is NOT
+   * invoked for cancelled nodes (avoiding spurious `sendPlaybackComplete` calls).
+   */
+  private _cancelAllTtsAudio(): void {
+    if (this._unblockSafetyTimer !== null) {
+      clearTimeout(this._unblockSafetyTimer);
+      this._unblockSafetyTimer = null;
+    }
+    for (const src of this._activeTtsSourceNodes) {
+      src.onended = null;
+      try { src.stop(); } catch { /* already ended — ignore */ }
+    }
+    this._activeTtsSourceNodes = [];
+    this._activeTtsSources = 0;
+    this._unblockAfterTts = false;
+    this.logger.log('[VoiceService] TTS cancelled – all audio sources stopped');
   }
 
   private _flushTtsUnblock(fromSafetyTimer = false): void {
@@ -359,8 +391,9 @@ export class VoiceService {
     // Signal the proxy that TTS playback is complete.  The proxy will transition
     // to LISTENING and send a 'listening' event back; the mic is unmuted there
     // (not here) so it is live only when the proxy is confirmed ready.
+    // Do NOT call _isAcquisitionBlocked$.next(false) here — 'listening' is the
+    // single source of truth so that UI and mic unblock atomically.
     this.voiceStreaming.sendPlaybackComplete();
-    this._isAcquisitionBlocked$.next(false);
   }
 
   async stopSession(options?: { discardInProgressSegment?: boolean}): Promise<{ voiceIngressResultUrl: string | null }> {
@@ -378,14 +411,9 @@ export class VoiceService {
     } catch {
       /* ignore */
     }
+    this._cancelAllTtsAudio();
     this.ttsPlayContext = undefined;
     this.ttsNextPlayTime = 0;
-    this._activeTtsSources = 0;
-    this._unblockAfterTts = false;
-    if (this._unblockSafetyTimer !== null) {
-      clearTimeout(this._unblockSafetyTimer);
-      this._unblockSafetyTimer = null;
-    }
 
     let voiceIngressResultUrl: string | null = null;
     if (this.voiceIngressConfig) {
