@@ -3,7 +3,8 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 /**
  * Garantisce un solo messaggio TTS in riproduzione alla volta.
- * Se arrivano più messaggi TTS, vengono riprodotti in coda (FIFO) senza interrompere quello corrente.
+ * Quando arriva un nuovo messaggio TTS mentre un altro è in corso, quello vecchio viene
+ * interrotto immediatamente (preemption) e il nuovo parte subito.
  */
 @Injectable({ providedIn: 'root' })
 export class TtsAudioPlaybackCoordinator {
@@ -23,8 +24,16 @@ export class TtsAudioPlaybackCoordinator {
   readonly stopAllPlayback$: Observable<void> = this._stopAll$.asObservable();
 
   /**
+   * Emits the ownerId of the component being preempted (stopped mid-playback by a newer message).
+   * Only the component whose ownerId matches should react — unlike stopAll$ which targets everyone.
+   */
+  private readonly _preemptCurrent$ = new Subject<string>();
+  readonly preemptPlayback$: Observable<string> = this._preemptCurrent$.asObservable();
+
+  /**
    * Richiede l'avvio della riproduzione TTS per `ownerId`.
-   * Se non c'è nessun TTS attivo, parte subito; altrimenti viene messo in coda.
+   * Se un altro TTS è già in corso, viene interrotto immediatamente (preemption) e
+   * `ownerId` parte subito. Qualsiasi coda pendente viene svuotata.
    */
   requestStart(ownerId: string, start: () => void): void {
     const id = (ownerId || '').trim();
@@ -34,13 +43,18 @@ export class TtsAudioPlaybackCoordinator {
     if (this.currentOwnerId === id) {
       return;
     }
-    if (this.queue.some((j) => j.ownerId === id)) {
-      return;
-    }
+
     if (this.currentOwnerId) {
-      this.queue.push({ ownerId: id, start });
-      return;
+      // Preempt: signal only the evicted owner to stop (not a broadcast stopAll).
+      // This avoids stopping the component that is about to start playing.
+      const evicted = this.currentOwnerId;
+      this.queue.length = 0;
+      this.currentOwnerId = null;
+      this._preemptCurrent$.next(evicted);
+    } else {
+      this.queue.length = 0;
     }
+
     this.currentOwnerId = id;
     this._isTTSPlaying$.next(true);
     try {
