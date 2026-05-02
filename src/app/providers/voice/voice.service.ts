@@ -33,7 +33,7 @@ export class VoiceService {
   private sessionConstraints: MediaStreamConstraints = DEFAULT_VOICE_MEDIA_STREAM_CONSTRAINTS;
   private onRecordingComplete?: (result: VoiceSegmentPayload) => void;
   private enableTranscription = true;
-  private voiceIngressConfig: VoiceStreamingSessionConfig | null = null;
+  private voiceIngressConfig?: VoiceStreamingSessionConfig | null = null;
 
   private readonly audioSegmentSubject = new Subject<VoiceSegmentPayload>();
   
