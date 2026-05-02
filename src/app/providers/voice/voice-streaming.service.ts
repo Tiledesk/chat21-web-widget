@@ -570,6 +570,21 @@ export class VoiceStreamingService {
     }
   }
 
+  /**
+   * Send `{ event: "barge_in" }` to the proxy, requesting an immediate interruption
+   * of the ongoing TTS playback.  Use when the user explicitly wants to speak while
+   * the bot is talking (e.g. via a UI button or a client-side VAD onset).
+   *
+   * The proxy will stop the TTS stream and transition to LISTENING; the widget should
+   * handle the server-sent `barge_in` and `listening` events to update local state.
+   */
+  sendBargeIn(): void {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify({ event: 'barge_in' }));
+      this.logger.info('[VoiceStreaming] barge_in sent');
+    }
+  }
+
   private cleanup(): void {
     this.logger.info('[VoiceStreaming] cleanup', { state: this._currentState, sessionId: this.currentSessionId });
     this.audioChunkCount = 0;
