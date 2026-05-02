@@ -1,4 +1,6 @@
-import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, TYPE_MSG_URL_PREVIEW } from 'src/chat21-core/utils/constants';
@@ -10,13 +12,14 @@ import { UrlPreviewService } from 'src/app/providers/url-preview.service';
 import { extractUrlsFromText } from 'src/app/utils/url-utils';
 import { extractUrlsFromJsonSources, mergeJsonSourcesMissingFields, parseJsonSources } from 'src/app/utils/json-sources-utils';
 import { JsonSourceItem } from '../json-sources/json-sources.component';
+import { VoiceTtsKaraokeWord } from 'src/app/providers/voice/voice-streaming.types';
 
 @Component({
   selector: 'chat-bubble-message',
   templateUrl: './bubble-message.component.html',
   styleUrls: ['./bubble-message.component.scss']
 })
-export class BubbleMessageComponent implements OnInit {
+export class BubbleMessageComponent implements OnInit, OnDestroy {
 
   @Input() message: MessageModel;
   @Input() isSameSender: boolean;
@@ -28,6 +31,10 @@ export class BubbleMessageComponent implements OnInit {
   _isStreaming = false;
   /** Precomputed word list; rebuilt only when the message text changes. */
   _streamingWords: Array<{ word: string; index: number }> = [];
+  /** Live karaoke word states driven by voiceTtsKaraoke$ during an active WSS session. */
+  _wssKaraokeWords$?: Observable<VoiceTtsKaraokeWord[]>;
+
+  private _kSub?: Subscription;
   @Output() onBeforeMessageRender = new EventEmitter();
   @Output() onAfterMessageRender = new EventEmitter();
   @Output() onElementRendered = new EventEmitter<{ element: string; status: boolean }>();
@@ -59,6 +66,30 @@ export class BubbleMessageComponent implements OnInit {
     if (isAudioTTS(this.message) && this.voiceService.isWssVoiceActive && this.message?.uid) {
       this.voiceService.markProxyHandled(this.message.uid);
     }
+
+    // Set up karaoke observable for TTS messages during WSS sessions.
+    if (isAudioTTS(this.message) && this.message?.text) {
+      const text = this.message.text;
+      const rawWords = text.trim().split(/\s+/).filter((w) => w.length > 0);
+      // Always start as 'past' (fully visible). The karaoke RAF loop will drive
+      // words through future→active→past for the current speaking turn; using
+      // 'future' here would dimm old/history messages the moment voice opens.
+      const initialWords: VoiceTtsKaraokeWord[] = rawWords.map((w) => ({ text: w, state: 'past' as const }));
+
+      this._wssKaraokeWords$ = this.voiceService.voiceTtsKaraoke$.pipe(
+        startWith({ text, words: initialWords, activeIndex: -1 }),
+        map((frame) =>
+          frame.text === text
+            ? (frame.words as VoiceTtsKaraokeWord[])
+            : initialWords,
+        ),
+      );
+    }
+  }
+
+  ngOnDestroy(): void {
+    this._kSub?.unsubscribe();
+    this._kSub = undefined;
   }
 
   ngOnChanges(): void {
@@ -110,6 +141,10 @@ export class BubbleMessageComponent implements OnInit {
 
   trackWord(_index: number, item: { word: string; index: number }): number {
     return item.index;
+  }
+
+  trackKaraokeWord(index: number): number {
+    return index;
   }
 
   onBeforeMessageRenderFN(event: any): void {

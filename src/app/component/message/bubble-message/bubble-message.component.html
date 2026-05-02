@@ -71,8 +71,19 @@
         [color]="fontColor">
       </chat-audio-sync>
 
-      <!-- Text fallback for TTS messages that were (or are being) handled by the voice proxy -->
-      <chat-text *ngIf="isAudioTTS(message) && ((voiceService.isWssVoiceActive$ | async) || voiceService.wasProxyHandled(message?.uid)) && message?.text"
+      <!-- Karaoke display for TTS messages while a WSS voice session is active -->
+      <p *ngIf="isAudioTTS(message) && (voiceService.isWssVoiceActive$ | async) && _wssKaraokeWords$"
+         class="wss-karaoke"
+         [style.color]="fontColor">
+        <span *ngFor="let w of (_wssKaraokeWords$ | async); trackBy: trackKaraokeWord"
+              class="wss-word"
+              [class.future]="w.state === 'future'"
+              [class.active]="w.state === 'active'"
+              [class.past]="w.state === 'past'">{{ w.text }}&nbsp;</span>
+      </p>
+
+      <!-- Text fallback for TTS messages after the voice proxy session ended -->
+      <chat-text *ngIf="isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && voiceService.wasProxyHandled(message?.uid) && message?.text"
         [text]="message?.text"
         [color]="fontColor">
       </chat-text>

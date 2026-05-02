@@ -13,7 +13,12 @@ import {
 import { SpeechToTextProvider } from './STT&TTS/speech-provider.abstract';
 import { VadService } from './vad.service';
 import { VoiceStreamingService } from './voice-streaming.service';
-import { VoiceStreamingSessionConfig, VoiceWsControlMessage } from './voice-streaming.types';
+import {
+  VoiceTtsKaraokeFrame,
+  VoiceTtsKaraokeWord,
+  VoiceStreamingSessionConfig,
+  VoiceWsControlMessage,
+} from './voice-streaming.types';
 import { TtsAudioPlaybackCoordinator } from '../tts-audio-playback-coordinator.service';
 
 const VOICE_RECORDING_MIME = 'audio/webm';
@@ -122,6 +127,19 @@ export class VoiceService {
   // Set to true by the 'done' event; triggers acquisition unblock once all sources end.
   private _unblockAfterTts = false;
   private _unblockSafetyTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // ── WSS TTS Karaoke ──────────────────────────────────────────────────────────────────────────
+  private _kText = '';
+  private _kWords: Array<VoiceTtsKaraokeWord & { start: number; end: number }> = [];
+  private _kStartContextTime = 0;
+  private _kDuration = 0;
+  private _kRafId?: number;
+  private _kLastActiveIndex = -2;
+
+  private readonly _voiceTtsKaraokeSubject = new Subject<VoiceTtsKaraokeFrame>();
+  /** Emits word-state frames while WebSocket TTS audio plays; drives the karaoke highlight in bubble-message. */
+  readonly voiceTtsKaraoke$: Observable<VoiceTtsKaraokeFrame> = this._voiceTtsKaraokeSubject.asObservable();
+  // ─────────────────────────────────────────────────────────────────────────────────────────────
 
   private readonly logger: LoggerService = LoggerInstance.getInstance();
 
@@ -297,6 +315,7 @@ export class VoiceService {
         // Emit the text being spoken so UI can display it alongside the audio.
         if (typeof msg.text === 'string' && msg.text) {
           this.voiceTtsTextSubject.next(msg.text);
+          this._startTtsKaraoke(msg.text);
         }
         break;
       }
@@ -416,6 +435,7 @@ export class VoiceService {
     this._activeTtsSourceNodes = [];
     this._activeTtsSources = 0;
     this._unblockAfterTts = false;
+    this._stopTtsKaraoke(true);
     this.logger.log('[VoiceService] TTS cancelled – all audio sources stopped');
   }
 
@@ -431,6 +451,7 @@ export class VoiceService {
     } else {
       this.logger.log('[VoiceService] TTS unblock: all sources ended, sending playback complete');
     }
+    this._stopTtsKaraoke(true);
     // Signal the proxy that TTS playback is complete.  The proxy will transition
     // to LISTENING and send a 'listening' event back; the mic is unmuted there
     // (not here) so it is live only when the proxy is confirmed ready.
@@ -438,6 +459,76 @@ export class VoiceService {
     // single source of truth so that UI and mic unblock atomically.
     this.voiceStreaming.sendPlaybackComplete();
   }
+
+  // ── WSS TTS Karaoke helpers ───────────────────────────────────────────────
+
+  private _startTtsKaraoke(text: string): void {
+    this._stopTtsKaraoke(false);
+    this._kText = text;
+    const rawWords = text.trim().split(/\s+/).filter((w) => w.length > 0);
+    if (rawWords.length === 0) return;
+    // ~140 WPM → ~0.43 s/word (same estimate as audio-sync)
+    const duration = Math.max(1, rawWords.length * 0.43);
+    this._kDuration = duration;
+    const step = duration / rawWords.length;
+    this._kWords = rawWords.map((w, i) => ({
+      text: w,
+      start: i * step,
+      end: (i + 1) * step,
+      state: 'future' as const,
+    }));
+    this._kStartContextTime = this.ttsPlayContext?.currentTime ?? 0;
+    this._kLastActiveIndex = -2;
+    this._rafKaraokeLoop();
+  }
+
+  private _stopTtsKaraoke(markAllPast: boolean): void {
+    if (this._kRafId !== undefined) {
+      cancelAnimationFrame(this._kRafId);
+      this._kRafId = undefined;
+    }
+    if (markAllPast && this._kWords.length > 0) {
+      this._kWords.forEach((w) => { w.state = 'past'; });
+      this._voiceTtsKaraokeSubject.next({
+        text: this._kText,
+        words: this._kWords.map(({ text, state }) => ({ text, state })),
+        activeIndex: -1,
+      });
+      this._kWords = [];
+      this._kText = '';
+    }
+  }
+
+  private _rafKaraokeLoop(): void {
+    const elapsed = (this.ttsPlayContext?.currentTime ?? 0) - this._kStartContextTime;
+    let activeIndex = -1;
+
+    this._kWords.forEach((w) => {
+      if (elapsed >= w.end) {
+        w.state = 'past';
+      } else if (elapsed >= w.start && elapsed < w.end) {
+        w.state = 'active';
+        activeIndex = this._kWords.indexOf(w);
+      } else {
+        w.state = 'future';
+      }
+    });
+
+    if (activeIndex !== this._kLastActiveIndex) {
+      this._kLastActiveIndex = activeIndex;
+      this._voiceTtsKaraokeSubject.next({
+        text: this._kText,
+        words: this._kWords.map(({ text, state }) => ({ text, state })),
+        activeIndex,
+      });
+    }
+
+    if (elapsed < this._kDuration) {
+      this._kRafId = requestAnimationFrame(() => this._rafKaraokeLoop());
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
 
   async stopSession(options?: { discardInProgressSegment?: boolean}): Promise<{ voiceIngressResultUrl: string | null }> {
     const discard = options?.discardInProgressSegment === true;

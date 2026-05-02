@@ -55,3 +55,34 @@
         transform: translateY(0);
     }
 }
+
+// -- WSS TTS Karaoke ----------------------------------------------------------
+.wss-karaoke {
+    // Match chat-text (ShadowDom) visual layout so there's no jump when voice opens.
+    // font-size must be set explicitly: the parent has font-size:10px but chat-text
+    // overrides it via :host { font-size: var(--font-size-bubble-message, 14px) }.
+    display: block;
+    margin: 0;
+    padding: 12px 16px;
+    font-size: var(--font-size-bubble-message, 14px);
+    line-height: 1.4em;
+    font-weight: 300;
+    overflow: hidden;
+}
+
+.wss-word {
+    display: inline;
+    transition: opacity 120ms ease;
+
+    &.future {
+        opacity: 0.35;
+    }
+
+    &.active {
+        opacity: 1;
+    }
+
+    &.past {
+        opacity: 1;
+    }
+}
