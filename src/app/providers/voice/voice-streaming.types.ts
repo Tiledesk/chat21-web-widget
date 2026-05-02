@@ -97,3 +97,17 @@ export type VoiceWsControlMessage = {
   isFinal?: boolean;
   message?: string;
 } & Record<string, unknown>;
+
+/** Single word with its karaoke highlight state. */
+export interface VoiceTtsKaraokeWord {
+  text: string;
+  state: 'future' | 'active' | 'past';
+}
+
+/** Emitted on each word transition while TTS plays over WebSocket. */
+export interface VoiceTtsKaraokeFrame {
+  /** Full text of the utterance being spoken. */
+  text: string;
+  words: ReadonlyArray<VoiceTtsKaraokeWord>;
+  activeIndex: number;
+}
