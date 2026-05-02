@@ -25,5 +25,6 @@
     "authPersistence": "${AUTH_PERSISTENCE}",
     "enbedJs": "${ENBED_JS}",
     "brandSrc": "${BRAND_SRC}",
-    "voiceProxyWsBaseUrl": "${VOICE_PROXY_WS_BASE_URL}"
+    "voiceProxyWsUrl": "${VOICE_PROXY_WS_URL}",
+    "voiceProxyApiBaseUrl": "${VOICE_PROXY_API_BASE_URL}"
 }

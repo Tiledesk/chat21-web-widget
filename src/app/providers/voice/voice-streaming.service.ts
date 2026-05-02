@@ -65,7 +65,7 @@ export class VoiceStreamingService {
   /** Emits one debug log when the first chunk is dropped due to muting; reset on unmute. */
   private _mutedDropLogged = false;
 
-  constructor(private readonly appConfig: AppConfigService) {}
+  constructor(private readonly appConfig: AppConfigService) { }
 
   readonly state$: Observable<VoiceStreamingConnectionState> = this._state$.asObservable();
   readonly serverMessage$: Observable<VoiceStreamingServerMessage> = this._serverMessage$.asObservable();
@@ -84,15 +84,7 @@ export class VoiceStreamingService {
    * Returns `null` when no proxy URL is configured.
    */
   get proxyHttpBaseUrl(): string | null {
-    const raw = String(this.appConfig.getConfig()?.voiceProxyWsBaseUrl ?? '').trim();
-    if (!raw) return null;
-    try {
-      const url = new URL(raw);
-      url.protocol = url.protocol === 'wss:' ? 'https:' : 'http:';
-      return url.origin;
-    } catch {
-      return null;
-    }
+    return this.appConfig.getConfig()?.voiceProxyApiBaseUrl ?? '';
   }
 
   get connectionState(): VoiceStreamingConnectionState {
@@ -176,8 +168,8 @@ export class VoiceStreamingService {
           } else {
             // Socket closed before streaming started (connecting/open state) — reject start().
             const msg = ev.code === 4401 ? 'auth_failed'
-                      : ev.code === 4400 ? 'config_error'
-                      : `socket closed before streaming (code ${ev.code})`;
+              : ev.code === 4400 ? 'config_error'
+                : `socket closed before streaming (code ${ev.code})`;
             fail(new Error(msg));
           }
         }
@@ -244,16 +236,16 @@ export class VoiceStreamingService {
         lang: config.lang ?? 'it',
       });
       socket.send(JSON.stringify({
-        sender:            config.sender,
-        recipient:         config.recipient,
-        lang:              config.lang ?? 'it',
-        text:              config.text ?? '',
-        type:              config.type ?? 'text',
+        sender: config.sender,
+        recipient: config.recipient,
+        lang: config.lang ?? 'it',
+        text: config.text ?? '',
+        type: config.type ?? 'text',
         recipient_fullname: config.recipient_fullname ?? '',
-        sender_fullname:   config.sender_fullname ?? '',
-        attributes:        config.attributes ?? {},
-        metadata:          config.metadata ?? '',
-        channel_type:      config.channel_type ?? '',
+        sender_fullname: config.sender_fullname ?? '',
+        attributes: config.attributes ?? {},
+        metadata: config.metadata ?? '',
+        channel_type: config.channel_type ?? '',
       }));
 
       // 4. Wait for session_started before opening the mic/recorder.
@@ -662,7 +654,7 @@ export class VoiceStreamingService {
   }
 
   private resolveBaseUrl(override?: string): string {
-    const fromApp = String(this.appConfig.getConfig()?.voiceProxyWsBaseUrl ?? '').trim();
+    const fromApp = String(this.appConfig.getConfig()?.voiceProxyWsUrl ?? '').trim();
     const raw = (String(override ?? '').trim() || fromApp).trim();
     if (!raw) {
       throw new Error(
