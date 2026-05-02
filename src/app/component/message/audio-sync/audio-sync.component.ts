@@ -296,6 +296,21 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private startPlayback(audio: HTMLAudioElement): void {
     const messageSrc = (this.message as any)?.metadata?.src as string | undefined;
+
+    if (this.message?.type === 'tts') {
+      // Always route TTS through the proxy endpoint; fall back to metadata.src
+      // only if the proxy is not configured. metadata.src may be absent when
+      // tiledesk-server delegates synthesis to the proxy entirely, so this check
+      // must happen before the !messageSrc guard below.
+      const src = this.voiceService.proxyTtsStreamUrl ?? messageSrc;
+      if (!src) {
+        this.handlePlaybackError();
+        return;
+      }
+      this.startStreamingFromEndpoint(audio, src);
+      return;
+    }
+
     if (!messageSrc) {
       this.playbackStarted = false;
       this.ttsPlayback.releaseIfCurrent(this.playbackOwnerId);
@@ -304,14 +319,6 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.message.isJustRecived = false;
       }
       this.cdr.detectChanges();
-      return;
-    }
-
-    if (this.message?.type === 'tts') {
-      // Prefer the speech-proxy streaming endpoint over the tiledesk-server URL
-      // stored in metadata.src, so all TTS audio is routed through the proxy.
-      const src = this.voiceService.proxyTtsStreamUrl ?? messageSrc;
-      this.startStreamingFromEndpoint(audio, src);
       return;
     }
 
@@ -517,9 +524,6 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
       };
-      if (jwt) {
-        headers['Authorization'] = jwt;
-      }
 
       const response = await fetch(endpoint, {
         method: 'POST',
