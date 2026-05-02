@@ -10,7 +10,7 @@ describe('VoiceStreamingService', () => {
       providers: [
         {
           provide: AppConfigService,
-          useValue: { getConfig: () => ({ voiceProxyWsBaseUrl: '' }) },
+          useValue: { getConfig: () => ({ voiceProxyWsUrl: '' }) },
         },
       ],
     });

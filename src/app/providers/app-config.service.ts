@@ -40,8 +40,10 @@ export class AppConfigService {
     }
     // END GET BASE URL and create absolute url of remoteConfigUrl //
     const that = this;
-    return this.http.get(urlConfigFile).toPromise().then(data => {
-      that.appConfig = data;
+    return this.http.get(urlConfigFile).toPromise().then((data: any) => {
+      if (data) {
+        that.appConfig = data;
+      }
       }).catch(err => {
         console.error('error loadAppConfig', err);
       });
