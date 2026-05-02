@@ -145,6 +145,11 @@ export class VoiceService {
     return base ? `${base}/api/tts/stream` : null;
   }
 
+  get proxyTtsUrl(): string | null {
+    const base = this.voiceStreaming.proxyHttpBaseUrl;
+    return base ? `${base}/api/tts` : null;
+  }
+
   /**
    * Richiede il microfono, avvia VAD in ascolto (inizio/fine parlato) e registra in WebM per segmento.
    */

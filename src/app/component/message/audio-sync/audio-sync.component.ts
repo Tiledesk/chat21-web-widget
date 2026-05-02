@@ -17,6 +17,7 @@ import { Globals } from 'src/app/utils/globals';
 
 /** HAVE_METADATA: metadati già disponibili (tipico audio servito da cache). */
 const HAVE_METADATA = 1;
+const BROWSER_TTS_OUTPUT_FORMAT = 'mp3_44100_128';
 
 @Component({
   selector: 'chat-audio-sync',
@@ -238,16 +239,21 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     const messageSrc = (this.message as any)?.metadata?.src as string | undefined;
 
     if (this.message?.type === 'tts') {
-      // Always route TTS through the proxy endpoint; fall back to metadata.src
-      // only if the proxy is not configured. metadata.src may be absent when
-      // tiledesk-server delegates synthesis to the proxy entirely, so this check
-      // must happen before the !messageSrc guard below.
-      const src = this.voiceService.proxyTtsStreamUrl ?? messageSrc;
-      if (!src) {
-        this.handlePlaybackError();
+      const streamEndpoint = this.voiceService.proxyTtsStreamUrl;
+      const fullFileEndpoint = this.voiceService.proxyTtsUrl;
+      if (streamEndpoint) {
+        this.startStreamingFromEndpoint(audio, streamEndpoint, fullFileEndpoint, messageSrc);
         return;
       }
-      this.startStreamingFromEndpoint(audio, src);
+      if (fullFileEndpoint) {
+        this.fetchFullFileFromEndpoint(audio, fullFileEndpoint);
+        return;
+      }
+      if (messageSrc) {
+        this.playDirectUrl(audio, messageSrc);
+        return;
+      }
+      this.handlePlaybackError();
       return;
     }
 
@@ -262,7 +268,11 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
       return;
     }
 
-    audio.src = messageSrc;
+    this.playDirectUrl(audio, messageSrc);
+  }
+
+  private playDirectUrl(audio: HTMLAudioElement, src: string): void {
+    audio.src = src;
     try {
       audio.currentTime = 0;
     } catch {
@@ -271,16 +281,40 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     audio.play().catch(() => this.handlePlaybackError());
   }
 
-  private startStreamingFromEndpoint(audio: HTMLAudioElement, endpoint: string): void {
+  private startStreamingFromEndpoint(
+    audio: HTMLAudioElement,
+    endpoint: string,
+    fullFileEndpoint?: string | null,
+    directFallbackSrc?: string,
+  ): void {
     this.cleanupStreaming();
 
     const jwt = this.getJwtToken();
     const voiceSettings = this.getVoiceSettingsBody(); 
     const requestBody = this.buildTtsRequestBody(voiceSettings);
+    let fallbackUsed = false;
+    const fallback = () => {
+      if (fallbackUsed) {
+        this.handlePlaybackError();
+        return;
+      }
+      fallbackUsed = true;
+      this.cleanupStreaming();
+      if (fullFileEndpoint) {
+        this.fetchFullFileFromEndpoint(audio, fullFileEndpoint);
+        return;
+      }
+      if (directFallbackSrc) {
+        this.playDirectUrl(audio, directFallbackSrc);
+        return;
+      }
+      this.handlePlaybackError();
+    };
+
     // <audio src="..."> non può inviare header/body: serve fetch().
     const hasMse = typeof (window as any).MediaSource !== 'undefined';
     if (!hasMse) {
-      this.fetchAsBlobAndPlay(audio, endpoint, jwt, requestBody);
+      fallback();
       return;
     }
 
@@ -312,14 +346,15 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
         }
 
         const headerType = (response.headers.get('content-type') || '').split(';')[0].trim();
-        const mime = (headerType && MediaSourceCtor.isTypeSupported(headerType))
-          ? headerType
-          : 'audio/mpeg';
-
-        if (!MediaSourceCtor.isTypeSupported(mime)) {
-          this.cleanupStreaming();
+        if (headerType && !MediaSourceCtor.isTypeSupported(headerType)) {
           // Fallback: fetch completo e play via blob (no streaming).
-          this.fetchAsBlobAndPlay(audio, endpoint, jwt, requestBody);
+          fallback();
+          return;
+        }
+
+        const mime = headerType || 'audio/mpeg';
+        if (!MediaSourceCtor.isTypeSupported(mime)) {
+          fallback();
           return;
         }
 
@@ -360,15 +395,14 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
             ) as ArrayBuffer;
             sourceBuffer.appendBuffer(ab);
           } catch {
-            this.cleanupStreaming();
-            this.fetchAsBlobAndPlay(audio, endpoint, jwt, requestBody);
+            fallback();
           }
         };
 
         sourceBuffer.addEventListener('updateend', () => {
           if (!started && this.playbackStarted && !this.destroyed) {
             started = true;
-            audio.play().catch(() => this.handlePlaybackError());
+            audio.play().catch(() => fallback());
           }
           pump();
         });
@@ -392,7 +426,7 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
         tryEndOfStream();
       } catch {
         if (!abort.signal.aborted) {
-          this.handlePlaybackError();
+          fallback();
         }
       }
     };
@@ -489,16 +523,33 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  private buildTtsRequestBody(voiceSettings: unknown): unknown {
+  private fetchFullFileFromEndpoint(audio: HTMLAudioElement, endpoint: string): void {
+    const jwt = this.getJwtToken();
+    const voiceSettings = this.getVoiceSettingsBody();
+    const requestBody = this.buildTtsRequestBody(voiceSettings, false);
+    void this.fetchAsBlobAndPlay(audio, endpoint, jwt, requestBody);
+  }
+
+  private buildTtsRequestBody(voiceSettings: unknown, streaming = true): unknown {
     const text = this.message?.text ?? '';
     if (
       voiceSettings &&
       typeof voiceSettings === 'object' &&
       !Array.isArray(voiceSettings)
     ) {
-      return { ...(voiceSettings as Record<string, unknown>), text, streaming: true };
+      return {
+        outputFormat: BROWSER_TTS_OUTPUT_FORMAT,
+        ...(voiceSettings as Record<string, unknown>),
+        text,
+        streaming,
+      };
     }
-    return { voiceSettings, text, streaming: true };
+    return {
+      voiceSettings,
+      text,
+      streaming,
+      outputFormat: BROWSER_TTS_OUTPUT_FORMAT,
+    };
   }
 
   private markAllWordsPast(): void {
