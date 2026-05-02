@@ -245,12 +245,11 @@ export class VoiceService {
         this.logger.log('[VoiceService] session_started', { requestId: msg.requestId ?? '' });
         break;
       case 'listening':
-        // Proxy confirmed it is in LISTENING state — safe to forward audio now.
-        // Using setAudioMuted instead of resumeRecording so MediaRecorder keeps
-        // running continuously (no WebM timestamp gaps that could confuse Flux).
-        this.voiceStreaming.setAudioMuted(false);
+        // Proxy confirmed it is in LISTENING state — unblock the UI.
+        // Audio has been flowing continuously (AEC handles echo suppression),
+        // so there is nothing to unmute here.
         this._isAcquisitionBlocked$.next(false);
-        this.logger.log('[VoiceService] listening – mic unmuted, acquisition unblocked');
+        this.logger.log('[VoiceService] listening – acquisition unblocked');
         break;
       case 'transcript': {
         const text = typeof msg.text === 'string' ? msg.text : '';
@@ -260,24 +259,24 @@ export class VoiceService {
         break;
       }
       case 'thinking':
+        // Block acquisition UI while the bot processes the utterance.
+        // Audio continues flowing to the proxy so the server can detect
+        // barge-in via Flux STT even during PROCESSING state.
         this._isAcquisitionBlocked$.next(true);
-        // Mute (but don't pause) the recorder while the bot processes the utterance.
-        // MediaRecorder keeps running so the WebM stream has no timestamp gaps;
-        // chunks are simply not forwarded to the proxy until 'listening' arrives.
-        this.voiceStreaming.setAudioMuted(true);
-        this.logger.log('[VoiceService] thinking – mic muted, acquisition blocked', { activeTtsSources: this._activeTtsSources });
+        this.logger.log('[VoiceService] thinking – acquisition blocked', { activeTtsSources: this._activeTtsSources });
         break;
       case 'speaking': {
         this._isAcquisitionBlocked$.next(true);
-        // Mute microphone to prevent echo: while the bot is speaking, mic audio
-        // must not be forwarded to the proxy (no AEC available).
-        this.voiceStreaming.setAudioMuted(true);
-        // Cancel any audio still playing from a previous turn before scheduling new chunks.
+        // Do NOT mute the microphone. The MediaStream is captured with
+        // echoCancellation: true, so the browser's AEC filters out the bot's
+        // speaker output before it reaches the MediaRecorder. Audio keeps
+        // flowing to the proxy so Flux can fire StartOfTurn when the user
+        // speaks, enabling server-side barge-in detection.
         this._cancelAllTtsAudio();
         // Reset TTS scheduling so new chunks play from now, not a stale future time.
         this.ttsNextPlayTime = this.ttsPlayContext?.currentTime ?? 0;
         const preview = typeof msg.text === 'string' ? msg.text.slice(0, 80) : '';
-        this.logger.log('[VoiceService] speaking – mic muted, TTS text preview', { preview });
+        this.logger.log('[VoiceService] speaking – acquisition blocked, TTS text preview', { preview });
         // Emit the text being spoken so UI can display it alongside the audio.
         if (typeof msg.text === 'string' && msg.text) {
           this.voiceTtsTextSubject.next(msg.text);
@@ -306,14 +305,13 @@ export class VoiceService {
       case 'barge_in':
         // Proxy's VAD detected user speech while the bot was talking — stop TTS immediately.
         // Do NOT send tts_playback_complete; this is an interruption, not a normal completion.
-        // The proxy will follow with { event: "listening" } which authoritatively unblocks
-        // the mic, but we also unblock here so the UI reacts without waiting for that round-trip.
+        // The proxy will follow with { event: "listening" } which authoritatively unblocks the UI.
+        // Audio was never muted, so there is nothing to unmute.
         this._cancelAllTtsAudio();
         this.ttsNextPlayTime = 0;
         this._unblockAfterTts = false;
-        this.voiceStreaming.setAudioMuted(false);
         this._isAcquisitionBlocked$.next(false);
-        this.logger.log('[VoiceService] barge_in – TTS cancelled, mic unblocked');
+        this.logger.log('[VoiceService] barge_in – TTS cancelled, acquisition unblocked');
         break;
       case 'error': {
         const errorMsg = typeof msg.message === 'string' ? msg.message : 'Voice session error';
