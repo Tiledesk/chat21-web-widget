@@ -116,6 +116,10 @@ export class VoiceService {
   private _activeTtsSources = 0;
   // References to active AudioBufferSourceNodes so they can be stopped on preemption.
   private _activeTtsSourceNodes: AudioBufferSourceNode[] = [];
+  // Monotonic counter incremented every time all in-flight TTS audio is invalidated
+  // (barge_in or a new speaking event).  playWsTtsChunk captures this at entry and
+  // checks it after the async decodeAudioData call to discard stale results.
+  private _ttsGeneration = 0;
   // Set to true by the 'done' event; triggers acquisition unblock once all sources end.
   private _unblockAfterTts = false;
   private _unblockSafetyTimer: ReturnType<typeof setTimeout> | null = null;
@@ -327,6 +331,10 @@ export class VoiceService {
 
   /** Chunk TTS: ogni buffer deve essere decodificabile da `decodeAudioData` (es. segmento WebM/Opus completo). */
   private async playWsTtsChunk(buf: ArrayBuffer): Promise<void> {
+    // Capture the current generation BEFORE the synchronous increment so that
+    // if _cancelAllTtsAudio() fires (incrementing _ttsGeneration) while this
+    // decode is in-flight, the mismatch is detected and the stale chunk is discarded.
+    const capturedGeneration = this._ttsGeneration;
     // Increment SYNCHRONOUSLY before any await so the 'done' event handler (which arrives
     // on the next WebSocket message — a different event-loop tick) sees a non-zero count.
     this._activeTtsSources++;
@@ -338,6 +346,14 @@ export class VoiceService {
       }
       const ctx = this.ttsPlayContext;
       const audioBuf = await ctx.decodeAudioData(buf.slice(0));
+      // Stale-chunk guard: barge_in or a new speaking event called _cancelAllTtsAudio()
+      // which incremented _ttsGeneration. Discard this decoded buffer so no audio plays
+      // for a turn that was already cancelled, and undo the counter increment.
+      if (this._ttsGeneration !== capturedGeneration) {
+        this._activeTtsSources = Math.max(0, this._activeTtsSources - 1);
+        this.logger.log('[VoiceService] TTS chunk discarded – stale generation', { capturedGeneration, currentGeneration: this._ttsGeneration });
+        return;
+      }
       const src = ctx.createBufferSource();
       src.buffer = audioBuf;
       src.connect(ctx.destination);
@@ -371,8 +387,11 @@ export class VoiceService {
    * the previous turn's audio, and during `stopSession`.
    * Clears `onended` callbacks BEFORE stopping so that `_onTtsSourceEnded` is NOT
    * invoked for cancelled nodes (avoiding spurious `sendPlaybackComplete` calls).
+   * Also increments `_ttsGeneration` so any in-flight `decodeAudioData` promises
+   * can detect that their result is stale and discard the decoded buffer.
    */
   private _cancelAllTtsAudio(): void {
+    this._ttsGeneration++;
     if (this._unblockSafetyTimer !== null) {
       clearTimeout(this._unblockSafetyTimer);
       this._unblockSafetyTimer = null;
