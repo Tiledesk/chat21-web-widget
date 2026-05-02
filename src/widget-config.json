@@ -3,7 +3,7 @@
   "uploadEngine": "native",
   "pushEngine": "none",
   "logLevel": "info"    ,
-  "remoteTranslationsUrl": "https://stage.eks.tiledesk.com/api/",
+  "remoteTranslationsUrl": "https://localhost:3000/api/",
   "firebaseConfig": {
     "apiKey": "CHANGEIT",
     "authDomain": "CHANGEIT.firebaseapp.com",
@@ -16,14 +16,15 @@
   },
   "chat21Config": {
     "appId": "tilechat",
-    "MQTTendpoint": "wss://stage.eks.tiledesk.com/mqws/ws",
-    "APIendpoint": "https://stage.eks.tiledesk.com/chatapi/api"
+    "MQTTendpoint": "wss://localhost:3000/mqws/ws",
+    "APIendpoint": "https://localhost:3000/chatapi/api"
   },
-  "apiUrl": "https://stage.eks.tiledesk.com/api/",
-  "baseImageUrl": "https://stage.eks.tiledesk.com/api/",
+  "apiUrl": "https://localhost:3000/api/",
+  "baseImageUrl": "https://localhost:3000/api/",
   "dashboardUrl": "/dashboard/",
   "authPersistence": "LOCAL",
   "enbedJs": "true",
   "brandSrc": "",
-  "voiceProxyWsBaseUrl": "ws://localhost:3000/ws/voice"
+  "voiceProxyWsUrl": "wss://localhost:3000/speech/ws/voice",
+  "voiceProxyApiBaseUrl": "https://localhost:3000/speech/"
 }
