@@ -28,7 +28,7 @@
 }
 
 :host .loading.fullSize ::ng-deep > div.spinner{
-    margin: 50px 0px !important;
+    margin: 15px 0px !important;
 }
 
 // ============= CSS c21-body ================= //
@@ -168,6 +168,9 @@
                         min-width: 14px;
                         border: 0.1px solid #0000000f;
                     }
+                    .msg_sent.json-resources{
+                        border: 0 !important;
+                    }
                     .message_innerhtml {
                         padding: 8px;
                     }
@@ -245,6 +248,10 @@
                             margin: auto 0 auto 0 !important;
                         }
 
+                    }
+                    .msg_receive.json-resources{
+                        min-height: unset;
+                        padding: 0;
                     }
                     
 

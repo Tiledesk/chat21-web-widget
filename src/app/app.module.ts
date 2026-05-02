@@ -145,6 +145,7 @@ import {
 } from './providers/voice/STT&TTS/speech-provider.abstract';
 import { ErrorAlertComponent } from './component/error-alert/error-alert.component';
 import { ConfirmCloseComponent } from './modals/confirm-close/confirm-close.component';
+import { JsonSourcesComponent } from './component/message/json-sources/json-sources.component';
 
 
 
@@ -318,6 +319,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     LikeUnlikeComponent,
     TooltipDirective,
     CarouselComponent,
+    JsonSourcesComponent,
     ErrorAlertComponent,
     ConfirmCloseComponent
   ],

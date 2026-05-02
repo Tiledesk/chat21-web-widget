@@ -6,6 +6,49 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.32-rc17
+- **bug fixed**: empty message in preview URLs
+
+# 5.1.32-rc16
+- **added**: added chat-json-sources to preview URLs
+
+# 5.1.32-rc15
+- **changed**: redemptionMs: 800
+
+# 5.1.32-rc14
+- **changed**: minor ui fixed
+
+# 5.1.32-rc13
+- **added**: VAD speech state events (`speechStart$`, `speechEnd$`) to improve UI/state transitions around user speech
+- **changed**: stream audio footer UI — stream button expands into a “Terminate” pill with animated level bars driven by mic intensity; recorder icon hidden while streaming; textarea width adjusted while streaming
+- **changed**: `StreamAudioSpectrum` — consolidated stream spectrum + stream button visuals into a single component with improved silence vs speaking handling and volume-driven bar heights
+- **changed**: conversation layout while streaming — adjusted received bubble sizing (`fullSizeMessage`) and loading spinner spacing (`fullSize`) for full-width stream mode
+
+
+
+# 5.1.32-rc12
+- **changed**: voice acquisition blocking during TTS response — pause VAD after user speech ends until the TTS response cycle completes; added safety timeout and `isAcquisitionBlocked$` to drive UI (e.g. greyed spectrum)
+- **chore**: version bump to `5.1.32-rc12`
+
+# 5.1.32-rc11
+- **added**: global TTS stop — `TtsAudioPlaybackCoordinator.stopAll()` + `stopAllPlayback$` to abort current and queued TTS playback and reveal full message text
+- **changed**: stop TTS playback when closing stream audio
+- **chore**: version bump to `5.1.32-rc11`
+
+# 5.1.32-rc10
+- **added**: TTS playback state (`isTTSPlaying$`) to coordinate voice UI and suppress mic segment emission while the bot is speaking
+- **changed**: stream spectrum theme color turns grey while TTS is playing
+
+
+# 5.1.32-rc9
+- **added**: mic-triggered TTS interruption — when VAD detects user speech, stop current TTS playback, clear the queue, and reveal the full message text
+- **added**: global TTS stop API (`TtsAudioPlaybackCoordinator.stopAll()` + `stopAllPlayback$`) to stop current + queued TTS playback from UI/events (e.g. close stream)
+- **changed**: `chat-audio-sync` TTS playback now streams audio via authenticated POST to `message.metadata.src`, sending `voiceSettings` + `text` and `streaming: true`
+- **changed**: stream UI spectrum — removed circular orb and stretched the spectrum line to fill the `#streamAudioAlert` width with 10px side padding
+- **changed**: conversation content layout while streaming — adjusted received bubble left margin and loading spinner margins for full-size mode
+
+
 # 5.1.32-rc8
 - **changed**: updated the dev environment defaults to align with the stage setup (remote config URL, API endpoints, logging level, storage prefix, and related settings)
 
@@ -135,14 +178,11 @@
 - **bug-fixed**: check showEmojiFooterButton to enable/disable emojii
 - **bug-fixed**: markdown is fired as an emojii and blocked by isEmojii check fn
 
-<<<<<<< HEAD
-=======
 # 5.1.7-rc7
 - **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
 
 # 5.1.7-rc6
 - **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
->>>>>>> master-pre
 
 # 5.1.7-rc5
 - **bug-fixed**: bug fixed BUTTON STYLES

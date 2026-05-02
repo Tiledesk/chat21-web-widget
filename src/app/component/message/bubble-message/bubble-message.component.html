@@ -97,15 +97,20 @@
                 [style.animation-delay]="(w.index * 80) + 'ms'">{{w.word}} </span>
         </p>
 
+        <chat-json-sources *ngIf="jsonSources !== null && jsonSources.length > 0"
+          [items]="jsonSources"
+          (onElementRendered)="onElementRenderedFN($event)">
+        </chat-json-sources>
+
         <!-- [htmlEnabled]="(message?.type==='html')? true : false" -->
-        <chat-text *ngIf="message?.type !=='html' && !_isStreaming"
+        <chat-text *ngIf="jsonSources === null && message?.type !=='html' && !_isStreaming"
           [text]="message?.text"
           [color]="fontColor"
           (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
           (onAfterMessageRender)="onAfterMessageRenderFN($event)">
         </chat-text>
 
-        <chat-html *ngIf="message?.type==='html'"
+        <chat-html *ngIf="jsonSources === null && message?.type==='html'"
           [htmlText]="message?.text"
           [fontSize]="stylesMap.get('buttonFontSize')"
           [themeColor]="stylesMap.get('themeColor')"

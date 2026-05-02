@@ -218,7 +218,7 @@ export class VoiceService {
         void this.vad?.pause();
       },
       minSpeechMs: 480,
-      redemptionMs: 1920,
+      redemptionMs: 800,//1920,
       preSpeechPadMs: 960,
     });
 

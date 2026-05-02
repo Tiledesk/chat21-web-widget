@@ -6,6 +6,7 @@ import {
   MESSAGE_TYPE_MINE,
   MESSAGE_TYPE_OTHERS,
   MAX_WIDTH_IMAGES,
+  MIN_WIDTH_IMAGES,
   INFO_MESSAGE_TYPE,
   CHANNEL_TYPE,
   MESSAGE_TYPE_PRIVATE
@@ -321,7 +322,21 @@ export function commandToMessage(msg: MessageModel, conversation: ConversationMo
   message.type = msg['type']
   message.isSender = isSender(message.sender, currentUserId)
   message.attributes = { ...conversation.attributes, ...msg['attributes']}
-  
 
   return message as MessageModel
+}
+
+export function calcImageSize(metadata: any): { width: number; height: number } {
+  const size = { width: metadata.width, height: metadata.height };
+  if (!metadata.width) return size;
+  if (metadata.width <= 55) {
+    const ratio = metadata.width / metadata.height;
+    size.width = MIN_WIDTH_IMAGES;
+    size.height = MIN_WIDTH_IMAGES / ratio;
+  } else if (metadata.width > MAX_WIDTH_IMAGES) {
+    const ratio = metadata.width / metadata.height;
+    size.width = MAX_WIDTH_IMAGES;
+    size.height = MAX_WIDTH_IMAGES / ratio;
+  }
+  return size;
 }
