@@ -77,6 +77,24 @@ export class VoiceStreamingService {
   /** Emette il close code WebSocket a ogni disconnessione (4401 = auth, 4400 = config, 1001 = server down, 1006 = network). */
   readonly closeCode$: Observable<number> = this._closeCode$.asObservable();
 
+  /**
+   * Returns the HTTP(S) origin of the speech-proxy, derived from `voiceProxyWsBaseUrl`.
+   * `ws://host:port/...` → `http://host:port`
+   * `wss://host:port/...` → `https://host:port`
+   * Returns `null` when no proxy URL is configured.
+   */
+  get proxyHttpBaseUrl(): string | null {
+    const raw = String(this.appConfig.getConfig()?.voiceProxyWsBaseUrl ?? '').trim();
+    if (!raw) return null;
+    try {
+      const url = new URL(raw);
+      url.protocol = url.protocol === 'wss:' ? 'https:' : 'http:';
+      return url.origin;
+    } catch {
+      return null;
+    }
+  }
+
   get connectionState(): VoiceStreamingConnectionState {
     return this._currentState;
   }

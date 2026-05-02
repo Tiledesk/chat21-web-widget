@@ -138,6 +138,15 @@ export class VoiceService {
   }
 
   /**
+   * Returns the speech-proxy's streaming TTS endpoint URL, or `null` when no proxy is configured.
+   * The audio-sync component uses this to redirect TTS calls from the tiledesk-server to the proxy.
+   */
+  get proxyTtsStreamUrl(): string | null {
+    const base = this.voiceStreaming.proxyHttpBaseUrl;
+    return base ? `${base}/api/tts/stream` : null;
+  }
+
+  /**
    * Richiede il microfono, avvia VAD in ascolto (inizio/fine parlato) e registra in WebM per segmento.
    */
   async startSession(options: VoiceSessionStartOptions = {}): Promise<void> {
