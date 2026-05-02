@@ -12,6 +12,7 @@ import {
 import { Subscription } from 'rxjs';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
 import { Globals } from 'src/app/utils/globals';
 
 /** HAVE_METADATA: metadati già disponibili (tipico audio servito da cache). */
@@ -58,6 +59,7 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     private readonly cdr: ChangeDetectorRef,
     private readonly ttsPlayback: TtsAudioPlaybackCoordinator,
     private readonly globals: Globals,
+    private readonly voiceService: VoiceService,
   ) {}
 
   /** `false` = messaggio già in storico: niente autoplay / karaoke. Da `message.isJustRecived`. */
@@ -233,8 +235,8 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private startPlayback(audio: HTMLAudioElement): void {
-    const src = (this.message as any)?.metadata?.src as string | undefined;
-    if (!src) {
+    const messageSrc = (this.message as any)?.metadata?.src as string | undefined;
+    if (!messageSrc) {
       this.playbackStarted = false;
       this.ttsPlayback.releaseIfCurrent(this.playbackOwnerId);
       this.markAllWordsPast();
@@ -246,11 +248,14 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     if (this.message?.type === 'tts') {
+      // Prefer the speech-proxy streaming endpoint over the tiledesk-server URL
+      // stored in metadata.src, so all TTS audio is routed through the proxy.
+      const src = this.voiceService.proxyTtsStreamUrl ?? messageSrc;
       this.startStreamingFromEndpoint(audio, src);
       return;
     }
 
-    audio.src = src;
+    audio.src = messageSrc;
     try {
       audio.currentTime = 0;
     } catch {
