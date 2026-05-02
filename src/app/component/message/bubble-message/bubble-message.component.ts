@@ -1,27 +1,40 @@
-import { Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, TYPE_MSG_URL_PREVIEW } from 'src/chat21-core/utils/constants';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 import { calcImageSize, isAudio, isAudioTTS, isFile, isFrame, isImage, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
 import { UrlPreviewService } from 'src/app/providers/url-preview.service';
 import { extractUrlsFromText } from 'src/app/utils/url-utils';
 import { extractUrlsFromJsonSources, mergeJsonSourcesMissingFields, parseJsonSources } from 'src/app/utils/json-sources-utils';
 import { JsonSourceItem } from '../json-sources/json-sources.component';
+import { VoiceTtsKaraokeWord } from 'src/app/providers/voice/voice-streaming.types';
 
 @Component({
   selector: 'chat-bubble-message',
   templateUrl: './bubble-message.component.html',
   styleUrls: ['./bubble-message.component.scss']
 })
-export class BubbleMessageComponent {
+export class BubbleMessageComponent implements OnInit, OnDestroy {
 
   @Input() message: MessageModel;
   @Input() isSameSender: boolean;
   @Input() fontColor: string;
   @Input() stylesMap: Map<string, string>;
+  /** When true, a newly-arrived bot text message reveals its words one by one. */
+  @Input() streamOnArrival = false;
+  /** One-shot flag: set once in ngOnChanges, never reverts so animation isn't replayed. */
+  _isStreaming = false;
+  /** Precomputed word list; rebuilt only when the message text changes. */
+  _streamingWords: Array<{ word: string; index: number }> = [];
+  /** Live karaoke word states driven by voiceTtsKaraoke$ during an active WSS session. */
+  _wssKaraokeWords$?: Observable<VoiceTtsKaraokeWord[]>;
 
+  private _kSub?: Subscription;
   @Output() onBeforeMessageRender = new EventEmitter();
   @Output() onAfterMessageRender = new EventEmitter();
   @Output() onElementRendered = new EventEmitter<{ element: string; status: boolean }>();
@@ -39,13 +52,45 @@ export class BubbleMessageComponent {
   readonly MESSAGE_TYPE_MINE = MESSAGE_TYPE_MINE;
   readonly MESSAGE_TYPE_OTHERS = MESSAGE_TYPE_OTHERS;
 
-  sizeImage: { width: number; height: number };
-  fullnameColor: string;
+  sizeImage: { width: number; height: number } = { width: 0, height: 0 };
+  fullnameColor: string = '';
   jsonSources: JsonSourceItem[] | null = null;
 
   private urlPreviewReqId = 0;
 
-  constructor(public sanitizer: DomSanitizer, private urlPreviewService: UrlPreviewService) {}
+  constructor(public sanitizer: DomSanitizer, public voiceService: VoiceService, private urlPreviewService: UrlPreviewService) { }
+
+  ngOnInit() {
+    // If this TTS message arrived while the voice proxy was active, mark it so
+    // audio-sync never replays it after the session ends.
+    if (isAudioTTS(this.message) && this.voiceService.isWssVoiceActive && this.message?.uid) {
+      this.voiceService.markProxyHandled(this.message.uid);
+    }
+
+    // Set up karaoke observable for TTS messages during WSS sessions.
+    if (isAudioTTS(this.message) && this.message?.text) {
+      const text = this.message.text;
+      const rawWords = text.trim().split(/\s+/).filter((w) => w.length > 0);
+      // Always start as 'past' (fully visible). The karaoke RAF loop will drive
+      // words through future→active→past for the current speaking turn; using
+      // 'future' here would dimm old/history messages the moment voice opens.
+      const initialWords: VoiceTtsKaraokeWord[] = rawWords.map((w) => ({ text: w, state: 'past' as const }));
+
+      this._wssKaraokeWords$ = this.voiceService.voiceTtsKaraoke$.pipe(
+        startWith({ text, words: initialWords, activeIndex: -1 }),
+        map((frame) =>
+          frame.text === text
+            ? (frame.words as VoiceTtsKaraokeWord[])
+            : initialWords,
+        ),
+      );
+    }
+  }
+
+  ngOnDestroy(): void {
+    this._kSub?.unsubscribe();
+    this._kSub = undefined;
+  }
 
   ngOnChanges(): void {
     if (this.message?.metadata && typeof this.message.metadata === 'object') {
@@ -60,6 +105,26 @@ export class BubbleMessageComponent {
       this.fullnameColor = getColorBck(this.message.sender_fullname);
     }
 
+    // One-shot: activate word streaming for newly-arrived bot text messages during a voice session.
+    // Reset isJustRecived so the animation never replays on subsequent change detection cycles.
+    if (
+      !this._isStreaming &&
+      this.streamOnArrival &&
+      this.message?.isJustRecived === true &&
+      this.messageType(this.MESSAGE_TYPE_OTHERS, this.message) &&
+      !this.isAudio(this.message) &&
+      !this.isAudioTTS(this.message) &&
+      this.message?.type !== 'html'
+    ) {
+      this._isStreaming = true;
+      this._streamingWords = (this.message.text ?? '')
+        .trim()
+        .split(/\s+/)
+        .filter(w => w.length > 0)
+        .map((word, index) => ({ word, index }));
+      this.message.isJustRecived = false;
+    }
+
     if (this.message?.type !== TYPE_MSG_URL_PREVIEW) {
       this.jsonSources = null;
       return;
@@ -72,6 +137,14 @@ export class BubbleMessageComponent {
     const urls = sourcesUrls.length > 0 ? sourcesUrls : extractUrlsFromText(this.message.text, 10);
 
     this.enrichWithUrlPreview(urls, parsedSources);
+  }
+
+  trackWord(_index: number, item: { word: string; index: number }): number {
+    return item.index;
+  }
+
+  trackKaraokeWord(index: number): number {
+    return index;
   }
 
   onBeforeMessageRenderFN(event: any): void {

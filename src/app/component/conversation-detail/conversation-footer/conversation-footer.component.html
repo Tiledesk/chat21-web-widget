@@ -12,21 +12,33 @@
         <div tabindex="-1" class="alertText">{{translationMap.get('EMOJI_NOT_ELLOWED')}}</div>
     </div>
 
-    <!-- STREAM AUDIO: cerchio con onde animate -->
-    <!-- <div id="streamAudioAlert" *ngIf="!hideTextAreaContent && isStreamAudioActive" class="fade-in-bottom stream-audio-alert" [class.hideTextReply]="hideTextReply" role="status" [attr.aria-label]="translationMap?.get('STREAM_AUDIO_LISTENING') || 'Stream audio attivo'">
+    <!-- STREAM AUDIO: status + waveform panel above footer -->
+    <div id="streamAudioAlert" *ngIf="!hideTextAreaContent && (isStreamAudioActive || isStreamAudioConnecting)"
+         class="fade-in-bottom stream-audio-alert" [class.hideTextReply]="hideTextReply"
+         role="status" [attr.aria-label]="voiceStatusLabel">
+        <div class="voice-status-row">
+            <span class="voice-status-dot"
+                  [class.voice-status-dot--connecting]="isStreamAudioConnecting && !isStreamAudioActive"
+                  [class.voice-status-dot--listening]="isStreamAudioActive && !isBotSpeaking"
+                  [class.voice-status-dot--processing]="isStreamAudioActive && isBotSpeaking">
+            </span>
+            <span class="voice-status-text">{{ voiceStatusLabel }}</span>
+            <span class="voice-transcript-text" *ngIf="lastVoiceTranscript">{{ lastVoiceTranscript }}</span>
+        </div>
         <chat-stream-audio-spectrum
-            [volume]="currentVolume"
-            [accentColor]="isBotSpeaking ? '#b0b0b0' : stylesMap?.get('themeColor')">
+            mode="alert"
+            [volume]="isBotSpeaking ? 0 : currentVolume"
+            [accentColor]="stylesMap?.get('themeColor')">
         </chat-stream-audio-spectrum>
-    </div> -->
+    </div>
 
 </div>
 
 <div class="textarea-container-wrapper" *ngIf="!hideTextAreaContent && !hideTextReply">
     <!-- TEXTAREA + ICONS: conv active-->
-    <div class="textarea-container">
+    <div class="textarea-container" [class.voice-mode]="isStreamAudioActive || isStreamAudioConnecting">
         
-        <div *ngIf="!isStopRec" class="icons-container">
+        <div *ngIf="!isStopRec && !(isStreamAudioActive || isStreamAudioConnecting)" class="icons-container">
             <!-- ICON ATTACHMENT -->
             <label *ngIf="showAttachmentFooterButton" tabindex="1502" aria-label="allegati" for="chat21-file" class="chat21-textarea-button" [class.active]="!isFilePendingToUpload && !hideTextReply" id="chat21-start-upload-doc">
                 <span class="v-align-center">
@@ -71,9 +83,18 @@
 
 
 
-        <div *ngIf="!isStopRec" class="visible-text-area" [class.stream-active]="isStreamAudioActive" [class.hasError]="showAlertEmoji" [class.disabled] = "( isConversationArchived || hideTextReply)? true : null">
-            <!-- isFilePendingToUpload || -->
+        <div *ngIf="!isStopRec" class="visible-text-area" [class.stream-active]="isStreamAudioActive || isStreamAudioConnecting" [class.hasError]="showAlertEmoji" [class.disabled] = "( isConversationArchived || hideTextReply)? true : null">
+            <!-- Voice mode: inline status chip -->
+            <div class="voice-inline-status" *ngIf="isStreamAudioActive || isStreamAudioConnecting" role="status" aria-live="polite">
+                <span class="voice-inline-dot"
+                      [class.voice-inline-dot--connecting]="isStreamAudioConnecting && !isStreamAudioActive"
+                      [class.voice-inline-dot--processing]="isStreamAudioActive && isBotSpeaking">
+                </span>
+                <span class="voice-inline-label">{{ voiceStatusLabel }}</span>
+            </div>
+            <!-- Normal mode: textarea -->
         <textarea 
+            *ngIf="!(isStreamAudioActive || isStreamAudioConnecting)"
             [attr.disabled] = "(hideTextReply)? true : null"
             [attr.placeholder] ="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
             start-focus-chat21-conversation-component
@@ -94,7 +115,7 @@
         </div>
 
         <!-- ICON SEND -->
-        <div *ngIf="(textInputTextArea !== '' && !isStopRec) || !showAudioRecorderFooterButton" tabindex="-1" class="chat21-textarea-button" [class.disabled]="showAlertEmoji" [class.active]="textInputTextArea && !hideTextReply" id="chat21-button-send" (click)="onSendPressed($event)">
+        <div *ngIf="((textInputTextArea !== '' && !isStopRec && !isStreamAudioActive) || !showAudioRecorderFooterButton)" tabindex="-1" class="chat21-textarea-button" [class.disabled]="showAlertEmoji" [class.active]="textInputTextArea && !hideTextReply" id="chat21-button-send" (click)="onSendPressed($event)">
             <span class="v-align-center">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  height="24" width="24" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve" fill="currentColor">
                     <path d="M1.8,20.6V3.4l20.2,8.6L1.8,20.6ZM3.9,17.3l12.6-5.4L3.9,6.6v3.7l6.4,1.6-6.4,1.6v3.8ZM3.9,17.3V6.6v10.7Z"/>
@@ -103,7 +124,7 @@
         </div>
 
         <!-- ICON REC -->
-        <div *ngIf="showAudioRecorderFooterButton && !textInputTextArea && !isStreamAudioActive" tabindex="-1" class="chat21-audio-button" [class.active]="isStopRec" id="chat21-button-rec">
+        <div *ngIf="showAudioRecorderFooterButton && !textInputTextArea && !isStreamAudioActive && !isStreamAudioConnecting" tabindex="-1" class="chat21-audio-button" [class.active]="isStopRec" id="chat21-button-rec">
             <chat-audio-recorder
                 (startRecordingEvent)="onStartRecording()"
                 (deleteRecordingEvent)="onDeleteRecording()"
@@ -116,13 +137,13 @@
         <!-- ICON STREAM / CHIUDI STREAM (cerchio, icone bianche su iconColor) -->
         <div *ngIf="showAudioStreamFooterButton" tabindex="-1" id="chat21-button-stream"
             class="chat21-textarea-button chat21-stream-button"
-            [class.active]="isStreamAudioActive || (!textInputTextArea && !hideTextReply)"
-            [class.chat21-stream-button--expanded]="isStreamAudioActive"
-            (click)="onStreamPressed($event)" [attr.aria-label]="isStreamAudioActive ? (translationMap?.get('CLOSE') || 'Chiudi stream') : (translationMap?.get('STREAM_AUDIO') || 'Stream audio')"
+            [class.active]="isStreamAudioActive || isStreamAudioConnecting || (!textInputTextArea && !hideTextReply)"
+            [class.chat21-stream-button--expanded]="isStreamAudioActive || isStreamAudioConnecting"
+            (click)="onStreamPressed($event)" [attr.aria-label]="(isStreamAudioActive || isStreamAudioConnecting) ? (translationMap?.get('CLOSE') || 'Chiudi stream') : (translationMap?.get('STREAM_AUDIO') || 'Stream audio')"
             [ngStyle]="{ 'background-color': stylesMap?.get('iconColor') || stylesMap?.get('themeColor') }">
             <chat-stream-audio-spectrum
                 mode="button"
-                [active]="isStreamAudioActive"
+                [active]="isStreamAudioActive || isStreamAudioConnecting"
                 [volume]="currentVolume"
                 [translationMap]="translationMap">
             </chat-stream-audio-spectrum>
