@@ -302,6 +302,18 @@ export class VoiceService {
           // the single source of truth for unblocking both UI and mic.
         }
         break;
+      case 'barge_in':
+        // Proxy's VAD detected user speech while the bot was talking — stop TTS immediately.
+        // Do NOT send tts_playback_complete; this is an interruption, not a normal completion.
+        // The proxy will follow with { event: "listening" } which authoritatively unblocks
+        // the mic, but we also unblock here so the UI reacts without waiting for that round-trip.
+        this._cancelAllTtsAudio();
+        this.ttsNextPlayTime = 0;
+        this._unblockAfterTts = false;
+        this.voiceStreaming.setAudioMuted(false);
+        this._isAcquisitionBlocked$.next(false);
+        this.logger.log('[VoiceService] barge_in – TTS cancelled, mic unblocked');
+        break;
       case 'error': {
         const errorMsg = typeof msg.message === 'string' ? msg.message : 'Voice session error';
         this.logger.error('[VoiceService] WSS error', errorMsg);

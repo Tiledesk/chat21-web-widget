@@ -31,7 +31,7 @@ describe('VoiceService', () => {
 
     voiceStreamingMock = jasmine.createSpyObj<VoiceStreamingService>(
       'VoiceStreamingService',
-      ['start', 'stop', 'setAudioMuted', 'sendPlaybackComplete'],
+      ['start', 'stop', 'setAudioMuted', 'sendPlaybackComplete', 'sendBargeIn'],
     );
     voiceStreamingMock.start.and.returnValue(Promise.resolve());
     voiceStreamingMock.stop.and.returnValue(
@@ -209,6 +209,42 @@ describe('VoiceService', () => {
     (service as any)._onTtsSourceEnded();
 
     // _unblockAfterTts was cleared by cancel; no sendPlaybackComplete should fire
+    expect(voiceStreamingMock.sendPlaybackComplete).not.toHaveBeenCalled();
+  });
+
+  // ── Barge-in ──────────────────────────────────────────────────────────────
+
+  it('barge_in event cancels TTS audio and unblocks acquisition without sending tts_playback_complete', async () => {
+    await startWssSession();
+    voiceStreamingMock.sendPlaybackComplete.calls.reset();
+
+    // Simulate bot speaking with audio in flight
+    wsControl$.next({ event: 'speaking', text: 'hello' } as VoiceWsControlMessage);
+    ttsBinaryChunk$.next(new ArrayBuffer(4));   // _activeTtsSources++ synchronously
+    wsControl$.next({ event: 'done' } as VoiceWsControlMessage); // _unblockAfterTts = true
+
+    // Proxy detects user speech and sends barge_in
+    wsControl$.next({ event: 'barge_in' } as VoiceWsControlMessage);
+
+    // Audio should be cancelled (mic unmuted, acquisition unblocked)
+    expect(voiceStreamingMock.setAudioMuted).toHaveBeenCalledWith(false);
+    // tts_playback_complete must NOT be sent — it was an interruption, not a completion
+    expect(voiceStreamingMock.sendPlaybackComplete).not.toHaveBeenCalled();
+    // Acquisition gate should be open
+    let acquired = false;
+    (service as any)._isAcquisitionBlocked$.subscribe((v: boolean) => (acquired = v));
+    expect(acquired).toBe(false);
+  });
+
+  it('barge_in while no TTS is active does not throw and still unblocks acquisition', async () => {
+    await startWssSession();
+    voiceStreamingMock.sendPlaybackComplete.calls.reset();
+
+    // No speaking event — mic was never muted
+    expect(() => {
+      wsControl$.next({ event: 'barge_in' } as VoiceWsControlMessage);
+    }).not.toThrow();
+
     expect(voiceStreamingMock.sendPlaybackComplete).not.toHaveBeenCalled();
   });
 });
