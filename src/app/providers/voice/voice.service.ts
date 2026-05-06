@@ -148,6 +148,8 @@ export class VoiceService {
 
   private readonly logger: LoggerService = LoggerInstance.getInstance();
 
+  private readonly bufferTime = 200000; // used as max safety timer duration for long TTS messages
+
   constructor(
     private readonly vadService: VadService,
     private readonly ttsPlayback: TtsAudioPlaybackCoordinator,
@@ -335,7 +337,7 @@ export class VoiceService {
           // Add 5 seconds buffer for network/decode latency.
           // Minimum 5 seconds, maximum 300 seconds for very long messages.
           const remainingMs = Math.max(0, this._ttsExpectedEndTime - Date.now());
-          const safetyMs = Math.min(300000, Math.max(5000, remainingMs + 5000));
+          const safetyMs = Math.min(this.bufferTime, Math.max(5000, remainingMs + 5000));
           if (this._unblockSafetyTimer !== null) clearTimeout(this._unblockSafetyTimer);
           this._unblockSafetyTimer = setTimeout(() => this._flushTtsUnblock(true), safetyMs);
           this.logger.log('[VoiceService] done – TTS still pending, waiting for all sources to end', { 
@@ -344,13 +346,15 @@ export class VoiceService {
             safetyTimerMs: safetyMs
           });
         } else {
-          // No audio sources pending — playback was already complete (or audio was empty).
-          // Signal the proxy synchronously; mic stays muted until the proxy confirms
-          // LISTENING via the 'listening' event.
-          this.logger.log('[VoiceService] done – no pending TTS, sending playback complete immediately');
-          this.voiceStreaming.sendPlaybackComplete();
-          // Do NOT unblock acquisition here — proxy will send 'listening' which is
-          // the single source of truth for unblocking both UI and mic.
+          // No audio sources currently tracked, but there might be chunks in flight
+          // or sources that already finished. Do NOT send playbackComplete here -
+          // it will be sent either by _onTtsSourceEnded when sources actually end,
+          // or by the safety timer as fallback. This prevents race where done
+          // arrives before chunks start playing.
+          this.logger.log('[VoiceService] done – no active sources, waiting for any in-flight audio');
+          // Set a short safety timer anyway in case chunks arrive after done
+          if (this._unblockSafetyTimer !== null) clearTimeout(this._unblockSafetyTimer);
+          this._unblockSafetyTimer = setTimeout(() => this._flushTtsUnblock(true), 10000);
         }
         break;
       case 'error': {
