@@ -1,5 +1,6 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChange, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, OnDestroy, Output, SimpleChange, ViewChild } from '@angular/core';
 import { FormGroup, FormGroupDirective } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { FormArray } from '../../../../../chat21-core/models/formArray';
 
 @Component({
@@ -7,7 +8,7 @@ import { FormArray } from '../../../../../chat21-core/models/formArray';
   templateUrl: './form-text.component.html',
   styleUrls: ['./form-text.component.scss']
 })
-export class FormTextComponent implements OnInit {
+export class FormTextComponent implements OnInit, OnDestroy {
 
   @Input() element: FormArray;
   @Input() controlName: string;
@@ -19,17 +20,23 @@ export class FormTextComponent implements OnInit {
   @ViewChild('div_input') input: ElementRef;
   form: FormGroup<any>;
   inputType: string = 'text'
+  private valueChangesSub?: Subscription;
+
   constructor(private rootFormGroup: FormGroupDirective,
               private elementRef: ElementRef) { }
 
   ngOnInit() {
     this.form = this.rootFormGroup.control as FormGroup<any>;
     if(this.form && this.form.controls && this.form.controls[this.controlName]){
-      this.form.controls[this.controlName].valueChanges.subscribe((value) => {
+      this.valueChangesSub = this.form.controls[this.controlName].valueChanges.subscribe((value) => {
         this.hasSubmitted= false;
         this.setFormStyle();
       })
     }
+  }
+
+  ngOnDestroy() {
+    this.valueChangesSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChange){

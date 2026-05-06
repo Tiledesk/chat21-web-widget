@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { MAX_WIDTH_IMAGES, MSG_STATUS_RETURN_RECEIPT, MSG_STATUS_SENT, MSG_STATUS_SENT_SERVER } from 'src/app/utils/constants';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
@@ -14,7 +15,7 @@ import { extractUrlsFromJsonSources, parseJsonSources } from 'src/app/utils/json
   templateUrl: './conversation-content.component.html',
   styleUrls: ['./conversation-content.component.scss']
 })
-export class ConversationContentComponent implements OnInit {
+export class ConversationContentComponent implements OnInit, OnDestroy {
   @ViewChild('scrollMe') public scrollMe: ElementRef;
   
   @Input() messages: MessageModel[]
@@ -75,6 +76,7 @@ export class ConversationContentComponent implements OnInit {
   showUploadProgress: boolean = false;
   fileType: string;
   private logger: LoggerService = LoggerInstance.getInstance();
+  private uploadSub?: Subscription;
 
   constructor(private cdref: ChangeDetectorRef,
               private elementRef: ElementRef,
@@ -84,8 +86,8 @@ export class ConversationContentComponent implements OnInit {
     this.listenToUploadFileProgress();
   }
 
-  ngAfterContentChecked() {
-    this.cdref.detectChanges();
+  ngOnDestroy() {
+    this.uploadSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges){
@@ -132,7 +134,7 @@ export class ConversationContentComponent implements OnInit {
 
   // ENABLE HTML SECTION 'FILE PENDING UPLOAD'
   listenToUploadFileProgress() {
-    this.uploadService.BSStateUpload.subscribe((data: any) => {
+    this.uploadSub = this.uploadService.BSStateUpload.subscribe((data: any) => {
       this.logger.debug('[CONV-CONTENT] BSStateUpload', data);
       // && data.type.startsWith("application")
       if (data) { 

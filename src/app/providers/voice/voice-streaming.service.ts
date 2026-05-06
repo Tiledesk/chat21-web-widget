@@ -13,10 +13,11 @@ import {
   VoiceWsControlMessage,
 } from './voice-streaming.types';
 
-// Flux docs recommend 80ms chunks for optimal latency; 250ms is a practical
-// balance for WebM containerization overhead in the browser.
+// Flux docs recommend 80ms chunks for optimal latency; 160ms is a practical
+// balance for WebM containerization overhead in the browser while providing
+// good STT accuracy.
 // Source: https://developers.deepgram.com/docs/flux/quickstart
-const DEFAULT_TIMESLICE_MS = 250;
+const DEFAULT_TIMESLICE_MS = 160;
 const READY_TIMEOUT_MS = 10_000;
 const SESSION_STARTED_TIMEOUT_MS = 10_000;
 
@@ -571,27 +572,12 @@ export class VoiceStreamingService {
 
   /**
    * Send `{ event: "tts_playback_complete" }` to the proxy, signalling that TTS
-   * playback has finished and the microphone is ready to receive user speech.
+   * playback has finished and the microphone is now safe to receive user speech.
    */
   sendPlaybackComplete(): void {
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify({ event: 'tts_playback_complete' }));
       this.logger.info('[VoiceStreaming] tts_playback_complete sent');
-    }
-  }
-
-  /**
-   * Send `{ event: "barge_in" }` to the proxy, requesting an immediate interruption
-   * of the ongoing TTS playback.  Use when the user explicitly wants to speak while
-   * the bot is talking (e.g. via a UI button or a client-side VAD onset).
-   *
-   * The proxy will stop the TTS stream and transition to LISTENING; the widget should
-   * handle the server-sent `barge_in` and `listening` events to update local state.
-   */
-  sendBargeIn(): void {
-    if (this.ws?.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify({ event: 'barge_in' }));
-      this.logger.info('[VoiceStreaming] barge_in sent');
     }
   }
 

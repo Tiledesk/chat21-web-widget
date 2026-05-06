@@ -109,6 +109,8 @@ export class VoiceService {
   private analyser?: AnalyserNode;
   /** Buffer dedicato (`ArrayBuffer`) per compatibilità con `getByteFrequencyData`. */
   private dataArray?: Uint8Array;
+  /** RAF ID for volume loop - used to cancel on cleanup */
+  private volumeRafId?: number;
 
   /** Riproduzione chunk TTS binari dal proxy (Web Audio). */
   private ttsPlayContext?: AudioContext;
@@ -127,6 +129,9 @@ export class VoiceService {
   // Set to true by the 'done' event; triggers acquisition unblock once all sources end.
   private _unblockAfterTts = false;
   private _unblockSafetyTimer: ReturnType<typeof setTimeout> | null = null;
+  // Track when the last TTS chunk is expected to finish playing.
+  // Used to calculate a proper safety timer duration for long messages.
+  private _ttsExpectedEndTime = 0;
 
   // ── WSS TTS Karaoke ──────────────────────────────────────────────────────────────────────────
   private _kText = '';
@@ -310,6 +315,8 @@ export class VoiceService {
         this._cancelAllTtsAudio();
         // Reset TTS scheduling so new chunks play from now, not a stale future time.
         this.ttsNextPlayTime = this.ttsPlayContext?.currentTime ?? 0;
+        // Reset expected end time for new TTS stream
+        this._ttsExpectedEndTime = 0;
         const preview = typeof msg.text === 'string' ? msg.text.slice(0, 80) : '';
         this.logger.log('[VoiceService] speaking – acquisition blocked, TTS text preview', { preview });
         // Emit the text being spoken so UI can display it alongside the audio.
@@ -324,10 +331,18 @@ export class VoiceService {
         // _activeTtsSources tracks pending sources; when the last one ends, acquisition unblocks.
         if (this._activeTtsSources > 0) {
           this._unblockAfterTts = true;
-          // Safety: force-unblock after 15 s in case onended never fires.
+          // Calculate safety timer based on expected audio end time.
+          // Add 5 seconds buffer for network/decode latency.
+          // Minimum 5 seconds, maximum 300 seconds for very long messages.
+          const remainingMs = Math.max(0, this._ttsExpectedEndTime - Date.now());
+          const safetyMs = Math.min(300000, Math.max(5000, remainingMs + 5000));
           if (this._unblockSafetyTimer !== null) clearTimeout(this._unblockSafetyTimer);
-          this._unblockSafetyTimer = setTimeout(() => this._flushTtsUnblock(true), 15000);
-          this.logger.log('[VoiceService] done – TTS still pending, waiting for all sources to end', { activeTtsSources: this._activeTtsSources });
+          this._unblockSafetyTimer = setTimeout(() => this._flushTtsUnblock(true), safetyMs);
+          this.logger.log('[VoiceService] done – TTS still pending, waiting for all sources to end', { 
+            activeTtsSources: this._activeTtsSources,
+            expectedEndInMs: remainingMs,
+            safetyTimerMs: safetyMs
+          });
         } else {
           // No audio sources pending — playback was already complete (or audio was empty).
           // Signal the proxy synchronously; mic stays muted until the proxy confirms
@@ -337,17 +352,6 @@ export class VoiceService {
           // Do NOT unblock acquisition here — proxy will send 'listening' which is
           // the single source of truth for unblocking both UI and mic.
         }
-        break;
-      case 'barge_in':
-        // Proxy's VAD detected user speech while the bot was talking — stop TTS immediately.
-        // Do NOT send tts_playback_complete; this is an interruption, not a normal completion.
-        // The proxy will follow with { event: "listening" } which authoritatively unblocks the UI.
-        // Audio was never muted, so there is nothing to unmute.
-        this._cancelAllTtsAudio();
-        this.ttsNextPlayTime = 0;
-        this._unblockAfterTts = false;
-        this._isAcquisitionBlocked$.next(false);
-        this.logger.log('[VoiceService] barge_in – TTS cancelled, acquisition unblocked');
         break;
       case 'error': {
         const errorMsg = typeof msg.message === 'string' ? msg.message : 'Voice session error';
@@ -392,8 +396,12 @@ export class VoiceService {
       const t0 = Math.max(ctx.currentTime, this.ttsNextPlayTime);
       src.start(t0);
       this.ttsNextPlayTime = t0 + audioBuf.duration;
+      // Track the expected end time in wall-clock time (ms) for safety timer calculation.
+      // Convert AudioContext time delta to milliseconds and add to current time.
+      const audioEndDelayMs = (this.ttsNextPlayTime - ctx.currentTime) * 1000;
+      this._ttsExpectedEndTime = Date.now() + audioEndDelayMs;
       this._activeTtsSourceNodes.push(src);
-      this.logger.log('[VoiceService] TTS chunk scheduled', { durationS: audioBuf.duration.toFixed(3), startsAtS: t0.toFixed(3), activeTtsSources: this._activeTtsSources });
+      this.logger.log('[VoiceService] TTS chunk scheduled', { durationS: audioBuf.duration.toFixed(3), startsAtS: t0.toFixed(3), activeTtsSources: this._activeTtsSources, expectedEndInMs: audioEndDelayMs.toFixed(0) });
       src.onended = () => this._onTtsSourceEnded(src);
     } catch (e) {
       this._onTtsSourceEnded();
@@ -435,6 +443,7 @@ export class VoiceService {
     this._activeTtsSourceNodes = [];
     this._activeTtsSources = 0;
     this._unblockAfterTts = false;
+    this._ttsExpectedEndTime = 0;
     this._stopTtsKaraoke(true);
     this.logger.log('[VoiceService] TTS cancelled – all audio sources stopped');
   }
@@ -590,6 +599,10 @@ export class VoiceService {
     }
 
     // 🎧 cleanup audio context
+    if (this.volumeRafId) {
+      cancelAnimationFrame(this.volumeRafId);
+      this.volumeRafId = undefined;
+    }
     this.audioContext?.close();
     this.audioContext = undefined;
     this.analyser = undefined;
@@ -683,8 +696,7 @@ export class VoiceService {
   private startVolumeLoop(): void {
     const tick = () => {
       if (!this.analyser || !this.dataArray) {
-        requestAnimationFrame(tick);
-        return;
+        return; // Stop the loop if analyser is cleaned up
       }
 
       this.analyser.getByteFrequencyData(
@@ -700,10 +712,10 @@ export class VoiceService {
 
       this.volumeSubject.next(volume);
 
-      requestAnimationFrame(tick);
+      this.volumeRafId = requestAnimationFrame(tick);
     };
 
-    tick();
+    this.volumeRafId = requestAnimationFrame(tick);
   }
 
   /**
