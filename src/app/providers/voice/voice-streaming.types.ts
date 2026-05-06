@@ -86,7 +86,6 @@ export type VoiceWsServerEventName =
   | 'thinking'
   | 'speaking'
   | 'done'
-  | 'barge_in'
   | 'error';
 
 /** Messaggio di controllo JSON dal proxy (`msg.event`); altri campi sono ignorati se non gestiti. */
