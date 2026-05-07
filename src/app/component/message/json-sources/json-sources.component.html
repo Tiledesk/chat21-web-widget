@@ -11,23 +11,23 @@
     <span class="sources-count">{{ items.length }} {{ items.length === 1 ? 'sito' : 'siti' }}</span>
   </div>
 
-  <a class="row"
+  <a class="source-row"
      *ngFor="let item of visibleItems; trackBy: trackByLink"
      [href]="item.link"
      target="_blank"
      rel="noopener noreferrer">
 
-    <div class="left">
-      <div class="title">{{ item.title }}</div>
-      <div class="desc" *ngIf="item.description">{{ item.description }}</div>
-      <div class="meta">
-        <img class="favicon" *ngIf="getFavicon(item)" [src]="getFavicon(item)" alt="" loading="lazy" />
-        <span class="host">{{ getHostname(item) }}</span>
+    <div class="source-row__left">
+      <div class="source-row__title">{{ item.title }}</div>
+      <div class="source-row__desc" *ngIf="item.description">{{ item.description }}</div>
+      <div class="source-row__meta">
+        <img class="source-row__favicon" *ngIf="getFavicon(item)" [src]="getFavicon(item)" alt="" loading="lazy" />
+        <span class="source-row__host">{{ getHostname(item) }}</span>
       </div>
     </div>
 
-    <div class="thumb" *ngIf="item.image">
-      <img [src]="item.image" alt="" loading="lazy" (error)="$event.target.closest('.thumb').remove()" />
+    <div class="source-row__thumb" *ngIf="item.image">
+      <img [src]="item.image" alt="" loading="lazy" (error)="$event.target.closest('.source-row__thumb').remove()" />
     </div>
   </a>
 

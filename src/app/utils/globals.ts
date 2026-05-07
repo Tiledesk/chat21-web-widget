@@ -226,6 +226,7 @@ export class Globals {
   hasCalloutInWidgetConfig: boolean; // *******  new ********
 
   fontFamilySource: string; // *******  new ********
+  cssSource: string; // *******  new ********
 
   size: 'min' | 'max' | 'top'; // *******  new ********
 
@@ -448,6 +449,8 @@ export class Globals {
     this.hasCalloutInWidgetConfig = false;
     /** set widget size from 3 different positions: min, max, top */
     this.size = 'min';
+    /** remote CSS override URL (from window.tiledeskSettings.cssSource only) */
+    this.cssSource = '';
     /** enable to close the chat in conversation */
     this.closeChatInConversation = false;
     // ============ END: SET EXTERNAL PARAMETERS ==============//

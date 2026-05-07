@@ -6,6 +6,14 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.33-rc5
+- **added**: cssSource tiledeskSettings property to manage and override widget style 
+
+# 5.1.33-rc4
+- **bug fixed**: bug fixed extractUrlsFromText
+
+# 5.1.32-rc18
+- **bug fixed**: bug fix css kb_json_sources
 
 # 5.1.32-rc17
 - **bug fixed**: empty message in preview URLs

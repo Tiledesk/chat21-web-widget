@@ -1,20 +1,65 @@
 export function extractUrlsFromText(text?: string, maxUrls = 20): string[] {
   if (!text) return [];
   const input = text.toString();
-  const urlRegex = /https?:\/\/[^\s<>"'`)\]]+/gi;
-  const matches = input.match(urlRegex) || [];
+  // Match candidates:
+  // - https?://...
+  // - www....
+  // - naked domains like google.it/path
+  // We later normalize + validate.
+  const candidateRegex =
+    /\b(?:https?:\/\/[^\s<>"'`)\]]+|www\.[^\s<>"'`)\]]+|[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+[^\s<>"'`)\]]*)/gi;
+  const matches = input.match(candidateRegex) || [];
 
   const seen = new Set<string>();
   const out: string[] = [];
   for (const raw of matches) {
-    const cleaned = raw.replace(/[.,;:!?]+$/g, '').trim();
-    if (!cleaned) continue;
-    if (seen.has(cleaned)) continue;
-    seen.add(cleaned);
-    out.push(cleaned);
+    const normalized = normalizeAndValidateUrlCandidate(raw);
+    if (!normalized) continue;
+    if (seen.has(normalized)) continue;
+    seen.add(normalized);
+    out.push(normalized);
     if (out.length >= maxUrls) break;
   }
   return out;
+}
+
+function normalizeAndValidateUrlCandidate(candidate: string): string | null {
+  if (!candidate) return null;
+  let s = candidate.trim();
+
+  // Drop surrounding punctuation/brackets commonly attached in text
+  s = s.replace(/^[("'<\[]+/, '').replace(/[)"'>\]]+$/, '');
+  // Drop trailing punctuation
+  s = s.replace(/[.,;:!?]+$/g, '').trim();
+  if (!s) return null;
+
+  // Reject emails quickly
+  if (s.includes('@')) return null;
+
+  // Add scheme if missing
+  if (/^www\./i.test(s)) {
+    s = `https://${s}`;
+  } else if (!/^https?:\/\//i.test(s)) {
+    s = `https://${s}`;
+  }
+
+  try {
+    const url = new URL(s);
+    const hostname = url.hostname.toLowerCase();
+
+    // must look like a real domain: contain a dot and a plausible TLD
+    if (!hostname.includes('.')) return null;
+    const tld = hostname.split('.').pop() || '';
+    if (tld.length < 2) return null;
+    if (!/^[a-z0-9-]+$/.test(tld)) return null;
+
+    // normalize: remove default port and trailing slash when path is '/'
+    url.hash = ''; // do not include fragments in "identity"
+    if (url.pathname === '/') url.pathname = '';
+    return url.toString();
+  } catch {
+    return null;
+  }
 }
 
 /**
