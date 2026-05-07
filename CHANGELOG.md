@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.33-rc4
+- **bug fixed**: bug fixed extractUrlsFromText
+
 # 5.1.32-rc18
 - **bug fixed**: bug fix css kb_json_sources
 
