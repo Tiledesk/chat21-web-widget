@@ -166,6 +166,9 @@
                     }
                     .msg_sent.json-resources{
                         border: 0 !important;
+                        width: 100%;
+                        max-width: 652px;
+                        flex: 1 1 auto;
                     }
                     .message_innerhtml {
                         padding: 8px;
@@ -243,6 +246,9 @@
                     .msg_receive.json-resources{
                         min-height: unset;
                         padding: 0;
+                        width: 100%;
+                        max-width: 652px;
+                        flex: 1 1 auto;
                     }
                     
 
