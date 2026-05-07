@@ -259,6 +259,12 @@ export class VoiceStreamingService {
       this.mediaStream = shared
         ? shared
         : await navigator.mediaDevices.getUserMedia({ audio: true });
+      const tracks = this.mediaStream.getAudioTracks();
+      this.logger.info('[VoiceStreaming] microphone acquired', {
+        shared: !!shared,
+        tracks: tracks.length,
+        label: tracks[0]?.label ?? '(unknown)',
+      });
       const recorderOpts: MediaRecorderOptions = {};
       if (mime) {
         recorderOpts.mimeType = mime;

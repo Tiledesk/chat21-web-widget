@@ -129,6 +129,10 @@ export class VoiceService {
   // Set to true by the 'done' event; triggers acquisition unblock once all sources end.
   private _unblockAfterTts = false;
   private _unblockSafetyTimer: ReturnType<typeof setTimeout> | null = null;
+  // Fallback timer started after sendPlaybackComplete. If the proxy does not reply
+  // with 'listening' within the timeout window, the UI is force-unblocked so the
+  // user is not left stuck waiting indefinitely.
+  private _listeningFallbackTimer: ReturnType<typeof setTimeout> | null = null;
   // Track when the last TTS chunk is expected to finish playing.
   // Used to calculate a proper safety timer duration for long messages.
   private _ttsExpectedEndTime = 0;
@@ -179,6 +183,8 @@ export class VoiceService {
    * Richiede il microfono, avvia VAD in ascolto (inizio/fine parlato) e registra in WebM per segmento.
    */
   async startSession(options: VoiceSessionStartOptions = {}): Promise<void> {
+    const mode = options.voiceIngressStream ? 'wss-proxy' : 'legacy-vad';
+    this.logger.info('[VoiceService] startSession', { mode });
     await this.stopSession();
 
     this.sessionConstraints = options.constraints ?? DEFAULT_VOICE_MEDIA_STREAM_CONSTRAINTS;
@@ -196,7 +202,13 @@ export class VoiceService {
 
   /** Sessione guidata dal proxy: solo mic + volume + WSS (mic in upload, eventi + TTS in download). */
   private async startWssVoiceSession(): Promise<void> {
+    this.logger.info('[VoiceService] acquiring microphone for WSS session');
     this.stream = await navigator.mediaDevices.getUserMedia(this.sessionConstraints);
+    const tracks = this.stream.getAudioTracks();
+    this.logger.info('[VoiceService] microphone acquired', {
+      tracks: tracks.length,
+      label: tracks[0]?.label ?? '(unknown)',
+    });
 
     // 🎧 AUDIO ANALYSER INIT
     this.initAudioAnalyser(this.stream);
@@ -209,7 +221,7 @@ export class VoiceService {
       await this.voiceStreaming.start(this.voiceIngressConfig!, { sharedMediaStream: this.stream });
       // Signal that the voice proxy is now live — suppresses tiledesk-server TTS.
       this._isWssVoiceActive$.next(true);
-      this.logger.log('[VoiceService] sessione WSS (nessun VAD locale)');
+      this.logger.info('[VoiceService] WSS voice session started (no local VAD)');
     } catch (e) {
       this.wsControlSub?.unsubscribe();
       this.wsControlSub = undefined;
@@ -287,25 +299,41 @@ export class VoiceService {
         this.logger.log('[VoiceService] session_started', { requestId: msg.requestId ?? '' });
         break;
       case 'listening':
-        // Proxy confirmed it is in LISTENING state — unblock the UI.
-        // Audio has been flowing continuously (AEC handles echo suppression),
-        // so there is nothing to unmute here.
+        // Proxy confirmed it is in LISTENING state — unblock the UI and resume
+        // the MediaRecorder. Recording was paused on 'thinking' and must only
+        // restart here, after TTS playback has fully completed and the proxy
+        // is confirmed ready to receive audio again.
+        if (this._listeningFallbackTimer !== null) {
+          clearTimeout(this._listeningFallbackTimer);
+          this._listeningFallbackTimer = null;
+        }
         this._isAcquisitionBlocked$.next(false);
-        this.logger.log('[VoiceService] listening – acquisition unblocked');
+        this.voiceStreaming.resumeRecording();
+        this.logger.log('[VoiceService] listening – acquisition unblocked, recording resumed');
         break;
       case 'transcript': {
         const text = typeof msg.text === 'string' ? msg.text : '';
         const isFinal = !!msg.isFinal;
+        // Guard: if the proxy has already moved to PROCESSING (thinking) or SPEAKING,
+        // this transcript is a stale in-flight STT result. Discard it so it cannot
+        // override the blocked acquisition state or reach any downstream subscriber.
+        // 'thinking' is stronger than 'transcript' — state must not regress.
+        if (this._isAcquisitionBlocked$.value) {
+          this.logger.warn('[VoiceService] transcript discarded – arrived after thinking/speaking (stale STT result)', { text, isFinal });
+          break;
+        }
         this.logger.log('[VoiceService] transcript', { text, isFinal });
         this.voiceTranscriptSubject.next({ text, isFinal });
         break;
       }
       case 'thinking':
         // Block acquisition UI while the bot processes the utterance.
-        // Audio continues flowing to the proxy so the server can detect
-        // barge-in via Flux STT even during PROCESSING state.
+        // Pause the MediaRecorder so no audio chunks are sent to the proxy
+        // during PROCESSING state. Recording resumes only after the proxy
+        // confirms LISTENING (i.e. after TTS playback has fully finished).
         this._isAcquisitionBlocked$.next(true);
-        this.logger.log('[VoiceService] thinking – acquisition blocked', { activeTtsSources: this._activeTtsSources });
+        this.voiceStreaming.pauseRecording();
+        this.logger.log('[VoiceService] thinking – acquisition blocked, recording paused', { activeTtsSources: this._activeTtsSources });
         break;
       case 'speaking': {
         this._isAcquisitionBlocked$.next(true);
@@ -346,13 +374,14 @@ export class VoiceService {
             safetyTimerMs: safetyMs
           });
         } else {
-          // No audio sources currently tracked, but there might be chunks in flight
-          // or sources that already finished. Do NOT send playbackComplete here -
-          // it will be sent either by _onTtsSourceEnded when sources actually end,
-          // or by the safety timer as fallback. This prevents race where done
-          // arrives before chunks start playing.
-          this.logger.log('[VoiceService] done – no active sources, waiting for any in-flight audio');
-          // Set a short safety timer anyway in case chunks arrive after done
+          // No audio sources tracked yet, but binary TTS chunks may still be in-flight
+          // (WebSocket binary frames can arrive after the JSON 'done' control message).
+          // Set _unblockAfterTts so that _onTtsSourceEnded() triggers _flushTtsUnblock
+          // naturally when those chunks finish playing, instead of relying solely on the
+          // safety timer (which would delay unblock by 10 s even when audio ends sooner).
+          this._unblockAfterTts = true;
+          this.logger.log('[VoiceService] done – no active sources yet, arming unblock for in-flight chunks');
+          // Safety timer as last resort in case no chunks arrive at all.
           if (this._unblockSafetyTimer !== null) clearTimeout(this._unblockSafetyTimer);
           this._unblockSafetyTimer = setTimeout(() => this._flushTtsUnblock(true), 10000);
         }
@@ -383,6 +412,7 @@ export class VoiceService {
       if (!this.ttsPlayContext || this.ttsPlayContext.state === 'closed') {
         this.ttsPlayContext = new AudioContext();
         this.ttsNextPlayTime = this.ttsPlayContext.currentTime;
+        this.logger.info('[VoiceService] TTS AudioContext created');
       }
       const ctx = this.ttsPlayContext;
       const audioBuf = await ctx.decodeAudioData(buf.slice(0));
@@ -404,7 +434,11 @@ export class VoiceService {
       // Convert AudioContext time delta to milliseconds and add to current time.
       const audioEndDelayMs = (this.ttsNextPlayTime - ctx.currentTime) * 1000;
       this._ttsExpectedEndTime = Date.now() + audioEndDelayMs;
+      const isFirstChunk = this._activeTtsSourceNodes.length === 0;
       this._activeTtsSourceNodes.push(src);
+      if (isFirstChunk) {
+        this.logger.info('[VoiceService] TTS playback started', { durationS: audioBuf.duration.toFixed(3), startsAtS: t0.toFixed(3) });
+      }
       this.logger.log('[VoiceService] TTS chunk scheduled', { durationS: audioBuf.duration.toFixed(3), startsAtS: t0.toFixed(3), activeTtsSources: this._activeTtsSources, expectedEndInMs: audioEndDelayMs.toFixed(0) });
       src.onended = () => this._onTtsSourceEnded(src);
     } catch (e) {
@@ -420,6 +454,10 @@ export class VoiceService {
       if (idx !== -1) { this._activeTtsSourceNodes.splice(idx, 1); }
     }
     this.logger.log('[VoiceService] TTS source ended', { activeTtsSources: this._activeTtsSources, unblockPending: this._unblockAfterTts });
+    if (this._activeTtsSources === 0) {
+      this.logger.info('[VoiceService] TTS playback ended – all sources finished');
+      console.log('[VoiceService] TTS audio finished playing');
+    }
     if (this._unblockAfterTts && this._activeTtsSources === 0) {
       this._flushTtsUnblock(false);
     }
@@ -465,12 +503,21 @@ export class VoiceService {
       this.logger.log('[VoiceService] TTS unblock: all sources ended, sending playback complete');
     }
     this._stopTtsKaraoke(true);
-    // Signal the proxy that TTS playback is complete.  The proxy will transition
-    // to LISTENING and send a 'listening' event back; the mic is unmuted there
-    // (not here) so it is live only when the proxy is confirmed ready.
-    // Do NOT call _isAcquisitionBlocked$.next(false) here — 'listening' is the
-    // single source of truth so that UI and mic unblock atomically.
+    // Signal the proxy that TTS playback is complete. The proxy will transition
+    // to LISTENING and send a 'listening' event back; the mic resumes and the UI
+    // unblocks only then — so the user sees 'listening' exactly when the stream
+    // is open, not before.
+    // Start a fallback timer: if the proxy does not respond with 'listening' within
+    // 3 seconds (network hiccup, server race, etc.) force-unblock so the user is
+    // never left stuck. The timer is cancelled immediately if 'listening' arrives.
     this.voiceStreaming.sendPlaybackComplete();
+    if (this._listeningFallbackTimer !== null) clearTimeout(this._listeningFallbackTimer);
+    this._listeningFallbackTimer = setTimeout(() => {
+      this._listeningFallbackTimer = null;
+      this.logger.warn('[VoiceService] listening fallback timer fired – proxy did not respond, force-unblocking');
+      this._isAcquisitionBlocked$.next(false);
+      this.voiceStreaming.resumeRecording();
+    }, 3000);
   }
 
   // ── WSS TTS Karaoke helpers ───────────────────────────────────────────────
@@ -545,6 +592,7 @@ export class VoiceService {
 
   async stopSession(options?: { discardInProgressSegment?: boolean}): Promise<{ voiceIngressResultUrl: string | null }> {
     const discard = options?.discardInProgressSegment === true;
+    this.logger.info('[VoiceService] stopSession', { discard, isWssVoiceActive: this._isWssVoiceActive$.getValue() });
 
     this.wsControlSub?.unsubscribe();
     this.wsControlSub = undefined;
@@ -625,6 +673,10 @@ export class VoiceService {
     clearTimeout(this.responseTimeoutId);
     this.responseTimeoutId = undefined;
     this.isWaitingForResponse = false;
+    if (this._listeningFallbackTimer !== null) {
+      clearTimeout(this._listeningFallbackTimer);
+      this._listeningFallbackTimer = null;
+    }
     this._isAcquisitionBlocked$.next(false);
 
     return { voiceIngressResultUrl };
