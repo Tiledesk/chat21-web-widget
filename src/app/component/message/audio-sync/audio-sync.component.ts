@@ -12,10 +12,12 @@ import {
 import { Subscription } from 'rxjs';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
 import { Globals } from 'src/app/utils/globals';
 
 /** HAVE_METADATA: metadati già disponibili (tipico audio servito da cache). */
 const HAVE_METADATA = 1;
+const BROWSER_TTS_OUTPUT_FORMAT = 'mp3_44100_128';
 
 @Component({
   selector: 'chat-audio-sync',
@@ -52,11 +54,13 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   private streamAbort?: AbortController;
   private mediaSourceObjectUrl?: string;
   private stopAllSub?: Subscription;
+  private preemptSub?: Subscription;
 
   constructor(
     private readonly cdr: ChangeDetectorRef,
     private readonly ttsPlayback: TtsAudioPlaybackCoordinator,
     private readonly globals: Globals,
+    private readonly voiceService: VoiceService,
   ) {}
 
   /** `false` = messaggio già in storico: niente autoplay / karaoke. Da `message.isJustRecived`. */
@@ -176,6 +180,28 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
       }
       this.cdr.detectChanges();
     });
+
+    // Preempt signal: a newer message requested start while this one was playing.
+    // Only react when the emitted id matches this component's own ownerId.
+    this.preemptSub = this.ttsPlayback.preemptPlayback$.subscribe((stoppedId) => {
+      if (stoppedId !== this.playbackOwnerId) {
+        return;
+      }
+      this.playbackStarted = false;
+      this.cleanupStreaming();
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
+      this.markAllWordsPast();
+      if (this.message) {
+        this.message.isJustRecived = false;
+      }
+      this.cdr.detectChanges();
+      // No releaseIfCurrent call — the coordinator already cleared currentOwnerId before emitting.
+    });
   }
 
   ngOnDestroy(): void {
@@ -184,6 +210,8 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.cleanupStreaming();
     this.stopAllSub?.unsubscribe();
     this.stopAllSub = undefined;
+    this.preemptSub?.unsubscribe();
+    this.preemptSub = undefined;
 
     const audio = this.audioRef?.nativeElement;
     if (audio) {
@@ -208,8 +236,28 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private startPlayback(audio: HTMLAudioElement): void {
-    const src = (this.message as any)?.metadata?.src as string | undefined;
-    if (!src) {
+    const messageSrc = (this.message as any)?.metadata?.src as string | undefined;
+
+    if (this.message?.type === 'tts') {
+      const streamEndpoint = this.voiceService.proxyTtsStreamUrl;
+      const fullFileEndpoint = this.voiceService.proxyTtsUrl;
+      if (streamEndpoint) {
+        this.startStreamingFromEndpoint(audio, streamEndpoint, fullFileEndpoint, messageSrc);
+        return;
+      }
+      if (fullFileEndpoint) {
+        this.fetchFullFileFromEndpoint(audio, fullFileEndpoint);
+        return;
+      }
+      if (messageSrc) {
+        this.playDirectUrl(audio, messageSrc);
+        return;
+      }
+      this.handlePlaybackError();
+      return;
+    }
+
+    if (!messageSrc) {
       this.playbackStarted = false;
       this.ttsPlayback.releaseIfCurrent(this.playbackOwnerId);
       this.markAllWordsPast();
@@ -220,11 +268,10 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
       return;
     }
 
-    if (this.message?.type === 'tts') {
-      this.startStreamingFromEndpoint(audio, src);
-      return;
-    }
+    this.playDirectUrl(audio, messageSrc);
+  }
 
+  private playDirectUrl(audio: HTMLAudioElement, src: string): void {
     audio.src = src;
     try {
       audio.currentTime = 0;
@@ -234,16 +281,40 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     audio.play().catch(() => this.handlePlaybackError());
   }
 
-  private startStreamingFromEndpoint(audio: HTMLAudioElement, endpoint: string): void {
+  private startStreamingFromEndpoint(
+    audio: HTMLAudioElement,
+    endpoint: string,
+    fullFileEndpoint?: string | null,
+    directFallbackSrc?: string,
+  ): void {
     this.cleanupStreaming();
 
     const jwt = this.getJwtToken();
     const voiceSettings = this.getVoiceSettingsBody(); 
     const requestBody = this.buildTtsRequestBody(voiceSettings);
+    let fallbackUsed = false;
+    const fallback = () => {
+      if (fallbackUsed) {
+        this.handlePlaybackError();
+        return;
+      }
+      fallbackUsed = true;
+      this.cleanupStreaming();
+      if (fullFileEndpoint) {
+        this.fetchFullFileFromEndpoint(audio, fullFileEndpoint);
+        return;
+      }
+      if (directFallbackSrc) {
+        this.playDirectUrl(audio, directFallbackSrc);
+        return;
+      }
+      this.handlePlaybackError();
+    };
+
     // <audio src="..."> non può inviare header/body: serve fetch().
     const hasMse = typeof (window as any).MediaSource !== 'undefined';
     if (!hasMse) {
-      this.fetchAsBlobAndPlay(audio, endpoint, jwt, requestBody);
+      fallback();
       return;
     }
 
@@ -275,14 +346,15 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
         }
 
         const headerType = (response.headers.get('content-type') || '').split(';')[0].trim();
-        const mime = (headerType && MediaSourceCtor.isTypeSupported(headerType))
-          ? headerType
-          : 'audio/mpeg';
-
-        if (!MediaSourceCtor.isTypeSupported(mime)) {
-          this.cleanupStreaming();
+        if (headerType && !MediaSourceCtor.isTypeSupported(headerType)) {
           // Fallback: fetch completo e play via blob (no streaming).
-          this.fetchAsBlobAndPlay(audio, endpoint, jwt, requestBody);
+          fallback();
+          return;
+        }
+
+        const mime = headerType || 'audio/mpeg';
+        if (!MediaSourceCtor.isTypeSupported(mime)) {
+          fallback();
           return;
         }
 
@@ -323,15 +395,14 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
             ) as ArrayBuffer;
             sourceBuffer.appendBuffer(ab);
           } catch {
-            this.cleanupStreaming();
-            this.fetchAsBlobAndPlay(audio, endpoint, jwt, requestBody);
+            fallback();
           }
         };
 
         sourceBuffer.addEventListener('updateend', () => {
           if (!started && this.playbackStarted && !this.destroyed) {
             started = true;
-            audio.play().catch(() => this.handlePlaybackError());
+            audio.play().catch(() => fallback());
           }
           pump();
         });
@@ -355,7 +426,7 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
         tryEndOfStream();
       } catch {
         if (!abort.signal.aborted) {
-          this.handlePlaybackError();
+          fallback();
         }
       }
     };
@@ -427,9 +498,6 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
         'Authorization': `${jwt}`
       };
 
-      console.log('headers', headers);
-      console.log('requestBody', requestBody);
-
       const response = await fetch(endpoint, {
         method: 'POST',
         headers,
@@ -455,16 +523,33 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  private buildTtsRequestBody(voiceSettings: unknown): unknown {
+  private fetchFullFileFromEndpoint(audio: HTMLAudioElement, endpoint: string): void {
+    const jwt = this.getJwtToken();
+    const voiceSettings = this.getVoiceSettingsBody();
+    const requestBody = this.buildTtsRequestBody(voiceSettings, false);
+    void this.fetchAsBlobAndPlay(audio, endpoint, jwt, requestBody);
+  }
+
+  private buildTtsRequestBody(voiceSettings: unknown, streaming = true): unknown {
     const text = this.message?.text ?? '';
     if (
       voiceSettings &&
       typeof voiceSettings === 'object' &&
       !Array.isArray(voiceSettings)
     ) {
-      return { ...(voiceSettings as Record<string, unknown>), text, streaming: true };
+      return {
+        outputFormat: BROWSER_TTS_OUTPUT_FORMAT,
+        ...(voiceSettings as Record<string, unknown>),
+        text,
+        streaming,
+      };
     }
-    return { voiceSettings, text, streaming: true };
+    return {
+      voiceSettings,
+      text,
+      streaming,
+      outputFormat: BROWSER_TTS_OUTPUT_FORMAT,
+    };
   }
 
   private markAllWordsPast(): void {

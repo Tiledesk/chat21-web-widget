@@ -1,7 +1,7 @@
 {
   "name": "@chat21/chat21-web-widget",
   "author": "Tiledesk SRL",
-  "version": "5.1.32-rc16",
+  "version": "5.1.32-rc17",
   "license": "MIT",
   "homepage": "https://www.tiledesk.com",
   "repository": {
@@ -16,7 +16,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "source-map-explorer": "source-map-explorer dist/*.js"
+    "source-map-explorer": "source-map-explorer dist/*.js",
+    "voice-mock": "node mocks/voice-websocket-mock/server.cjs"
   },
   "private": false,
   "dependencies": {
@@ -71,6 +72,7 @@
     "protractor": "~7.0.0",
     "ts-node": "~7.0.0",
     "tslint": "~6.1.0",
-    "typescript": "~5.4"
+    "typescript": "~5.4",
+    "ws": "^8.18.0"
   }
 }

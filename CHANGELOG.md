@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.32-rc17
+- **bug fixed**: empty message in preview URLs
+
 # 5.1.32-rc16
 - **added**: added chat-json-sources to preview URLs
 

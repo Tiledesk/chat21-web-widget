@@ -22,7 +22,7 @@
                       <div *ngFor="let message of messages; let first = first; let last = last; let i = index" tabindex="1521" class="rowMsg" [style.display]="isEmptyUrlPreview(message) ? 'none' : null">
     
                           <!-- message SENDER:: -->
-                          <div role="messaggio" *ngIf="messageType(MESSAGE_TYPE_MINE, message) && (!isStreamAudioActive && !message.isJustRecived)" class="msg_container base_sent">
+                          <div role="messaggio" *ngIf="messageType(MESSAGE_TYPE_MINE, message) && !message.isJustRecived" class="msg_container base_sent">
                           
                             <!--backgroundColor non viene ancora usato -->
                             <!-- class="messages msg_sent slide-in-right" -->
@@ -69,6 +69,7 @@
                               [message]="message"
                               [fontColor]="stylesMap.get('bubbleReceivedTextColor')"
                               [stylesMap]="stylesMap"
+                              [streamOnArrival]="false"
                               (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
                               (onAfterMessageRender)="onAfterMessageRenderFN($event)"
                               (onElementRendered)="onElementRenderedFN($event)">
