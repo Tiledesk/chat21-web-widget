@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.32-rc18
+- **bug fixed**: bug fix css kb_json_sources
 
 # 5.1.32-rc17
 - **bug fixed**: empty message in preview URLs
