@@ -1154,11 +1154,22 @@ export class GlobalSettingsService {
         if (TEMP !== undefined) {
             globals.showAudioRecorderFooterButton = (TEMP === true) ? true : false;
         }
+        TEMP = tiledeskSettings['showAudioStreamFooterButton'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showAudioStreamFooterButton:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.showAudioStreamFooterButton = (TEMP === true) ? true : false;
+        }
         TEMP = tiledeskSettings['size'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > size:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.size = TEMP;
         } 
+
+        TEMP = tiledeskSettings['closeChatInConversation'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > closeChatInConversation:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.closeChatInConversation = (TEMP === true) ? true : false;
+        }
     }
 
     /**
@@ -1896,6 +1907,11 @@ export class GlobalSettingsService {
             globals.showAttachmentFooterButton = stringToBoolean(TEMP);
         }
 
+        TEMP = getParameterByName(windowContext, 'tiledesk_showAudioStreamFooterButton');
+        if (TEMP) {
+            globals.showAudioStreamFooterButton = stringToBoolean(TEMP);
+        }
+
         TEMP = getParameterByName(windowContext, 'tiledesk_showEmojiFooterButton');
         if (TEMP) {
             globals.showEmojiFooterButton = stringToBoolean(TEMP);
@@ -1904,6 +1920,11 @@ export class GlobalSettingsService {
         TEMP = getParameterByName(windowContext, 'tiledesk_size');
         if (TEMP) {
             globals.size = TEMP;
+        }
+
+        TEMP = getParameterByName(windowContext, 'tiledesk_closeChatInConversation');
+        if (TEMP) {
+            globals.closeChatInConversation = stringToBoolean(TEMP);
         }
         
     }

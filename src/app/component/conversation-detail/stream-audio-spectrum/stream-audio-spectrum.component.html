@@ -1,0 +1,43 @@
+<ng-container [ngSwitch]="mode">
+    <!-- ALERT: spectrum line (fills streamAudioAlert width) -->
+    <div *ngSwitchCase="'alert'" class="stream-audio-spectrum" [ngStyle]="accentColor ? { color: accentColor } : null">
+        <svg class="stream-audio-spectrum__svg" viewBox="0 0 100 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+                <linearGradient [attr.id]="gradientId" x1="0" y1="16" x2="100" y2="16" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="currentColor" stop-opacity="0.45"/>
+                    <stop offset="50%" stop-color="currentColor" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="currentColor" stop-opacity="0.45"/>
+                </linearGradient>
+            </defs>
+            <path class="stream-audio-spectrum__line"
+                [attr.d]="spectrumLinePath"
+                fill="none"
+                [attr.stroke]="'url(#' + gradientId + ')'"
+                stroke-width="2.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <!-- BUTTON: inactive icon / expanded pill content -->
+    <ng-container *ngSwitchCase="'button'">
+        <span class="stream-audio-button__icon" *ngIf="!active" aria-hidden="true">
+            <svg role="img" xmlns="http://www.w3.org/2000/svg" version="1.1" width="24" height="24" viewBox="0 0 30 30" fill="currentColor" preserveAspectRatio="xMidYMid meet">
+                <path class="s0" d="m5.21 7.41c-1.21 0-2.21 0.99-2.21 2.21v8.14c0 1.21 0.99 2.21 2.21 2.21 1.22 0 2.21-0.99 2.21-2.21v-8.14c0-1.21-0.99-2.21-2.21-2.21z"/>
+                <path class="s0" d="m11.64 3.01c-1.22 0-2.21 0.99-2.21 2.2v16.94c0 1.21 0.99 2.2 2.21 2.2 1.22 0 2.21-0.98 2.21-2.2v-16.94c0-1.21-0.99-2.21-2.21-2.21z"/>
+                <path class="s0" d="m15.86 9.25v8.88c0 1.21 0.99 2.21 2.21 2.21 1.22 0 2.21-0.99 2.21-2.21v-8.88c0-1.22-0.99-2.21-2.21-2.21-1.22 0-2.21 0.99-2.21 2.21z"/>
+                <path class="s0" d="m24.5 8.97c-1.22 0-2.21 0.99-2.21 2.21v5.02c0 1.22 0.99 2.21 2.21 2.21 1.22 0 2.21-0.99 2.21-2.21v-5.02c0-1.21-0.99-2.21-2.21-2.21z"/>
+            </svg>
+        </span>
+
+        <span class="stream-audio-button__expanded" *ngIf="active">
+            <span class="stream-audio-button__bars" aria-hidden="true">
+                <span class="bar" [style.transform]="'scaleY(' + barScales[0] + ')'"></span>
+                <span class="bar" [style.transform]="'scaleY(' + barScales[1] + ')'"></span>
+                <span class="bar" [style.transform]="'scaleY(' + barScales[2] + ')'"></span>
+                <span class="bar" [style.transform]="'scaleY(' + barScales[3] + ')'"></span>
+            </span>
+            <span class="stream-audio-button__label">{{ translationMap.get('CLOSE') }}</span>
+        </span>
+    </ng-container>
+</ng-container>

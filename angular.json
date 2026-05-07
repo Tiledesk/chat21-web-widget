@@ -61,7 +61,9 @@
               "idb",
               "accept-language-parser",
               "file-saver",
-              "dayjs"
+              "dayjs",
+              "onnxruntime-web",
+              "@ricky0123/vad-web"
             ],
             "sourceMap": true,
             "optimization": false,
@@ -182,5 +184,9 @@
           "defaultConfiguration": "development"
         }
       }
-    }}
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
 }
