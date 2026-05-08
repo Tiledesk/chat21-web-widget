@@ -127,6 +127,19 @@ export class VoiceService {
   // (barge_in or a new speaking event).  playWsTtsChunk captures this at entry and
   // checks it after the async decodeAudioData call to discard stale results.
   private _ttsGeneration = 0;
+
+  // ── Ordered-scheduling state ──────────────────────────────────────────────────────────────────
+  // Chunks arrive over WebSocket and their decodeAudioData calls run concurrently.
+  // Because a smaller/later chunk can decode faster than a larger/earlier one, scheduling
+  // based solely on decode-completion order causes audio to play out of arrival order
+  // (e.g. "manuale" starts before "scrittura" even though it arrived after it).
+  // Fix: assign a monotonic sequence number on arrival, decode in parallel, but only
+  // schedule a buffer once every preceding buffer has already been scheduled.
+  private _ttsChunkSeq = 0;       // Incremented on each chunk arrival (arrival order)
+  private _ttsScheduledSeq = 0;   // Next sequence slot that is allowed to be scheduled
+  // Decoded buffers waiting for their turn to be scheduled (keyed by arrival sequence)
+  private _ttsDecodedPending = new Map<number, AudioBuffer>();
+  // ─────────────────────────────────────────────────────────────────────────────────────────────
   // Set to true by the 'done' event; triggers acquisition unblock once all sources end.
   private _unblockAfterTts = false;
   private _unblockSafetyTimer: ReturnType<typeof setTimeout> | null = null;
@@ -399,8 +412,19 @@ export class VoiceService {
     }
   }
 
-  /** Chunk TTS: ogni buffer deve essere decodificabile da `decodeAudioData` (es. segmento WebM/Opus completo). */
+  /**
+   * Chunk TTS: ogni buffer deve essere decodificabile da `decodeAudioData` (es. segmento WebM/Opus completo).
+   *
+   * Decode-race fix: multiple chunks decode concurrently; a smaller/later chunk can finish
+   * decoding before a larger/earlier one, which would cause the AudioBufferSourceNode to be
+   * scheduled out of arrival order (e.g. "manuale" before "scrittura").  To prevent this, each
+   * chunk is assigned a monotonic sequence number on arrival and stored in _ttsDecodedPending
+   * after decoding.  _drainTtsDecodedBuffers() only advances the schedule when the next
+   * expected sequence slot is present, guaranteeing arrival-order playback regardless of decode speed.
+   */
   private async playWsTtsChunk(buf: ArrayBuffer): Promise<void> {
+    // Assign arrival-order sequence number SYNCHRONOUSLY before any await.
+    const seq = this._ttsChunkSeq++;
     // Capture the current generation BEFORE the synchronous increment so that
     // if _cancelAllTtsAudio() fires (incrementing _ttsGeneration) while this
     // decode is in-flight, the mismatch is detected and the stale chunk is discarded.
@@ -408,7 +432,7 @@ export class VoiceService {
     // Increment SYNCHRONOUSLY before any await so the 'done' event handler (which arrives
     // on the next WebSocket message — a different event-loop tick) sees a non-zero count.
     this._activeTtsSources++;
-    this.logger.log('[VoiceService] TTS chunk received', { bytes: buf.byteLength, activeTtsSources: this._activeTtsSources });
+    this.logger.log('[VoiceService] TTS chunk received', { seq, bytes: buf.byteLength, activeTtsSources: this._activeTtsSources });
     try {
       if (!this.ttsPlayContext || this.ttsPlayContext.state === 'closed') {
         this.ttsPlayContext = new AudioContext();
@@ -422,9 +446,39 @@ export class VoiceService {
       // for a turn that was already cancelled, and undo the counter increment.
       if (this._ttsGeneration !== capturedGeneration) {
         this._activeTtsSources = Math.max(0, this._activeTtsSources - 1);
-        this.logger.log('[VoiceService] TTS chunk discarded – stale generation', { capturedGeneration, currentGeneration: this._ttsGeneration });
+        this.logger.log('[VoiceService] TTS chunk discarded – stale generation', { seq, capturedGeneration, currentGeneration: this._ttsGeneration });
         return;
       }
+      // Store the decoded buffer under its arrival sequence number and attempt to
+      // flush any contiguous run of decoded buffers in order.
+      this._ttsDecodedPending.set(seq, audioBuf);
+      this._drainTtsDecodedBuffers();
+    } catch (e) {
+      // Advance the scheduler past this failed slot so subsequent decoded chunks are
+      // not blocked waiting for a slot that will never be filled.
+      if (seq === this._ttsScheduledSeq) {
+        this._ttsScheduledSeq++;
+        this._drainTtsDecodedBuffers();
+      }
+      this._onTtsSourceEnded();
+      this.logger.warn('[VoiceService] TTS chunk decode failed', { seq }, e);
+    }
+  }
+
+  /**
+   * Schedules decoded TTS buffers in strict arrival order.
+   * Called after every successful decode. Drains the _ttsDecodedPending map
+   * starting at _ttsScheduledSeq, stopping as soon as the next slot is missing
+   * (i.e. that chunk is still decoding or failed).
+   */
+  private _drainTtsDecodedBuffers(): void {
+    const ctx = this.ttsPlayContext;
+    if (!ctx) return;
+    while (this._ttsDecodedPending.has(this._ttsScheduledSeq)) {
+      const audioBuf = this._ttsDecodedPending.get(this._ttsScheduledSeq)!;
+      this._ttsDecodedPending.delete(this._ttsScheduledSeq);
+      this._ttsScheduledSeq++;
+
       const src = ctx.createBufferSource();
       src.buffer = audioBuf;
       src.connect(ctx.destination);
@@ -432,7 +486,6 @@ export class VoiceService {
       src.start(t0);
       this.ttsNextPlayTime = t0 + audioBuf.duration;
       // Track the expected end time in wall-clock time (ms) for safety timer calculation.
-      // Convert AudioContext time delta to milliseconds and add to current time.
       const audioEndDelayMs = (this.ttsNextPlayTime - ctx.currentTime) * 1000;
       this._ttsExpectedEndTime = Date.now() + audioEndDelayMs;
       const isFirstChunk = this._activeTtsSourceNodes.length === 0;
@@ -440,11 +493,8 @@ export class VoiceService {
       if (isFirstChunk) {
         this.logger.info('[VoiceService] TTS playback started', { durationS: audioBuf.duration.toFixed(3), startsAtS: t0.toFixed(3) });
       }
-      this.logger.log('[VoiceService] TTS chunk scheduled', { durationS: audioBuf.duration.toFixed(3), startsAtS: t0.toFixed(3), activeTtsSources: this._activeTtsSources, expectedEndInMs: audioEndDelayMs.toFixed(0) });
+      this.logger.log('[VoiceService] TTS chunk scheduled', { seq: this._ttsScheduledSeq - 1, durationS: audioBuf.duration.toFixed(3), startsAtS: t0.toFixed(3), activeTtsSources: this._activeTtsSources, expectedEndInMs: audioEndDelayMs.toFixed(0) });
       src.onended = () => this._onTtsSourceEnded(src);
-    } catch (e) {
-      this._onTtsSourceEnded();
-      this.logger.warn('[VoiceService] TTS chunk decode failed', e);
     }
   }
 
@@ -487,6 +537,10 @@ export class VoiceService {
     this._activeTtsSources = 0;
     this._unblockAfterTts = false;
     this._ttsExpectedEndTime = 0;
+    // Reset ordered-scheduling state so the next speaking turn starts fresh.
+    this._ttsChunkSeq = 0;
+    this._ttsScheduledSeq = 0;
+    this._ttsDecodedPending.clear();
     this._stopTtsKaraoke(true);
     this.logger.log('[VoiceService] TTS cancelled – all audio sources stopped');
   }
