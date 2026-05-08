@@ -49,6 +49,13 @@ export function isAudio(message: any) {
   return false;
 }
 
+export function isJsonSources(message: any) {
+  if (message && message.type && message.type === 'url_preview') {
+    return true;
+  }
+  return false;
+}
+
 /** */
 export function isInfo(message: any) {
     if (message && message.attributes && (message.attributes.subtype === 'info' || message.attributes.subtype === 'info/support')) {

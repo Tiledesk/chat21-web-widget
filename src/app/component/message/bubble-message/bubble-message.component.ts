@@ -3,11 +3,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, TYPE_MSG_URL_PREVIEW } from 'src/chat21-core/utils/constants';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
-import { calcImageSize, isAudio, isFile, isFrame, isImage, messageType } from 'src/chat21-core/utils/utils-message';
+import { calcImageSize, isAudio, isFile, isFrame, isImage, isJsonSources, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
-import { UrlPreviewService } from 'src/app/providers/url-preview.service';
-import { extractUrlsFromText } from 'src/app/utils/url-utils';
-import { extractUrlsFromJsonSources, mergeJsonSourcesMissingFields, parseJsonSources } from 'src/app/utils/json-sources-utils';
+import { JsonSourcesParserService } from 'src/app/providers/json-sources-parser.service';
 import { JsonSourceItem } from '../json-sources/json-sources.component';
 
 @Component({
@@ -33,6 +31,7 @@ export class BubbleMessageComponent {
   readonly isFile = isFile;
   readonly isFrame = isFrame;
   readonly isAudio = isAudio;
+  readonly isJsonSources = isJsonSources;
   readonly messageType = messageType;
   readonly convertColorToRGBA = convertColorToRGBA;
   readonly MESSAGE_TYPE_MINE = MESSAGE_TYPE_MINE;
@@ -44,7 +43,10 @@ export class BubbleMessageComponent {
 
   private urlPreviewReqId = 0;
 
-  constructor(public sanitizer: DomSanitizer, private urlPreviewService: UrlPreviewService) {}
+  constructor(
+    public sanitizer: DomSanitizer,
+    private jsonSourcesParser: JsonSourcesParserService
+  ) {}
 
   ngOnChanges(): void {
     if (this.message?.metadata && typeof this.message.metadata === 'object') {
@@ -59,18 +61,28 @@ export class BubbleMessageComponent {
       this.fullnameColor = getColorBck(this.message.sender_fullname);
     }
 
-    if (this.message?.type !== TYPE_MSG_URL_PREVIEW) {
-      this.jsonSources = null;
-      return;
-    }
+    // Reset on every message change: we must not "leak" sources across different messages.
+    this.jsonSources = null;
 
-    const parsedSources = parseJsonSources(this.message.text);
-    this.jsonSources = parsedSources;
+    // url_preview payload can live on message root OR inside metadata/attributes depending on the integration.
+    const urlPreviewLike =
+      this.message?.type === TYPE_MSG_URL_PREVIEW
+      || this.message?.metadata?.type === TYPE_MSG_URL_PREVIEW
+      || this.message?.attributes?.type === TYPE_MSG_URL_PREVIEW;
+    if (urlPreviewLike) this.loadJsonSourcesFromUrlPreviewMessage();
+  }
 
-    const sourcesUrls = extractUrlsFromJsonSources(parsedSources).slice(0, 10);
-    const urls = sourcesUrls.length > 0 ? sourcesUrls : extractUrlsFromText(this.message.text, 10);
+  private async loadJsonSourcesFromUrlPreviewMessage(): Promise<void> {
+    // Protect the UI from out-of-order async responses when the input `message` changes quickly.
+    const reqId = ++this.urlPreviewReqId;
+    // 1) Parse-only, so the UI can render immediately (no url-preview calls).
+    const baseSources = this.jsonSourcesParser.parseBaseFromMessage(this.message);
+    this.jsonSources = baseSources;
 
-    this.enrichWithUrlPreview(urls, parsedSources);
+    // 2) Enrich in background via url-preview, then merge missing fields.
+    const enriched = await this.jsonSourcesParser.enrichSources(baseSources);
+    if (reqId !== this.urlPreviewReqId) return;
+    this.jsonSources = enriched;
   }
 
   onBeforeMessageRenderFN(event: any): void {
@@ -83,30 +95,5 @@ export class BubbleMessageComponent {
 
   onElementRenderedFN(event: any): void {
     this.onElementRendered.emit({ element: event.element, status: event.status });
-  }
-
-  private async enrichWithUrlPreview(urls: string[], baseSources: JsonSourceItem[] | null): Promise<void> {
-    if (urls.length === 0) return;
-
-    const reqId = ++this.urlPreviewReqId;
-    const items = await this.urlPreviewService.previewUrls(urls);
-    if (reqId !== this.urlPreviewReqId) return;
-
-    const previewItems: JsonSourceItem[] = (items || []).map(x => ({
-      title: x.title || x.siteName || x.url,
-      link: x.url,
-      description: x.description,
-      image: x.image,
-      favicon: x.favicon,
-      favicon_hd: x.favicon_hd
-    }));
-
-    if (previewItems.length === 0) return;
-
-    if (baseSources?.length) {
-      this.jsonSources = mergeJsonSourcesMissingFields(baseSources, previewItems);
-    } else if (this.jsonSources === null) {
-      this.jsonSources = previewItems;
-    }
   }
 }
