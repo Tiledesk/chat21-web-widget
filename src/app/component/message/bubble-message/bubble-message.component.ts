@@ -5,12 +5,10 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, TYPE_MSG_URL_PREVIEW } from 'src/chat21-core/utils/constants';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
-import { calcImageSize, isAudio, isAudioTTS, isFile, isFrame, isImage, messageType } from 'src/chat21-core/utils/utils-message';
+import { JsonSourcesParserService } from 'src/app/providers/json-sources-parser.service';
+import { calcImageSize, isAudio, isAudioTTS, isFile, isFrame, isImage, isJsonSources, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
 import { VoiceService } from 'src/app/providers/voice/voice.service';
-import { UrlPreviewService } from 'src/app/providers/url-preview.service';
-import { extractUrlsFromText } from 'src/app/utils/url-utils';
-import { extractUrlsFromJsonSources, mergeJsonSourcesMissingFields, parseJsonSources } from 'src/app/utils/json-sources-utils';
 import { JsonSourceItem } from '../json-sources/json-sources.component';
 import { VoiceTtsKaraokeWord } from 'src/app/providers/voice/voice-streaming.types';
 
@@ -46,6 +44,7 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
   readonly isFile = isFile;
   readonly isFrame = isFrame;
   readonly isAudio = isAudio;
+  readonly isJsonSources = isJsonSources;
   readonly isAudioTTS = isAudioTTS;
   readonly messageType = messageType;
   readonly convertColorToRGBA = convertColorToRGBA;
@@ -58,7 +57,11 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
 
   private urlPreviewReqId = 0;
 
-  constructor(public sanitizer: DomSanitizer, public voiceService: VoiceService, private urlPreviewService: UrlPreviewService) { }
+  constructor(
+    public sanitizer: DomSanitizer, 
+    public voiceService: VoiceService, 
+    private jsonSourcesParser: JsonSourcesParserService
+  ) { }
 
   ngOnInit() {
     // If this TTS message arrived while the voice proxy was active, mark it so
@@ -130,13 +133,25 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const parsedSources = parseJsonSources(this.message.text);
-    this.jsonSources = parsedSources;
+    // url_preview payload can live on message root OR inside metadata/attributes depending on the integration.
+    const urlPreviewLike =
+      this.message?.type === TYPE_MSG_URL_PREVIEW
+      || this.message?.metadata?.type === TYPE_MSG_URL_PREVIEW
+      || this.message?.attributes?.type === TYPE_MSG_URL_PREVIEW;
+    if (urlPreviewLike) this.loadJsonSourcesFromUrlPreviewMessage();
+  }
 
-    const sourcesUrls = extractUrlsFromJsonSources(parsedSources).slice(0, 10);
-    const urls = sourcesUrls.length > 0 ? sourcesUrls : extractUrlsFromText(this.message.text, 10);
+  private async loadJsonSourcesFromUrlPreviewMessage(): Promise<void> {
+    // Protect the UI from out-of-order async responses when the input `message` changes quickly.
+    const reqId = ++this.urlPreviewReqId;
+    // 1) Parse-only, so the UI can render immediately (no url-preview calls).
+    const baseSources = this.jsonSourcesParser.parseBaseFromMessage(this.message);
+    this.jsonSources = baseSources;
 
-    this.enrichWithUrlPreview(urls, parsedSources);
+    // 2) Enrich in background via url-preview, then merge missing fields.
+    const enriched = await this.jsonSourcesParser.enrichSources(baseSources);
+    if (reqId !== this.urlPreviewReqId) return;
+    this.jsonSources = enriched;
   }
 
   trackWord(_index: number, item: { word: string; index: number }): number {
@@ -157,30 +172,5 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
 
   onElementRenderedFN(event: any): void {
     this.onElementRendered.emit({ element: event.element, status: event.status });
-  }
-
-  private async enrichWithUrlPreview(urls: string[], baseSources: JsonSourceItem[] | null): Promise<void> {
-    if (urls.length === 0) return;
-
-    const reqId = ++this.urlPreviewReqId;
-    const items = await this.urlPreviewService.previewUrls(urls);
-    if (reqId !== this.urlPreviewReqId) return;
-
-    const previewItems: JsonSourceItem[] = (items || []).map(x => ({
-      title: x.title || x.siteName || x.url,
-      link: x.url,
-      description: x.description,
-      image: x.image,
-      favicon: x.favicon,
-      favicon_hd: x.favicon_hd
-    }));
-
-    if (previewItems.length === 0) return;
-
-    if (baseSources?.length) {
-      this.jsonSources = mergeJsonSourcesMissingFields(baseSources, previewItems);
-    } else if (this.jsonSources === null) {
-      this.jsonSources = previewItems;
-    }
   }
 }

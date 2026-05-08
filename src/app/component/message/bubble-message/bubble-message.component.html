@@ -58,12 +58,17 @@
         (onElementRendered)="onElementRenderedFN($event)">
       </chat-audio> -->
 
-      <chat-audio  *ngIf="isAudio(message)"
+      <chat-audio *ngIf="isAudio(message)"
         [metadata]="message.metadata"
         [color]="fontColor"
         [stylesMap]="stylesMap">
       </chat-audio>
-
+      
+      <!-- Json sources -->
+      <chat-json-sources *ngIf="jsonSources !== null && jsonSources.length > 0"
+        [items]="jsonSources"
+        (onElementRendered)="onElementRenderedFN($event)">
+      </chat-json-sources> 
       <!-- TTS player: only when voice proxy is NOT active (avoids double playback)
            and the message was not already played by the proxy (avoids replay on session end) -->
       <chat-audio-sync *ngIf="isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && !voiceService.wasProxyHandled(message?.uid)"
@@ -88,7 +93,6 @@
         [color]="fontColor">
       </chat-text>
 
-
       <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"
         [metadata]="message.metadata"
         [width]="message.metadata.width"
@@ -99,7 +103,7 @@
       <!-- <div *ngIf="message.type == 'text'"> -->     
 
       <!-- tooltip="{{message.timestamp | dateAgo}} ({{message.timestamp | date:'shortDate'}} {{message.timestamp | date:'HH:mm:ss'}})" placement="bottom" -->
-      <div *ngIf="message?.text && (!isAudio(message) && !isAudioTTS(message))" >
+      <div *ngIf="message?.text && (!isAudio(message) && !isAudioTTS(message)) && !isJsonSources(message)" >
 
         <!-- Word-by-word streaming reveal during an active voice session -->
         <p *ngIf="_isStreaming" class="streaming-text" [style.color]="fontColor">
@@ -107,11 +111,6 @@
                 class="stream-word"
                 [style.animation-delay]="(w.index * 80) + 'ms'">{{w.word}} </span>
         </p>
-
-        <chat-json-sources *ngIf="jsonSources !== null && jsonSources.length > 0"
-          [items]="jsonSources"
-          (onElementRendered)="onElementRenderedFN($event)">
-        </chat-json-sources>
 
         <!-- [htmlEnabled]="(message?.type==='html')? true : false" -->
         <chat-text *ngIf="jsonSources === null && message?.type !=='html' && !_isStreaming"
