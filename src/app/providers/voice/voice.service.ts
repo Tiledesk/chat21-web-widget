@@ -4,6 +4,7 @@ import { getDefaultRealTimeVADOptions } from '@ricky0123/vad-web';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
+import { Globals } from 'src/app/utils/globals';
 
 import {
   DEFAULT_VOICE_MEDIA_STREAM_CONSTRAINTS,
@@ -164,6 +165,12 @@ export class VoiceService {
   readonly voiceTtsKaraoke$: Observable<VoiceTtsKaraokeFrame> = this._voiceTtsKaraokeSubject.asObservable();
   // ─────────────────────────────────────────────────────────────────────────────────────────────
 
+  // ── Thinking / typing-indicator sound ─────────────────────────────────────────────────────────
+  // Played on loop while the bot is thinking or the first TTS chunk hasn't arrived yet.
+  // Only active during WSS voice sessions (voice-proxy mode).
+  private _keyboardSoundEl: HTMLAudioElement | null = null;
+  // ─────────────────────────────────────────────────────────────────────────────────────────────
+
   private readonly logger: LoggerService = LoggerInstance.getInstance();
 
   private readonly bufferTime = 200000; // used as max safety timer duration for long TTS messages
@@ -173,6 +180,7 @@ export class VoiceService {
     private readonly ttsPlayback: TtsAudioPlaybackCoordinator,
     private readonly voiceStreaming: VoiceStreamingService,
     @Optional() @Inject(SpeechToTextProvider) private readonly speechToText: SpeechToTextProvider | null,
+    private readonly globals: Globals,
   ) {}
 
   get isSessionActive(): boolean {
@@ -321,6 +329,8 @@ export class VoiceService {
           clearTimeout(this._listeningFallbackTimer);
           this._listeningFallbackTimer = null;
         }
+        // If TTS never arrived (edge case) the keyboard sound would still be looping — stop it.
+        this._stopKeyboardSound();
         this._isAcquisitionBlocked$.next(false);
         this.voiceStreaming.resumeRecording();
         this.logger.log('[VoiceService] listening – acquisition unblocked, recording resumed');
@@ -347,6 +357,8 @@ export class VoiceService {
         // confirms LISTENING (i.e. after TTS playback has fully finished).
         this._isAcquisitionBlocked$.next(true);
         this.voiceStreaming.pauseRecording();
+        // Play keyboard typing sound to mask the silence while the bot generates its response.
+        this._startKeyboardSound();
         this.logger.log('[VoiceService] thinking – acquisition blocked, recording paused', { activeTtsSources: this._activeTtsSources });
         break;
       case 'speaking': {
@@ -363,6 +375,9 @@ export class VoiceService {
         this._ttsExpectedEndTime = 0;
         const preview = typeof msg.text === 'string' ? msg.text.slice(0, 80) : '';
         this.logger.log('[VoiceService] speaking – acquisition blocked, TTS text preview', { preview });
+        // Keep keyboard sound going (or start it as a fallback if 'thinking' was missed)
+        // until the first TTS audio chunk actually starts playing.
+        this._startKeyboardSound();
         // Emit the text being spoken so UI can display it alongside the audio.
         if (typeof msg.text === 'string' && msg.text) {
           this.voiceTtsTextSubject.next(msg.text);
@@ -491,6 +506,8 @@ export class VoiceService {
       const isFirstChunk = this._activeTtsSourceNodes.length === 0;
       this._activeTtsSourceNodes.push(src);
       if (isFirstChunk) {
+        // First real audio about to play — stop the keyboard typing sound immediately.
+        this._stopKeyboardSound();
         this.logger.info('[VoiceService] TTS playback started', { durationS: audioBuf.duration.toFixed(3), startsAtS: t0.toFixed(3) });
       }
       this.logger.log('[VoiceService] TTS chunk scheduled', { seq: this._ttsScheduledSeq - 1, durationS: audioBuf.duration.toFixed(3), startsAtS: t0.toFixed(3), activeTtsSources: this._activeTtsSources, expectedEndInMs: audioEndDelayMs.toFixed(0) });
@@ -645,6 +662,31 @@ export class VoiceService {
 
   // ─────────────────────────────────────────────────────────────────────────
 
+  // ── Keyboard typing-indicator sound helpers ───────────────────────────────
+  /**
+   * Starts the keyboard sound on loop to mask silence while the bot is
+   * generating its response. No-op if already playing.
+   * Only called during WSS voice sessions (voice-proxy mode).
+   */
+  private _startKeyboardSound(): void {
+    if (this._keyboardSoundEl) return; // already playing
+    const audio = new Audio(`${this.globals.baseLocation}/assets/sounds/keyboard.mp3`);
+    audio.loop = true;
+    audio.play().catch((e) => this.logger.warn('[VoiceService] keyboard sound play failed', e));
+    this._keyboardSoundEl = audio;
+    this.logger.log('[VoiceService] keyboard sound started');
+  }
+
+  /** Stops and discards the keyboard typing sound. No-op if not playing. */
+  private _stopKeyboardSound(): void {
+    if (!this._keyboardSoundEl) return;
+    this._keyboardSoundEl.pause();
+    this._keyboardSoundEl.currentTime = 0;
+    this._keyboardSoundEl = null;
+    this.logger.log('[VoiceService] keyboard sound stopped');
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
   async stopSession(options?: { discardInProgressSegment?: boolean}): Promise<{ voiceIngressResultUrl: string | null }> {
     const discard = options?.discardInProgressSegment === true;
     this.logger.info('[VoiceService] stopSession', { discard, isWssVoiceActive: this._isWssVoiceActive$.getValue() });
@@ -664,6 +706,7 @@ export class VoiceService {
     this._cancelAllTtsAudio();
     this.ttsPlayContext = undefined;
     this.ttsNextPlayTime = 0;
+    this._stopKeyboardSound();
 
     let voiceIngressResultUrl: string | null = null;
     if (this.voiceIngressConfig) {
