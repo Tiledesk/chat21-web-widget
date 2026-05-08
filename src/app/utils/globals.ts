@@ -36,6 +36,14 @@ export class Globals {
   isMobile: boolean;
   isLogged: boolean;
   soundEnabled: boolean;
+  /** Volume for the keyboard typing-indicator sound during voice sessions. Range 0.0–1.0. */
+  keyboardSoundVolume: number;
+  /**
+   * Filename (local) or absolute URL (remote) for the keyboard typing-indicator sound.
+   * Local: bare filename resolved against `baseLocation + '/assets/sounds/'` (e.g. `'keyboard.mp3'`).
+   * Remote: full URL starting with `http://` or `https://`.
+   */
+  keyboardSoundFile: string;
   BUILD_VERSION: String;
   baseLocation: string;
   availableAgents: Array<UserAgent> = [];
@@ -465,6 +473,8 @@ export class Globals {
     this.BUILD_VERSION = 'v.' + environment.version;
 
     this.soundEnabled = true;
+    this.keyboardSoundVolume = 0.3;
+    this.keyboardSoundFile = 'keyboard.mp3';
 
     this.conversationsBadge = 0;
 

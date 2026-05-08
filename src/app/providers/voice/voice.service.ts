@@ -670,11 +670,16 @@ export class VoiceService {
    */
   private _startKeyboardSound(): void {
     if (this._keyboardSoundEl) return; // already playing
-    const audio = new Audio(`${this.globals.baseLocation}/assets/sounds/keyboard.mp3`);
+    const file = this.globals.keyboardSoundFile ?? 'keyboard.mp3';
+    const src = /^https?:\/\//i.test(file)
+      ? file
+      : `${this.globals.baseLocation}/assets/sounds/${file}`;
+    const audio = new Audio(src);
     audio.loop = true;
+    audio.volume = Math.min(1, Math.max(0, this.globals.keyboardSoundVolume));
     audio.play().catch((e) => this.logger.warn('[VoiceService] keyboard sound play failed', e));
     this._keyboardSoundEl = audio;
-    this.logger.log('[VoiceService] keyboard sound started');
+    this.logger.log('[VoiceService] keyboard sound started', { src, volume: audio.volume });
   }
 
   /** Stops and discards the keyboard typing sound. No-op if not playing. */
