@@ -44,7 +44,9 @@
               "src/environments/real_data/widget-config-docker.json",
               "src/environments/real_data/widget-config-native-mqtt.json",
               "src/environments/real_data/widget-config-native-prod.json",
-              "src/environments/real_data/widget-config-aws-stage.json"
+              "src/environments/real_data/widget-config-aws-stage.json",
+              "src/environments/real_data/widget-config-aws-aruba.json",
+              "src/environments/real_data/widget-config-regione-puglia.json"
             ],
             "styles": [
               "src/app/sass/styles.scss"
@@ -59,7 +61,9 @@
               "idb",
               "accept-language-parser",
               "file-saver",
-              "dayjs"
+              "dayjs",
+              "onnxruntime-web",
+              "@ricky0123/vad-web"
             ],
             "sourceMap": true,
             "optimization": false,
@@ -180,5 +184,9 @@
           "defaultConfiguration": "development"
         }
       }
-    }}
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
 }

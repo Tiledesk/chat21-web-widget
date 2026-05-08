@@ -14,6 +14,7 @@ export class MessageModel {
         public attributes: any,
         public channel_type: string,
         public isSender: boolean,
-        public emoticon?: boolean
+        public emoticon?: boolean,
+        public isJustRecived?: boolean
     ) { }
 }

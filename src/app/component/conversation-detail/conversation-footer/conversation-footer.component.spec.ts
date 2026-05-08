@@ -13,6 +13,9 @@ import { By } from '@angular/platform-browser';
 import { NGXLogger } from 'ngx-logger';
 import { CustomLogger } from 'src/chat21-core/providers/logger/customLogger';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
+import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
+import { TiledeskAuthService } from 'src/chat21-core/providers/tiledesk/tiledesk-auth.service';
 
 describe('ConversationFooterComponent', () => {
   let component: ConversationFooterComponent;
@@ -20,6 +23,16 @@ describe('ConversationFooterComponent', () => {
   let ngxlogger: NGXLogger;
   let customLogger = new CustomLogger(ngxlogger)
   
+  const voiceServiceMock = {
+    startSession: () => Promise.resolve(),
+    stopSession: () => Promise.resolve({ voiceIngressResultUrl: null as string | null }),
+    audioSegment$: { subscribe: () => ({ unsubscribe: () => undefined }) },
+    voiceTranscript$: { subscribe: () => ({ unsubscribe: () => undefined }) },
+    volume$: { subscribe: () => ({ unsubscribe: () => undefined }) },
+    isAcquisitionBlocked$: { subscribe: () => ({ unsubscribe: () => undefined }) },
+  };
+  const ttsMock = { stopAll: () => undefined, isTTSPlaying$: { subscribe: () => ({ unsubscribe: () => undefined }) } };
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ 
@@ -32,7 +45,10 @@ describe('ConversationFooterComponent', () => {
         TypingService, 
         UploadService,
         ConversationsHandlerService,
-        ArchivedConversationsHandlerService
+        ArchivedConversationsHandlerService,
+        { provide: VoiceService, useValue: voiceServiceMock },
+        { provide: TtsAudioPlaybackCoordinator, useValue: ttsMock },
+        { provide: TiledeskAuthService, useValue: { getTiledeskToken: () => '' } },
       ]
     })
     .compileComponents();

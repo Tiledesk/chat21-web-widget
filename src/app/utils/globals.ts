@@ -219,14 +219,18 @@ export class Globals {
   showEmojiFooterButton: boolean // *******  new ********
   showAttachmentFooterButton: boolean // *******  new ********
   showAudioRecorderFooterButton: boolean // *******  new ********
+  showAudioStreamFooterButton: boolean // *******  new ********
 
   allowedOnSpecificUrl: boolean // *******  new ********
   allowedOnSpecificUrlList: Array<string> // *******  new ********
   hasCalloutInWidgetConfig: boolean; // *******  new ********
 
   fontFamilySource: string; // *******  new ********
+  cssSource: string; // *******  new ********
 
   size: 'min' | 'max' | 'top'; // *******  new ********
+
+  closeChatInConversation: boolean; // *******  new ********
   constructor(
   ) { }
 
@@ -435,6 +439,8 @@ export class Globals {
     this.showAttachmentFooterButton = true;
     /** show/hide rec audio option in footer chat-detail page */
     this.showAudioRecorderFooterButton = true;
+    /** show/hide stream audio option in footer chat-detail page */
+    this.showAudioStreamFooterButton = true;
     /** enabled to set a list of pattern url able to load the widget **/
     this.allowedOnSpecificUrl = false
     /** set a list of pattern url able to load the widget */
@@ -443,7 +449,10 @@ export class Globals {
     this.hasCalloutInWidgetConfig = false;
     /** set widget size from 3 different positions: min, max, top */
     this.size = 'min';
-
+    /** remote CSS override URL (from window.tiledeskSettings.cssSource only) */
+    this.cssSource = '';
+    /** enable to close the chat in conversation */
+    this.closeChatInConversation = false;
     // ============ END: SET EXTERNAL PARAMETERS ==============//
 
 

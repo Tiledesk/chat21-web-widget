@@ -339,6 +339,8 @@ export class GlobalSettingsService {
         this.setCssIframe();
         /** set main style */
         this.setStyle();
+        /** external CSS override: last stylesheet in document head (max cascade priority vs bundle) */
+        this.applyCustomCssOverrideFromGlobals();
         this.obsSettingsService.next(true);
     }
 
@@ -418,6 +420,28 @@ export class GlobalSettingsService {
         document.head.appendChild(link);
 
         document.documentElement.style.setProperty('--font-family', family);
+    }
+
+    /**
+     * Loads `globals.cssSource` (set only from tiledeskSettings) as the last stylesheet in head
+     * so rules with the same specificity override local / bundled CSS.
+     */
+    private applyCustomCssOverrideFromGlobals(): void {
+        const id = 'tiledesk-widget-css-override';
+        document.getElementById(id)?.remove();
+
+        const href = (this.globals.cssSource || '').trim();
+        console.log('href', href);
+        if (!href) {
+            return;
+        }
+
+        const link = document.createElement('link');
+        link.id = id;
+        link.rel = 'stylesheet';
+        link.href = href;
+        link.setAttribute('data-tiledesk-css-override', 'true');
+        document.head.appendChild(link);
     }
     /**
      * A: setVariablesFromService
@@ -639,6 +663,11 @@ export class GlobalSettingsService {
         let TEMP: any;
         const tiledeskSettings = windowContext['tiledeskSettings'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > tiledeskSettings: ', tiledeskSettings);
+        /** css override URL: solo tiledeskSettings, mai da URL / query params */
+        TEMP = tiledeskSettings['cssSource'];
+        if (TEMP !== undefined) {
+            globals.cssSource = TEMP;
+        }
         TEMP = tiledeskSettings['tenant'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings >  tenant:: ', TEMP);
         if (TEMP !== undefined) {
@@ -1125,11 +1154,22 @@ export class GlobalSettingsService {
         if (TEMP !== undefined) {
             globals.showAudioRecorderFooterButton = (TEMP === true) ? true : false;
         }
+        TEMP = tiledeskSettings['showAudioStreamFooterButton'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > showAudioStreamFooterButton:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.showAudioStreamFooterButton = (TEMP === true) ? true : false;
+        }
         TEMP = tiledeskSettings['size'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > size:: ', TEMP]);
         if (TEMP !== undefined) {
             globals.size = TEMP;
         } 
+
+        TEMP = tiledeskSettings['closeChatInConversation'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > closeChatInConversation:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.closeChatInConversation = (TEMP === true) ? true : false;
+        }
     }
 
     /**
@@ -1867,6 +1907,11 @@ export class GlobalSettingsService {
             globals.showAttachmentFooterButton = stringToBoolean(TEMP);
         }
 
+        TEMP = getParameterByName(windowContext, 'tiledesk_showAudioStreamFooterButton');
+        if (TEMP) {
+            globals.showAudioStreamFooterButton = stringToBoolean(TEMP);
+        }
+
         TEMP = getParameterByName(windowContext, 'tiledesk_showEmojiFooterButton');
         if (TEMP) {
             globals.showEmojiFooterButton = stringToBoolean(TEMP);
@@ -1875,6 +1920,11 @@ export class GlobalSettingsService {
         TEMP = getParameterByName(windowContext, 'tiledesk_size');
         if (TEMP) {
             globals.size = TEMP;
+        }
+
+        TEMP = getParameterByName(windowContext, 'tiledesk_closeChatInConversation');
+        if (TEMP) {
+            globals.closeChatInConversation = stringToBoolean(TEMP);
         }
         
     }

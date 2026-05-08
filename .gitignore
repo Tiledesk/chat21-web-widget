@@ -51,5 +51,18 @@ src/widget-config-native-mqtt.json
 
 .angular/cache/
 docs/agents
+
+# Voice WSS local mock (file binari catturati in sviluppo)
+mocks/voice-websocket-mock/temp/
+
+deploy_amazon_*.sh
 docs
+
+# Playwright MCP session artifacts
+.playwright-mcp/
+
+# Screenshots captured during dev/testing
+*.png
+*.jpeg
+*.jpg
 .claude
