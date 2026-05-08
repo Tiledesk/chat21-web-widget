@@ -948,6 +948,14 @@ export class GlobalSettingsService {
         if (TEMP !== undefined) {
             globals.soundEnabled = TEMP;
         }
+        TEMP = tiledeskSettings['keyboardSoundVolume'];
+        if (TEMP !== undefined) {
+            globals.keyboardSoundVolume = +TEMP;
+        }
+        TEMP = tiledeskSettings['keyboardSoundFile'];
+        if (TEMP !== undefined) {
+            globals.keyboardSoundFile = TEMP;
+        }
         TEMP = tiledeskSettings['openExternalLinkButton'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > openExternalLinkButton:: ', TEMP]);
         if (TEMP !== undefined) {
@@ -1336,6 +1344,14 @@ export class GlobalSettingsService {
         TEMP = el.nativeElement.getAttribute('soundEnabled');
         if (TEMP !== null) {
             this.globals.soundEnabled = TEMP;
+        }
+        TEMP = el.nativeElement.getAttribute('keyboardSoundVolume');
+        if (TEMP !== null) {
+            this.globals.keyboardSoundVolume = +TEMP;
+        }
+        TEMP = el.nativeElement.getAttribute('keyboardSoundFile');
+        if (TEMP !== null) {
+            this.globals.keyboardSoundFile = TEMP;
         }
         TEMP = el.nativeElement.getAttribute('openExternalLinkButton');
         if (TEMP !== null) {
@@ -1734,6 +1750,16 @@ export class GlobalSettingsService {
         TEMP = getParameterByName(windowContext, 'tiledesk_soundEnabled');
         if (TEMP) {
             globals.soundEnabled = stringToBoolean(TEMP); 
+        }
+
+        TEMP = getParameterByName(windowContext, 'tiledesk_keyboardSoundVolume');
+        if (TEMP) {
+            globals.keyboardSoundVolume = +TEMP;
+        }
+
+        TEMP = getParameterByName(windowContext, 'tiledesk_keyboardSoundFile');
+        if (TEMP) {
+            globals.keyboardSoundFile = TEMP;
         }
 
         TEMP = getParameterByName(windowContext, 'tiledesk_openExternalLinkButton');
