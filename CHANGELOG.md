@@ -7,7 +7,7 @@
 *Tiledesk SRL*
 
 
-# 5.1.33-rc6
+# 5.1.33-rc7
 - **added**: added more URL source types in kb_json_sources
 
 # 5.1.33-rc5
