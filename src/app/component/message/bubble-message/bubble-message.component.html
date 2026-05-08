@@ -63,7 +63,8 @@
         [color]="fontColor"
         [stylesMap]="stylesMap">
       </chat-audio>
-
+      
+      <!-- Json sources -->
       <chat-json-sources *ngIf="jsonSources !== null && jsonSources.length > 0"
         [items]="jsonSources"
         (onElementRendered)="onElementRenderedFN($event)">
@@ -91,12 +92,6 @@
         [text]="message?.text"
         [color]="fontColor">
       </chat-text>
-
-      <!-- Json sources -->
-      <chat-json-sources *ngIf="jsonSources !== null && jsonSources.length > 0"
-        [items]="jsonSources"
-        (onElementRendered)="onElementRenderedFN($event)">
-      </chat-json-sources>
 
       <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"
         [metadata]="message.metadata"
