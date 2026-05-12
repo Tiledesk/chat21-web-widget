@@ -1,0 +1,38 @@
+<div class="sources-panel" *ngIf="items && items.length > 0">
+
+  <div class="sources-header">
+    <div class="sources-favicons">
+      <img class="header-favicon"
+           *ngFor="let item of headerFavicons; trackBy: trackByLink"
+           [src]="getFavicon(item)"
+           alt=""
+           loading="lazy" />
+    </div>
+    <span class="sources-count">{{ items.length }} {{ items.length === 1 ? 'sito' : 'siti' }}</span>
+  </div>
+
+  <a class="source-row"
+     *ngFor="let item of visibleItems; trackBy: trackByLink"
+     [href]="item.link"
+     target="_blank"
+     rel="noopener noreferrer">
+
+    <div class="source-row__left">
+      <div class="source-row__title">{{ item.title }}</div>
+      <div class="source-row__desc" *ngIf="item.description">{{ item.description }}</div>
+      <div class="source-row__meta">
+        <img class="source-row__favicon" *ngIf="getFavicon(item)" [src]="getFavicon(item)" alt="" loading="lazy" />
+        <span class="source-row__host">{{ getHostname(item) }}</span>
+      </div>
+    </div>
+
+    <div class="source-row__thumb" *ngIf="item.image">
+      <img [src]="item.image" alt="" loading="lazy" (error)="$event.target.closest('.source-row__thumb').remove()" />
+    </div>
+  </a>
+
+  <button class="show-all" *ngIf="canExpand" type="button" (click)="toggleShowAll()">
+    {{ showAll ? 'Mostra meno' : 'Mostra tutto' }}
+  </button>
+</div>
+

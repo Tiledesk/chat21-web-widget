@@ -1,0 +1,197 @@
+:host {
+  --panel-bck: #f7f8fa;
+  --row-sep: rgba(66, 133, 244, 0.18);
+  --text: rgba(0, 0, 0, 0.90);
+  --muted: rgba(0, 0, 0, 0.62);
+  --accent: #1a73e8;
+  --pill-bck: #eaebf1;
+
+  font-family: "Google Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --title-line-height: 1.4;
+  --title-font-size: 14px;
+
+  --desc-line-height: 1.3;
+  --desc-font-size: 12px;
+
+  display: block;
+  width: 100%;
+  max-width: 652px;
+}
+
+.sources-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 4px 8px 4px;
+  border-bottom: 1px solid var(--row-sep);
+}
+
+.sources-favicons {
+  display: flex;
+  align-items: center;
+}
+
+.header-favicon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: rgba(255, 255, 255, 0.7);
+  object-fit: cover;
+
+  & + & {
+    margin-left: -2px;
+  }
+}
+
+.sources-count {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.sources-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 12px 10px 12px;
+  background: var(--panel-bck);
+  border-radius: 18px;
+  font-size: 14px;
+  width: 100%;
+  max-width: 652px;
+  box-sizing: border-box;
+}
+
+.source-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+  padding: 10px 10px;
+  border-radius: 12px;
+  transition: background 140ms ease;
+  font-family: 'Google Sans', Arial, sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.55);
+    .source-row__title {
+      text-decoration: underline;
+    }
+  }
+
+  & + & {
+    border-top: 1px solid var(--row-sep);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  .source-row__left {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 auto;
+  }
+
+  .source-row__title {
+    font-weight: 500;
+    color: var(--text);
+    font-size: var(--title-font-size);
+    line-height: var(--title-line-height);
+    margin: 0px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+  }
+
+  .source-row__desc {
+    font-size: var(--desc-font-size);
+    line-height: var(--desc-line-height);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    color: #56595e;
+    margin: 0;
+  }
+
+  .source-row__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 2px;
+  }
+
+  .source-row__favicon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    border: 2px solid #fff;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  }
+
+  .source-row__host {
+    color: rgba(0, 0, 0, 0.55);
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .source-row__thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex: 0 0 auto;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.65);
+    align-self: flex-start;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .source-row__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.show-all {
+  margin-top: 10px;
+  border: 0;
+  background: var(--pill-bck);
+  color: rgba(0, 0, 0, 0.78);
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: filter 140ms ease, transform 140ms ease;
+}
+
+.show-all:hover {
+  filter: brightness(0.98);
+  transform: translateY(-1px);
+}
+

@@ -27,7 +27,7 @@
                       <div *ngFor="let message of messages; let first = first; let last = last; let i = index" class="rowMsg">
 
                           <!-- message SENDER:: -->
-                          <div role="article" *ngIf="messageType(MESSAGE_TYPE_MINE, message)" class="msg_container base_sent">
+                           <div role="article" *ngIf="messageType(MESSAGE_TYPE_MINE, message) && !message.isJustRecived" class="msg_container base_sent">
                           
                             <!--backgroundColor non viene ancora usato -->
                             <!-- class="messages msg_sent slide-in-right" -->
@@ -55,7 +55,7 @@
                           <!-- message RECIPIENT:: -->
                           <div role="article" *ngIf="messageType(MESSAGE_TYPE_OTHERS, message)" class="msg_container base_receive">
                             
-                            <chat-avatar-image *ngIf="!isSameSender(message?.sender, i)" 
+                            <chat-avatar-image *ngIf="!isSameSender(message?.sender, i) && !isStreamAudioActive" 
                               [ngClass]="{'slide-in-left': false}"    
                               [senderID]="message?.sender"
                               [senderFullname]="message?.sender_fullname"
@@ -68,13 +68,15 @@
                               [ngClass]="{'slide-in-left': false}"
                               [class.no-background]="(isImage(message) || isFrame(message) || isCarousel(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"
                               [class.emoticon]="isEmojii(message?.text)"
-                              [style.margin-left]="isSameSender(message?.sender, i)? 'calc(var(--avatar-width) + 10px)': null"
+                              [class.fullSizeMessage]="isStreamAudioActive"
+                              [style.margin-left]="isSameSender(message?.sender, i) ? 'calc(var(--avatar-width) + 10px)' : null"
                               [ngStyle]="{'background': stylesMap.get('bubbleReceivedBackground'), 'color': stylesMap.get('bubbleReceivedTextColor'), 'width':isFrame(message) ?'100%' : null}"
                               [isSameSender]="isSameSender(message?.sender, i)"
                               [message]="message"
                               [fontColor]="stylesMap.get('bubbleReceivedTextColor')"
                               [stylesMap]="stylesMap"
                               [translationMap]="translationMap"
+                              [streamOnArrival]="false"
                               (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
                               (onAfterMessageRender)="onAfterMessageRenderFN($event)"
                               (onElementRendered)="onElementRenderedFN($event)">
@@ -142,9 +144,10 @@
                           [senderFullname]="nameUserTypingNow"
                           [baseLocation]="baseLocation">
                         </chat-avatar-image>
+                        
                         <user-typing
-                          [ngClass]="{'userTypingNowExist': !idUserTypingNow}"
                           [color]="stylesMap?.get('iconColor')"
+                          [ngClass]="{'userTypingNowExist': !idUserTypingNow}"
                           [translationMap]="translationMap"
                           [idUserTypingNow]="idUserTypingNow"
                           [nameUserTypingNow]="nameUserTypingNow">
@@ -153,7 +156,9 @@
 
                       <div *ngIf="showThinkingMessage && lastServerSenderKind === 'bot'" class="msg_container base_receive thinking_receive">
                         <user-typing class="loading thinking-dots"
+                          [class.fullSize]="isStreamAudioActive"
                           [color]="stylesMap?.get('iconColor')"
+                          [class.fullSize]="isStreamAudioActive"
                           [translationMap]="translationMap"
                           [idUserTypingNow]="idUserTypingNow"
                           [nameUserTypingNow]="nameUserTypingNow">

@@ -1,7 +1,7 @@
 ### STAGE 1: Build ###
 
 # We label our stage as ‘builder’
-FROM node:20.12.2-alpine3.19 as builder
+FROM --platform=$BUILDPLATFORM node:20.12.2-alpine3.19 as builder
 
 COPY package.json package-lock.json ./
 
@@ -15,12 +15,11 @@ COPY . .
 
 ## Build the angular app in production mode and store the artifacts in dist folder
 
+
 RUN npx ng build --configuration="prod" --output-path=dist --base-href=./ --output-hashing=none
 
-
 ### STAGE 2: Setup ###
-
-FROM nginx:1.14.1-alpine
+FROM --platform=$BUILDPLATFORM nginx:1.14.1-alpine
 
 ## Copy our default nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
@@ -33,4 +32,4 @@ COPY --from=builder /ng-app/dist/browser /usr/share/nginx/html
 
 RUN echo "Chat21 Web Widget Started!!"
 
-CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/html/widget-config-template.json > /usr/share/nginx/html/widget-config.json && exec nginx -g 'daemon off;'"]
+CMD ["/bin/sh", "-c", "envsubst < /usr/share/nginx/html/widget-config-template.json > /usr/share/nginx/html/widget-config.json && exec nginx -g 'daemon off;'"]

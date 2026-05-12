@@ -26,6 +26,7 @@ export class ConversationContentComponent implements OnInit {
   @Input() showThinkingMessage: boolean;
   @Input() lastServerSenderKind: 'bot' | 'human' | null;
   @Input() fullscreenMode: boolean;
+  @Input() isStreamAudioActive: boolean;
   @Input() translationMap: Map< string, string>;
   @Input() stylesMap: Map<string, string>;
   @Output() onBeforeMessageRender = new EventEmitter();
@@ -91,7 +92,6 @@ export class ConversationContentComponent implements OnInit {
     if(this.stylesMap && this.stylesMap.get('bubbleReceivedTextColor')) this.elementRef.nativeElement.querySelector('.c21-body').style.setProperty('--textColorReceive', this.stylesMap.get('bubbleReceivedTextColor'));
 
   }
-
 
   /**
    *

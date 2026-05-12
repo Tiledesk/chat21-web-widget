@@ -118,5 +118,10 @@
     "CAROUSEL_NEXT": "Next slide",
     "CAROUSEL_LABEL": "Cards carousel",
     "CAROUSEL_SLIDE_LABEL": "Slide {current} of {total}",
-    "SKIP_TO_COMPOSER": "Skip to message composer"
+    "SKIP_TO_COMPOSER": "Skip to message composer",
+    "MAX_ATTACHMENT_ERROR": "The file exceeds the maximum allowed size",
+    "STREAM_AUDIO": "Voice input",
+    "VOICE_CONNECTING": "Connecting...",
+    "VOICE_LISTENING": "Listening...",
+    "VOICE_PROCESSING": "Processing..."
 }
