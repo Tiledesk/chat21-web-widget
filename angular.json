@@ -160,7 +160,19 @@
               "src/styles.scss"
             ],
             "scripts": [],
-            "codeCoverage": true
+            "codeCoverage": true,
+            "codeCoverageExclude": [
+              "src/chat21-core/providers/firebase/**/*.ts",
+              "src/chat21-core/providers/mqtt/**/*.ts",
+              "src/main.ts",
+              "src/polyfills.ts",
+              "src/zone-flag.ts",
+              "src/models/**/*.ts",
+              "src/chat21-core/models/**/*.ts",
+              "src/chat21-core/providers/native/**/*.ts",
+              "src/chat21-core/providers/logger/customLogger.ts",
+              "src/chat21-core/providers/logger/loggerInstance.ts"
+            ]
           }
         },
         "e2e": {

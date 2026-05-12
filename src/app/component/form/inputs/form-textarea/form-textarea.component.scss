@@ -42,7 +42,7 @@
     }
 
     /* Remove input border colour */
-    textarea:focus,
+    textarea:focus:not(:focus-visible),
     textarea:active,
     textarea:hover,
     textarea:visited {
@@ -52,9 +52,6 @@
         background-position: center bottom,center calc(100% - 1px);
         background-color: rgba(0,0,0,0);
         transition: background 0s ease-out;
-        // box-shadow: none;
-        // background-color: #ffffff;
-        // outline: none;
     }
     
     /* Remove input background colour for Chrome autocomplete */
@@ -182,9 +179,13 @@ textarea {
     background-repeat: no-repeat;
     background-position: center bottom,center calc(100% - 1px);
     background-size: 100% 2px, 100% 1px;
-    // box-shadow: none;
     transition-duration: 0.3s;
     width: 100%;
+}
+
+.form-group.is-focused .form-control:focus-visible {
+    outline: 2px solid var(--themeColor, #1a73e8) !important;
+    outline-offset: 2px;
 }
 
 .form-group.is-focused.form-info .form-control {

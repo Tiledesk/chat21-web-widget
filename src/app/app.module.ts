@@ -56,6 +56,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { A11yModule } from '@angular/cdk/a11y';
 import { environment } from 'src/environments/environment';
 
 //THIRD-PART MODULES
@@ -316,6 +317,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    A11yModule,
     PickerModule,
      TranslateModule.forRoot({
     //   defaultLanguage: 'en',

@@ -86,11 +86,14 @@
 
 /* ==================== OPTION MENU CONTAINER ==================== */ 
 #c21-options-menu {
-    width: auto;
+    /* Single column: every row matches the width of the widest item */
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: max-content;
+    max-width: 80%;
     height: auto;
     //min-height: 40px;
     min-width: 100px;
-    max-width: 80%;
     position: absolute;
     z-index: 10;
     top: 40px;
@@ -103,10 +106,12 @@
     color: var(--blue);
     box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0  rgba(0, 0, 0, 0.2);
     background-color: #ffffff;
-    // padding: 10px 0px 10px 0px;
+    padding: 5px;
     .c21-header-button {
         // padding: 6px 10px 6px 10px;
-        margin: 5px 5px;
+        box-sizing: border-box;
+        width: 100%;
+        margin: 5px 0;
         padding: 5px 10px;
         display: flex;
         align-items: center;
@@ -130,6 +135,9 @@
     }
 
     .build_version_menu {
+        box-sizing: border-box;
+        width: 100%;
+        margin: 5px 0 0;
         color: var(--gray);
         justify-content: center;
         font-size: 0.8em;

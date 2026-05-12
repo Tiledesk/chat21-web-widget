@@ -19,6 +19,7 @@ export class BubbleMessageComponent implements OnInit {
   @Input() isSameSender: boolean;
   @Input() fontColor: string;
   @Input() stylesMap: Map<string, string>;
+  @Input() translationMap: Map<string, string>;
   @Output() onBeforeMessageRender = new EventEmitter();
   @Output() onAfterMessageRender = new EventEmitter();
   @Output() onElementRendered = new EventEmitter<{element: string, status: boolean}>();

@@ -246,7 +246,15 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'CONTINUE',
       'EMOJI_NOT_ELLOWED',
       'ATTACHMENT',
-      'EMOJI'
+      'EMOJI',
+      'BUTTON_ATTACH_FILE',
+      'BUTTON_SEND_MESSAGE',
+      'BUTTON_RECORD_AUDIO',
+      'BUTTON_DELETE_AUDIO',
+      'BUTTON_SEND_AUDIO',
+      'BUTTON_PLAY_AUDIO',
+      'BUTTON_PAUSE_AUDIO',
+      'SKIP_TO_COMPOSER'
     ];
 
     const keysContent = [
@@ -266,13 +274,21 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'LABEL_THINKING',
       'LABEL_TO',
       'ARRAY_DAYS',
+      'CONVERSATION_LOG_LABEL',
+      'BUTTON_SCROLL_TO_BOTTOM',
+      'CAROUSEL_PREVIOUS',
+      'CAROUSEL_NEXT',
+      'CAROUSEL_LABEL',
+      'CAROUSEL_SLIDE_LABEL'
     ];
 
     const keysPreview= [
       'BACK', 
       'CLOSE',
       'LABEL_PLACEHOLDER',
-      'LABEL_PREVIEW'
+      'LABEL_PREVIEW',
+      'BUTTON_CLOSE_PREVIEW',
+      'BUTTON_SEND_MESSAGE'
     ];
 
     const keysCloseChatDialog= [
@@ -1031,6 +1047,21 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   
+
+ /**
+  * Programmatically moves keyboard focus to the message composer textarea.
+  * Wired to the visible-on-focus skip link in conversation.component.html (WCAG 2.4.1 Bypass Blocks).
+  */
+ skipToCompose() {
+   try {
+     const textarea = document.getElementById('chat21-main-message-context') as HTMLTextAreaElement | null;
+     if (textarea) {
+       textarea.focus();
+     }
+   } catch(e) {
+     this.logger.warn('[CONV-COMP] skipToCompose error', e);
+   }
+ }
 
  scrollToBottom() {
   this.conversationContent.scrollToBottom();

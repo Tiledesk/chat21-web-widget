@@ -117,6 +117,7 @@ export class Globals {
   WAITING_TIME_NOT_FOUND: string;
   CLOSED: string;
   LABEL_PREVIEW: string;
+  BUTTON_OPEN_CHAT: string;
 
   // ============ BEGIN: EXTERNAL PARAMETERS ==============//
   autoStart: boolean;

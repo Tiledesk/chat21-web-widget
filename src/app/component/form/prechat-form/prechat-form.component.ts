@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Globals } from 'src/app/utils/globals';
 import { AppStorageService } from 'src/chat21-core/providers/abstract/app-storage.service';
@@ -118,6 +118,13 @@ export class PrechatFormComponent implements OnInit, AfterViewInit {
 
   returnClosePage() {
     this.onClosePage.emit();
+  }
+
+  @HostListener('keydown.escape', ['$event'])
+  onEscape(event: KeyboardEvent){
+    event.preventDefault();
+    event.stopPropagation();
+    this.returnClosePage();
   }
 
   onSubmitForm(form: {}){

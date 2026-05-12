@@ -2,7 +2,12 @@
 
   <div class="c21-body-container">
   
-    <div class="c21-body-content" tabindex="1520" aria-label=" messaggi della conversazione: ">
+    <div class="c21-body-content"
+         role="log"
+         aria-live="polite"
+         aria-relevant="additions text"
+         aria-atomic="false"
+         [attr.aria-label]="translationMap?.get('CONVERSATION_LOG_LABEL') || 'Conversation messages'">
   
       <!-- USER TYPING (WAIT MESSAGE)  -->
       <span *ngIf="messages && this.messages.length === 0 && !isTypings">
@@ -19,21 +24,22 @@
               <div #scrollMe id="scroll-me" (scroll)="onScroll($event)">
     
                   <div id="{{idDivScroll}}" class="c21-contentScroll" > <!-- (resized)="onResized($event)" -->
-                      <div *ngFor="let message of messages; let first = first; let last = last; let i = index" tabindex="1521" class="rowMsg">
-    
+                      <div *ngFor="let message of messages; let first = first; let last = last; let i = index" class="rowMsg">
+
                           <!-- message SENDER:: -->
-                          <div role="messaggio" *ngIf="messageType(MESSAGE_TYPE_MINE, message)" class="msg_container base_sent">
+                          <div role="article" *ngIf="messageType(MESSAGE_TYPE_MINE, message)" class="msg_container base_sent">
                           
                             <!--backgroundColor non viene ancora usato -->
                             <!-- class="messages msg_sent slide-in-right" -->
                             <chat-bubble-message class="messages msg_sent"
-                              [class.no-background]="(isImage(message) || isFrame(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"  
+                              [class.no-background]="(isImage(message) || isFrame(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"
                               [class.emoticon]="isEmojii(message?.text)"
                               [ngStyle]="{'background': stylesMap.get('bubbleSentBackground'), 'color': stylesMap.get('bubbleSentTextColor')}"
                               [ngClass]="{'button-in-msg' : message?.metadata && message?.metadata?.button}"
                               [message]="message"
                               [fontColor]="stylesMap.get('bubbleSentTextColor')"
                               [stylesMap]="stylesMap"
+                              [translationMap]="translationMap"
                               (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
                               (onAfterMessageRender)="onAfterMessageRenderFN($event)"
                               (onElementRendered)="onElementRenderedFN($event)">
@@ -47,7 +53,7 @@
                           </div>
     
                           <!-- message RECIPIENT:: -->
-                          <div role="messaggio" *ngIf="messageType(MESSAGE_TYPE_OTHERS, message)" class="msg_container base_receive">
+                          <div role="article" *ngIf="messageType(MESSAGE_TYPE_OTHERS, message)" class="msg_container base_receive">
                             
                             <chat-avatar-image *ngIf="!isSameSender(message?.sender, i)" 
                               [ngClass]="{'slide-in-left': false}"    
@@ -60,7 +66,7 @@
                             <!-- [ngClass]="{'slide-in-left': !isFirstMessage(message?.sender, i)}"  -->
                             <chat-bubble-message class="messages msg_receive"
                               [ngClass]="{'slide-in-left': false}"
-                              [class.no-background]="(isImage(message) || isFrame(message) || isCarousel(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"  
+                              [class.no-background]="(isImage(message) || isFrame(message) || isCarousel(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"
                               [class.emoticon]="isEmojii(message?.text)"
                               [style.margin-left]="isSameSender(message?.sender, i)? 'calc(var(--avatar-width) + 10px)': null"
                               [ngStyle]="{'background': stylesMap.get('bubbleReceivedBackground'), 'color': stylesMap.get('bubbleReceivedTextColor'), 'width':isFrame(message) ?'100%' : null}"
@@ -68,6 +74,7 @@
                               [message]="message"
                               [fontColor]="stylesMap.get('bubbleReceivedTextColor')"
                               [stylesMap]="stylesMap"
+                              [translationMap]="translationMap"
                               (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
                               (onAfterMessageRender)="onAfterMessageRenderFN($event)"
                               (onElementRendered)="onElementRenderedFN($event)">
@@ -110,6 +117,7 @@
                               [isConversationArchived]="isConversationArchived"
                               [isLastMessage] = "isLastMessage(message?.uid)"
                               [stylesMap]="stylesMap"
+                              [translationMap]="translationMap"
                               (onElementRendered)="onElementRenderedFN($event)"
                               (onAttachmentButtonClicked)="onAttachmentButtonClickedFN($event)">
                             </chat-carousel>
