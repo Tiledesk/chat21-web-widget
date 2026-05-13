@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.33-rc10
+- **bug-fixed**: fixed bug with knowledge base json sources without URLs
+
 # 5.1.33-rc9
 - **changed**: **Conversation footer** — accessibility-focused markup (ARIA roles/labels, live regions, semantic send control), stream-audio layout (wrapper + voice mode: hide attach/emoji while streaming, inline status, stream button + spectrum), optional **Close chat** action when `closeChatInConversation` is enabled; emoji restriction alert uses assertive live region semantics.
 - **bug-fixed**: **`getConversationDetail` Tiledesk fallback** — when `getMyRequests()` rejects, the conversation is treated as archived (`isConversationArchived = true`) and the handler returns immediately instead of resetting state from an empty fallback payload.
