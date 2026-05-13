@@ -527,27 +527,31 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       return this.isConversationArchived;
     }
 
-    //   //FALLBACK TO TILEDESK
-    const requests_list = await this.tiledeskRequestService.getMyRequests().catch(err => {
+    // FALLBACK TO TILEDESK
+    let requests_list: { requests: any[] };
+    try {
+      requests_list = await this.tiledeskRequestService.getMyRequests();
+    } catch (err) {
       this.logger.error('[CONV-COMP] getConversationDetail: error getting request from Tiledesk', err);
-      this.isConversationArchived=true
-      return { requests: [] }
-    });
-    if (requests_list && requests_list.requests.length > 0) {
-      this.logger.debug('[CONV-COMP] getConversationDetail: request exist on Tiledesk', requests_list);
-      let conversation = requests_list.requests.find((request)=> request.request_id === this.conversationId)
-      if(conversation){
-        this.isConversationArchived = false
-        return this.isConversationArchived
-      }
-      this.logger.debug('[CONV-COMP] getConversationDetail: request NOT EXIST on Tiledesk', requests_list);
-      this.isConversationArchived = true
-      return this.isConversationArchived
+      this.isConversationArchived = true;
+      return this.isConversationArchived;
     }
 
-      this.isConversationArchived = false;
-      return null;
+    if (requests_list && requests_list.requests.length > 0) {
+      this.logger.debug('[CONV-COMP] getConversationDetail: request exist on Tiledesk', requests_list);
+      const conversation = requests_list.requests.find((request) => request.request_id === this.conversationId);
+      if (conversation) {
+        this.isConversationArchived = false;
+        return this.isConversationArchived;
+      }
+      this.logger.debug('[CONV-COMP] getConversationDetail: request NOT EXIST on Tiledesk', requests_list);
+      this.isConversationArchived = true;
+      return this.isConversationArchived;
     }
+
+    this.isConversationArchived = false;
+    return null;
+  }
 
   /**
     * this.g.recipientId:

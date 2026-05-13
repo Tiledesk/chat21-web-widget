@@ -1,13 +1,27 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { of } from 'rxjs';
 import { MAX_WIDTH_IMAGES, MIN_WIDTH_IMAGES } from 'src/chat21-core/utils/constants';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
+import { JsonSourcesParserService } from 'src/app/providers/json-sources-parser.service';
 
 import { BubbleMessageComponent } from './bubble-message.component';
 
 describe('BubbleMessageComponent', () => {
   let component: BubbleMessageComponent;
   let fixture: ComponentFixture<BubbleMessageComponent>;
+
+  const voiceServiceMock = {
+    isWssVoiceActive: false,
+    markProxyHandled: jasmine.createSpy('markProxyHandled'),
+    voiceTtsKaraoke$: of({ text: '', words: [], activeIndex: -1 }),
+  };
+
+  const jsonSourcesParserMock = {
+    parseBaseFromMessage: jasmine.createSpy('parseBaseFromMessage').and.returnValue(null),
+    enrichSources: jasmine.createSpy('enrichSources').and.resolveTo(null),
+  };
 
   const textMessage: any = {
     attributes: { projectId: 'p1' },
@@ -28,6 +42,10 @@ describe('BubbleMessageComponent', () => {
     TestBed.configureTestingModule({
       declarations: [BubbleMessageComponent],
       schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        { provide: VoiceService, useValue: voiceServiceMock },
+        { provide: JsonSourcesParserService, useValue: jsonSourcesParserMock },
+      ],
     }).compileComponents();
   }));
 
@@ -59,33 +77,6 @@ describe('BubbleMessageComponent', () => {
     expect(textChild.properties.text).toEqual(textMessage.text);
   });
 
-  describe('getMetadataSize', () => {
-    it('should scale down when width exceeds MAX_WIDTH_IMAGES', () => {
-      const meta = { width: MAX_WIDTH_IMAGES * 2, height: 100 };
-      const s = component.getMetadataSize(meta);
-      expect(s.width).toBe(MAX_WIDTH_IMAGES);
-    });
-
-    it('should apply MIN_WIDTH when thumbnail width is small', () => {
-      const meta = { width: 40, height: 80 };
-      const s = component.getMetadataSize(meta);
-      expect(s.width).toBe(MIN_WIDTH_IMAGES);
-    });
-
-    it('should keep metadata dimensions for mid-sized images', () => {
-      const meta = { width: 120, height: 60 };
-      const s = component.getMetadataSize(meta);
-      expect(s.width).toBe(120);
-      expect(s.height).toBe(60);
-    });
-
-    it('should return raw metadata when width branch not matched', () => {
-      const s = component.getMetadataSize({ width: undefined, height: 10 });
-      expect(s.width).toBeUndefined();
-      expect(s.height).toBe(10);
-    });
-  });
-
   describe('ngOnChanges', () => {
     it('should compute sizeImage from message metadata object', () => {
       component.message = {
@@ -96,10 +87,49 @@ describe('BubbleMessageComponent', () => {
       expect(component.sizeImage.width).toBe(100);
     });
 
+    it('should cap width when metadata exceeds MAX_WIDTH_IMAGES (calcImageSize)', () => {
+      component.message = {
+        ...textMessage,
+        metadata: { width: MAX_WIDTH_IMAGES * 2, height: 100 },
+      };
+      component.ngOnChanges();
+      expect(component.sizeImage.width).toBe(MAX_WIDTH_IMAGES);
+    });
+
+    it('should scale up narrow thumbnails when width <= 55 (calcImageSize)', () => {
+      component.message = {
+        ...textMessage,
+        metadata: { width: 40, height: 80 },
+      };
+      component.ngOnChanges();
+      expect(component.sizeImage.width).toBe(MIN_WIDTH_IMAGES);
+      expect(component.sizeImage.height).toBe(MIN_WIDTH_IMAGES / (40 / 80));
+    });
+
+    it('should keep metadata dimensions for mid-sized images', () => {
+      component.message = {
+        ...textMessage,
+        metadata: { width: 120, height: 60 },
+      };
+      component.ngOnChanges();
+      expect(component.sizeImage.width).toBe(120);
+      expect(component.sizeImage.height).toBe(60);
+    });
+
+    it('should leave width undefined when metadata has no width (calcImageSize)', () => {
+      component.message = {
+        ...textMessage,
+        metadata: { width: undefined, height: 10 },
+      };
+      component.ngOnChanges();
+      expect(component.sizeImage.width).toBeUndefined();
+      expect(component.sizeImage.height).toBe(10);
+    });
+
     it('should ignore non-object metadata', () => {
       component.message = { ...textMessage, metadata: 'x' as any };
       component.ngOnChanges();
-      expect(component.sizeImage).toBeUndefined();
+      expect(component.sizeImage).toEqual({ width: 0, height: 0 });
     });
 
     it('should derive fullnameColor from fontColor', () => {
