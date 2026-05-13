@@ -6,6 +6,12 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.33-rc8
+- **changed**: **Conversation footer** — accessibility-focused markup (ARIA roles/labels, live regions, semantic send control), stream-audio layout (wrapper + voice mode: hide attach/emoji while streaming, inline status, stream button + spectrum), optional **Close chat** action when `closeChatInConversation` is enabled; emoji restriction alert uses assertive live region semantics.
+- **bug-fixed**: **`getConversationDetail` Tiledesk fallback** — when `getMyRequests()` rejects, the conversation is treated as archived (`isConversationArchived = true`) and the handler returns immediately instead of resetting state from an empty fallback payload.
+- **bug-fixed**: **`VoiceService`** — skip Web Audio `createMediaStreamSource` when the `MediaStream` has no audio tracks (avoids `InvalidStateError` under mocked `getUserMedia` in unit tests and edge browsers).
+- **bug-fixed**: **`TtsAudioPlaybackCoordinator`** — avoid emitting a duplicate `isTTSPlaying$` `true` when preempting an already-playing owner (keeps emission sequence stable for consumers).
+- **bug-fixed**: **Unit tests** — aligned `BubbleMessageComponent` specs with `calcImageSize` + DI mocks; `AudioSyncComponent` spec module setup (`declarations` + `CommonModule`) and TTS streaming call expectations; `VoiceService` specs with realistic mic streams and updated expectations for proxy `listening` / `barge_in` (no `setAudioMuted` on those paths); `TtsAudioPlaybackCoordinator` `stopAll` test asserts `_stopAll$` broadcast via spy; `ConversationComponent` spec for Tiledesk error path.
 
 # 5.1.33-rc7
 - **added**: added more URL source types in kb_json_sources
