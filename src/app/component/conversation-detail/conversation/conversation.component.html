@@ -1,11 +1,14 @@
 
-<!-- tabindex="1500"-->
-<!-- onFocus="document.querySelector('[start-focus-chat21-conversation-component]').focus()" -->
-<div id="chat21-conversation-component" 
+<div id="chat21-conversation-component"
     #afConversationComponent
-    tabindex="1500" 
-    aria-modal="true"
-    [class.chat21-conversation--close-stream-active]="closeStreamButtonActiveForSheetBottom()">
+    role="region"
+    [attr.aria-label]="g?.project?.widgetTitle">
+
+    <!-- Skip-link: revealed only on focus, jumps straight to the message composer (WCAG 2.4.1 Bypass Blocks). -->
+    <a class="c21-skip-link" href="#chat21-main-message-context"
+        (click)="$event.preventDefault(); skipToCompose()">
+        {{ translationMapFooter?.get('SKIP_TO_COMPOSER') || 'Skip to message composer' }}
+    </a>
 
     <!-- HEADER -->
     <chat-conversation-header
@@ -115,12 +118,16 @@
     </dialog>
 
     <!-- FOOTER -->
-    <!-- [class.maximize-width]="(g?.singleConversation && hideTextAreaContent) || (isConversationArchived && !g?.allowReopen)" -->
     <div id="chat21-footer">
-        <div *ngIf="showBadgeScroollToBottom" id="chat21-buttonToBottom" (click)="scrollToBottom()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path opacity=".87" fill="none" d="M24 24H0V0h24v24z"/><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z"/></svg>
-            <div *ngIf="messagesBadgeCount!=0" id="chat21-divBudge" class="c21-divBudge">{{messagesBadgeCount}}</div>
-        </div>
+        <button *ngIf="showBadgeScroollToBottom"
+            type="button"
+            id="chat21-buttonToBottom"
+            class="c21-button-clean"
+            [attr.aria-label]="translationMapContent?.get('BUTTON_SCROLL_TO_BOTTOM') || 'Scroll to last message'"
+            (click)="scrollToBottom()">
+            <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path opacity=".87" fill="none" d="M24 24H0V0h24v24z"/><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z"/></svg>
+            <span *ngIf="messagesBadgeCount!=0" id="chat21-divBudge" class="c21-divBudge" aria-hidden="true">{{messagesBadgeCount}}</span>
+        </button>
 
         <chat-conversation-footer
             [conversationWith]="conversationWith"

@@ -23,6 +23,7 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
   @Input() isSameSender: boolean;
   @Input() fontColor: string;
   @Input() stylesMap: Map<string, string>;
+  @Input() translationMap: Map<string, string>;
   /** When true, a newly-arrived bot text message reveals its words one by one. */
   @Input() streamOnArrival = false;
   /** One-shot flag: set once in ngOnChanges, never reverts so animation isn't replayed. */

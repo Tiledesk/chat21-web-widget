@@ -1,26 +1,4 @@
-<!-- [ngClass]="{'button-in-msg' : message.metadata && message.metadata.button}" -->
-<!-- ngStyle]="{'padding': (isImage(message) || isFrame(message))?'1px':'0 8px'}" -->
-<!-- 'width': (isImage(message) || isFrame(message))? sizeImage?.width + 'px': null  -->
-
-
-    
-<!-- <div id="bubble-message" *ngIf="isAudio(message)" [ngStyle]="{'padding': '0'}" class="messages primary-color">
-  <div>
-    <chat-audio-track  *ngIf="isAudio(message)"
-      [metadata]="message.metadata" 
-    ></chat-audio-track>
-  </div>
-</div> 
-
-
-[ngStyle]="{'padding': (isImage(message) || isFrame(message) || isAudio(message))?'0 0px':'0 8px'}"
--->
-
-
-
-
-
-<div id="bubble-message" *ngIf="hasRenderableContent()" class="messages primary-color">
+<div class="bubble-message messages primary-color">
     <div>
 
       <div *ngIf="messageType(MESSAGE_TYPE_OTHERS, message) && !isSameSender"
@@ -28,17 +6,7 @@
         [ngStyle]="{'margin': (isImage(message) || isFrame(message))? '12px 16px 8px 16px': '12px 16px 0px 16px'}" class="message_sender_fullname">
         {{message?.sender_fullname}}
       </div>
-      <!-- message type:: image -->
-      <!-- <div *ngIf="message.type == 'image' && message.metadata"  [ngStyle] = "{ 'max-width': getSizeImg(message).width, 'max-height': getSizeImg(message).height }">
-          <img class="message-contentX message-content-imageX" [src]="message.metadata.src" />
-      </div> -->
-  
-      <!-- <img *ngIf="message.type == 'image' && message.metadata" class="message-contentX message-content-imageX"
-      [src]="message.metadata.src" [width]="getSizeImg(message).width"
-      [height]="getSizeImg(message).height" /> -->
 
-      <!-- [width]="getMetadataSize(message.metadata).width"
-      [height]="getMetadataSize(message.metadata).height" -->
       <chat-image *ngIf="isImage(message)"
         [metadata]="message.metadata"
         [width]="sizeImage?.width"
@@ -53,15 +21,12 @@
         (onElementRendered)="onElementRenderedFN($event)">
       </chat-frame>
 
-      <!-- <chat-audio *ngIf="isAudio(message)"
-        [metadata]="message.metadata" 
-        (onElementRendered)="onElementRenderedFN($event)">
-      </chat-audio> -->
 
       <chat-audio *ngIf="isAudio(message)"
         [metadata]="message.metadata"
         [color]="fontColor"
-        [stylesMap]="stylesMap">
+        [stylesMap]="stylesMap"
+        [translationMap]="translationMap">
       </chat-audio>
       
       <!-- Json sources -->
@@ -113,7 +78,7 @@
         </p>
 
         <!-- [htmlEnabled]="(message?.type==='html')? true : false" -->
-        <chat-text *ngIf="jsonSources === null && message?.type !=='html' && !_isStreaming"
+        <chat-text *ngIf="message?.type !=='html'"
           [text]="message?.text"
           [color]="fontColor"
           (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
@@ -128,13 +93,5 @@
         </chat-html>
 
       </div>
-  
     </div>
-  
-  </div>
-
-
-  
-
-
-
+</div>

@@ -1,5 +1,4 @@
-<!-- 'background-color': stylesMap.get('backgroundColor'), 'color': stylesMap.get('foregroundColor'), 'background-image': stylesMap.get('themeColor')+','+ convertColorToRGBA(stylesMap.get('themeColor'), 50)+')' -->
-<div class="c21-header"  [ngStyle]="{'background-image': stylesMap?.get('colorGradient') }">
+<div class="c21-header" [ngStyle]="{'background-image': stylesMap?.get('colorGradient') }">
 
   <div class="c21-header-container">
 
@@ -7,63 +6,106 @@
     <div class="c21-header-content">
 
         <!-- ICON CLOSE CHAT -->
-        <button [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-close c21-button-clean" [ngStyle]="{'display': (hideHeaderCloseButton)?'none':'flex'}" (click)="closeWidget()">
-            <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
+        <button [attr.disabled]="(isButtonsDisabled)?true:null"
+            type="button"
+            class="c21-header-button c21-right c21-close c21-button-clean"
+            [attr.aria-label]="translationMap?.get('BUTTON_CLOSE_TO_ICON')"
+            [ngStyle]="{'display': (hideHeaderCloseButton)?'none':'flex'}"
+            (click)="closeWidget()">
+            <svg aria-hidden="true" focusable="false"
+                [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }"
+                xmlns="http://www.w3.org/2000/svg"
                 width="24px" height="24px" viewBox="0 0 24 24">
                 <path d="M19.35,9.21c.2-.2.2-.51,0-.71l-.71-.71c-.2-.2-.51-.2-.71,0l-5.94,5.94-5.94-5.94c-.2-.2-.51-.2-.71,0l-.71.71c-.2.2-.2.51,0,.71l7,7c.2.2.51.2.71,0l7-7Z"/>
-                <title id="altIconTitle">{{ translationMap?.get('BUTTON_CLOSE_TO_ICON') }}</title>
             </svg>
         </button>
-            
+
         <!-- ICON MENU OPTION -->
-        <button [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-button-clean" [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}" (click)="toggleMenu()" >
-            <svg aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
+        <button [attr.disabled]="(isButtonsDisabled)?true:null"
+            type="button"
+            class="c21-header-button c21-right c21-button-clean"
+            [attr.aria-label]="translationMap?.get('OPTIONS')"
+            [attr.aria-expanded]="isMenuShow ? 'true' : 'false'"
+            aria-haspopup="true"
+            [attr.aria-controls]="isMenuShow ? 'c21-options-menu' : null"
+            [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}"
+            (click)="toggleMenu()">
+            <svg aria-hidden="true" focusable="false"
+                [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }"
+                xmlns="http://www.w3.org/2000/svg"
                 width="24" height="24" viewBox="0 0 24 24">
                 <path fill="none" d="M0 0h24v24H0V0z" />
                 <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                <title id="altIconTitle">{{ translationMap?.get('OPTIONS') }}</title>
             </svg>
         </button>
 
 
     <!-- ICON MAXIMIZE -->
-    <button *ngIf="size === 'min' && !fullscreenMode && !isMobile" [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-button-clean" [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}" (click)="onChangeSize('max')" >
-        <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
+    <button *ngIf="size === 'min' && !fullscreenMode && !isMobile"
+        [attr.disabled]="(isButtonsDisabled)?true:null"
+        type="button"
+        class="c21-header-button c21-right c21-button-clean"
+        [attr.aria-label]="translationMap?.get('MAXIMIZE')"
+        [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}"
+        (click)="onChangeSize('max')">
+        <svg aria-hidden="true" focusable="false"
+            [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }"
+            xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
             width="17" height="17" viewBox="0 0 17 17">
             <path d="M6.49001 8.30999L3.69 11.11V9.40999C3.69 8.93999 3.31 8.55999 2.84 8.55999C2.37 8.55999 1.99001 8.93999 1.99001 9.40999V14.01H6.59C7.06 14.01 7.44 13.63 7.44 13.16C7.44 12.69 7.06 12.31 6.59 12.31H4.89L7.69 9.50999L6.49001 8.30999ZM9.41 1.98999C8.94 1.98999 8.56001 2.36999 8.56001 2.83999C8.56001 3.30999 8.94 3.68999 9.41 3.68999H11.11L8.31001 6.48999L9.51 7.68999L12.31 4.88999V6.58999C12.31 7.05999 12.69 7.43999 13.16 7.43999C13.63 7.43999 14.01 7.05999 14.01 6.58999V1.98999H9.41Z"></path>
-            <title id="altIconTitle">{{ translationMap?.get('MAXIMIZE') }}</title>
         </svg>
     </button>
 
      <!-- ICON MINIMIZE -->
-    <button *ngIf="size==='top' && !fullscreenMode && !isMobile" [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-button-clean" [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}" (click)="onChangeSize('min')" >
-        <svg role="img" aria-labelledby="altIconTitle" class="icon-menu" [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
+    <button *ngIf="size==='top' && !fullscreenMode && !isMobile"
+        [attr.disabled]="(isButtonsDisabled)?true:null"
+        type="button"
+        class="c21-header-button c21-right c21-button-clean"
+        [attr.aria-label]="translationMap?.get('MINIMIZE')"
+        [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}"
+        (click)="onChangeSize('min')">
+        <svg aria-hidden="true" focusable="false"
+            class="icon-menu"
+            [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}"
+            xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
             width="17" height="17" viewBox="0 0 17 17">
             <path d="M13.59 5.31h-1.7l3.3-3.3-1.2-1.2-3.3 3.3v-1.7a.85.85 0 1 0-1.7 0v4.6h4.6a.85.85 0 1 0 0-1.7M1.57 9.84c0 .47.38.85.85.85h1.7l-3.3 3.3 1.2 1.2 3.3-3.3v1.7a.85.85 0 1 0 1.7 0v-4.6h-4.6a.85.85 0 0 0-.85.85"></path>
-            <title id="altIconTitle">{{ translationMap?.get('MINIMIZE') }}</title>
         </svg>
     </button>
 
     <!-- ICON TOP -->
-    <button *ngIf="size==='max' && !fullscreenMode && !isMobile" [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="-1" class="c21-header-button c21-right c21-button-clean" [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}" (click)="onChangeSize('top')" >
-        <svg  role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
+    <button *ngIf="size==='max' && !fullscreenMode && !isMobile"
+        [attr.disabled]="(isButtonsDisabled)?true:null"
+        type="button"
+        class="c21-header-button c21-right c21-button-clean"
+        [attr.aria-label]="translationMap?.get('CENTER')"
+        [ngStyle]="{'display': (hideHeaderConversationOptionsMenu)?'none':'flex'}"
+        (click)="onChangeSize('top')">
+        <svg aria-hidden="true" focusable="false"
+            [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}"
+            xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
             width="17" height="17" viewBox="0 0 17 17">
             <path d="M3.7,7.6L2.5,6.4C2.2,6,2.2,5.5,2.5,5.2s0.9-0.4,1.2-0.1L7,8.4l-3.3,3.3c-0.4,0.4-0.8,0.3-1.1,0s-0.4-0.9-0.1-1.2l1.2-1.2 H1.5l0-1.7H3.7z"/>
             <path d="M13.3,7.6l1.2-1.2c0.4-0.4,0.3-0.8,0-1.1s-0.9-0.4-1.2-0.1L10,8.4l3.3,3.3c0.4,0.4,0.8,0.3,1.1,0s0.4-0.9,0.1-1.2l-1.2-1.2 h2.2l0-1.7H13.3z"/>
             <path d="M8.5,14.5L8.5,14.5c-0.5,0-0.9-0.4-0.9-0.8V3.3c0-0.5,0.4-0.8,0.8-0.8h0c0.5,0,0.8,0.4,0.8,0.8v10.4 C9.4,14.2,9,14.5,8.5,14.5z"/>
-            <title id="altIconTitle">{{ translationMap?.get('CENTER') }}</title>
         </svg>
     </button>
 
 
 
         <!-- ICON BACK -->
-        <button [attr.disabled]="(isButtonsDisabled)?true:null" tabindex="1530" aria-label=" indietro " class="c21-header-button c21-left c21-button-clean" [ngStyle]="{'display': (hideHeaderBackButton)?'none':'flex'}" (click)="returnHome()">
-            <svg role="img" aria-labelledby="altIconTitle" [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }" xmlns="http://www.w3.org/2000/svg"
+        <button [attr.disabled]="(isButtonsDisabled)?true:null"
+            type="button"
+            class="c21-header-button c21-left c21-button-clean"
+            [attr.aria-label]="translationMap?.get('PREV_CONVERSATIONS') || translationMap?.get('BACK')"
+            [ngStyle]="{'display': (hideHeaderBackButton)?'none':'flex'}"
+            (click)="returnHome()">
+            <svg aria-hidden="true" focusable="false"
+                [ngStyle]="{'fill': stylesMap?.get('foregroundColor') }"
+                xmlns="http://www.w3.org/2000/svg"
                 width="24px" height="24px" viewBox="0 0 24 24">
                 <path fill="none" d="M0 0h24v24H0V0z" />
                 <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z" />
-                <title id="altIconTitle">{{ translationMap?.get('PREV_CONVERSATIONS') }}</title>
             </svg>
         </button>
 
@@ -71,7 +113,7 @@
         <div class="c21-title" [ngStyle]="{'color': stylesMap?.get('foregroundColor') }">
             <div class="titleText">{{widgetTitle}}</div>
         </div>
-        
+
         <user-typing *ngIf="isTypings && typingLocation==='header'"
             [color]="stylesMap?.get('foregroundColor')"
             [translationMap]="translationMap"
@@ -84,44 +126,54 @@
 
 </div>
 
-<div *ngIf="isMenuShow" id="c21-options-menu">
+<div *ngIf="isMenuShow"
+    id="c21-options-menu"
+    role="group"
+    [attr.aria-label]="translationMap?.get('OPTIONS')"
+    (keydown.escape)="$event.preventDefault(); $event.stopPropagation(); toggleMenu()">
     <!-- ICON VOLUME -->
-    <div class="c21-header-button c21-right" (click)="toggleSound()">
-        <svg *ngIf="!soundEnabled" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+    <button type="button"
+        class="c21-header-button c21-right c21-button-clean"
+        [attr.aria-pressed]="soundEnabled ? 'true' : 'false'"
+        [attr.aria-label]="soundEnabled ? translationMap?.get('SOUND_ON') : translationMap?.get('SOUND_OFF')"
+        (click)="toggleSound()">
+        <svg *ngIf="!soundEnabled" aria-hidden="true" focusable="false" class="icon-menu" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
             <path fill="none" d="M0 0h24v24H0V0z" />
             <path d="M4.34 2.93L2.93 4.34 7.29 8.7 7 9H3v6h4l5 5v-6.59l4.18 4.18c-.65.49-1.38.88-2.18 1.11v2.06c1.34-.3 2.57-.92 3.61-1.75l2.05 2.05 1.41-1.41L4.34 2.93zM10 15.17L7.83 13H5v-2h2.83l.88-.88L10 11.41v3.76zM19 12c0 .82-.15 1.61-.41 2.34l1.53 1.53c.56-1.17.88-2.48.88-3.87 0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zm-7-8l-1.88 1.88L12 7.76zm4.5 8c0-1.77-1.02-3.29-2.5-4.03v1.79l2.48 2.48c.01-.08.02-.16.02-.24z" />
-            <title id="altIconTitle">{{ translationMap?.get('SOUND_OFF') }}</title>
         </svg>
-        <svg *ngIf="soundEnabled" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+        <svg *ngIf="soundEnabled" aria-hidden="true" focusable="false" class="icon-menu" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
             <path fill="none" d="M0 0h24v24H0V0z" />
             <path d="M3 9v6h4l5 5V4L7 9H3zm7-.17v6.34L7.83 13H5v-2h2.83L10 8.83zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77z" />
-            <title id="altIconTitle">{{ translationMap?.get('SOUND_ON') }}</title>
         </svg>
         <span *ngIf="!soundEnabled" class="label-menu-item"> {{ translationMap?.get('SOUND_OFF') }}</span>
         <span *ngIf="soundEnabled" class="label-menu-item"> {{ translationMap?.get('SOUND_ON')}}</span>
-    </div>
+    </button>
 
     <!-- ICON TRANSCRIPT -->
-    <div class="c21-header-button c21-right" *ngIf="isTrascriptDownloadEnabled" (click)="dowloadTranscript()">
-        <svg role="img" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24">
+    <button type="button"
+        class="c21-header-button c21-right c21-button-clean" *ngIf="isTrascriptDownloadEnabled"
+        [attr.aria-label]="translationMap?.get('DOWNLOAD_TRANSCRIPT')"
+        (click)="dowloadTranscript()">
+        <svg aria-hidden="true" focusable="false" class="icon-menu" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24">
             <path fill="none" d="M0 0h24v24H0V0z" />
             <path d="M16 13h-3V3h-2v10H8l4 4 4-4zM4 19v2h16v-2H4z" />
-            <title id="altIconTitle">{{ translationMap?.get('DOWNLOAD_TRANSCRIPT') }}</title>
         </svg>
         <span class="label-menu-item">{{ translationMap?.get('DOWNLOAD_TRANSCRIPT') }}</span>
-    </div>
+    </button>
 
     <!-- ICON CLOSE CHAT -->
-    <div class="c21-header-button c21-right"  *ngIf="!hideCloseConversationOptionMenu" (click)="closeChat()">
-        <svg role="img" id="archive" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg"  
+    <button type="button"
+        class="c21-header-button c21-right c21-button-clean" *ngIf="!hideCloseConversationOptionMenu"
+        [attr.aria-label]="translationMap?.get('CLOSE_CHAT')"
+        (click)="closeChat()">
+        <svg aria-hidden="true" focusable="false" id="archive" class="icon-menu" xmlns="http://www.w3.org/2000/svg"
             width="20px" height="20px" viewBox="0 0 512 512">
             <path d="M80 152v256a40.12 40.12 0 0040 40h272a40.12 40.12 0 0040-40V152" stroke-linecap="round" stroke-linejoin="round" stroke-width="50px" fill="none"></path>
             <rect x="48" y="64" width="416" height="80" rx="28" ry="28" stroke-linejoin="round" stroke-width="50px" fill="none" ></rect>
             <path stroke-linecap="round" stroke-linejoin="round" d="M320 304l-64 64-64-64M256 345.89V224" stroke-width="50px" fill="none"></path>
-            <title id="altIconTitle">{{ translationMap?.get('CLOSE_CHAT') }}</title>
         </svg>
         <span class="label-menu-item">{{ translationMap?.get('CLOSE_CHAT') }}</span>
-    </div>
+    </button>
 
     <!-- ICON OPEN CHAT DETAIL -->
     <!-- <div class="c21-header-button c21-right" *ngIf="!hideChatDetailOptionMenu"(click)="openDetail()">
@@ -149,44 +201,52 @@
     </div> -->
     
     <!-- ICON MAXIMIZE -->
-    <div class="c21-header-button c21-right" *ngIf="size === 'min' && !fullscreenMode" (click)="onChangeSize('max')">
-        <svg  role="img" aria-labelledby="altIconTitle" fill="none" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
+    <button type="button"
+        class="c21-header-button c21-right c21-button-clean" *ngIf="size === 'min' && !fullscreenMode"
+        [attr.aria-label]="translationMap?.get('MAXIMIZE')"
+        (click)="onChangeSize('max')">
+        <svg aria-hidden="true" focusable="false" fill="none" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
             width="17" height="17" viewBox="0 0 17 17">
             <path d="M6.49001 8.30999L3.69 11.11V9.40999C3.69 8.93999 3.31 8.55999 2.84 8.55999C2.37 8.55999 1.99001 8.93999 1.99001 9.40999V14.01H6.59C7.06 14.01 7.44 13.63 7.44 13.16C7.44 12.69 7.06 12.31 6.59 12.31H4.89L7.69 9.50999L6.49001 8.30999ZM9.41 1.98999C8.94 1.98999 8.56001 2.36999 8.56001 2.83999C8.56001 3.30999 8.94 3.68999 9.41 3.68999H11.11L8.31001 6.48999L9.51 7.68999L12.31 4.88999V6.58999C12.31 7.05999 12.69 7.43999 13.16 7.43999C13.63 7.43999 14.01 7.05999 14.01 6.58999V1.98999H9.41Z" fill="currentColor"></path>
-            <title id="altIconTitle">{{ translationMap?.get('MAXIMIZE') }}</title>
         </svg>
         <span class="label-menu-item">{{ translationMap?.get('MAXIMIZE') }}</span>
-    </div>
+    </button>
     <!-- ICON MINIMIZE -->
-    <div class="c21-header-button c21-right" *ngIf="(size==='max' || size==='top') && !fullscreenMode" (click)="onChangeSize('min')">
-        <svg role="img" aria-labelledby="altIconTitle" class="icon-menu" fill="none" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
+    <button type="button"
+        class="c21-header-button c21-right c21-button-clean" *ngIf="(size==='max' || size==='top') && !fullscreenMode"
+        [attr.aria-label]="translationMap?.get('MINIMIZE')"
+        (click)="onChangeSize('min')">
+        <svg aria-hidden="true" focusable="false" class="icon-menu" fill="none" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
             width="17" height="17" viewBox="0 0 17 17">
             <path d="M13.59 5.31h-1.7l3.3-3.3-1.2-1.2-3.3 3.3v-1.7a.85.85 0 1 0-1.7 0v4.6h4.6a.85.85 0 1 0 0-1.7M1.57 9.84c0 .47.38.85.85.85h1.7l-3.3 3.3 1.2 1.2 3.3-3.3v1.7a.85.85 0 1 0 1.7 0v-4.6h-4.6a.85.85 0 0 0-.85.85" fill="currentColor"></path>
-            <title id="altIconTitle">{{ translationMap?.get('MINIMIZE') }}</title>
         </svg>
         <span class="label-menu-item">{{ translationMap?.get('MINIMIZE') }}</span>
-    </div>
+    </button>
     <!-- ICON TOP -->
-    <div class="c21-header-button c21-right" *ngIf="size!=='top' && !fullscreenMode" (click)="onChangeSize('top')">
-        <svg  role="img" aria-labelledby="altIconTitle" fill="none" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
+    <button type="button"
+        class="c21-header-button c21-right c21-button-clean" *ngIf="size!=='top' && !fullscreenMode"
+        [attr.aria-label]="translationMap?.get('CENTER')"
+        (click)="onChangeSize('top')">
+        <svg aria-hidden="true" focusable="false" fill="none" xmlns="http://www.w3.org/2000/svg" transform="matrix(-1,0,0,1,0,0)"
             width="17" height="17" viewBox="0 0 17 17">
             <path fill="currentColor" d="M3.7,7.6L2.5,6.4C2.2,6,2.2,5.5,2.5,5.2s0.9-0.4,1.2-0.1L7,8.4l-3.3,3.3c-0.4,0.4-0.8,0.3-1.1,0s-0.4-0.9-0.1-1.2l1.2-1.2 H1.5l0-1.7H3.7z"/>
             <path fill="currentColor" d="M13.3,7.6l1.2-1.2c0.4-0.4,0.3-0.8,0-1.1s-0.9-0.4-1.2-0.1L10,8.4l3.3,3.3c0.4,0.4,0.8,0.3,1.1,0s0.4-0.9,0.1-1.2l-1.2-1.2 h2.2l0-1.7H13.3z"/>
             <path fill="currentColor" d="M8.5,14.5L8.5,14.5c-0.5,0-0.9-0.4-0.9-0.8V3.3c0-0.5,0.4-0.8,0.8-0.8h0c0.5,0,0.8,0.4,0.8,0.8v10.4 C9.4,14.2,9,14.5,8.5,14.5z"/>
-            <title id="altIconTitle">{{ translationMap?.get('CENTER') }}</title>
         </svg>
         <span class="label-menu-item">{{ translationMap?.get('CENTER') }}</span>
-    </div>
+    </button>
 
     <!-- ICON LOGOUT -->
-    <div class="c21-header-button c21-right"  *ngIf="!hideSignOutOptionMenu" (click)="signOut()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" aria-labelledby="altIconTitle" class="icon-menu">
+    <button type="button"
+        class="c21-header-button c21-right c21-button-clean" *ngIf="!hideSignOutOptionMenu"
+        [attr.aria-label]="translationMap?.get('LOGOUT')"
+        (click)="signOut()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="icon-menu">
             <path fill="none" d="M0 0h24v24H0V0z"/>
             <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
-            <title id="altIconTitle">{{ translationMap?.get('LOGOUT') }}</title>
         </svg>
         <span class="label-menu-item">{{ translationMap?.get('LOGOUT') }}</span>
-    </div>
+    </button>
 
     <!-- BUILD VERSION -->
     <div class="c21-button build_version_menu" *ngIf="build_version">

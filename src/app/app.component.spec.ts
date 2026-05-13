@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Triggerhandler } from './../chat21-core/utils/triggerHandler';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -20,25 +21,32 @@ import { PresenceService } from 'src/chat21-core/providers/abstract/presence.ser
 import { UploadService } from 'src/chat21-core/providers/abstract/upload.service';
 import { AppConfigService } from './providers/app-config.service';
 import { ChatManager } from 'src/chat21-core/providers/chat-manager';
-import { NGXLogger } from 'ngx-logger';
+import { Globals } from './utils/globals';
+
+
 import { CustomLogger } from 'src/chat21-core/providers/logger/customLogger';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { of } from 'rxjs';
  
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
-  let ngxlogger: NGXLogger;
-  let customLogger = new CustomLogger(ngxlogger)
+  const ngxlogger = jasmine.createSpyObj('NGXLogger', ['log', 'trace', 'debug', 'warn', 'error', 'info']);
+  const customLogger = new CustomLogger(ngxlogger);
   
   beforeEach(waitForAsync(() => {
+    LoggerInstance.setInstance(customLogger);
+    spyOn(AppComponent.prototype, 'ngAfterViewInit').and.stub();
     TestBed.configureTestingModule({
     declarations: [
         AppComponent
     ],
     imports: [RouterTestingModule,
         TranslateModule.forRoot()],
+    schemas: [NO_ERRORS_SCHEMA],
     providers: [
+        Globals,
         Triggerhandler,
         GlobalSettingsService,
         AppStorageService,
@@ -63,11 +71,18 @@ describe('AppComponent', () => {
   }));
 
   beforeEach(() => {
+    spyOn(TestBed.inject(GlobalSettingsService), 'getProjectParametersById').and.returnValue(
+      of({ project: null }) as any,
+    );
+    spyOn(TestBed.inject(GlobalSettingsService), 'manageLoadingDomains').and.returnValue(true);
+
+    const translator = TestBed.inject(TranslatorService);
+    spyOn(translator, 'initI18n').and.returnValue(Promise.resolve(undefined));
+    spyOn(translator, 'translate').and.stub();
+    spyOn(translator, 'getLanguage').and.returnValue('en');
+
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
-    LoggerInstance.setInstance(customLogger)
-    let logger = LoggerInstance.getInstance()
-    component['logger']= logger
     fixture.detectChanges();
   });
 

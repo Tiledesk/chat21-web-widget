@@ -664,6 +664,11 @@ export class VoiceService {
    * 🎧 AUDIO ANALYSER INIT
    */
   private initAudioAnalyser(stream: MediaStream): void {
+    if (!stream?.getAudioTracks?.()?.length) {
+      this.logger.log('[VoiceService] initAudioAnalyser: no audio track on stream, skipping analyser');
+      return;
+    }
+
     this.audioContext = new AudioContext();
 
     const source = this.audioContext.createMediaStreamSource(stream);

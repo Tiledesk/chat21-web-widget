@@ -58,6 +58,14 @@ mocks/voice-websocket-mock/temp/
 deploy_amazon_*.sh
 docs
 
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+.playwright-mcp/
 # Playwright MCP session artifacts
 .playwright-mcp/
 

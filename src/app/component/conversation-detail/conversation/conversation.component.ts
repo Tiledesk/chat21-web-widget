@@ -252,6 +252,14 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'EMOJI_NOT_ELLOWED',
       'ATTACHMENT',
       'EMOJI',
+      'BUTTON_ATTACH_FILE',
+      'BUTTON_SEND_MESSAGE',
+      'BUTTON_RECORD_AUDIO',
+      'BUTTON_DELETE_AUDIO',
+      'BUTTON_SEND_AUDIO',
+      'BUTTON_PLAY_AUDIO',
+      'BUTTON_PAUSE_AUDIO',
+      'SKIP_TO_COMPOSER',
       'CLOSE_CHAT',
       'CLOSE',
       'VOICE_CONNECTING',
@@ -276,13 +284,21 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'LABEL_THINKING',
       'LABEL_TO',
       'ARRAY_DAYS',
+      'CONVERSATION_LOG_LABEL',
+      'BUTTON_SCROLL_TO_BOTTOM',
+      'CAROUSEL_PREVIOUS',
+      'CAROUSEL_NEXT',
+      'CAROUSEL_LABEL',
+      'CAROUSEL_SLIDE_LABEL'
     ];
 
     const keysPreview= [
       'BACK', 
       'CLOSE',
       'LABEL_PLACEHOLDER',
-      'LABEL_PREVIEW'
+      'LABEL_PREVIEW',
+      'BUTTON_CLOSE_PREVIEW',
+      'BUTTON_SEND_MESSAGE'
     ];
 
     const keysCloseChatDialog= [
@@ -511,27 +527,31 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       return this.isConversationArchived;
     }
 
-    //   //FALLBACK TO TILEDESK
-    const requests_list = await this.tiledeskRequestService.getMyRequests().catch(err => {
+    // FALLBACK TO TILEDESK
+    let requests_list: { requests: any[] };
+    try {
+      requests_list = await this.tiledeskRequestService.getMyRequests();
+    } catch (err) {
       this.logger.error('[CONV-COMP] getConversationDetail: error getting request from Tiledesk', err);
-      this.isConversationArchived=true
-      return { requests: [] }
-    });
-    if (requests_list && requests_list.requests.length > 0) {
-      this.logger.debug('[CONV-COMP] getConversationDetail: request exist on Tiledesk', requests_list);
-      let conversation = requests_list.requests.find((request)=> request.request_id === this.conversationId)
-      if(conversation){
-        this.isConversationArchived = false
-        return this.isConversationArchived
-      }
-      this.logger.debug('[CONV-COMP] getConversationDetail: request NOT EXIST on Tiledesk', requests_list);
-      this.isConversationArchived = true
-      return this.isConversationArchived
+      this.isConversationArchived = true;
+      return this.isConversationArchived;
     }
 
-      this.isConversationArchived = false;
-      return null;
+    if (requests_list && requests_list.requests.length > 0) {
+      this.logger.debug('[CONV-COMP] getConversationDetail: request exist on Tiledesk', requests_list);
+      const conversation = requests_list.requests.find((request) => request.request_id === this.conversationId);
+      if (conversation) {
+        this.isConversationArchived = false;
+        return this.isConversationArchived;
+      }
+      this.logger.debug('[CONV-COMP] getConversationDetail: request NOT EXIST on Tiledesk', requests_list);
+      this.isConversationArchived = true;
+      return this.isConversationArchived;
     }
+
+    this.isConversationArchived = false;
+    return null;
+  }
 
   /**
     * this.g.recipientId:
@@ -1059,6 +1079,21 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   
+
+ /**
+  * Programmatically moves keyboard focus to the message composer textarea.
+  * Wired to the visible-on-focus skip link in conversation.component.html (WCAG 2.4.1 Bypass Blocks).
+  */
+ skipToCompose() {
+   try {
+     const textarea = document.getElementById('chat21-main-message-context') as HTMLTextAreaElement | null;
+     if (textarea) {
+       textarea.focus();
+     }
+   } catch(e) {
+     this.logger.warn('[CONV-COMP] skipToCompose error', e);
+   }
+ }
 
  scrollToBottom() {
   this.conversationContent.scrollToBottom();

@@ -28,16 +28,15 @@ describe('TtsAudioPlaybackCoordinator', () => {
   });
 
   it('stopAll clears the queue, sets playing=false, and emits stopAllPlayback$', () => {
-    const stopAllFired: void[] = [];
-    coordinator.stopAllPlayback$.subscribe(() => stopAllFired.push());
+    const stopNextSpy = spyOn((coordinator as any)._stopAll$, 'next').and.callThrough();
 
     coordinator.requestStart('msg-1', () => {});
     coordinator.stopAll();
 
+    expect(stopNextSpy).toHaveBeenCalledTimes(1);
     const states: boolean[] = [];
     coordinator.isTTSPlaying$.subscribe((v) => states.push(v));
     expect(states).toEqual([false]);
-    expect(stopAllFired.length).toBe(1);
   });
 
   // ── Preemption tests (SPEC-002) ───────────────────────────────────────────
