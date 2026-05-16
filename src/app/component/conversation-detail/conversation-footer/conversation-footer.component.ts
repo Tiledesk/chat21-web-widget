@@ -124,6 +124,12 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     return this.translationMap?.get('VOICE_LISTENING') || 'Listening...';
   }
 
+  get maxAttachmentLabel(): string {
+    const template = this.translationMap?.get('MAX_ATTACHMENT')
+      || `Max allowed size {{FILE_SIZE_LIMIT}}Mb`;
+    return template.replace(/\{\{FILE_SIZE_LIMIT\}\}/g, String(this.file_size_limit));
+  }
+
   file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
   isErrorNetwork: boolean = false;
