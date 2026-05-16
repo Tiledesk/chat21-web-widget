@@ -44,7 +44,7 @@ describe('VoiceService', () => {
 
     voiceStreamingMock = jasmine.createSpyObj<VoiceStreamingService>(
       'VoiceStreamingService',
-      ['start', 'stop', 'setAudioMuted', 'sendPlaybackComplete', 'sendBargeIn'],
+      ['start', 'stop', 'setAudioMuted', 'sendPlaybackComplete', 'pauseRecording', 'resumeRecording'],
     );
     voiceStreamingMock.start.and.returnValue(Promise.resolve());
     voiceStreamingMock.stop.and.returnValue(
@@ -65,6 +65,8 @@ describe('VoiceService', () => {
       ],
     });
     service = TestBed.inject(VoiceService);
+    spyOn(service as any, '_startKeyboardSound').and.stub();
+    spyOn(service as any, '_stopKeyboardSound').and.stub();
   });
 
   // ── Existing session lifecycle tests ──────────────────────────────────────
@@ -156,22 +158,21 @@ describe('VoiceService', () => {
     expect(voiceStreamingMock.setAudioMuted).not.toHaveBeenCalled();
   });
 
-  it('empty-audio path: sendPlaybackComplete immediately but acquisition stays blocked until "listening"', async () => {
+  it('empty-audio path: sendPlaybackComplete after flush but acquisition stays blocked until "listening"', async () => {
     const blocked = await startWssSession();
     const initialLen = blocked.length;
 
-    // Simulate done arriving with NO binary audio (_activeTtsSources === 0)
+    // done with no binary audio arms unblock; flush sends playback complete to proxy
     wsControl$.next({ event: 'speaking', text: 'hello' } as VoiceWsControlMessage);
     wsControl$.next({ event: 'done' } as VoiceWsControlMessage);
 
-    // Proxy signalled immediately
+    expect(voiceStreamingMock.sendPlaybackComplete).not.toHaveBeenCalled();
+    (service as any)._flushTtsUnblock(false);
     expect(voiceStreamingMock.sendPlaybackComplete).toHaveBeenCalledTimes(1);
 
-    // Acquisition must still be blocked — proxy hasn't confirmed LISTENING yet
     const afterDone = blocked.slice(initialLen);
     expect(afterDone.every((v) => v === true)).toBeTrue();
 
-    // Unblock only after proxy confirms
     wsControl$.next({ event: 'listening' } as VoiceWsControlMessage);
     expect(blocked[blocked.length - 1]).toBeFalse();
   });
@@ -189,22 +190,19 @@ describe('VoiceService', () => {
 
   // ── Audio preemption tests (SPEC-002) ────────────────────────────────────
 
-  it('second "speaking" cancels first audio: sendPlaybackComplete called exactly once for the new turn', async () => {
+  it('second "speaking" cancels first audio: sendPlaybackComplete only after flush for the new turn', async () => {
     await startWssSession();
     voiceStreamingMock.sendPlaybackComplete.calls.reset();
 
-    // First turn: audio chunk arrives → _activeTtsSources = 1 (sync) → done sets _unblockAfterTts
     wsControl$.next({ event: 'speaking', text: 'first' } as VoiceWsControlMessage);
-    ttsBinaryChunk$.next(new ArrayBuffer(4));           // _activeTtsSources++ synchronously
-    wsControl$.next({ event: 'done' } as VoiceWsControlMessage); // _unblockAfterTts = true
-
-    // Second turn preempts while first audio is still "playing"
-    wsControl$.next({ event: 'speaking', text: 'second' } as VoiceWsControlMessage);
-    // _cancelAllTtsAudio() resets _activeTtsSources=0, _unblockAfterTts=false
-
-    // done with no audio → sendPlaybackComplete immediately (new turn, _activeTtsSources = 0)
+    ttsBinaryChunk$.next(new ArrayBuffer(4));
     wsControl$.next({ event: 'done' } as VoiceWsControlMessage);
 
+    wsControl$.next({ event: 'speaking', text: 'second' } as VoiceWsControlMessage);
+    wsControl$.next({ event: 'done' } as VoiceWsControlMessage);
+
+    expect(voiceStreamingMock.sendPlaybackComplete).not.toHaveBeenCalled();
+    (service as any)._flushTtsUnblock(false);
     expect(voiceStreamingMock.sendPlaybackComplete).toHaveBeenCalledTimes(1);
   });
 
@@ -226,35 +224,4 @@ describe('VoiceService', () => {
     expect(voiceStreamingMock.sendPlaybackComplete).not.toHaveBeenCalled();
   });
 
-  // ── Barge-in ──────────────────────────────────────────────────────────────
-
-  it('barge_in event cancels TTS audio and unblocks acquisition without sending tts_playback_complete', async () => {
-    await startWssSession();
-    voiceStreamingMock.sendPlaybackComplete.calls.reset();
-
-    // Simulate bot speaking with audio in flight
-    wsControl$.next({ event: 'speaking', text: 'hello' } as VoiceWsControlMessage);
-    ttsBinaryChunk$.next(new ArrayBuffer(4));   // _activeTtsSources++ synchronously
-    wsControl$.next({ event: 'done' } as VoiceWsControlMessage); // _unblockAfterTts = true
-
-    // Proxy detects user speech and sends barge_in
-    wsControl$.next({ event: 'barge_in' } as VoiceWsControlMessage);
-
-    // tts_playback_complete must NOT be sent — it was an interruption, not a completion
-    expect(voiceStreamingMock.sendPlaybackComplete).not.toHaveBeenCalled();
-    expect(voiceStreamingMock.setAudioMuted).not.toHaveBeenCalled();
-    expect((service as any)._isAcquisitionBlocked$.getValue()).toBe(false);
-  });
-
-  it('barge_in while no TTS is active does not throw and still unblocks acquisition', async () => {
-    await startWssSession();
-    voiceStreamingMock.sendPlaybackComplete.calls.reset();
-
-    // No speaking event — mic was never muted
-    expect(() => {
-      wsControl$.next({ event: 'barge_in' } as VoiceWsControlMessage);
-    }).not.toThrow();
-
-    expect(voiceStreamingMock.sendPlaybackComplete).not.toHaveBeenCalled();
-  });
 });

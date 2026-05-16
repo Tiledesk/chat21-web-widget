@@ -264,11 +264,4 @@ describe('ConversationContentComponent', () => {
     });
   });
 
-  describe('ngAfterContentChecked', () => {
-    it('should trigger change detection', () => {
-      spyOn((component as any).cdref, 'detectChanges');
-      component.ngAfterContentChecked();
-      expect((component as any).cdref.detectChanges).toHaveBeenCalled();
-    });
-  });
 });
