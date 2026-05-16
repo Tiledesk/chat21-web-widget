@@ -22,11 +22,14 @@
     <!-- BUTTON: inactive icon / expanded pill content -->
     <ng-container *ngSwitchCase="'button'">
         <span class="stream-audio-button__icon" *ngIf="!active" aria-hidden="true">
-            <svg role="img" xmlns="http://www.w3.org/2000/svg" version="1.1" width="24" height="24" viewBox="0 0 30 30" fill="currentColor" preserveAspectRatio="xMidYMid meet">
-                <path class="s0" d="m5.21 7.41c-1.21 0-2.21 0.99-2.21 2.21v8.14c0 1.21 0.99 2.21 2.21 2.21 1.22 0 2.21-0.99 2.21-2.21v-8.14c0-1.21-0.99-2.21-2.21-2.21z"/>
-                <path class="s0" d="m11.64 3.01c-1.22 0-2.21 0.99-2.21 2.2v16.94c0 1.21 0.99 2.2 2.21 2.2 1.22 0 2.21-0.98 2.21-2.2v-16.94c0-1.21-0.99-2.21-2.21-2.21z"/>
-                <path class="s0" d="m15.86 9.25v8.88c0 1.21 0.99 2.21 2.21 2.21 1.22 0 2.21-0.99 2.21-2.21v-8.88c0-1.22-0.99-2.21-2.21-2.21-1.22 0-2.21 0.99-2.21 2.21z"/>
-                <path class="s0" d="m24.5 8.97c-1.22 0-2.21 0.99-2.21 2.21v5.02c0 1.22 0.99 2.21 2.21 2.21 1.22 0 2.21-0.99 2.21-2.21v-5.02c0-1.21-0.99-2.21-2.21-2.21z"/>
+            <svg role="img" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 23 23" aria-labelledby="altIconTitle">
+                <rect x="0" y="7.5" height="6px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
+                <rect x="4" y="5.5" height="10px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
+                <rect x="8" y="2.5" height="16px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
+                <rect x="12" y="5.5" height="10px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
+                <rect x="16" y="2.5" height="16px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
+                <rect x="20" y="7.5" height="6px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
+                <title id="altIconTitle">{{ translationMap.get('STREAM_AUDIO') }}</title>
             </svg>
         </span>
 
