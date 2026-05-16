@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.33-rc11
+- **changed**: **Stream audio** — updated the streaming/voice-mode footer icon.
+- **added**: **Stream audio** — tooltip on the stream button (i18n key `STREAM_AUDIO`, e.g. “Use voice mode”) via SVG `<title>` and `aria-label`.
+
 # 5.1.33-rc10
 - **bug-fixed**: fixed bug with knowledge base json sources without URLs
 
