@@ -256,7 +256,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'CLOSE',
       'VOICE_CONNECTING',
       'VOICE_LISTENING',
-      'VOICE_PROCESSING'
+      'VOICE_PROCESSING',
+      'STREAM_AUDIO'
     ];
 
     const keysContent = [

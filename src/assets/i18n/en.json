@@ -101,6 +101,7 @@
   "MAX_ATTACHMENT": "Max allowed size {{FILE_SIZE_LIMIT}}Mb",
   "MAX_ATTACHMENT_ERROR": "The file exceeds the maximum allowed size",
   "EMOJI": "Emoji",
+  "STREAM_AUDIO": "Use voice mode",
   "VOICE_CONNECTING": "Connecting...",
   "VOICE_LISTENING": "Listening...",
   "VOICE_PROCESSING": "Processing..."

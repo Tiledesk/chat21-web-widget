@@ -39,6 +39,9 @@
   width: 20px;
   height: 20px;
   display: block;
+  rect {
+    fill: var(--icon-fill-color);
+  }
 }
 
 .stream-audio-button__expanded {
@@ -48,6 +51,7 @@
   gap: 12px;
   width: 100%;
   user-select: none;
+  color: var(--icon-fill-color);
 }
 
 .stream-audio-button__label {
@@ -74,6 +78,6 @@
   width: 3px;
   height: 100%;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--icon-fill-color);
   transform-origin: center;
 }

@@ -134,8 +134,7 @@
             class="chat21-textarea-button chat21-stream-button"
             [class.active]="isStreamAudioActive || isStreamAudioConnecting || (!textInputTextArea && !hideTextReply)"
             [class.chat21-stream-button--expanded]="isStreamAudioActive || isStreamAudioConnecting"
-            (click)="onStreamPressed($event)" [attr.aria-label]="(isStreamAudioActive || isStreamAudioConnecting) ? (translationMap?.get('CLOSE') || 'Chiudi stream') : (translationMap?.get('STREAM_AUDIO') || 'Stream audio')"
-            [ngStyle]="{ 'background-color': stylesMap?.get('iconColor') || stylesMap?.get('themeColor') }">
+            (click)="onStreamPressed($event)" [attr.aria-label]="(isStreamAudioActive || isStreamAudioConnecting) ? (translationMap?.get('CLOSE') || 'Chiudi stream') : (translationMap?.get('STREAM_AUDIO') || 'Stream audio')">
             <chat-stream-audio-spectrum
                 mode="button"
                 [active]="isStreamAudioActive || isStreamAudioConnecting"

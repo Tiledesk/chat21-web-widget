@@ -110,28 +110,19 @@
     box-sizing: border-box;
     flex-shrink: 0;
     color: #ffffff;
-    transition:
-        min-width 220ms ease,
-        border-radius 180ms ease,
-        padding 180ms ease;
+    transition: min-width 220ms ease, border-radius 180ms ease, padding 180ms ease;
 
-    .chat21-stream-button__icon svg {
-        width: 20px;
-        height: 20px;
-        path {
-            fill: #ffffff;
-        }
-    }
-
-    &.chat21-textarea-button span svg:hover {
-        background: rgba(255, 255, 255, 0.2) !important;
-        border-radius: 50%;
+    &:hover{
+        background: rgba(240, 240, 240, 0.4) !important;
+        transition: all 0.45s ease-in-out 0s !important;
+        -moz-transition: all 0.45s ease-in-out 0s !important;
+        -webkit-transition: all 0.45s ease-in-out 0s !important;
     }
 
     &.chat21-stream-button--expanded {
-        min-width: 120px;
+        min-width: 110px;
         border-radius: 999px;
-        padding: 0 14px;
+        // padding: 0 14px;
         justify-content: center;
 
         // stop the circle-hover background from looking odd on pill
@@ -432,7 +423,7 @@ textarea:active{
     flex-direction: column;
     justify-content: center;
     position: absolute;
-    padding: 8px 16px;
+    // padding: 8px 16px;
     overflow: hidden;
     background-color: color-mix(in srgb, var(--content-background-color) 34%, transparent);
     backdrop-filter: blur(20px) saturate(1.2);
