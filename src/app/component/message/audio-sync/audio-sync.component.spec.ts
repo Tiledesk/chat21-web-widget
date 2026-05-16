@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonModule } from '@angular/common';
 
 import { AudioSyncComponent } from './audio-sync.component';
 import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
@@ -17,7 +18,8 @@ describe('AudioSyncComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [AudioSyncComponent],
+      declarations: [AudioSyncComponent],
+      imports: [CommonModule],
       providers: [
         {
           provide: TtsAudioPlaybackCoordinator,
@@ -61,6 +63,7 @@ describe('AudioSyncComponent', () => {
       audio,
       'https://speech.example.com/api/tts/stream',
       'https://speech.example.com/api/tts',
+      undefined,
     );
   });
 

@@ -22,6 +22,31 @@ export class FormTextComponent implements OnInit, OnDestroy {
   inputType: string = 'text'
   private valueChangesSub?: Subscription;
 
+  get fieldBaseId(): string {
+    const raw = this.element?.name || this.controlName || 'field';
+    return 'c21-prechat-' + String(raw).replace(/[^a-zA-Z0-9_-]/g, '_');
+  }
+
+  get errorsId(): string {
+    return this.fieldBaseId + '-errors';
+  }
+
+  get ariaDescribedByErrors(): string | null {
+    const name = this.element?.name;
+    if (!this.hasSubmitted || !this.form?.controls?.[name]?.errors) {
+      return null;
+    }
+    return this.errorsId;
+  }
+
+  get ariaInvalid(): 'true' | 'false' {
+    const name = this.element?.name;
+    if (!this.hasSubmitted || !this.form?.controls?.[name]) {
+      return 'false';
+    }
+    return this.form.controls[name].invalid ? 'true' : 'false';
+  }
+
   constructor(private rootFormGroup: FormGroupDirective,
               private elementRef: ElementRef) { }
 

@@ -60,7 +60,7 @@ export class BrandService {
     },
     WIDGET: {
       LOGO_CHAT: "https://smartflows-eu-public.s3.eu-central-1.amazonaws.com/imagicle-resources/SmartflowsLogo-NoText.svg",
-      POWERED_BY: "<a tabindex='-1' target='_blank href='https://www.imagicle.com/en/products/conversational-ai/'><img src='https://smartflows-eu-public.s3.eu-central-1.amazonaws.com/imagicle-resources/SmartflowsLogo-NoText.svg'/><span> Powered by Conversational AI</span></a>",
+      POWERED_BY: "<a target='_blank' rel='noopener noreferrer' href='https://www.imagicle.com/en/products/conversational-ai/'><img src='https://smartflows-eu-public.s3.eu-central-1.amazonaws.com/imagicle-resources/SmartflowsLogo-NoText.svg' alt=''/><span> Powered by Conversational AI</span></a>",
     },
     CDS: {
       META_TITLE:"Design Studio",

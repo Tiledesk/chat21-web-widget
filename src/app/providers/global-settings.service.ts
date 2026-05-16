@@ -6,7 +6,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Globals } from '../utils/globals';
 import { convertColorToRGBA, detectIfIsMobile, getImageUrlThumb, getParameterByName, stringToBoolean, stringToNumber } from '../utils/utils';
 
-import { TemplateBindingParseResult } from '@angular/compiler';
 import { AppStorageService } from '../../chat21-core/providers/abstract/app-storage.service';
 import { LoggerService } from '../../chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from '../../chat21-core/providers/logger/loggerInstance';
@@ -731,7 +730,7 @@ export class GlobalSettingsService {
         }
         TEMP = tiledeskSettings['lang'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > lang:: ', TEMP);
-        if (TemplateBindingParseResult) {
+        if (TEMP !== undefined) {
             globals.lang = TEMP;
             // globals.setParameter('lang', TEMP);
         }

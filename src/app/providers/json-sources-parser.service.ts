@@ -7,25 +7,19 @@ import { mergeJsonSourcesMissingFields } from 'src/app/utils/json-sources-utils'
 
 export type UrlPreviewMessage = {
   type?: string; // "url_preview"
-  activeMode?: 'form' | 'list' | 'text' | string;
-  form?: { sources?: any[] };
-  list?: string;
   text?: string;
 };
 
 /**
  * Parse and enrich "url_preview" messages into `JsonSourceItem[]`.
  *
- * This service is intentionally isolated so it can be replaced/removed easily.
- *
  * Rules:
- * - It expects the full url_preview message object: `{ type: 'url_preview', activeMode: 'form'|'list'|'text', ... }`
- * - `activeMode` selects the source field to use:
- *   - `form`: reads `msg.form.sources` (array of `{source_name, source_file_name, ...}`)
- *   - `list`: reads `msg.list` (free text) and extracts URLs (max 10)
- *   - `text`: reads `msg.text` (a JSON array string with the same schema as `form.sources`)
- * - After building the initial array, it calls `url-preview` only for items that miss title or description,
- *   and merges the missing fields only (never overwriting existing values).
+ * - The payload is always read from `msg.text`, regardless of `activeMode`.
+ * - `msg.text` may be either:
+ *     - a JSON array of source objects (`{source_name, source_file_name, ...}`), or
+ *     - a plain string from which URLs are extracted (split by whitespace/punctuation).
+ * - After building the initial array, `url-preview` is called only for items that miss
+ *   title or description, and missing fields are merged in (never overwriting).
  */
 @Injectable({ providedIn: 'root' })
 export class JsonSourcesParserService {
@@ -98,28 +92,26 @@ export class JsonSourcesParserService {
   private parseBaseJsonSources(msg?: UrlPreviewMessage | null): JsonSourceItem[] | null {
     if (!msg || msg.type !== 'url_preview') return null;
 
-    const mode = (msg.activeMode || '').toString().trim();
-    const normalizedMode = mode === 'json_sources' ? 'form' : mode; // backward compat
-
-    if (normalizedMode === 'form') {
-      return this.mapSourcesArray(msg.form?.sources);
-    }
-    if (normalizedMode === 'list') {
-      return this.mapListToSources(msg.list);
-    }
-    if (normalizedMode === 'text') {
-      return this.mapTextToSources(msg.text);
-    }
-
-    // best-effort fallback order
-    return this.mapSourcesArray(msg.form?.sources)
-      || this.mapTextToSources(msg.text)
-      || this.mapListToSources(msg.list);
+    // Regardless of `activeMode`, the payload is always read from `msg.text`.
+    // It can be either a JSON array of source objects, or a plain string with URLs.
+    return this.isJsonArrayOfObjects(msg.text)
+      ? this.mapTextToSources(msg.text)
+      : this.mapListToSources(msg.text);
   }
 
   private mapListToSources(listValue?: string): JsonSourceItem[] | null {
     const urls = extractUrlsFromText((listValue || '').toString(), 10);
     return urls.length ? urls.map(u => ({ link: u, title: u })) : null;
+  }
+
+  private isJsonArrayOfObjects(text?: string): boolean {
+    if (!text) return false;
+    try {
+      const parsed = this.parseJsonLenient(text);
+      return Array.isArray(parsed) && parsed.some(it => it && typeof it === 'object' && !Array.isArray(it));
+    } catch {
+      return false;
+    }
   }
 
   private mapTextToSources(text?: string): JsonSourceItem[] | null {
@@ -137,9 +129,10 @@ export class JsonSourcesParserService {
     if (!arr || arr.length === 0) return null;
     const mapped = arr
       .filter((s: any) => s && typeof s === 'object' && typeof s[JSON_SOURCE_FIELD_URL] === 'string')
-      .map((s: any): JsonSourceItem => {
+      .map((s: any): JsonSourceItem | null => {
         const rawUrl = (s[JSON_SOURCE_FIELD_URL] || '').toString().trim();
-        const normalized = extractUrlsFromText(rawUrl, 1)[0] || rawUrl;
+        const normalized = extractUrlsFromText(rawUrl, 1)[0];
+        if (!normalized) return null;
         return {
           link: normalized,
           title: (s[JSON_SOURCE_FIELD_TITLE] || rawUrl).toString(),
@@ -147,7 +140,7 @@ export class JsonSourcesParserService {
           image: typeof s.source_image === 'string' ? s.source_image : undefined
         };
       })
-      .filter((x: JsonSourceItem) => !!x.link);
+      .filter((x: JsonSourceItem | null): x is JsonSourceItem => !!x && !!x.link);
     return mapped.length ? mapped : null;
   }
 

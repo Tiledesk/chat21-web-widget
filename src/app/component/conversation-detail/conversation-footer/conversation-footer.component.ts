@@ -962,48 +962,46 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   }
 
   /**
-   * when I press a key I call this method which:
-   * check if 'enter' has been pressed
-   * if you clear text
-   * set field height as min by default
-   * takes out the focus and resets it after a few moments
-   * (this is a patch to keep the focus and eliminate the br of the send !!!)
-   * send message
+   * Single keyboard handler for the message textarea.
+   *
+   * - Enter (no modifier)               -> send message
+   * - Shift / Alt / Ctrl / Meta + Enter -> insert a newline (default browser behavior)
+   * - Tab                               -> prevented, to keep focus inside the chat
+   *
+   * Modifier check is intentionally on `keydown` because `keypress` is deprecated
+   * and does not consistently fire for modifier combos across browsers.
    * @param event
    */
-  onkeypress(event) {
+  onkeydown(event: KeyboardEvent) {
     const keyCode = event.which || event.keyCode;
-    this.textInputTextArea = ((document.getElementById('chat21-main-message-context') as HTMLInputElement).value);
-    if (keyCode === 13) { // ENTER pressed
-      if(this.showAlertEmoji){
-        return; 
-      }
-      if (this.textInputTextArea && this.textInputTextArea.trim() !== '') {
-        //   that.logger.log('[CONV-FOOTER] sendMessage -> ', this.textInputTextArea);
-        // this.resizeInputField();
-        // this.messagingService.sendMessage(msg, TYPE_MSG_TEXT);
-        // this.setDepartment();
-        // this.textInputTextArea = replaceBr(this.textInputTextArea);
-        this.sendMessage(this.textInputTextArea, TYPE_MSG_TEXT);
-        // this.restoreTextArea();
-      }
-    } else if (keyCode === 9) { // TAB pressed
-      event.preventDefault();
-    }
-  }
 
-  
-  /**
-  * HANDLE: cmd+enter, shiftKey+enter, alt+enter, ctrl+enter
-  * @param event 
-  */
-  onkeydown(event){
-    const keyCode = event.which || event.keyCode;
-    // metaKey -> COMMAND ,  shiftKey -> SHIFT, altKey -> ALT, ctrlKey -> CONTROL
-    if( (event.metaKey || event.shiftKey || event.altKey || event.ctrlKey) && keyCode===13){  
+    if (keyCode === 13) { // ENTER
+      const hasModifier = event.metaKey || event.shiftKey || event.altKey || event.ctrlKey;
+      if (hasModifier) {
+        // Let the textarea insert a newline on its own (do not preventDefault).
+        return;
+      }
+
+      // Plain Enter -> send the message
       event.preventDefault();
-      this.textInputTextArea += '\r\n';
-      this.resizeInputField();
+
+      if (this.showAlertEmoji) {
+        return;
+      }
+
+      const target = document.getElementById('chat21-main-message-context') as HTMLInputElement;
+      if (target) {
+        this.textInputTextArea = target.value;
+      }
+
+      if (this.textInputTextArea && this.textInputTextArea.trim() !== '') {
+        this.sendMessage(this.textInputTextArea, TYPE_MSG_TEXT);
+      }
+      return;
+    }
+
+    if (keyCode === 9) { // TAB
+      event.preventDefault();
     }
   }
   
