@@ -573,6 +573,9 @@ export class GlobalSettingsService {
                     if (variables.hasOwnProperty('allowedUploadExtentions')) {
                         globals['fileUploadAccept'] = variables['allowedUploadExtentions'];
                     }
+                    if(variables.hasOwnProperty('showAudioStreamFooterButton')) {
+                        globals['showAudioStreamFooterButton'] = variables['showAudioStreamFooterButton'];
+                    }
                     
                 }
             }
