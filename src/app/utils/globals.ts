@@ -36,6 +36,14 @@ export class Globals {
   isMobile: boolean;
   isLogged: boolean;
   soundEnabled: boolean;
+  /** Volume for the keyboard typing-indicator sound during voice sessions. Range 0.0–1.0. */
+  keyboardSoundVolume: number;
+  /**
+   * Filename (local) or absolute URL (remote) for the keyboard typing-indicator sound.
+   * Local: bare filename resolved against `baseLocation + '/assets/sounds/'` (e.g. `'keyboard.mp3'`).
+   * Remote: full URL starting with `http://` or `https://`.
+   */
+  keyboardSoundFile: string;
   BUILD_VERSION: String;
   baseLocation: string;
   availableAgents: Array<UserAgent> = [];
@@ -117,6 +125,7 @@ export class Globals {
   WAITING_TIME_NOT_FOUND: string;
   CLOSED: string;
   LABEL_PREVIEW: string;
+  BUTTON_OPEN_CHAT: string;
 
   // ============ BEGIN: EXTERNAL PARAMETERS ==============//
   autoStart: boolean;
@@ -219,12 +228,14 @@ export class Globals {
   showEmojiFooterButton: boolean // *******  new ********
   showAttachmentFooterButton: boolean // *******  new ********
   showAudioRecorderFooterButton: boolean // *******  new ********
+  showAudioStreamFooterButton: boolean // *******  new ********
 
   allowedOnSpecificUrl: boolean // *******  new ********
   allowedOnSpecificUrlList: Array<string> // *******  new ********
   hasCalloutInWidgetConfig: boolean; // *******  new ********
 
   fontFamilySource: string; // *******  new ********
+  cssSource: string; // *******  new ********
 
   size: 'min' | 'max' | 'top'; // *******  new ********
 
@@ -437,6 +448,8 @@ export class Globals {
     this.showAttachmentFooterButton = true;
     /** show/hide rec audio option in footer chat-detail page */
     this.showAudioRecorderFooterButton = true;
+    /** show/hide stream audio option in footer chat-detail page */
+    this.showAudioStreamFooterButton = true;
     /** enabled to set a list of pattern url able to load the widget **/
     this.allowedOnSpecificUrl = false
     /** set a list of pattern url able to load the widget */
@@ -445,6 +458,8 @@ export class Globals {
     this.hasCalloutInWidgetConfig = false;
     /** set widget size from 3 different positions: min, max, top */
     this.size = 'min';
+    /** remote CSS override URL (from window.tiledeskSettings.cssSource only) */
+    this.cssSource = '';
     /** enable to close the chat in conversation */
     this.closeChatInConversation = false;
     // ============ END: SET EXTERNAL PARAMETERS ==============//
@@ -465,6 +480,8 @@ export class Globals {
     this.BUILD_VERSION = 'v.' + environment.version;
 
     this.soundEnabled = true;
+    this.keyboardSoundVolume = 0.3;
+    this.keyboardSoundFile = 'keyboard.mp3';
 
     this.conversationsBadge = 0;
 
@@ -616,13 +633,35 @@ export class Globals {
     }
 
 
-    //customize position for 'tiledeskdiv' for mobile
+    // On mobile, force fullscreen while open regardless of stored `size`.
     if(isOpen && this.isMobile && divTiledeskWidget){
+      divTiledeskWidget.classList.remove('min-size')
+      divTiledeskWidget.classList.remove('max-size')
+      divTiledeskWidget.classList.remove('top-size')
+      divTiledeskWidget.classList.add('fullscreen')
+      divTiledeskWidget.style.left = '0px'
       divTiledeskWidget.style.right = '0px'
+      divTiledeskWidget.style.top = '0px'
       divTiledeskWidget.style.bottom = '0px'
+      divTiledeskWidget.style.width = '100%'
+      divTiledeskWidget.style.height = '100%'
+      divTiledeskWidget.style.maxWidth = 'none'
+      divTiledeskWidget.style.maxHeight = 'none'
     } else if(!isOpen && this.isMobile && divTiledeskWidget){
-      divTiledeskWidget.style.bottom = this.marginY
-      this.align === 'left'?  divTiledeskWidget.style.left = this.mobileMarginX : divTiledeskWidget.style.right = this.mobileMarginX; 
+      divTiledeskWidget.classList.remove('fullscreen')
+      divTiledeskWidget.style.removeProperty('top')
+      divTiledeskWidget.style.removeProperty('width')
+      divTiledeskWidget.style.removeProperty('height')
+      divTiledeskWidget.style.removeProperty('max-width')
+      divTiledeskWidget.style.removeProperty('max-height')
+      divTiledeskWidget.style.bottom = this.mobileMarginY
+      if (this.align === 'left') {
+        divTiledeskWidget.style.left = this.mobileMarginX
+        divTiledeskWidget.style.removeProperty('right')
+      } else {
+        divTiledeskWidget.style.right = this.mobileMarginX
+        divTiledeskWidget.style.removeProperty('left')
+      }
     }
 
     //customize position for 'tiledeskdiv' for desktop if fullscreenMode is not active

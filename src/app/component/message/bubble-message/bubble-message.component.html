@@ -1,26 +1,4 @@
-<!-- [ngClass]="{'button-in-msg' : message.metadata && message.metadata.button}" -->
-<!-- ngStyle]="{'padding': (isImage(message) || isFrame(message))?'1px':'0 8px'}" -->
-<!-- 'width': (isImage(message) || isFrame(message))? sizeImage?.width + 'px': null  -->
-
-
-    
-<!-- <div id="bubble-message" *ngIf="isAudio(message)" [ngStyle]="{'padding': '0'}" class="messages primary-color">
-  <div>
-    <chat-audio-track  *ngIf="isAudio(message)"
-      [metadata]="message.metadata" 
-    ></chat-audio-track>
-  </div>
-</div> 
-
-
-[ngStyle]="{'padding': (isImage(message) || isFrame(message) || isAudio(message))?'0 0px':'0 8px'}"
--->
-
-
-
-
-
-<div id="bubble-message"  class="messages primary-color">
+<div class="bubble-message messages primary-color">
     <div>
 
       <div *ngIf="messageType(MESSAGE_TYPE_OTHERS, message) && !isSameSender"
@@ -28,17 +6,7 @@
         [ngStyle]="{'margin': (isImage(message) || isFrame(message))? '12px 16px 8px 16px': '12px 16px 0px 16px'}" class="message_sender_fullname">
         {{message?.sender_fullname}}
       </div>
-      <!-- message type:: image -->
-      <!-- <div *ngIf="message.type == 'image' && message.metadata"  [ngStyle] = "{ 'max-width': getSizeImg(message).width, 'max-height': getSizeImg(message).height }">
-          <img class="message-contentX message-content-imageX" [src]="message.metadata.src" />
-      </div> -->
-  
-      <!-- <img *ngIf="message.type == 'image' && message.metadata" class="message-contentX message-content-imageX"
-      [src]="message.metadata.src" [width]="getSizeImg(message).width"
-      [height]="getSizeImg(message).height" /> -->
 
-      <!-- [width]="getMetadataSize(message.metadata).width"
-      [height]="getMetadataSize(message.metadata).height" -->
       <chat-image *ngIf="isImage(message)"
         [metadata]="message.metadata"
         [width]="sizeImage?.width"
@@ -53,17 +21,42 @@
         (onElementRendered)="onElementRenderedFN($event)">
       </chat-frame>
 
-      <!-- <chat-audio *ngIf="isAudio(message)"
-        [metadata]="message.metadata" 
-        (onElementRendered)="onElementRenderedFN($event)">
-      </chat-audio> -->
 
-      <chat-audio  *ngIf="isAudio(message)"
+      <chat-audio *ngIf="isAudio(message)"
         [metadata]="message.metadata"
         [color]="fontColor"
-        [stylesMap]="stylesMap">
+        [stylesMap]="stylesMap"
+        [translationMap]="translationMap">
       </chat-audio>
+      
+      <!-- Json sources -->
+      <chat-json-sources *ngIf="jsonSources !== null && jsonSources.length > 0"
+        [items]="jsonSources"
+        (onElementRendered)="onElementRenderedFN($event)">
+      </chat-json-sources> 
+      <!-- TTS player: only when voice proxy is NOT active (avoids double playback)
+           and the message was not already played by the proxy (avoids replay on session end) -->
+      <chat-audio-sync *ngIf="isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && !voiceService.wasProxyHandled(message?.uid)"
+        [message]="message"
+        [color]="fontColor">
+      </chat-audio-sync>
 
+      <!-- Karaoke display for TTS messages while a WSS voice session is active -->
+      <p *ngIf="isAudioTTS(message) && (voiceService.isWssVoiceActive$ | async) && _wssKaraokeWords$"
+         class="wss-karaoke"
+         [style.color]="fontColor">
+        <span *ngFor="let w of (_wssKaraokeWords$ | async); trackBy: trackKaraokeWord"
+              class="wss-word"
+              [class.future]="w.state === 'future'"
+              [class.active]="w.state === 'active'"
+              [class.past]="w.state === 'past'">{{ w.text }}&nbsp;</span>
+      </p>
+
+      <!-- Text fallback for TTS messages after the voice proxy session ended -->
+      <chat-text *ngIf="isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && voiceService.wasProxyHandled(message?.uid) && message?.text"
+        [text]="message?.text"
+        [color]="fontColor">
+      </chat-text>
 
       <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"
         [metadata]="message.metadata"
@@ -75,7 +68,14 @@
       <!-- <div *ngIf="message.type == 'text'"> -->     
 
       <!-- tooltip="{{message.timestamp | dateAgo}} ({{message.timestamp | date:'shortDate'}} {{message.timestamp | date:'HH:mm:ss'}})" placement="bottom" -->
-      <div *ngIf="message?.text && !isAudio(message)" >
+      <div *ngIf="message?.text && (!isAudio(message) && !isAudioTTS(message)) && !isJsonSources(message)" >
+
+        <!-- Word-by-word streaming reveal during an active voice session -->
+        <p *ngIf="_isStreaming" class="streaming-text" [style.color]="fontColor">
+          <span *ngFor="let w of _streamingWords; trackBy: trackWord"
+                class="stream-word"
+                [style.animation-delay]="(w.index * 80) + 'ms'">{{w.word}} </span>
+        </p>
 
         <!-- [htmlEnabled]="(message?.type==='html')? true : false" -->
         <chat-text *ngIf="message?.type !=='html'"
@@ -85,7 +85,7 @@
           (onAfterMessageRender)="onAfterMessageRenderFN($event)">
         </chat-text>
 
-        <chat-html *ngIf="message?.type==='html'"
+        <chat-html *ngIf="jsonSources === null && message?.type==='html'"
           [htmlText]="message?.text"
           [fontSize]="stylesMap.get('buttonFontSize')"
           [themeColor]="stylesMap.get('themeColor')"
@@ -93,13 +93,5 @@
         </chat-html>
 
       </div>
-  
     </div>
-  
-  </div>
-
-
-  
-
-
-
+</div>

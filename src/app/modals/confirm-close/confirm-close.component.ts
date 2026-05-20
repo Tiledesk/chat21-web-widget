@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChange, SimpleChanges, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, SimpleChange, SimpleChanges, ViewChild, OnDestroy } from '@angular/core';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 
@@ -23,6 +23,13 @@ export class ConfirmCloseComponent implements OnInit{
   ngOnInit(): void {
     this.logger.log('[CONFIRM CLOSE MODAL] onInit', this.isLoadingActive, this.stylesMap);
     // this.dialog.showModal();
+  }
+
+  @HostListener('keydown.escape', ['$event'])
+  onEscape(event: KeyboardEvent){
+    event.preventDefault();
+    event.stopPropagation();
+    this.onBack();
   }
 
   ngOnChanges(changes: SimpleChanges){

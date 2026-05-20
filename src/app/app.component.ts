@@ -116,7 +116,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   errorMessage: string = '';
   errorKeyMessage: string = null;
   errorParams: Record<string, any> = {};
-
+  
   private logger: LoggerService = LoggerInstance.getInstance();
   constructor(
     private el: ElementRef,
@@ -169,13 +169,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     if (conversation.attributes && conversation.attributes['subtype'] === 'info') {
                         return;
                     }
-                    if (conversation.is_new && this.isInitialized) {
+                    if (conversation.is_new && that.isInitialized) {
                         that.manageTabNotification(false, 'conv-added')
                         // this.soundMessage(); 
                     }
-                    if(this.g.isOpen === false){
-                        that.lastConversation = conversation;
+                    if(this.g.isOpen === false && conversation.sender !== this.g.senderId && !isInfo(conversation)){
                         that.g.isOpenNewMessage = true;
+                        that.lastConversation = conversation;
                     }
                 } else {
                     //widget closed
@@ -223,6 +223,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                             that.lastConversation = conversation;
                             that.g.isOpenNewMessage = true;
                             that.logger.debug('[APP-COMP] lastconversationnn', that.lastConversation)
+                            that.logger.debug('[APP-COMP] lastconversationnn message' + JSON.stringify(that.lastConversation?.attributes?.commands))
                         }
                         let badgeNewConverstionNumber = that.conversationsHandlerService.countIsNew()
                         that.g.setParameter('conversationsBadge', badgeNewConverstionNumber);
@@ -452,6 +453,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             }
 
             const autoStart = this.g.autoStart;
+            const startHidden = this.g.startHidden;
             that.stateLoggedUser = state;
             if (state && state === AUTH_STATE_ONLINE) {
                 /** sono loggato */
@@ -526,6 +528,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     // || this.g.hasCalloutInWidgetConfig;
                 if (shouldAutoAuthenticate) {
                     that.authenticate();
+                    if(startHidden){ that.hideWidget(); }
                 } else {
                     that.logger.debug('[APP-COMP] Skip auto-auth: startup conditions not met, show launcher only');
                 }
@@ -1253,6 +1256,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         const senderId = this.g.senderId;
         this.logger.debug('[APP-COMP] f21_open senderId: ', senderId);
         if (senderId) {
+            this.enforceMobileFullscreenOnOpen();
             // chiudo callout
             this.g.setParameter('displayEyeCatcherCard', 'none');
             // this.g.isOpen = true; // !this.isOpen;
@@ -1708,6 +1712,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.logger.debug('[APP-COMP] openCloseWidget', recipientId, this.g.isOpen, this.g.startFromHome);
 
         if (this.g.isOpen === false) {
+            this.enforceMobileFullscreenOnOpen();
             if(this.forceDisconnect){
                 this.logger.log('[FORCE] onOpenCloseWidget --> reconnect', this.forceDisconnect)
                 this.messagingAuthService.createCustomToken(this.g.tiledeskToken)
@@ -2171,6 +2176,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.appStorageService.setItem('size', normalizedMode);
         } catch (e) {
             this.logger.warn('[APP-COMP] onWidgetSizeChange > cannot persist size', e);
+        }
+    }
+
+    private enforceMobileFullscreenOnOpen() {
+        if (this.g?.isMobile) {
+            this.g.fullscreenMode = true;
+            this.g.size = 'max';
         }
     }
 

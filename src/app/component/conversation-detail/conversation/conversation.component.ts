@@ -40,6 +40,7 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
 import { TiledeskRequestsService } from 'src/chat21-core/providers/tiledesk/tiledesk-requests.service';
 import { ConversationContentComponent } from '../conversation-content/conversation-content.component';
 import { checkAcceptedFile } from 'src/app/utils/utils';
+import { computeConversationBadgeState } from 'src/app/utils/conversation-sender-classifier';
 // import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -115,12 +116,13 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
 
   // Temporary "thinking" state after a client message is sent.
   public showThinkingMessage: boolean = false;
-  private waitingServerReply: boolean = false;
 
   // Badge "ultimo messaggio ricevuto dal server" (bot/umano)
   public showLastServerSenderBadge: boolean = false;
   public lastServerSenderKind: 'bot' | 'human' | null = null;
   public lastServerSenderBadgeText: string = '';
+  // Diagnostics/internal state: kind of the latest *server* message (including system).
+  public latestServerMessageKind: 'bot' | 'human' | 'system' | 'unknown' = 'unknown';
 
 
   CLIENT_BROWSER: string = navigator.userAgent;
@@ -158,6 +160,11 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   private setTimeoutWritingMessages;
   membersConversation = ['SYSTEM'];
   // ========== end:: typying =======
+
+  // ========== begin:: stream audio ======= //
+  public isStreamAudioActive = false;
+  public isStreamAudioConnecting = false;
+  // ========== end:: stream audio ======= //
 
   @ViewChild(ConversationFooterComponent) conversationFooter: ConversationFooterComponent
   @ViewChild(ConversationContentComponent) conversationContent: ConversationContentComponent
@@ -245,7 +252,21 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'EMOJI_NOT_ELLOWED',
       'ATTACHMENT',
       'EMOJI',
-      'CLOSE_CHAT'
+      'BUTTON_ATTACH_FILE',
+      'BUTTON_SEND_MESSAGE',
+      'BUTTON_RECORD_AUDIO',
+      'BUTTON_DELETE_AUDIO',
+      'BUTTON_SEND_AUDIO',
+      'BUTTON_PLAY_AUDIO',
+      'BUTTON_PAUSE_AUDIO',
+      'SKIP_TO_COMPOSER',
+      'CLOSE_CHAT',
+      'CLOSE',
+      'VOICE_CONNECTING',
+      'VOICE_LISTENING',
+      'VOICE_PROCESSING',
+      'STREAM_AUDIO',
+      'MAX_ATTACHMENT'
     ];
 
     const keysContent = [
@@ -265,13 +286,21 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'LABEL_THINKING',
       'LABEL_TO',
       'ARRAY_DAYS',
+      'CONVERSATION_LOG_LABEL',
+      'BUTTON_SCROLL_TO_BOTTOM',
+      'CAROUSEL_PREVIOUS',
+      'CAROUSEL_NEXT',
+      'CAROUSEL_LABEL',
+      'CAROUSEL_SLIDE_LABEL'
     ];
 
     const keysPreview= [
       'BACK', 
       'CLOSE',
       'LABEL_PLACEHOLDER',
-      'LABEL_PREVIEW'
+      'LABEL_PREVIEW',
+      'BUTTON_CLOSE_PREVIEW',
+      'BUTTON_SEND_MESSAGE'
     ];
 
     const keysCloseChatDialog= [
@@ -367,129 +396,20 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
 
   }
 
-  private classifyMessageSenderKind(msg: MessageModel | null | undefined): 'bot' | 'human' | 'system' | 'unknown' {
-    if (!msg) return 'unknown';
-
-    const sender = msg.sender;
-    const senderFullname = msg.sender_fullname;
-    const senderFullnameLower = (senderFullname || '').toString().toLowerCase();
-
-    // System messages are always from "system".
-    if (sender === 'system' || senderFullnameLower === 'system') {
-      return 'system';
-    }
-
-    const chatbotId = msg?.attributes?.flowAttributes?.chatbot_id;
-    if (chatbotId && sender && String(chatbotId) === String(sender)) {
-      return 'bot';
-    }
-
-    // Fallback heuristics (used when chatbot_id is missing)
-    if (sender && String(sender).includes('bot_')) {
-      return 'bot';
-    }
-    if (senderFullnameLower.includes('bot')) {
-      return 'bot';
-    }
-
-    return 'human';
-  }
-
   /**
-   * Detects explicit handoff-to-human system messages.
-   * Example:
-   * attributes.subtype = "info"
-   * attributes.updateconversation = true
-   * attributes.messagelabel.key = "MEMBER_JOINED_GROUP"
-   * attributes.messagelabel.parameters.member_id = "<human-agent-id>"
-   */
-  private isHumanHandoffSystemMessage(msg: MessageModel | null | undefined): boolean {
-    if (!msg) return false;
-    if (msg.sender !== 'system') return false;
-
-    const attrs: any = msg.attributes || {};
-    const key = attrs?.messagelabel?.key;
-    const memberId = attrs?.messagelabel?.parameters?.member_id;
-
-    if (attrs?.subtype !== 'info') return false;
-    if (attrs?.updateconversation !== true) return false;
-    if (key !== 'MEMBER_JOINED_GROUP') return false;
-    if (!memberId || typeof memberId !== 'string') return false;
-
-    // Exclude system/bot/self joins.
-    if (memberId === 'system') return false;
-    if (memberId.startsWith('bot_')) return false;
-    if (this.senderId && memberId === this.senderId) return false;
-
-    return true;
-  }
-
-  /**
-   * Finds the last server message (sender != client) and classifies it as bot/human.
-   * If the last server message is "system", it scans backward to find the last non-system server message.
+   * Backward-compat wrappers: keep component API stable while delegating
+   * the sender classification logic to a pure utility module.
    */
   private refreshLastServerSenderBadge() {
-    const senderId = this.senderId;
-    const msgs = this.messages || [];
-
-    let found: 'bot' | 'human' | null = null;
-    let latestServerMsg: MessageModel | null = null;
-
-    // messages are kept sorted by the handler, but we still scan from the end for "latest".
-    for (let i = msgs.length - 1; i >= 0; i--) {
-      const m = msgs[i];
-      if (!m) continue;
-
-      // Skip messages sent by the current client/user.
-      if (senderId && m.sender === senderId) continue;
-
-      if (!latestServerMsg) {
-        latestServerMsg = m;
-      }
-
-      const kind = this.classifyMessageSenderKind(m);
-      if (kind === 'system') continue;
-      if (kind === 'bot' || kind === 'human') {
-        found = kind;
-        break;
-      }
-    }
-
-    // Priority rule requested: if the latest server message is a system handoff message,
-    // consider the conversation as "human".
-    if (this.isHumanHandoffSystemMessage(latestServerMsg)) {
-      found = 'human';
-    }
-
-    this.lastServerSenderKind = found;
-    this.showLastServerSenderBadge = found !== null;
-    this.lastServerSenderBadgeText = found === 'bot' ? 'Bot' : (found === 'human' ? 'Umano' : '');
+    const state = computeConversationBadgeState(this.messages || [], this.senderId);
+    this.latestServerMessageKind = state.latestServerMessageKind;
+    this.lastServerSenderKind = state.latestNonSystemResponderKind;
+    this.showLastServerSenderBadge = state.showBadge;
+    this.lastServerSenderBadgeText = state.badgeText;
   }
 
-  private startThinkingMessage() {
-    this.waitingServerReply = true;
-    this.showThinkingMessage = true;
-  }
+  // (Implementation moved to src/app/utils/conversation-sender-classifier.ts)
 
-  private stopThinkingMessageImmediately() {
-    if (!this.waitingServerReply) {
-      return;
-    }
-    this.waitingServerReply = false;
-    this.showThinkingMessage = false;
-  }
-
-  private shouldShowThinkingForBot(): boolean {
-    // Primary source: latest server-side classification already computed.
-    if (this.lastServerSenderKind === 'bot') {
-      return true;
-    }
-    // Safe fallback for bot-targeted direct conversations.
-    if (this.conversationWith && this.conversationWith.includes('bot_')) {
-      return true;
-    }
-    return false;
-  }
 
   /**
    * do per scontato che this.userId esiste!!!
@@ -506,7 +426,6 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     // After loading/connecting, compute "ultimo messaggio ricevuto dal server"
     // (excluding messages sent by the client).
     this.refreshLastServerSenderBadge();
-    setTimeout(() => this.refreshLastServerSenderBadge(), 300);
 
     this.logger.debug('[CONV-COMP] ------ 4: initializeChatManager ------ ');
     //this.initializeChatManager();
@@ -610,27 +529,31 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       return this.isConversationArchived;
     }
 
-    //   //FALLBACK TO TILEDESK
-    const requests_list = await this.tiledeskRequestService.getMyRequests().catch(err => {
+    // FALLBACK TO TILEDESK
+    let requests_list: { requests: any[] };
+    try {
+      requests_list = await this.tiledeskRequestService.getMyRequests();
+    } catch (err) {
       this.logger.error('[CONV-COMP] getConversationDetail: error getting request from Tiledesk', err);
-      this.isConversationArchived=true
-      return { requests: [] }
-    });
-    if (requests_list && requests_list.requests.length > 0) {
-      this.logger.debug('[CONV-COMP] getConversationDetail: request exist on Tiledesk', requests_list);
-      let conversation = requests_list.requests.find((request)=> request.request_id === this.conversationId)
-      if(conversation){
-        this.isConversationArchived = false
-        return this.isConversationArchived
-      }
-      this.logger.debug('[CONV-COMP] getConversationDetail: request NOT EXIST on Tiledesk', requests_list);
-      this.isConversationArchived = true
-      return this.isConversationArchived
+      this.isConversationArchived = true;
+      return this.isConversationArchived;
     }
 
-      this.isConversationArchived = false;
-      return null;
+    if (requests_list && requests_list.requests.length > 0) {
+      this.logger.debug('[CONV-COMP] getConversationDetail: request exist on Tiledesk', requests_list);
+      const conversation = requests_list.requests.find((request) => request.request_id === this.conversationId);
+      if (conversation) {
+        this.isConversationArchived = false;
+        return this.isConversationArchived;
+      }
+      this.logger.debug('[CONV-COMP] getConversationDetail: request NOT EXIST on Tiledesk', requests_list);
+      this.isConversationArchived = true;
+      return this.isConversationArchived;
     }
+
+    this.isConversationArchived = false;
+    return null;
+  }
 
   /**
     * this.g.recipientId:
@@ -928,7 +851,11 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
         this.logger.debug('[CONV-COMP] ***** DETAIL messageAdded *****', msg);
         if (msg) {
           if (msg.sender !== this.senderId) {
-            this.stopThinkingMessageImmediately();
+            this.showThinkingMessage = false;
+          }
+
+          if (this.isStreamAudioActive && msg.sender !== this.senderId) {
+            this.conversationFooter?.interruptStreamDueToPeerMessage();
           }
 
           that.newMessageAdded(msg);
@@ -1154,6 +1081,21 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   
+
+ /**
+  * Programmatically moves keyboard focus to the message composer textarea.
+  * Wired to the visible-on-focus skip link in conversation.component.html (WCAG 2.4.1 Bypass Blocks).
+  */
+ skipToCompose() {
+   try {
+     const textarea = document.getElementById('chat21-main-message-context') as HTMLTextAreaElement | null;
+     if (textarea) {
+       textarea.focus();
+     }
+   } catch(e) {
+     this.logger.warn('[CONV-COMP] skipToCompose error', e);
+   }
+ }
 
  scrollToBottom() {
   this.conversationContent.scrollToBottom();
@@ -1463,13 +1405,17 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   onAfterSendMessageFN(message: MessageModel){
     // Manage thinking state only for messages sent by the current client.
     // Do not force-hide here for other message types/events.
+    this.logger.debug('[CONV-COMP] onAfterSendMessageFN::::')
     if (message && message.sender === this.senderId) {
-      if (this.shouldShowThinkingForBot()) {
-        this.startThinkingMessage();
-      } else {
-        this.showThinkingMessage = false;
-        this.waitingServerReply = false;
-      }
+      this.logger.debug('[CONV-COMP] onAfterSendMessageFN:::: message', message)
+      // if (this.shouldShowThinkingForBot()) {
+      //   this.logger.debug('[CONV-COMP] shouldShowThinkingForBot::::', true)
+      //   this.startThinkingMessage();
+      // } else {
+      //   this.logger.debug('[CONV-COMP] shouldShowThinkingForBot::::', false)
+      //   this.showThinkingMessage = false;
+      // }
+      this.showThinkingMessage = true;
     }
     this.onAfterSendMessage.emit(message)
   }
@@ -1503,6 +1449,14 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.onNewConversationButtonClicked.emit()
   }
 
+  /** CALLED BY: conv-footer streaming audio button */
+  onStreamAudioActiveChange(event: boolean){
+    this.isStreamAudioActive = event
+  }
+  /** CALLED BY: conv-footer when connecting state changes */
+  onStreamAudioConnectingChange(event: boolean){
+    this.isStreamAudioConnecting = event
+  }
   /** CALLED BY: conv-footer component */
   onCloseChatButtonClickedFN(event){
     this.logger.debug('[CONV-COMP] onCloseChatButtonClicked::::', event)
@@ -1510,6 +1464,13 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
   // =========== END: event emitter function ====== //
 
+  /**
+   * True quando è visibile il pulsante chiudi stream (`.close-stream-button`, `isStreamAudioActive`).
+   * Solo in quel caso il bottom del foglio include `--chat-footer-stream-button-height`.
+   */
+  closeStreamButtonActiveForSheetBottom(): boolean {
+    return !!(this.g?.showAudioStreamFooterButton && (this.isStreamAudioActive || this.isStreamAudioConnecting));
+  }
 
   openInputFiles() {
     alert('ok');
@@ -1529,7 +1490,6 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.isConversationArchived = false;
     this.hideTextAreaContent = false;
     this.showThinkingMessage = false;
-    this.waitingServerReply = false;
     this.conversationFooter.textInputTextArea='';
     this.hideFooterTextReply = false;
     this.footerMessagePlaceholder = '';

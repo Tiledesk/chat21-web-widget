@@ -25,5 +25,7 @@
     "authPersistence": "${AUTH_PERSISTENCE}",
     "enbedJs": "${ENBED_JS}",
     "brandSrc": "${BRAND_SRC}",
-    "closeChatInConversation": "${CLOSE_CHAT_IN_CONVERSATION}"
+    "closeChatInConversation": "${CLOSE_CHAT_IN_CONVERSATION}",
+    "voiceProxyWsUrl": "${VOICE_PROXY_WS_URL}",
+    "voiceProxyApiBaseUrl": "${VOICE_PROXY_API_BASE_URL}"
 }
