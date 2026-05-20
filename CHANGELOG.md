@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.34-ar
+- **added**: closeChatInConversation env parameter to manage 'Close Chat' button in conversation
+
 # 5.1.33-ar
 - **bug fixed**: widget not loaded because blob block loading in lauch.js
 
