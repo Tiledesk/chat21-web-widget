@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.33-rc12
+- **bug-fixed**: if last message is ulr_preview shows previous message buttons
+
 # 5.1.33-rc11
 - **changed**: **Stream audio** — updated the streaming/voice-mode footer icon.
 - **added**: **Stream audio** — tooltip on the stream button (i18n key `STREAM_AUDIO`, e.g. “Use voice mode”) via SVG `<title>` and `aria-label`.
