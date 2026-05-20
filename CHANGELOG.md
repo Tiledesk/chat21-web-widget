@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.35-ar
+- **bug fixed**: if last message is ulr_preview shows previous message buttons
+
 # 5.1.34-ar
 - **added**: closeChatInConversation env parameter to manage 'Close Chat' button in conversation
 
