@@ -153,6 +153,34 @@
     }
 }
 
+#chat21-last-server-sender-badge{
+    position: absolute;
+    top: 58px;
+    right: 12px;
+    z-index: 25;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.95em;
+    font-weight: 600;
+    line-height: 1.1;
+    border: 1px solid rgba(0,0,0,0.08);
+    color: rgba(0,0,0,0.65);
+    background: rgba(0,0,0,0.03);
+    user-select: none;
+
+    &.bot{
+        border-color: rgba(0, 150, 136, 0.45);
+        color: rgba(0, 150, 136, 1);
+        background: rgba(0, 150, 136, 0.12);
+    }
+
+    &.human{
+        border-color: rgba(63, 81, 181, 0.45);
+        color: rgba(63, 81, 181, 1);
+        background: rgba(63, 81, 181, 0.12);
+    }
+}
+
 dialog:-internal-dialog-in-top-layer{
     border: 0px;
     border-radius: 16px;

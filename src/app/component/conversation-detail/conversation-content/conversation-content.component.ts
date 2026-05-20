@@ -23,6 +23,8 @@ export class ConversationContentComponent implements OnInit {
   @Input() idUserTypingNow: string;
   @Input() nameUserTypingNow: string;
   @Input() typingLocation: string;
+  @Input() showThinkingMessage: boolean;
+  @Input() lastServerSenderKind: 'bot' | 'human' | null;
   @Input() fullscreenMode: boolean;
   @Input() translationMap: Map< string, string>;
   @Input() stylesMap: Map<string, string>;
@@ -223,7 +225,6 @@ export class ConversationContentComponent implements OnInit {
     // }
     // return false;
   }
-
 
   hideOutsideElements(){
     this.onMenuOptionShow.emit(false)

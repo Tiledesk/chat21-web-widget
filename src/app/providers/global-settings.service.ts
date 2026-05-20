@@ -326,6 +326,8 @@ export class GlobalSettingsService {
         }
         /** set button colors */
         this.setButtonColors();
+        // Detect mobile before loading persisted values so storage policies can depend on it.
+        this.globals.setParameter('isMobile', detectIfIsMobile(this.globals.windowContext));
 
         this.setVariableFromStorage(this.globals);
         this.setVariablesFromSettings(this.globals);
@@ -466,6 +468,10 @@ export class GlobalSettingsService {
         try {
             const variables = response.project.widget;
             if (typeof variables !== 'undefined') {
+                const hasCalloutTimer = Object.prototype.hasOwnProperty.call(variables, 'calloutTimer');
+                const hasCalloutTitle = Object.prototype.hasOwnProperty.call(variables, 'calloutTitle');
+                const hasCalloutMsg = Object.prototype.hasOwnProperty.call(variables, 'calloutMsg');
+                this.globals.hasCalloutInWidgetConfig = hasCalloutTimer || hasCalloutTitle || hasCalloutMsg;
                 for (const key of Object.keys(variables)) {
                     if (key === 'align' && variables[key] === 'left') {
                         const divWidgetContainer = globals.windowContext.document.getElementById('tiledeskdiv');
@@ -1895,6 +1901,15 @@ export class GlobalSettingsService {
     setVariableFromStorage(globals: Globals) {
         this.logger.debug('[GLOBAL-SET] setVariableFromStorage :::::::: SET VARIABLE ---------->', Object.keys(globals));
         for (const key of Object.keys(globals)) {
+            if (globals.isMobile === true && key === 'size') {
+                // On mobile we always open fullscreen, so legacy/persisted widget size must be ignored.
+                try {
+                    this.appStorageService.removeItem('size');
+                } catch (e) {
+                    this.logger.warn('[GLOBAL-SET] setVariableFromStorage > cannot remove size from storage', e);
+                }
+                continue;
+            }
             const val = this.appStorageService.getItem(key);
             // this.logger.debug('[GLOBAL-SET] setVariableFromStorage SET globals KEY ---------->', key);
             // this.logger.debug('[GLOBAL-SET] setVariableFromStorage SET globals VAL ---------->', val);

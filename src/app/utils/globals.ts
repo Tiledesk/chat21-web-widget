@@ -222,6 +222,7 @@ export class Globals {
 
   allowedOnSpecificUrl: boolean // *******  new ********
   allowedOnSpecificUrlList: Array<string> // *******  new ********
+  hasCalloutInWidgetConfig: boolean; // *******  new ********
 
   fontFamilySource: string; // *******  new ********
 
@@ -249,7 +250,7 @@ export class Globals {
 
     // ============ BEGIN: SET EXTERNAL PARAMETERS ==============//
     this.baseLocation = 'https://widget.tiledesk.com/v2';
-    this.autoStart = true;
+    this.autoStart = false;
     /** start Authentication and startUI */
     this.startHidden = false;
     /** show/hide all widget -> js call: showAllWidget */
@@ -440,6 +441,8 @@ export class Globals {
     this.allowedOnSpecificUrl = false
     /** set a list of pattern url able to load the widget */
     this.allowedOnSpecificUrlList = [];
+    /** true when server widget config has `callout` node */
+    this.hasCalloutInWidgetConfig = false;
     /** set widget size from 3 different positions: min, max, top */
     this.size = 'min';
     /** enable to close the chat in conversation */
@@ -613,13 +616,35 @@ export class Globals {
     }
 
 
-    //customize position for 'tiledeskdiv' for mobile
+    // On mobile, force fullscreen while open regardless of stored `size`.
     if(isOpen && this.isMobile && divTiledeskWidget){
+      divTiledeskWidget.classList.remove('min-size')
+      divTiledeskWidget.classList.remove('max-size')
+      divTiledeskWidget.classList.remove('top-size')
+      divTiledeskWidget.classList.add('fullscreen')
+      divTiledeskWidget.style.left = '0px'
       divTiledeskWidget.style.right = '0px'
+      divTiledeskWidget.style.top = '0px'
       divTiledeskWidget.style.bottom = '0px'
+      divTiledeskWidget.style.width = '100%'
+      divTiledeskWidget.style.height = '100%'
+      divTiledeskWidget.style.maxWidth = 'none'
+      divTiledeskWidget.style.maxHeight = 'none'
     } else if(!isOpen && this.isMobile && divTiledeskWidget){
-      divTiledeskWidget.style.bottom = this.marginY
-      this.align === 'left'?  divTiledeskWidget.style.left = this.mobileMarginX : divTiledeskWidget.style.right = this.mobileMarginX; 
+      divTiledeskWidget.classList.remove('fullscreen')
+      divTiledeskWidget.style.removeProperty('top')
+      divTiledeskWidget.style.removeProperty('width')
+      divTiledeskWidget.style.removeProperty('height')
+      divTiledeskWidget.style.removeProperty('max-width')
+      divTiledeskWidget.style.removeProperty('max-height')
+      divTiledeskWidget.style.bottom = this.mobileMarginY
+      if (this.align === 'left') {
+        divTiledeskWidget.style.left = this.mobileMarginX
+        divTiledeskWidget.style.removeProperty('right')
+      } else {
+        divTiledeskWidget.style.right = this.mobileMarginX
+        divTiledeskWidget.style.removeProperty('left')
+      }
     }
 
     //customize position for 'tiledeskdiv' for desktop if fullscreenMode is not active
