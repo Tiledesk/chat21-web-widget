@@ -1,23 +1,25 @@
-
-.textarea-container{
-    // padding: 8px 34px;
-    // padding-left: 70px;
-    // padding-right: 45px;
+.textarea-container-wrapper{
     display: flex;
-    // width: 100%;
+    flex-direction: column;
+    gap: 8px;
+}
+.textarea-container{
+    display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+}
+.close-chat-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 
-    //if attachment icon OR emoji icon is not in DOM -> increment textarea width
-    &:has(:not(#chat21-start-upload-doc), :not(#chat21-emoticon-picker)) .visible-text-area {
-        width: 80%;
+    .c21-close{
+        height: 30px !important;
+        margin: 0px !important;
     }
-    //if attachment icon AND emoji icon is not in DOM -> increment textarea width
-    &:has(:not(#chat21-start-upload-doc)):has(:not(#chat21-emoticon-picker)) .visible-text-area {
-        width: 90%;
-      }
-
 }
 
 .icons-container{
@@ -418,4 +420,29 @@ textarea:active{
     // left: 10px;
     border: none;
     // margin: -2px -2px 0px;
+}
+
+
+// aggiungi un'animazione di fade in e fade out quando .star-rating-widget è visibile con transition
+.star-rating-widget {
+    transition: all 0.5s ease-in-out;
+}
+
+.star-rating-widget {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -52px;
+    height: 100%;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    background-color: rgb(255, 255, 255);
+    flex-wrap: nowrap;
+    &.active {
+        bottom: 0px;
+    }
+    &.inactive {
+        bottom: -52px;
+    }
 }

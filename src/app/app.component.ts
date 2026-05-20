@@ -106,17 +106,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   
   forceDisconnect: boolean = false;
 
+  //network status
+  isOnline: boolean = true;
+
+  loading: boolean = false;
+  private calloutScheduleTimeout: any = null;
+  
   // alert error message 
   isShowErrorMessage: boolean = false;
   errorMessage: string = '';
   errorKeyMessage: string = null;
   errorParams: Record<string, any> = {};
 
-  //network status
-  isOnline: boolean = true;
-
-  loading: boolean = false;
-  private calloutScheduleTimeout: any = null;
   
   private logger: LoggerService = LoggerInstance.getInstance();
   constructor(
@@ -2319,6 +2320,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.el.nativeElement.style.setProperty('--chat-header-height', this.g.hideHeaderConversation? '0px': null)
         this.el.nativeElement.style.setProperty('--font-size-bubble-message', this.g.fontSize)
         this.el.nativeElement.style.setProperty('--font-family-bubble-message', this.g.fontFamily)
+        this.el.nativeElement.style.setProperty('--chat-footer-close-button-height', this.g.closeChatInConversation? '30px': '0px')
 
     }
 
