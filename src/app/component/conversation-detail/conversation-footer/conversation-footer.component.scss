@@ -8,6 +8,15 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+
+    //if attachment icon OR emoji icon is not in DOM -> increment textarea width
+    &:has(:not(#chat21-start-upload-doc), :not(#chat21-emoticon-picker)) .visible-text-area {
+        width: 80%;
+    }
+    //if attachment icon AND emoji icon is not in DOM -> increment textarea width
+    &:has(:not(#chat21-start-upload-doc)):has(:not(#chat21-emoticon-picker)) .visible-text-area {
+        width: 90%;
+    }
 }
 .close-chat-container{
     display: flex;
