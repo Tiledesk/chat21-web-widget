@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.36-ar
+- **bug fixed**: texarea with is not responsive
+
 # 5.1.35-ar
 - **bug fixed**: if last message is ulr_preview shows previous message buttons
 
