@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.34-rc1
+- **added**: onPageChangeVisibilityDesktop:'open' and 'onPageChangeVisibilityMobile: 'open' in chatbot-panel.html file
+
 # 5.1.33-rc12
 - **bug-fixed**: if last message is ulr_preview shows previous message buttons
 
