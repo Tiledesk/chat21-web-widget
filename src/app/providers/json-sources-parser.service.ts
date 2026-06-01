@@ -5,9 +5,17 @@ import { extractUrlsFromText } from 'src/app/utils/url-utils';
 import { JsonSourceItem } from 'src/app/component/message/json-sources/json-sources.component';
 import { mergeJsonSourcesMissingFields } from 'src/app/utils/json-sources-utils';
 
+export type UrlPreviewDisplayFields = {
+  title?: boolean;
+  description?: boolean;
+  image?: boolean;
+};
+
 export type UrlPreviewMessage = {
   type?: string; // "url_preview"
   text?: string;
+  displayFields?: UrlPreviewDisplayFields;
+  previewBackgroundColor?: string;
 };
 
 /**
@@ -79,7 +87,11 @@ export class JsonSourcesParserService {
     return this.enrichSources(base);
   }
 
-  private getUrlPreviewPayload(messageLike?: any): UrlPreviewMessage | null {
+  /**
+   * Public: lets callers (UI components) read the raw `url_preview` payload to
+   * extract presentation options like `displayFields` or `previewBackgroundColor`.
+   */
+  getUrlPreviewPayload(messageLike?: any): UrlPreviewMessage | null {
     if (!messageLike) return null;
     const candidates: any[] = [
       messageLike,
