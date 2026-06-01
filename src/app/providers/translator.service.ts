@@ -234,12 +234,27 @@ export class TranslatorService {
     this._translate.use(lang);
     this.logger.debug(`[TRANSLATOR-SERV] »»»» initI18n - »»» loadRemoteTranslations ?`, environment.loadRemoteTranslations);
     this._translate.setTranslation(lang, data, true);
-    // if (environment.loadRemoteTranslations) {
-    //   // console.log(`»»»» initI18n - »»» remote translation `, data);
-    //   this._translate.setTranslation(lang, data, true);
-    // } else {
-    //   this._translate.setTranslation(lang, data, true);
-    // }
+    this.syncDocumentLang(lang);
+  }
+
+  /**
+   * Synchronize the document `<html lang="...">` attribute with the active i18n language
+   * (WCAG 3.1.1 Language of Page, EN 301 549 § 9.3.1.1).
+   *
+   * The widget runs inside its own iframe, so we update the document of that iframe.
+   * If the widget is also embedded in a parent page (Tiledesk launcher), the parent
+   * page already declares its own `lang`, which we intentionally leave untouched.
+   */
+  private syncDocumentLang(lang: string) {
+    if (!lang) { return; }
+    const normalized = lang.toLowerCase().substring(0, 2);
+    try {
+      if (typeof document !== 'undefined' && document.documentElement) {
+        document.documentElement.setAttribute('lang', normalized);
+      }
+    } catch (e) {
+      this.logger.warn('[TRANSLATOR-SERV] syncDocumentLang error', e);
+    }
   }
 
   /** */
@@ -302,6 +317,9 @@ export class TranslatorService {
       'CLOSED',
       'LABEL_PREVIEW',
       'MAX_ATTACHMENT',
+      'EMOJI',
+      'BUTTON_OPEN_CHAT',
+      'MAX_ATTACHMENT_ERROR',
       'EMOJI'
     ];
 
@@ -358,7 +376,9 @@ export class TranslatorService {
       globals.LABEL_PREVIEW = res['LABEL_PREVIEW']
       globals.LABEL_ERROR_FIELD_REQUIRED= res['LABEL_ERROR_FIELD_REQUIRED']
       globals.MAX_ATTACHMENT = res['MAX_ATTACHMENT']
+      globals.MAX_ATTACHMENT_ERROR = res['MAX_ATTACHMENT_ERROR']
       globals.EMOJI = res['EMOJI']
+      globals.BUTTON_OPEN_CHAT = res['BUTTON_OPEN_CHAT']
       
       
       if(globals.WELCOME_TITLE === 'WELLCOME_TITLE') globals.WELCOME_TITLE = res['WELCOME_TITLE']

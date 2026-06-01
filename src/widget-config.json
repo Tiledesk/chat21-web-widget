@@ -24,6 +24,9 @@
     "dashboardUrl": "http://localhost:4500/",
     "authPersistence": "LOCAL",
     "enbedJs": true,
-    "brandSrc": "${BRAND_SRC}"
+    "brandSrc": "${BRAND_SRC}",
+    "voiceProxyWsUrl": "wss://localhost:3000/speech/ws/voice",
+    "voiceProxyApiBaseUrl": "https://localhost:3000/speech/api",
+    "closeChatInConversation": false
     
 }

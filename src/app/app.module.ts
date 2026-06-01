@@ -16,6 +16,7 @@ import { ConversationFooterComponent } from './component/conversation-detail/con
 import { ConversationInternalFrameComponent } from './component/conversation-detail/conversation-internal-frame/conversation-internal-frame.component';
 import { ConversationPreviewComponent } from './component/conversation-detail/conversation-preview/conversation-preview.component';
 import { ConversationAudioRecorderComponent } from './component/conversation-detail/conversation-audio-recorder/conversation-audio-recorder.component';
+import { StreamAudioSpectrumComponent } from './component/conversation-detail/stream-audio-spectrum/stream-audio-spectrum.component';
 /** CONVERSATION-DETAIL COMPONENTS */
 import { BubbleMessageComponent } from './component/message/bubble-message/bubble-message.component';
 import { AvatarComponent } from './component/message/avatar/avatar.component';
@@ -25,6 +26,7 @@ import { InfoMessageComponent } from './component/message/info-message/info-mess
 import { HtmlComponent } from './component/message/html/html.component';
 import { FrameComponent } from './component/message/frame/frame.component';
 import { AudioComponent } from './component/message/audio/audio.component';
+import { AudioSyncComponent } from './component/message/audio-sync/audio-sync.component';
 import { UserTypingComponent } from './../chat21-core/utils/user-typing/user-typing.component';
 /** MESSAGE ATTACHMENTS COMPONENTS */
 import { MessageAttachmentComponent } from './component/message-attachment/message-attachment.component';
@@ -56,6 +58,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { A11yModule } from '@angular/cdk/a11y';
 import { environment } from 'src/environments/environment';
 
 //THIRD-PART MODULES
@@ -136,6 +139,11 @@ import { Rules } from './utils/rules';
 import { ScriptService } from 'src/chat21-core/providers/scripts/script.service';
 import { CarouselComponent } from './component/message/carousel/carousel.component';
 import { BrandService } from './providers/brand.service';
+import { OpenAiVoiceProviderService } from './providers/voice/STT&TTS/openai-voice.provider';
+import {
+  SpeechToTextProvider,
+  TextToSpeechProvider,
+} from './providers/voice/STT&TTS/speech-provider.abstract';
 import { ErrorAlertComponent } from './component/error-alert/error-alert.component';
 import { ConfirmCloseComponent } from './modals/confirm-close/confirm-close.component';
 import { JsonSourcesComponent } from './component/message/json-sources/json-sources.component';
@@ -289,6 +297,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     ConversationPreviewComponent,
     ConversationInternalFrameComponent,
     ConversationAudioRecorderComponent,
+    StreamAudioSpectrumComponent,
     BubbleMessageComponent,
     AvatarComponent,
     FrameComponent,
@@ -301,6 +310,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     LinkButtonComponent,
     TextButtonComponent,
     AudioComponent,
+    AudioSyncComponent,
     UserTypingComponent,
     /**DIRECTIVES */
     HtmlEntitiesEncodePipe,
@@ -318,6 +328,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    A11yModule,
     PickerModule,
      TranslateModule.forRoot({
     //   defaultLanguage: 'en',
@@ -407,6 +418,8 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     WaitingService,
     ScriptService,
     BrandService,
+    { provide: SpeechToTextProvider, useExisting: OpenAiVoiceProviderService },
+    { provide: TextToSpeechProvider, useExisting: OpenAiVoiceProviderService },
     provideHttpClient(withInterceptorsFromDi())
   ],
   bootstrap: [AppComponent]

@@ -1,14 +1,18 @@
 <form [formGroup]="form">
   <div class="c21-body-header-checkbox">
-    <input  class="form-check-input errors" 
-            type="checkbox" 
+    <input  class="form-check-input errors"
+            type="checkbox"
+            [id]="fieldBaseId"
             [formControlName]="element?.name"
             [checked]="element?.value"
             [tabIndex]="element?.tabIndex"
             [ngClass]="{'errors': hasSubmitted && form.controls[element?.name].errors}"
+            [attr.aria-required]="element?.mandatory ? 'true' : null"
+            [attr.aria-invalid]="ariaInvalid"
+            [attr.aria-describedby]="ariaDescribedByErrors"
             (keydown.enter)="onEnterPressed($event)">
-    <label class="c21-form-message-field">{{element?.text}}</label>
-    <div *ngIf="hasSubmitted && form.get(element?.name).errors" class="text-danger">
+    <label class="c21-form-message-field" [attr.for]="fieldBaseId">{{element?.text}}</label>
+    <div [id]="errorsId" *ngIf="hasSubmitted && form.get(element?.name)?.errors" class="text-danger" role="alert">
       {{translationErrorLabelMap.get('LABEL_ERROR_FIELD_REQUIRED')}}
     </div>
   </div>

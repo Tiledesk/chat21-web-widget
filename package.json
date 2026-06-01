@@ -1,7 +1,7 @@
 {
   "name": "@chat21/chat21-web-widget",
   "author": "Tiledesk SRL",
-  "version": "5.1.33",
+  "version": "5.1.34-rc1",
   "license": "MIT",
   "homepage": "https://www.tiledesk.com",
   "repository": {
@@ -10,12 +10,15 @@
   },
   "scripts": {
     "ng": "ng",
+    "copy-onnx-wasm": "mkdir -p src/assets/onnx && cp node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.mjs node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm src/assets/onnx/",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
+    "test:e2e": "playwright test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "source-map-explorer": "source-map-explorer dist/*.js"
+    "source-map-explorer": "source-map-explorer dist/*.js",
+    "voice-mock": "node mocks/voice-websocket-mock/server.cjs"
   },
   "private": false,
   "dependencies": {
@@ -32,6 +35,7 @@
     "@ctrl/ngx-emoji-mart": "^9.2.0",
     "@ngx-translate/core": "^16.0.4",
     "@ngx-translate/http-loader": "^16.0.1",
+    "@ricky0123/vad-web": "^0.0.30",
     "accept-language-parser": "^1.5.0",
     "bootstrap": "^5.1.3",
     "dayjs": "^1.11.7",
@@ -40,6 +44,7 @@
     "humanize-duration-ts": "^2.1.1",
     "marked": "^16.3.0",
     "ngx-logger": "^5.0.11",
+    "onnxruntime-web": "^1.24.3",
     "replace": "^1.2.2",
     "rxjs": "^7.8.2",
     "source-map-explorer": "^2.5.3",
@@ -52,6 +57,7 @@
     "@angular/cli": "^18.2.19",
     "@angular/compiler-cli": "^18.2.13",
     "@angular/language-service": "^18.2.13",
+    "@playwright/test": "^1.59.1",
     "@types/jasmine": "^3.6.11",
     "@types/jasminewd2": "~2.0.3",
     "@types/marked": "^6.0.0",
@@ -68,6 +74,7 @@
     "protractor": "~7.0.0",
     "ts-node": "~7.0.0",
     "tslint": "~6.1.0",
-    "typescript": "~5.4"
+    "typescript": "~5.4",
+    "ws": "^8.18.0"
   }
 }

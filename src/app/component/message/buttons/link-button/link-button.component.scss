@@ -42,20 +42,17 @@
     transition: background-color .6s ease;
     .icon-button-action {
         position: absolute;
-        top: 50%;
-        right: 8px;
-        transform: translateY(-50%);
+        top: -1px;
+        right: 1px;
         svg {
-            fill: var(--textColor);
+            fill: var(--buttonTextColor);
         }
     }
     .icon-button-action-self{
         position: absolute;
-        top: 50%;
-        right: 8px;
-        transform: translateY(-50%);
+        right: 1px;
         svg {
-            fill: var(--textColor);
+            fill: var(--buttonTextColor);
         }
     }
     &:focus,

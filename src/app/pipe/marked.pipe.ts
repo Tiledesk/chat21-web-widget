@@ -5,6 +5,60 @@ import { marked, Tokens } from 'marked';
   name: 'marked'
 })
 export class MarkedPipe implements PipeTransform {
+  private static renderer: any = null;
+
+  private static getRenderer(): any {
+    if (!MarkedPipe.renderer) {
+      const renderer = new marked.Renderer();
+
+      /* --------------------------------------------------
+         🔐 1. NON renderizzare HTML raw
+      -------------------------------------------------- */
+      renderer.html = function(token: Tokens.HTML | Tokens.Tag): string {
+        const html = 'text' in token ? token.text : '';
+
+        return html
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+      };
+
+      /* --------------------------------------------------
+         🔐 2. Link sicuri
+      -------------------------------------------------- */
+      const originalLinkRenderer = renderer.link.bind(renderer);
+
+      const dangerousProtocols = [
+        /^javascript:/i,
+        /^data:/i,
+        /^vbscript:/i
+      ];
+
+      renderer.link = function({ href, title, tokens }: any) {
+
+        const normalized = (href || '').trim();
+
+        const isDangerous = dangerousProtocols.some(pattern =>
+          pattern.test(normalized)
+        );
+
+        if (isDangerous) {
+          return tokens ? tokens.map((t: any) => t.raw).join('') : href || '';
+        }
+
+        const html = originalLinkRenderer({ href, title, tokens });
+
+        // aggiunge sicurezza ai link
+        return html.replace(
+          '<a ',
+          '<a target="_blank" rel="noopener noreferrer" '
+        );
+      };
+
+      MarkedPipe.renderer = renderer;
+    }
+    return MarkedPipe.renderer;
+  }
 
   transform(value: any): string {
 
@@ -15,51 +69,7 @@ export class MarkedPipe implements PipeTransform {
 
     const inputWithNewlines = input.replace(/\\n/g, '\n');
 
-    const renderer = new marked.Renderer();
-
-    /* --------------------------------------------------
-       🔐 1. NON renderizzare HTML raw
-    -------------------------------------------------- */
-    renderer.html = function(token: Tokens.HTML | Tokens.Tag): string {
-      const html = 'text' in token ? token.text : '';
-
-      return html
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    };
-
-    /* --------------------------------------------------
-       🔐 2. Link sicuri
-    -------------------------------------------------- */
-    const originalLinkRenderer = renderer.link.bind(renderer);
-
-    const dangerousProtocols = [
-      /^javascript:/i,
-      /^data:/i,
-      /^vbscript:/i
-    ];
-
-    renderer.link = function({ href, title, tokens }) {
-
-      const normalized = (href || '').trim();
-
-      const isDangerous = dangerousProtocols.some(pattern =>
-        pattern.test(normalized)
-      );
-
-      if (isDangerous) {
-        return tokens ? tokens.map(t => t.raw).join('') : href || '';
-      }
-
-      const html = originalLinkRenderer({ href, title, tokens });
-
-      // aggiunge sicurezza ai link
-      return html.replace(
-        '<a ',
-        '<a target="_blank" rel="noopener noreferrer" '
-      );
-    };
+    const renderer = MarkedPipe.getRenderer();
 
     marked.setOptions({
       renderer,

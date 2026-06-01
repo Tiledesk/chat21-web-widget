@@ -1,10 +1,10 @@
-
-.textarea-container{
-    // padding: 8px 34px;
-    // padding-left: 70px;
-    // padding-right: 45px;
+.textarea-container-wrapper{
     display: flex;
-    // width: 100%;
+    flex-direction: column;
+    gap: 8px;
+}
+.textarea-container{
+    display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
@@ -16,8 +16,20 @@
     //if attachment icon AND emoji icon is not in DOM -> increment textarea width
     &:has(:not(#chat21-start-upload-doc)):has(:not(#chat21-emoticon-picker)) .visible-text-area {
         width: 90%;
-      }
+    }
+}
 
+.close-chat-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    .c21-close{
+        height: 30px !important;
+        margin: 0px !important;
+    }
 }
 
 .icons-container{
@@ -30,6 +42,7 @@
 
 .visible-text-area {
     width: 70%;
+    transition: width 220ms ease;
     // margin: 12px 0px;
     pointer-events: auto;
     border-radius: var(--chat-footer-border-radius);
@@ -39,6 +52,15 @@
     }
     &.hasError{
         box-shadow: 0 0 0 1px var(--chat-footer-border-color-error) inset;
+    }
+
+    &.stream-active {
+        flex: 1;
+        width: auto;
+        min-width: 0;
+        background-color: transparent;
+        display: flex;
+        align-items: center;
     }
 }
 
@@ -80,6 +102,39 @@
     padding: 0px;
     margin: 0px;
     border-radius: 50%;
+}
+
+/** Stream audio: cerchio pieno, glyph bianco su sfondo iconColor (stylesMap) */
+.chat21-stream-button.chat21-textarea-button {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    color: #ffffff;
+    transition: min-width 220ms ease, border-radius 180ms ease, padding 180ms ease;
+
+    &:hover{
+        background: rgba(240, 240, 240, 0.4) !important;
+        transition: all 0.45s ease-in-out 0s !important;
+        -moz-transition: all 0.45s ease-in-out 0s !important;
+        -webkit-transition: all 0.45s ease-in-out 0s !important;
+    }
+
+    &.chat21-stream-button--expanded {
+        min-width: 110px;
+        border-radius: 999px;
+        // padding: 0 14px;
+        justify-content: center;
+
+        // stop the circle-hover background from looking odd on pill
+        &.chat21-textarea-button span svg:hover {
+            background: transparent !important;
+            border-radius: 0;
+        }
+    }
 }
 
 textarea,
@@ -364,6 +419,85 @@ textarea:active{
     }
 }
 
+#streamAudioAlert {
+    bottom: 100%;
+    width: 100%;
+    height: var(--chat-footer-stream-button-height);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    // padding: 8px 16px;
+    overflow: hidden;
+    background-color: color-mix(in srgb, var(--content-background-color) 34%, transparent);
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        0 1px 0 rgba(0, 0, 0, 0.05);
+
+    .voice-status-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        min-height: 18px;
+    }
+
+    .voice-status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background-color: #b0b0b0;
+        animation: pulse-dot 2s ease-in-out infinite;
+
+        &--connecting {
+            background-color: #f59e0b;
+        }
+        &--listening {
+            background-color: #22c55e;
+        }
+        &--processing {
+            background-color: #3b82f6;
+            animation: pulse-dot 1s ease-in-out infinite;
+        }
+    }
+
+    .voice-status-text {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--chat-footer-color);
+        white-space: nowrap;
+    }
+
+    .voice-transcript-text {
+        font-size: 11px;
+        font-style: italic;
+        color: var(--dark-gray);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+        min-width: 0;
+
+        &::before {
+            content: '· ';
+        }
+    }
+
+    &.hideTextReply {
+        position: unset;
+        height: auto;
+        padding: 16px;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background-color: var(--content-background-color);
+    }
+}
+
 #textAlert{
     bottom: 100%;
     width: 100%;
@@ -418,4 +552,75 @@ textarea:active{
     // left: 10px;
     border: none;
     // margin: -2px -2px 0px;
+}
+
+
+// aggiungi un'animazione di fade in e fade out quando .star-rating-widget è visibile con transition
+.star-rating-widget {
+    transition: all 0.5s ease-in-out;
+}
+
+.star-rating-widget {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -52px;
+    height: 100%;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    background-color: rgb(255, 255, 255);
+    flex-wrap: nowrap;
+    &.active {
+        bottom: 0px;
+    }
+    &.inactive {
+        bottom: -52px;
+    }
+}
+.voice-preview {
+    font-style: italic;
+    opacity: 0.65;
+}
+
+// Voice mode: footer row layout when voice UI is active
+.textarea-container.voice-mode {
+    justify-content: flex-end;
+}
+
+// Inline voice status chip (inside .visible-text-area when stream active)
+.voice-inline-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 4px;
+
+    .voice-inline-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background-color: #22c55e;
+        animation: pulse-dot 2s ease-in-out infinite;
+
+        &--connecting {
+            background-color: #f59e0b;
+        }
+        &--processing {
+            background-color: #3b82f6;
+            animation: pulse-dot 1s ease-in-out infinite;
+        }
+    }
+
+    .voice-inline-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--dark-gray);
+        white-space: nowrap;
+    }
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.45; transform: scale(0.75); }
 }
