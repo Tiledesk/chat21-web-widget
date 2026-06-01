@@ -6,6 +6,8 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.34-rc2
+- **added**: updated url preview, added displayed fields
 
 # 5.1.34-rc1
 - **added**: onPageChangeVisibilityDesktop:'open' and 'onPageChangeVisibilityMobile: 'open' in chatbot-panel.html file
