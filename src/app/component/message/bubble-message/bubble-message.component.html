@@ -66,8 +66,10 @@
 
       <chat-json-sources *ngIf="jsonSources !== null && jsonSources.length > 0"
         [items]="jsonSources"
+        [displayFields]="jsonSourcesDisplayFields"
+        [backgroundColor]="jsonSourcesBackgroundColor"
         (onElementRendered)="onElementRenderedFN($event)">
-      </chat-json-sources> 
+      </chat-json-sources>
 
 
       <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"

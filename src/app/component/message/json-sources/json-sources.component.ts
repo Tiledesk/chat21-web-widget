@@ -10,6 +10,12 @@ export type JsonSourceItem = {
   image?: string;
 };
 
+export type JsonSourcesDisplayFields = {
+  title?: boolean;
+  description?: boolean;
+  image?: boolean;
+};
+
 @Component({
   selector: 'chat-json-sources',
   templateUrl: './json-sources.component.html',
@@ -19,10 +25,29 @@ export class JsonSourcesComponent {
   @Input() items: JsonSourceItem[] = [];
   @Input() themeColor?: string;
   @Input() limit = 3;
+  // Optional: per-field visibility. Missing/undefined fields default to visible
+  // (only an explicit `false` hides the field).
+  @Input() displayFields?: JsonSourcesDisplayFields;
+  // Optional: background color override for the sources panel.
+  @Input() backgroundColor?: string;
 
   @Output() onElementRendered = new EventEmitter<{ element: string; status: boolean }>();
 
   showAll = false;
+
+  isFieldVisible(field: keyof JsonSourcesDisplayFields): boolean {
+    return this.displayFields?.[field] !== false;
+  }
+
+  // Title is always rendered: when its content is missing or the field is
+  // hidden via displayFields, we fall back to the item URL so the row is never
+  // left without a label.
+  getTitleText(item: JsonSourceItem): string {
+    const titleVisible = this.isFieldVisible('title');
+    const title = (item?.title || '').trim();
+    if (titleVisible && title) return title;
+    return (item?.link || '').trim();
+  }
 
   trackByLink = (_: number, item: JsonSourceItem) => item?.link || item?.title || _;
 
@@ -49,6 +74,22 @@ export class JsonSourcesComponent {
   getHostname(item: JsonSourceItem): string {
     const hostname = this.safeHostname(item?.link || '');
     return hostname || '';
+  }
+
+  // Route large source images through wsrv.nl which downsamples them server-side
+  // to a thumbnail-sized version. Rendering at ~3x the CSS size keeps the result
+  // sharp on retina displays. Falls back to the original URL on any error.
+  getThumbUrl(item: JsonSourceItem): string {
+    const raw = (item?.image || '').trim();
+    if (!raw) return '';
+    if (!/^https?:\/\//i.test(raw)) return raw;
+    try {
+      const stripped = raw.replace(/^https?:\/\//i, '');
+      const encoded = encodeURIComponent(stripped);
+      return `https://wsrv.nl/?url=${encoded}&w=120&h=120&fit=cover&output=webp&n=-1`;
+    } catch {
+      return raw;
+    }
   }
 
   private safeHostname(url: string): string {

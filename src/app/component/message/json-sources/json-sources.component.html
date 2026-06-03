@@ -1,4 +1,5 @@
-<div class="sources-panel" *ngIf="items && items.length > 0">
+<div class="sources-panel" *ngIf="items && items.length > 0"
+     [style.background]="backgroundColor || null">
 
   <div class="sources-header">
     <div class="sources-favicons">
@@ -18,16 +19,16 @@
      rel="noopener noreferrer">
 
     <div class="source-row__left">
-      <div class="source-row__title">{{ item.title }}</div>
-      <div class="source-row__desc" *ngIf="item.description">{{ item.description }}</div>
+      <div class="source-row__title">{{ getTitleText(item) }}</div>
+      <div class="source-row__desc" *ngIf="isFieldVisible('description') && item.description">{{ item.description }}</div>
       <div class="source-row__meta">
         <img class="source-row__favicon" *ngIf="getFavicon(item)" [src]="getFavicon(item)" alt="" loading="lazy" />
         <span class="source-row__host">{{ getHostname(item) }}</span>
       </div>
     </div>
 
-    <div class="source-row__thumb" *ngIf="item.image">
-      <img [src]="item.image" alt="" loading="lazy" (error)="$event.target.closest('.source-row__thumb').remove()" />
+    <div class="source-row__thumb" *ngIf="isFieldVisible('image') && item.image">
+      <img [src]="getThumbUrl(item)" alt="" loading="lazy" (error)="$event.target.closest('.source-row__thumb').remove()" />
     </div>
   </a>
 

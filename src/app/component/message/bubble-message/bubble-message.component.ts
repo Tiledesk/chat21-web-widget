@@ -1,11 +1,11 @@
 import { Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MessageModel } from 'src/chat21-core/models/message';
-import { MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, TYPE_MSG_URL_PREVIEW } from 'src/chat21-core/utils/constants';
+import { MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS } from 'src/chat21-core/utils/constants';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 import { calcImageSize, isAudio, isFile, isFrame, isImage, isJsonSources, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
-import { JsonSourcesParserService } from 'src/app/providers/json-sources-parser.service';
+import { JsonSourcesParserService, UrlPreviewDisplayFields } from 'src/app/providers/json-sources-parser.service';
 import { JsonSourceItem } from '../json-sources/json-sources.component';
 
 @Component({
@@ -53,6 +53,8 @@ export class BubbleMessageComponent {
   fullnameColor: string;
   jsonSources: JsonSourceItem[] | null = null;
   isUrlPreviewMessage = false;
+  jsonSourcesDisplayFields?: UrlPreviewDisplayFields;
+  jsonSourcesBackgroundColor?: string;
 
   private urlPreviewReqId = 0;
 
@@ -76,14 +78,17 @@ export class BubbleMessageComponent {
 
     // Reset on every message change: we must not "leak" sources across different messages.
     this.jsonSources = null;
+    this.jsonSourcesDisplayFields = undefined;
+    this.jsonSourcesBackgroundColor = undefined;
 
     // url_preview payload can live on message root OR inside metadata/attributes depending on the integration.
-    const urlPreviewLike =
-      this.message?.type === TYPE_MSG_URL_PREVIEW
-      || this.message?.metadata?.type === TYPE_MSG_URL_PREVIEW
-      || this.message?.attributes?.type === TYPE_MSG_URL_PREVIEW;
-    this.isUrlPreviewMessage = !!urlPreviewLike;
-    if (urlPreviewLike) this.loadJsonSourcesFromUrlPreviewMessage();
+    const urlPreviewPayload = this.jsonSourcesParser.getUrlPreviewPayload(this.message);
+    this.isUrlPreviewMessage = !!urlPreviewPayload;
+    if (urlPreviewPayload) {
+      this.jsonSourcesDisplayFields = urlPreviewPayload.displayFields;
+      this.jsonSourcesBackgroundColor = urlPreviewPayload.previewBackgroundColor;
+      this.loadJsonSourcesFromUrlPreviewMessage();
+    }
   }
 
   private async loadJsonSourcesFromUrlPreviewMessage(): Promise<void> {
