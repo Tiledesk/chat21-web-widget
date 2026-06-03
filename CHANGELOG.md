@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 5.1.35
+- **bug fixed**: updated url preview, added displayed fields
+
 # 5.1.34
 - **bug fixed**: if last message is ulr_preview shows previous message buttons
 
