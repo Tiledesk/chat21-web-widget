@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.34
+- **bug fixed**: if last message is ulr_preview shows previous message buttons
+
 # 5.1.33
 - **bug fixed**: widget not loaded because blob block loading in lauch.js
 
