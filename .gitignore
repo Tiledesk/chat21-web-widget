@@ -60,3 +60,8 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 .playwright-mcp/
+# Voice WSS local mock (file binari catturati in sviluppo)
+mocks/voice-websocket-mock/temp/
+
+deploy_amazon_*.sh
+.claude

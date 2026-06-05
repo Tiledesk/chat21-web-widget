@@ -13,10 +13,28 @@ import { CustomLogger } from 'src/chat21-core/providers/logger/customLogger';
 import { NGXLogger } from 'ngx-logger';
 import { TYPE_MSG_TEXT } from 'src/chat21-core/utils/constants';
 import { ConversationHandlerService } from 'src/chat21-core/providers/abstract/conversation-handler.service';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
+import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
+import { TiledeskAuthService } from 'src/chat21-core/providers/tiledesk/tiledesk-auth.service';
+import { Globals } from 'src/app/utils/globals';
 
 describe('ConversationFooterComponent', () => {
   let component: ConversationFooterComponent;
   let fixture: ComponentFixture<ConversationFooterComponent>;
+
+  const voiceServiceMock = {
+    startSession: () => Promise.resolve(),
+    stopSession: () => Promise.resolve({ voiceIngressResultUrl: null as string | null }),
+    audioSegment$: { subscribe: () => ({ unsubscribe: () => undefined }) },
+    voiceTranscript$: { subscribe: () => ({ unsubscribe: () => undefined }) },
+    volume$: { subscribe: () => ({ unsubscribe: () => undefined }) },
+    isAcquisitionBlocked$: { subscribe: () => ({ unsubscribe: () => undefined }) },
+  };
+  const ttsMock = {
+    cancelAll: () => undefined,
+    stopAll: () => undefined,
+    isTTSPlaying$: { subscribe: () => ({ unsubscribe: () => undefined }) },
+  };
 
   const ngxlogger = jasmine.createSpyObj('NGXLogger', ['log', 'trace', 'debug', 'warn', 'error', 'info']);
   const customLogger = new CustomLogger(ngxlogger);
@@ -47,9 +65,13 @@ describe('ConversationFooterComponent', () => {
       imports: [FormsModule, ReactiveFormsModule],
       providers: [
         FormBuilder,
+        Globals,
         { provide: ChatManager, useValue: chatManagerStub },
         { provide: TypingService, useValue: typingStub },
         { provide: UploadService, useValue: uploadServiceStub as unknown as UploadService },
+        { provide: VoiceService, useValue: voiceServiceMock },
+        { provide: TtsAudioPlaybackCoordinator, useValue: ttsMock },
+        { provide: TiledeskAuthService, useValue: { getTiledeskToken: () => '' } },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],

@@ -6,9 +6,11 @@ import {
   MESSAGE_TYPE_MINE,
   MESSAGE_TYPE_OTHERS,
   MAX_WIDTH_IMAGES,
+  MIN_WIDTH_IMAGES,
   INFO_MESSAGE_TYPE,
   CHANNEL_TYPE,
-  MESSAGE_TYPE_PRIVATE
+  MESSAGE_TYPE_PRIVATE,
+  TYPE_MSG_URL_PREVIEW
 } from '../../chat21-core/utils/constants';
 /** */
 export function isCarousel(message: any) {
@@ -43,6 +45,20 @@ export function isFile(message: any) {
 
 export function isAudio(message: any) {
   if (message && message.type && message.type === 'file' && message.metadata && message.metadata.src && message.metadata.type.includes('audio') ) {
+    return true;
+  }
+  return false;
+}
+
+export function isAudioTTS(message: any) {
+  if (message && message.type && message.type === 'tts' && message.metadata && message.metadata.src && message.metadata.type.includes('audio') ) {
+    return true;
+  }
+  return false;
+}
+
+export function isJsonSources(message: any) {
+  if (message && message.type && message.type === 'url_preview') {
     return true;
   }
   return false;
@@ -91,10 +107,19 @@ export function isSameSender(messages, senderId, index):boolean{
 }
 
 export function isLastMessage(messages, idMessage):boolean {
-  if (idMessage === messages[messages.length - 1].uid) {
-    return true;
-  }
-  return false;
+  // url_preview messages are auxiliary (citations card): they must not "steal"
+  // last-message status from the preceding interactive message, otherwise its
+  // text/action buttons would disappear as soon as a url_preview arrives.
+  const interactive = (messages || []).filter((m: any) => !isUrlPreviewMessage(m));
+  const last = interactive[interactive.length - 1] || messages[messages.length - 1];
+  return !!last && idMessage === last.uid;
+}
+
+function isUrlPreviewMessage(m: any): boolean {
+  if (!m) return false;
+  return m.type === TYPE_MSG_URL_PREVIEW
+    || m.metadata?.type === TYPE_MSG_URL_PREVIEW
+    || m.attributes?.type === TYPE_MSG_URL_PREVIEW;
 }
 
 export function isFirstMessage(messages, senderId, index):boolean{
@@ -314,7 +339,21 @@ export function commandToMessage(msg: MessageModel, conversation: ConversationMo
   message.type = msg['type']
   message.isSender = isSender(message.sender, currentUserId)
   message.attributes = { ...conversation.attributes, ...msg['attributes']}
-  
 
   return message as MessageModel
+}
+
+export function calcImageSize(metadata: any): { width: number; height: number } {
+  const size = { width: metadata.width, height: metadata.height };
+  if (!metadata.width) return size;
+  if (metadata.width <= 55) {
+    const ratio = metadata.width / metadata.height;
+    size.width = MIN_WIDTH_IMAGES;
+    size.height = MIN_WIDTH_IMAGES / ratio;
+  } else if (metadata.width > MAX_WIDTH_IMAGES) {
+    const ratio = metadata.width / metadata.height;
+    size.width = MAX_WIDTH_IMAGES;
+    size.height = MAX_WIDTH_IMAGES / ratio;
+  }
+  return size;
 }

@@ -155,15 +155,10 @@ export class AudioComponent implements AfterViewInit {
     // });
 
     const response = await fetch(this.rawAudioUrl!);
-    this.logger.debug('getAudioDuration: response ---> ', response)
     const arrayBuffer = await response.arrayBuffer();
-    this.logger.debug('getAudioDuration: arrayBuffer ---> ', arrayBuffer)
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    this.logger.debug('getAudioDuration: audioContext ---> ', audioContext)
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-    this.logger.debug('getAudioDuration: audioBuffer ---> ', audioBuffer)
     this.audioDuration = audioBuffer.duration;
-    this.logger.debug('getAudioDuration: audioDuration ---> ', this.audioDuration)
 
   }
 

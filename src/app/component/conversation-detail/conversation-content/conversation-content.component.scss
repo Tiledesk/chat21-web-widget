@@ -27,6 +27,10 @@
     margin: 25px 50px
 }
 
+:host .loading.fullSize ::ng-deep > div.spinner{
+    margin: 50px 0px !important;
+}
+
 // ============= CSS c21-body ================= //
 .c21-body {
     // -webkit-box-shadow: inset 0 10px 10px -10px rgba(0,0,0,0.4);
@@ -164,6 +168,12 @@
                         min-width: 14px;
                         border: 0.1px solid #0000000f;
                     }
+                    .msg_sent.json-resources{
+                        border: 0 !important;
+                        width: 100%;
+                        max-width: 652px;
+                        flex: 1 1 auto;
+                    }
                     .message_innerhtml {
                         padding: 8px;
                     }
@@ -236,6 +246,18 @@
                         height: fit-content;
                         width: auto;
 
+                        &.fullSizeMessage {
+                            max-width: 100%;
+                            margin: auto 0 auto 0 !important;
+                        }
+
+                    }
+                    .msg_receive.json-resources{
+                        min-height: unset;
+                        padding: 0;
+                        width: 100%;
+                        max-width: 652px;
+                        flex: 1 1 auto;
                     }
                     
 
@@ -269,6 +291,15 @@
         } // end .c21-body-content
     }// end c21-body-container
 }// end c21-body
+
+/* Solo con pulsante chiudi stream (stream in ascolto): altezza extra come #streamAudioAlert */
+:host-context(#chat21-conversation-component.chat21-conversation--close-stream-active) .c21-body .c21-body-container .c21-body-content .chat21-sheet-content {
+    bottom: calc(
+        var(--chat-footer-logo-height) +
+        var(--chat-footer-height) +
+        var(--chat-footer-stream-button-height)
+    );
+}
 
 @keyframes thinking-dot {
     0%, 80%, 100% {

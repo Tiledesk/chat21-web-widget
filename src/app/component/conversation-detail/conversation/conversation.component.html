@@ -2,7 +2,8 @@
 <div id="chat21-conversation-component"
     #afConversationComponent
     role="region"
-    [attr.aria-label]="g?.project?.widgetTitle">
+    [attr.aria-label]="g?.project?.widgetTitle"
+    [class.chat21-conversation--close-stream-active]="closeStreamButtonActiveForSheetBottom()">
 
     <!-- Skip-link: revealed only on focus, jumps straight to the message composer (WCAG 2.4.1 Bypass Blocks). -->
     <a class="c21-skip-link" href="#chat21-main-message-context"
@@ -70,6 +71,7 @@
         [showThinkingMessage]="showThinkingMessage"
         [lastServerSenderKind]="lastServerSenderKind"
         [fullscreenMode]="g?.fullscreenMode"
+        [isStreamAudioActive]="isStreamAudioActive"
         [translationMap]="translationMapContent"
         [stylesMap]="stylesMap"
         (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
@@ -140,6 +142,7 @@
             [showAttachmentFooterButton]="g?.showAttachmentFooterButton"
             [showEmojiFooterButton]="g?.showEmojiFooterButton"
             [showAudioRecorderFooterButton]="g?.showAudioRecorderFooterButton"
+            [showAudioStreamFooterButton]="g?.showAudioStreamFooterButton"
             [hideTextAreaContent]="(g?.singleConversation && hideTextAreaContent) || (isConversationArchived && !g?.allowReopen)"
             [isConversationArchived]="isConversationArchived"
             [hideTextReply]="hideFooterTextReply"
@@ -156,7 +159,10 @@
             (onAfterSendMessage)="onAfterSendMessageFN($event)"
             (onChangeTextArea)="onChangeTextArea($event)"
             (onAttachmentFileButtonClicked)="onAttachmentFileButtonClicked($event)"
-            (onNewConversationButtonClicked)="onNewConversationButtonClickedFN($event)">
+            (onNewConversationButtonClicked)="onNewConversationButtonClickedFN($event)"
+            (onStreamAudioActiveChange)="onStreamAudioActiveChange($event)"
+            (onStreamAudioConnectingChange)="onStreamAudioConnectingChange($event)"
+            (onCloseChatButtonClicked)="onCloseChatButtonClickedFN($event)">
         </chat-conversation-footer>
 
     </div>
