@@ -25,5 +25,6 @@
   "authPersistence": "LOCAL",
   "enbedJs": "true",
   "brandSrc": "",
-  "voiceProxyWsBaseUrl": "ws://localhost:3000/ws/voice"
+  "voiceProxyWsBaseUrl": "ws://localhost:3000/ws/voice",
+  "voiceProxyApiBaseUrl": "http://localhost:3000/api"
 }
