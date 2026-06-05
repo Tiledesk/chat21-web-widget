@@ -56,7 +56,9 @@ export class TtsAudioPlaybackCoordinator {
     }
 
     this.currentOwnerId = id;
-    this._isTTSPlaying$.next(true);
+    if (!this._isTTSPlaying$.getValue()) {
+      this._isTTSPlaying$.next(true);
+    }
     try {
       start();
     } catch {

@@ -2,12 +2,31 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { MAX_WIDTH_IMAGES, MIN_WIDTH_IMAGES } from 'src/chat21-core/utils/constants';
+import { calcImageSize } from 'src/chat21-core/utils/utils-message';
+import { JsonSourcesParserService } from 'src/app/providers/json-sources-parser.service';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
 
 import { BubbleMessageComponent } from './bubble-message.component';
 
 describe('BubbleMessageComponent', () => {
   let component: BubbleMessageComponent;
   let fixture: ComponentFixture<BubbleMessageComponent>;
+
+  const jsonSourcesParserMock = {
+    getUrlPreviewPayload: () => null,
+    parseBaseFromMessage: () => null,
+    enrichSources: jasmine.createSpy('enrichSources').and.resolveTo([]),
+  };
+
+  const voiceServiceMock = {
+    isWssVoiceActive: false,
+    markProxyHandled: jasmine.createSpy('markProxyHandled'),
+    voiceTtsKaraoke$: {
+      pipe: () => ({
+        subscribe: () => ({ unsubscribe: () => undefined }),
+      }),
+    },
+  };
 
   const textMessage: any = {
     attributes: { projectId: 'p1' },
@@ -28,6 +47,10 @@ describe('BubbleMessageComponent', () => {
     TestBed.configureTestingModule({
       declarations: [BubbleMessageComponent],
       schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        { provide: JsonSourcesParserService, useValue: jsonSourcesParserMock },
+        { provide: VoiceService, useValue: voiceServiceMock },
+      ],
     }).compileComponents();
   }));
 
@@ -59,28 +82,28 @@ describe('BubbleMessageComponent', () => {
     expect(textChild.properties.text).toEqual(textMessage.text);
   });
 
-  describe('getMetadataSize', () => {
+  describe('calcImageSize', () => {
     it('should scale down when width exceeds MAX_WIDTH_IMAGES', () => {
       const meta = { width: MAX_WIDTH_IMAGES * 2, height: 100 };
-      const s = component.getMetadataSize(meta);
+      const s = calcImageSize(meta);
       expect(s.width).toBe(MAX_WIDTH_IMAGES);
     });
 
     it('should apply MIN_WIDTH when thumbnail width is small', () => {
       const meta = { width: 40, height: 80 };
-      const s = component.getMetadataSize(meta);
+      const s = calcImageSize(meta);
       expect(s.width).toBe(MIN_WIDTH_IMAGES);
     });
 
     it('should keep metadata dimensions for mid-sized images', () => {
       const meta = { width: 120, height: 60 };
-      const s = component.getMetadataSize(meta);
+      const s = calcImageSize(meta);
       expect(s.width).toBe(120);
       expect(s.height).toBe(60);
     });
 
     it('should return raw metadata when width branch not matched', () => {
-      const s = component.getMetadataSize({ width: undefined, height: 10 });
+      const s = calcImageSize({ width: undefined, height: 10 });
       expect(s.width).toBeUndefined();
       expect(s.height).toBe(10);
     });
