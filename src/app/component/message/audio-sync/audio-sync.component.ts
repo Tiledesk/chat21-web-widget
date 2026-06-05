@@ -14,7 +14,6 @@ import { MessageModel } from 'src/chat21-core/models/message';
 import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
 import { VoiceService } from 'src/app/providers/voice/voice.service';
 import { Globals } from 'src/app/utils/globals';
-import { VoiceService } from 'src/app/providers/voice/voice.service';
 
 /** HAVE_METADATA: metadati già disponibili (tipico audio servito da cache). */
 const HAVE_METADATA = 1;

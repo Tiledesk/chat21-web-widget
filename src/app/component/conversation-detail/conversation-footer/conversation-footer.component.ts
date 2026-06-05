@@ -41,6 +41,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   @Input() showAudioRecorderFooterButton: boolean;
   @Input() showAudioStreamFooterButton: boolean;
   // @Input() showContinueConversationButton: boolean;
+  @Input() closeChatInConversation: boolean;
   @Input() isConversationArchived: boolean;
   @Input() hideTextAreaContent: boolean;
   @Input() hideTextReply: boolean;
@@ -916,6 +917,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
 
   openNewConversation(){
     this.onNewConversationButtonClicked.emit();
+  }
+
+  onCloseChat(event){
+    this.onCloseChatButtonClicked.emit();
   }
 
   // onContinueConversation(){
