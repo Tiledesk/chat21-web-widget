@@ -28,7 +28,7 @@
         [stylesMap]="stylesMap"
         [translationMap]="translationMap">
       </chat-audio>
-      
+
       <!-- Json sources -->
       <chat-json-sources *ngIf="jsonSources !== null && jsonSources.length > 0"
         [items]="jsonSources"
@@ -43,6 +43,7 @@
         [message]="message"
         [color]="fontColor">
       </chat-audio-sync>
+
 
       <!-- Karaoke display for TTS messages while a WSS voice session is active -->
       <p *ngIf="isAudioTTS(message) && (voiceService.isWssVoiceActive$ | async) && _wssKaraokeWords$"
@@ -60,6 +61,8 @@
         [text]="message?.text"
         [color]="fontColor">
       </chat-text>
+
+
 
       <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"
         [metadata]="message.metadata"
@@ -81,7 +84,7 @@
         </p>
 
         <!-- [htmlEnabled]="(message?.type==='html')? true : false" -->
-        <chat-text *ngIf="message?.type !=='html'"
+        <chat-text *ngIf="jsonSources === null && message?.type !=='html' && !_isStreaming"
           [text]="message?.text"
           [color]="fontColor"
           (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"

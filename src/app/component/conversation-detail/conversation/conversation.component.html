@@ -2,7 +2,8 @@
 <div id="chat21-conversation-component"
     #afConversationComponent
     role="region"
-    [attr.aria-label]="g?.project?.widgetTitle">
+    [attr.aria-label]="g?.project?.widgetTitle"
+    [class.chat21-conversation--close-stream-active]="closeStreamButtonActiveForSheetBottom()">
 
     <!-- Skip-link: revealed only on focus, jumps straight to the message composer (WCAG 2.4.1 Bypass Blocks). -->
     <a class="c21-skip-link" href="#chat21-main-message-context"

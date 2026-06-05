@@ -41,6 +41,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   @Input() showAudioRecorderFooterButton: boolean;
   @Input() showAudioStreamFooterButton: boolean;
   // @Input() showContinueConversationButton: boolean;
+  @Input() closeChatInConversation: boolean;
   @Input() isConversationArchived: boolean;
   @Input() hideTextAreaContent: boolean;
   @Input() hideTextReply: boolean;
@@ -48,7 +49,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   @Input() isEmojiiPickerShow: boolean;
   @Input() footerMessagePlaceholder: string;
   @Input() fileUploadAccept: string;
-  @Input() closeChatInConversation: boolean;
   @Input() dropEvent: Event;
   @Input() poweredBy: string;
   @Input() stylesMap: Map<string, string>
@@ -155,6 +155,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     if(changes['conversationWith'] && changes['conversationWith'].currentValue !== undefined){
       this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
       this.isStreamAudioActive = false;
+      this.ttsPlayback.cancelAll();
       void this.stopVoice();
     }
     if(changes['hideTextReply'] && changes['hideTextReply'].currentValue !== undefined){
@@ -857,6 +858,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
       } catch (e) {
         this.logger.error('[CONV-FOOTER] onStreamPressed: initVoice failed', e);
         this.isStreamAudioActive = false;
+        this.ttsPlayback.cancelAll();
       } finally {
         this.isStreamAudioConnecting = false;
         this.onStreamAudioConnectingChange.emit(false);
@@ -864,6 +866,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     } else {
       await this.stopVoice();
       this.isStreamAudioActive = false;
+      // Close-stream-button clicked: stop any playing/queued TTS audio.
+      this.ttsPlayback.cancelAll();
       this.isStreamAudioConnecting = false;
       this.onStreamAudioConnectingChange.emit(false);
     }

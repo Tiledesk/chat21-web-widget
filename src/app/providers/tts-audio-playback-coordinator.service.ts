@@ -11,6 +11,11 @@ export class TtsAudioPlaybackCoordinator {
   private currentOwnerId: string | null = null;
   private readonly queue: Array<{ ownerId: string; start: () => void }> = [];
 
+  private readonly cancelAllSource = new Subject<void>();
+  /** Emesso quando la riproduzione TTS va interrotta globalmente (es. l’utente parla al microfono). */
+  readonly cancelAll$: Observable<void> = this.cancelAllSource.asObservable();
+
+
   /** Emits true while any TTS is playing or queued; false when the queue is fully drained. */
   private readonly _isTTSPlaying$ = new BehaviorSubject<boolean>(false);
   readonly isTTSPlaying$ = this._isTTSPlaying$.asObservable();
@@ -52,9 +57,7 @@ export class TtsAudioPlaybackCoordinator {
     }
 
     this.currentOwnerId = id;
-    if (!this._isTTSPlaying$.getValue()) {
-      this._isTTSPlaying$.next(true);
-    }
+    this._isTTSPlaying$.next(true);
     try {
       start();
     } catch {
@@ -94,6 +97,15 @@ export class TtsAudioPlaybackCoordinator {
   /** Distruzione componente o stop esplicito. */
   release(ownerId: string): void {
     this.releaseIfCurrent(ownerId);
+  }
+
+  /**
+   * Interrompe TUTTA la riproduzione TTS (corrente + coda) e notifica i componenti.
+   * I componenti devono fermare l’audio e mostrare il testo per intero.
+   */
+  cancelAll(): void {
+    this.stopAll();
+    this.cancelAllSource.next();
   }
 
   /**

@@ -53,32 +53,6 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
     return !!(msg.text && String(msg.text).trim().length > 0);
   }
 
-  readonly isImage = isImage;
-  readonly isFile = isFile;
-  readonly isFrame = isFrame;
-  readonly isAudio = isAudio;
-  readonly isJsonSources = isJsonSources;
-  readonly isAudioTTS = isAudioTTS;
-  readonly messageType = messageType;
-  readonly convertColorToRGBA = convertColorToRGBA;
-  readonly MESSAGE_TYPE_MINE = MESSAGE_TYPE_MINE;
-  readonly MESSAGE_TYPE_OTHERS = MESSAGE_TYPE_OTHERS;
-
-  sizeImage: { width: number; height: number } = { width: 0, height: 0 };
-  fullnameColor: string = '';
-  jsonSources: JsonSourceItem[] | null = null;
-  isUrlPreviewMessage = false;
-  jsonSourcesDisplayFields?: UrlPreviewDisplayFields;
-  jsonSourcesBackgroundColor?: string;
-
-  private urlPreviewReqId = 0;
-
-  constructor(
-    public sanitizer: DomSanitizer, 
-    public voiceService: VoiceService, 
-    private jsonSourcesParser: JsonSourcesParserService
-  ) { }
-
   ngOnInit() {
     // If this TTS message arrived while the voice proxy was active, mark it so
     // audio-sync never replays it after the session ends.
@@ -111,6 +85,32 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
     this._kSub = undefined;
   }
 
+  readonly isImage = isImage;
+  readonly isFile = isFile;
+  readonly isFrame = isFrame;
+  readonly isAudio = isAudio;
+  readonly isAudioTTS = isAudioTTS;
+  readonly isJsonSources = isJsonSources;
+  readonly messageType = messageType;
+  readonly convertColorToRGBA = convertColorToRGBA;
+  readonly MESSAGE_TYPE_MINE = MESSAGE_TYPE_MINE;
+  readonly MESSAGE_TYPE_OTHERS = MESSAGE_TYPE_OTHERS;
+
+  sizeImage: { width: number; height: number } = { width: 0, height: 0 };
+  fullnameColor: string = '';
+  jsonSources: JsonSourceItem[] | null = null;
+  isUrlPreviewMessage = false;
+  jsonSourcesDisplayFields?: UrlPreviewDisplayFields;
+  jsonSourcesBackgroundColor?: string;
+
+  private urlPreviewReqId = 0;
+
+  constructor(
+    public sanitizer: DomSanitizer,
+    public voiceService: VoiceService,
+    private jsonSourcesParser: JsonSourcesParserService
+  ) {}
+
   ngOnChanges(): void {
     if (this.message?.metadata && typeof this.message.metadata === 'object') {
       this.sizeImage = calcImageSize(this.message.metadata);
@@ -122,6 +122,26 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
 
     if (this.message?.sender_fullname?.trim()) {
       this.fullnameColor = getColorBck(this.message.sender_fullname);
+    }
+
+    // One-shot: activate word streaming for newly-arrived bot text messages during a voice session.
+    // Reset isJustRecived so the animation never replays on subsequent change detection cycles.
+    if (
+      !this._isStreaming &&
+      this.streamOnArrival &&
+      this.message?.isJustRecived === true &&
+      this.messageType(this.MESSAGE_TYPE_OTHERS, this.message) &&
+      !this.isAudio(this.message) &&
+      !this.isAudioTTS(this.message) &&
+      this.message?.type !== 'html'
+    ) {
+      this._isStreaming = true;
+      this._streamingWords = (this.message.text ?? '')
+        .trim()
+        .split(/\s+/)
+        .filter(w => w.length > 0)
+        .map((word, index) => ({ word, index }));
+      this.message.isJustRecived = false;
     }
 
     // Reset on every message change: we must not "leak" sources across different messages.
@@ -161,6 +181,14 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
       this.jsonSourcesBackgroundColor = urlPreviewPayload.previewBackgroundColor;
       this.loadJsonSourcesFromUrlPreviewMessage();
     }
+  }
+
+  trackWord(_index: number, item: { word: string; index: number }): number {
+    return item.index;
+  }
+
+  trackKaraokeWord(index: number): number {
+    return index;
   }
 
   private async loadJsonSourcesFromUrlPreviewMessage(): Promise<void> {
