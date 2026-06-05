@@ -434,7 +434,8 @@ textarea:active{
     position: absolute;
     // padding: 8px 16px;
     overflow: hidden;
-    background-color: color-mix(in srgb, var(--content-background-color) 34%, transparent);
+    background-color: var(--content-background-color);
+    // background-color: color-mix(in srgb, var(--content-background-color) 34%, transparent);
     backdrop-filter: blur(20px) saturate(1.2);
     -webkit-backdrop-filter: blur(20px) saturate(1.2);
     box-shadow:
