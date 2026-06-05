@@ -525,8 +525,21 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private getJwtToken(): string | null {
-    const token = (this.globals?.tiledeskToken || this.globals?.jwt || '').trim();
-    return token.length > 0 ? token : null;
+    const raw = (this.globals?.tiledeskToken || this.globals?.jwt || '')
+      .trim()
+      .replace(/^(JWT|Bearer)\s+/i, '')
+      .trim();
+    return raw.length > 0 ? `JWT ${raw}` : null;
+  }
+
+  /**
+   * Extracts the Tiledesk requestId from a Chat21 recipient string.
+   * Format: `support-group-<projectId>-<requestId>`
+   */
+  private parseRequestId(recipient: string): string | null {
+    const parts = recipient.split('-');
+    if (parts.length < 4) return null;
+    return parts.slice(3).join('-') || null;
   }
 
   private getVoiceSettingsBody(): unknown {
@@ -557,6 +570,9 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
       };
+      if (jwt) {
+        headers['Authorization'] = jwt;
+      }
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -586,30 +602,25 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   private fetchFullFileFromEndpoint(audio: HTMLAudioElement, endpoint: string): void {
     const jwt = this.getJwtToken();
     const voiceSettings = this.getVoiceSettingsBody();
-    const requestBody = this.buildTtsRequestBody(voiceSettings, false);
+    const requestBody = this.buildTtsRequestBody(voiceSettings);
     void this.fetchAsBlobAndPlay(audio, endpoint, jwt, requestBody);
   }
 
-  private buildTtsRequestBody(voiceSettings: unknown, streaming = true): unknown {
+  private buildTtsRequestBody(voiceSettings: unknown): unknown {
     const text = this.message?.text ?? '';
-    if (
-      voiceSettings &&
-      typeof voiceSettings === 'object' &&
-      !Array.isArray(voiceSettings)
-    ) {
-      return {
-        outputFormat: BROWSER_TTS_OUTPUT_FORMAT,
-        ...(voiceSettings as Record<string, unknown>),
-        text,
-        streaming,
-      };
+    const projectId = String(this.globals?.projectid ?? '').trim();
+    const requestId = this.parseRequestId(this.globals?.recipientId ?? '');
+    const base: Record<string, unknown> = { outputFormat: BROWSER_TTS_OUTPUT_FORMAT, text };
+    if (projectId) base['projectId'] = projectId;
+    if (requestId) {
+      base['requestId'] = requestId;
     }
-    return {
-      voiceSettings,
-      text,
-      streaming,
-      outputFormat: BROWSER_TTS_OUTPUT_FORMAT,
-    };
+    if (voiceSettings && typeof voiceSettings === 'object' && !Array.isArray(voiceSettings)) {
+      // Spread provider-specific fields (provider, voiceId, model, language, …) at top level.
+      // Keep `text` last so it cannot be overridden by voiceSettings.
+      return { ...base, ...(voiceSettings as Record<string, unknown>), text };
+    }
+    return base;
   }
 
   private markAllWordsPast(): void {
