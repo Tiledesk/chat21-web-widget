@@ -49,7 +49,7 @@
                           <!-- message RECIPIENT:: -->
                           <div role="messaggio" *ngIf="messageType(MESSAGE_TYPE_OTHERS, message)" class="msg_container base_receive">
                             
-                            <chat-avatar-image *ngIf="!isSameSender(message?.sender, i)" 
+                            <chat-avatar-image *ngIf="!isSameSender(message?.sender, i) && !isStreamAudioActive"
                               [ngClass]="{'slide-in-left': false}"    
                               [senderID]="message?.sender"
                               [senderFullname]="message?.sender_fullname"
