@@ -7,6 +7,17 @@
 *Tiledesk SRL*
 
 
+# 5.2.1
+- **bug fixed**: prevent avatar display when audio stream is active in conversation content
+- **changed**: refined message margin logic and updated widget/firebase configuration for local development
+- **changed**: simplified textarea background color and removed unused image in conversation footer
+- **changed**: updated `remoteConfigUrl` settings for widget configuration
+- **changed**: switched Docker builder stage base image to `node:20.12.2-bookworm-slim`
+- **changed**: upgraded Angular and build tool dependencies to align with version 5.2.1
+- **changed**: cleaned up and enhanced unit tests for conversation and audio components
+- **added**: integrated Playwright for end-to-end testing
+- **added**: comprehensive accessibility documentation for the Tiledesk Web Widget
+
 # 5.2.0 
 
 # 5.1.32-rc13
