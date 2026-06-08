@@ -9,6 +9,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 export class ConversationAudioRecorderComponent {
 
   @Input() stylesMap: Map<string, string>;
+  @Input() translationMap: Map<string, string>;
   @Output() startRecordingEvent = new EventEmitter<void>();
   @Output() deleteRecordingEvent = new EventEmitter<void>();
   @Output() endRecordingEvent = new EventEmitter<Blob | null>();

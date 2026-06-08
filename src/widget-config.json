@@ -1,29 +1,30 @@
 {
-    "chatEngine": "mqtt",
-    "uploadEngine": "native",
-    "pushEngine":"none",
-    "logLevel":"INFO",
-    "remoteTranslationsUrl": "http://localhost:3000/",
-    "firebaseConfig": {
-        "apiKey": "CHANGEIT",
-        "authDomain": "CHANGEIT",
-        "databaseURL": "CHANGEIT",
-        "projectId": "CHANGEIT",
-        "storageBucket": "CHANGEIT",
-        "messagingSenderId": "CHANGEIT",
-        "appId": "CHANGEIT",
-        "tenant": "CHANGEIT"
-    },
-    "chat21Config": {
-        "appId": "tilechat",
-        "MQTTendpoint": "ws://localhost:15675/ws",
-        "APIendpoint": "http://localhost:8004/api"
-    },
-    "apiUrl": "http://localhost:3000/",
-    "baseImageUrl": "http://localhost:3000/",
-    "dashboardUrl": "http://localhost:4500/",
-    "authPersistence": "LOCAL",
-    "enbedJs": true,
-    "brandSrc": "${BRAND_SRC}"
-    
+  "chatEngine": "mqtt",
+  "uploadEngine": "native",
+  "pushEngine": "none",
+  "logLevel": "info"    ,
+  "remoteTranslationsUrl": "http://localhost:3000/api/",
+  "firebaseConfig": {
+    "apiKey": "CHANGEIT",
+    "authDomain": "CHANGEIT.firebaseapp.com",
+    "databaseURL": "https://CHANGEIT.firebaseio.com",
+    "projectId": "CHANGEIT",
+    "storageBucket": "CHANGEIT.appspot.com",
+    "messagingSenderId": "CHANGEIT",
+    "appId": "",
+    "tenant": "tilechat"
+  },
+  "chat21Config": {
+    "appId": "tilechat",
+    "MQTTendpoint": "ws://localhost:15672/mqws/ws",
+    "APIendpoint": "http://localhost:3001/chatapi/api"
+  },
+  "apiUrl": "http://localhost:3000/api/",
+  "baseImageUrl": "http://localhost:3000/api/",
+  "dashboardUrl": "/dashboard/",
+  "authPersistence": "LOCAL",
+  "enbedJs": "true",
+  "brandSrc": "",
+  "voiceProxyWsBaseUrl": "ws://localhost:3000/ws/voice",
+  "voiceProxyApiBaseUrl": "http://localhost:3000/api"
 }

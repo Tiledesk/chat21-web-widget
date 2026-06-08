@@ -67,7 +67,7 @@ export const environment = {
   production: true,
   version: require('../../package.json').version,
   remoteConfig: false, // for performance don't load settings from remote
-  remoteConfigUrl: '/widget-config.json',
+  remoteConfigUrl: '/widget-config-aws-stage.json',
   loadRemoteTranslations: true,
   remoteTranslationsUrl: 'https://<YOUR_REMOTE_TRANSLATIONS_URL>/',
   chatEngine: "mqtt", // OR YOUR CUSTOM CHAT ENGINE

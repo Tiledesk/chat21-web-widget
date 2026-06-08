@@ -161,6 +161,11 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   membersConversation = ['SYSTEM'];
   // ========== end:: typying =======
 
+  // ========== begin:: stream audio ======= //
+  public isStreamAudioActive = false;
+  public isStreamAudioConnecting = false;
+  // ========== end:: stream audio ======= //
+
   @ViewChild(ConversationFooterComponent) conversationFooter: ConversationFooterComponent
   @ViewChild(ConversationContentComponent) conversationContent: ConversationContentComponent
   conversationHandlerService: ConversationHandlerService
@@ -246,7 +251,21 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'CONTINUE',
       'EMOJI_NOT_ELLOWED',
       'ATTACHMENT',
-      'EMOJI'
+      'EMOJI',
+      'BUTTON_ATTACH_FILE',
+      'BUTTON_SEND_MESSAGE',
+      'BUTTON_RECORD_AUDIO',
+      'BUTTON_DELETE_AUDIO',
+      'BUTTON_SEND_AUDIO',
+      'BUTTON_PLAY_AUDIO',
+      'BUTTON_PAUSE_AUDIO',
+      'SKIP_TO_COMPOSER',
+      'CLOSE_CHAT',
+      'CLOSE',
+      'VOICE_CONNECTING',
+      'VOICE_LISTENING',
+      'VOICE_PROCESSING',
+      'STREAM_AUDIO'
     ];
 
     const keysContent = [
@@ -266,13 +285,21 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'LABEL_THINKING',
       'LABEL_TO',
       'ARRAY_DAYS',
+      'CONVERSATION_LOG_LABEL',
+      'BUTTON_SCROLL_TO_BOTTOM',
+      'CAROUSEL_PREVIOUS',
+      'CAROUSEL_NEXT',
+      'CAROUSEL_LABEL',
+      'CAROUSEL_SLIDE_LABEL'
     ];
 
     const keysPreview= [
       'BACK', 
       'CLOSE',
       'LABEL_PLACEHOLDER',
-      'LABEL_PREVIEW'
+      'LABEL_PREVIEW',
+      'BUTTON_CLOSE_PREVIEW',
+      'BUTTON_SEND_MESSAGE'
     ];
 
     const keysCloseChatDialog= [
@@ -822,6 +849,10 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
             this.showThinkingMessage = false;
           }
 
+          if (this.isStreamAudioActive && msg.sender !== this.senderId) {
+            this.conversationFooter?.interruptStreamDueToPeerMessage();
+          }
+
           that.newMessageAdded(msg);
           // Update badge based on the latest message received from the server.
           // We rely on `messages` being kept in-sync by the conversation handler.
@@ -1031,6 +1062,21 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   
+
+ /**
+  * Programmatically moves keyboard focus to the message composer textarea.
+  * Wired to the visible-on-focus skip link in conversation.component.html (WCAG 2.4.1 Bypass Blocks).
+  */
+ skipToCompose() {
+   try {
+     const textarea = document.getElementById('chat21-main-message-context') as HTMLTextAreaElement | null;
+     if (textarea) {
+       textarea.focus();
+     }
+   } catch(e) {
+     this.logger.warn('[CONV-COMP] skipToCompose error', e);
+   }
+ }
 
  scrollToBottom() {
   this.conversationContent.scrollToBottom();
@@ -1382,6 +1428,28 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   onNewConversationButtonClickedFN(event){
     this.logger.debug('[CONV-COMP] floating onNewConversationButtonClicked')
     this.onNewConversationButtonClicked.emit()
+  }
+
+  /** CALLED BY: conv-footer component */
+  onStreamAudioActiveChange(event: boolean){
+    this.isStreamAudioActive = event
+  }
+  /** CALLED BY: conv-footer when connecting state changes */
+  onStreamAudioConnectingChange(event: boolean){
+    this.isStreamAudioConnecting = event
+  }
+  /** CALLED BY: conv-footer component */
+  onCloseChatButtonClickedFN(event){
+    this.logger.debug('[CONV-COMP] onCloseChatButtonClicked::::', event)
+    this.onCloseChat()
+  }
+
+  /**
+   * True quando è visibile il pulsante chiudi stream (`.close-stream-button`, `isStreamAudioActive`).
+   * Solo in quel caso il bottom del foglio include `--chat-footer-stream-button-height`.
+   */
+  closeStreamButtonActiveForSheetBottom(): boolean {
+    return !!(this.g?.showAudioStreamFooterButton && (this.isStreamAudioActive || this.isStreamAudioConnecting));
   }
   // =========== END: event emitter function ====== //
 

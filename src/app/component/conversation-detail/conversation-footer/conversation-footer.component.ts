@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
 import { error } from 'console';
 import { FILE_SIZE_LIMIT } from 'src/app/utils/constants';
 import { Globals } from 'src/app/utils/globals';
@@ -15,13 +15,18 @@ import { TYPE_MSG_FILE, TYPE_MSG_IMAGE, TYPE_MSG_TEXT } from 'src/chat21-core/ut
 import { convertColorToRGBA, isAllowedUrlInText, isEmoji } from 'src/chat21-core/utils/utils';
 import { findAndRemoveEmoji, isImage } from 'src/chat21-core/utils/utils-message';
 import { ProjectModel } from 'src/models/project';
+import { Subscription } from 'rxjs';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
+import { VoiceStreamingSessionConfig } from 'src/app/providers/voice/voice-streaming.types';
+import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
+import { TiledeskAuthService } from 'src/chat21-core/providers/tiledesk/tiledesk-auth.service';
 
 @Component({
   selector: 'chat-conversation-footer',
   templateUrl: './conversation-footer.component.html',
   styleUrls: ['./conversation-footer.component.scss']
 })
-export class ConversationFooterComponent implements OnInit, OnChanges {
+export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() conversationWith: string;
   @Input() attributes: string;
@@ -32,9 +37,11 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   @Input() userFullname: string;
   @Input() userEmail: string;
   @Input() showAttachmentFooterButton: boolean;
-  @Input() showEmojiFooterButton: boolean
-  @Input() showAudioRecorderFooterButton: boolean
+  @Input() showEmojiFooterButton: boolean;
+  @Input() showAudioRecorderFooterButton: boolean;
+  @Input() showAudioStreamFooterButton: boolean;
   // @Input() showContinueConversationButton: boolean;
+  @Input() closeChatInConversation: boolean;
   @Input() isConversationArchived: boolean;
   @Input() hideTextAreaContent: boolean;
   @Input() hideTextReply: boolean;
@@ -52,6 +59,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   @Output() onChangeTextArea = new EventEmitter<any>();
   @Output() onAttachmentFileButtonClicked = new EventEmitter<any>();
   @Output() onNewConversationButtonClicked = new EventEmitter();
+  @Output() onStreamAudioActiveChange = new EventEmitter<boolean>();
+  @Output() onStreamAudioConnectingChange = new EventEmitter<boolean>();
+  @Output() onCloseChatButtonClicked = new EventEmitter();
 
   @ViewChild('chat21_file') public chat21_file: ElementRef;
   // @ViewChild('emojii_container', {read: ViewContainerRef}) selector;
@@ -85,24 +95,61 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
 
   showAlertEmoji: boolean = false
 
+  /** Stream audio UI: icona equalizer → X; alert con onde animate sopra il footer */
+  isStreamAudioActive = false;
+  /** True while the WebSocket session is being established (between click and session_started). */
+  isStreamAudioConnecting = false;
+  /** True while the bot's TTS audio is playing — mic segments are suppressed, spectrum turns grey. */
+  isBotSpeaking = false;
+  /** Sottoscrizione ai segmenti audio (VAD → WebM) dal {@link VoiceService}. */
+  private voiceAudioSubscription?: Subscription;
+  /** Sottoscrizione a `transcript` finale dalla WSS. */
+  private voiceTranscriptSubscription?: Subscription;
+  /** Sottoscrizione al volume audio (real-time) dal {@link VoiceService}. */
+  private voiceVolumeSubscription?: Subscription;
+  /** Sottoscrizione allo stato TTS (bot sta parlando). */
+  private botSpeakingSub?: Subscription;
+  /** Passato a {@link StreamAudioSpectrumComponent} per disegnare la linea spettro. */
+  currentVolume = 0;
+  /** Last user utterance transcribed — persists during bot processing to show in voice panel. */
+  lastVoiceTranscript = '';
+
+  get voiceStatusLabel(): string {
+    if (this.isStreamAudioConnecting && !this.isStreamAudioActive) {
+      return this.translationMap?.get('VOICE_CONNECTING') || 'Connecting...';
+    }
+    if (this.isStreamAudioActive && this.isBotSpeaking) {
+      return this.translationMap?.get('VOICE_PROCESSING') || 'Processing...';
+    }
+    return this.translationMap?.get('VOICE_LISTENING') || 'Listening...';
+  }
+
   file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
 
 
   convertColorToRGBA = convertColorToRGBA;
   private logger: LoggerService = LoggerInstance.getInstance()
-  constructor(private chatManager: ChatManager,
-              private typingService: TypingService,
-              private uploadService: UploadService) { }
+  constructor(
+    private chatManager: ChatManager,
+    private typingService: TypingService,
+    private uploadService: UploadService,
+    private voiceService: VoiceService,
+    private ttsPlayback: TtsAudioPlaybackCoordinator,
+    private tiledeskAuthService: TiledeskAuthService,
+    public g: Globals,
+  ) {}
 
   ngOnInit() {
     // this.updateAttachmentTooltip();
   }
 
-
   ngOnChanges(changes: SimpleChanges){
     if(changes['conversationWith'] && changes['conversationWith'].currentValue !== undefined){
       this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
+      this.isStreamAudioActive = false;
+      this.ttsPlayback.cancelAll();
+      void this.stopVoice();
     }
     if(changes['hideTextReply'] && changes['hideTextReply'].currentValue !== undefined){
       this.restoreTextArea();
@@ -141,6 +188,159 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   //     }
   //   }, 500);
   // }
+
+  /**
+   * Stream voce: con `voiceIngress` solo WSS (no VAD) — transcript + TTS dal server.
+   * Senza ingresso WSS: VAD + upload per segmento.
+   */
+  async initVoice() {
+    this.voiceAudioSubscription?.unsubscribe();
+    this.voiceVolumeSubscription?.unsubscribe();
+    this.botSpeakingSub?.unsubscribe();
+    this.voiceTranscriptSubscription?.unsubscribe();
+
+    const voiceIngress = this.buildVoiceIngressStreamConfig();
+    this.voiceAudioSubscription = undefined;
+    this.voiceTranscriptSubscription = this.voiceService.voiceTranscript$.subscribe(({ text }) => {
+      // Guard: stop accepting transcript text once the proxy is processing (thinking/speaking)
+      if (text && !this.isBotSpeaking) {
+        this.textInputTextArea = text;
+        this.lastVoiceTranscript = text;
+        // The proxy publishes the user utterance to Chat21 via AMQP on utterance-end;
+        // no sendMessage call is needed here — doing so would produce duplicate messages.
+      }
+    });
+
+    this.voiceVolumeSubscription = this.voiceService.volume$.subscribe((volume) => {
+      this.currentVolume = volume;
+    });
+    this.botSpeakingSub = this.voiceService.isAcquisitionBlocked$.subscribe((blocked) => {
+      this.isBotSpeaking = blocked;
+      if (blocked) {
+        // Proxy has started thinking/speaking — clear the textarea preview
+        this.textInputTextArea = '';
+      }
+    });
+    await this.voiceService.startSession(voiceIngress ? { voiceIngressStream: voiceIngress } : {});
+  }
+
+  private buildVoiceIngressStreamConfig(): VoiceStreamingSessionConfig | null {
+    const token = this.tiledeskAuthService.getTiledeskToken() ?? '';
+    const sender = this.tiledeskAuthService.getCurrentUser()?.uid ?? '';
+    const recipient = this.conversationWith ?? '';
+    if (!token || !sender || !recipient) {
+      this.logger.warn('[CONV-FOOTER] buildVoiceIngressStreamConfig: missing required fields', {
+        hasToken: !!token,
+        hasSender: !!sender,
+        hasRecipient: !!recipient,
+      });
+      return null;
+    }
+    const { recipientFullname, attributes, channelType } = this.buildSendMessageContext();
+    this.logger.log('[CONV-FOOTER] buildVoiceIngressStreamConfig', { sender, recipient, channelType });
+    return {
+      token,
+      sender,
+      recipient,
+      // Use Deepgram multilingual code-switching so the model detects the spoken
+      // language from the audio stream regardless of browser locale.
+      // Source: https://developers.deepgram.com/docs/multilingual-code-switching
+      lang: 'multi',
+      text: '',
+      type: 'text',
+      recipient_fullname: recipientFullname ?? '',
+      sender_fullname: recipientFullname ?? '',
+      attributes: attributes ?? {},
+      metadata: '',
+      channel_type: channelType ?? '',
+    };
+  }
+
+  /**
+   * Merge `attributes` di componente con `additional_attributes` e risolve `recipientFullname` come in sendMessage.
+   */
+  private buildSendMessageContext(additional_attributes?: any) {
+    let recipientFullname = this.translationMap.get('GUEST_LABEL');
+    const g_attributes = this.attributes;
+    const attributes = <any>{};
+    if (g_attributes) {
+      for (const [key, value] of Object.entries(g_attributes)) {
+        attributes[key] = value;
+      }
+    }
+    if (additional_attributes) {
+      for (const [key, value] of Object.entries(additional_attributes)) {
+        attributes[key] = value;
+      }
+    }
+    const senderId = this.senderId;
+    const projectid = this.project.id;
+    const channelType = this.channelType;
+    const userFullname = this.userFullname;
+    const userEmail = this.userEmail;
+    const conversationWith = this.conversationWith;
+
+    if (userFullname) {
+      recipientFullname = userFullname;
+    } else if (userEmail) {
+      recipientFullname = userEmail;
+    } else if (attributes && attributes['userFullname']) {
+      recipientFullname = attributes['userFullname'];
+    } else {
+      recipientFullname = this.translationMap.get('GUEST_LABEL');
+    }
+
+    return {
+      recipientFullname,
+      attributes,
+      senderId,
+      projectid,
+      channelType,
+      conversationWith,
+    };
+  }
+  async stopVoice(options?: { discardInProgressSegment?: boolean }) {
+    // Stop all active TTS audio immediately and reveal all text.
+    this.ttsPlayback.stopAll();
+
+    this.voiceAudioSubscription?.unsubscribe();
+    this.voiceAudioSubscription = undefined;
+
+    this.voiceTranscriptSubscription?.unsubscribe();
+    this.voiceTranscriptSubscription = undefined;
+
+    this.voiceVolumeSubscription?.unsubscribe();
+    this.voiceVolumeSubscription = undefined;
+
+    this.botSpeakingSub?.unsubscribe();
+    this.botSpeakingSub = undefined;
+    this.isBotSpeaking = false;
+
+    await this.voiceService.stopSession(options);
+    this.currentVolume = 0;
+    this.textInputTextArea = '';
+    this.lastVoiceTranscript = '';
+  }
+
+  /**
+   * Messaggio in arrivo da un altro mittente mentre lo stream è attivo: con VAD legacy scarta il segmento in corso.
+   * Con sola sessione WSS non ha effetto sul mic (nessun recorder a segmenti locale).
+   */
+  interruptStreamDueToPeerMessage(): void {
+    if (!this.isStreamAudioActive) {
+      return;
+    }
+    this.logger.log('[CONV-FOOTER] discard recording segment: incoming message from peer (stream stays on)');
+    try {
+      this.voiceService.discardCurrentRecordingSegment();
+    } catch (e) {
+      this.logger.error('[CONV-FOOTER] interruptStreamDueToPeerMessage', e);
+    }
+  }
+
+  ngOnDestroy() {
+    void this.stopVoice();
+  }
 
   // ========= begin:: functions send image ======= //
   // START LOAD IMAGE //
@@ -379,40 +579,14 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
       // msg = replaceEndOfLine(msg);
       // msg = msg.trim();
 
-      let recipientFullname = this.translationMap.get('GUEST_LABEL');
-        // sponziello: adds ADDITIONAL ATTRIBUTES TO THE MESSAGE
-      const g_attributes = this.attributes;
-      // added <any> to resolve the Error occurred during the npm installation: Property 'userFullname' does not exist on type '{}'
-      const attributes = <any>{};
-      if (g_attributes) {
-        for (const [key, value] of Object.entries(g_attributes)) {
-          attributes[key] = value;
-        }
-      }
-      if (additional_attributes) {
-        for (const [key, value] of Object.entries(additional_attributes)) {
-          attributes[key] = value;
-        }
-      }
-        // fine-sponziello
-      // this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith)
-      const senderId = this.senderId;
-      const projectid = this.project.id;
-      const channelType = this.channelType;
-      const userFullname = this.userFullname;
-      const userEmail = this.userEmail;
-      const conversationWith = this.conversationWith;
-        
-
-      if (userFullname) {
-        recipientFullname = userFullname;
-      } else if (userEmail) {
-        recipientFullname = userEmail;
-      } else if (attributes && attributes['userFullname']) {
-        recipientFullname = attributes['userFullname'];
-      } else {
-        recipientFullname = this.translationMap.get('GUEST_LABEL');
-      }
+      const {
+        recipientFullname,
+        attributes,
+        senderId,
+        projectid,
+        channelType,
+        conversationWith,
+      } = this.buildSendMessageContext(additional_attributes);
 
       this.onBeforeMessageSent.emit({
         senderFullname: recipientFullname,
@@ -521,7 +695,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     }
   }
 
-  prepareAndUpload(audioBlob: Blob) {
+  prepareAndUpload(audioBlob: Blob, text: string = '') {
 
     this.isFilePendingToUpload = true;
     
@@ -551,7 +725,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     this.logger.log('[UPLOAD] metadata:', metadata);
   
     // stesso metodo che già usi
-    this.uploadSingle(metadata, file, '');
+    this.uploadSingle(metadata, file, text);
   }
 
   // Funzione per convertire Blob in Base64 usando FileReader
@@ -658,6 +832,42 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     }
   }
 
+  async onStreamPressed(event: Event) {
+    this.logger.log('[CONV-FOOTER] onStreamPressed:event', event);
+    event.preventDefault();
+    if (this.showAlertEmoji) {
+      return;
+    }
+    // Treat a click during connecting as a cancel request (same as turning off).
+    const turningOn = !this.isStreamAudioActive && !this.isStreamAudioConnecting;
+    this.logger.log('[CONV-FOOTER] onStreamPressed', { turningOn });
+    if (turningOn) {
+      this.isStreamAudioConnecting = true;
+      this.onStreamAudioConnectingChange.emit(true);
+      try {
+        this.currentVolume = 0;
+        await this.initVoice();
+        this.isStreamAudioActive = true;
+      } catch (e) {
+        this.logger.error('[CONV-FOOTER] onStreamPressed: initVoice failed', e);
+        this.isStreamAudioActive = false;
+        this.ttsPlayback.cancelAll();
+      } finally {
+        this.isStreamAudioConnecting = false;
+        this.onStreamAudioConnectingChange.emit(false);
+      }
+    } else {
+      await this.stopVoice();
+      this.isStreamAudioActive = false;
+      // Close-stream-button clicked: stop any playing/queued TTS audio.
+      this.ttsPlayback.cancelAll();
+      this.isStreamAudioConnecting = false;
+      this.onStreamAudioConnectingChange.emit(false);
+    }
+    this.onStreamAudioActiveChange.emit(this.isStreamAudioActive);
+    this.logger.log('[CONV-FOOTER] isStreamAudioActive', this.isStreamAudioActive);
+  }
+
   async onEmojiiPickerClicked(){
     // if(this.loadPickerModule){
     //   this.loadPickerModule = false;
@@ -709,6 +919,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
     this.onNewConversationButtonClicked.emit();
   }
 
+  onCloseChat(event){
+    this.onCloseChatButtonClicked.emit();
+  }
+
   // onContinueConversation(){
   //   this.hideTextAreaContent = false;
   //   this.onBackButton.emit(false)
@@ -745,48 +959,46 @@ export class ConversationFooterComponent implements OnInit, OnChanges {
   }
 
   /**
-   * when I press a key I call this method which:
-   * check if 'enter' has been pressed
-   * if you clear text
-   * set field height as min by default
-   * takes out the focus and resets it after a few moments
-   * (this is a patch to keep the focus and eliminate the br of the send !!!)
-   * send message
+   * Single keyboard handler for the message textarea.
+   *
+   * - Enter (no modifier)               -> send message
+   * - Shift / Alt / Ctrl / Meta + Enter -> insert a newline (default browser behavior)
+   * - Tab                               -> prevented, to keep focus inside the chat
+   *
+   * Modifier check is intentionally on `keydown` because `keypress` is deprecated
+   * and does not consistently fire for modifier combos across browsers.
    * @param event
    */
-  onkeypress(event) {
+  onkeydown(event: KeyboardEvent) {
     const keyCode = event.which || event.keyCode;
-    this.textInputTextArea = ((document.getElementById('chat21-main-message-context') as HTMLInputElement).value);
-    if (keyCode === 13) { // ENTER pressed
-      if(this.showAlertEmoji){
-        return; 
-      }
-      if (this.textInputTextArea && this.textInputTextArea.trim() !== '') {
-        //   that.logger.log('[CONV-FOOTER] sendMessage -> ', this.textInputTextArea);
-        // this.resizeInputField();
-        // this.messagingService.sendMessage(msg, TYPE_MSG_TEXT);
-        // this.setDepartment();
-        // this.textInputTextArea = replaceBr(this.textInputTextArea);
-        this.sendMessage(this.textInputTextArea, TYPE_MSG_TEXT);
-        // this.restoreTextArea();
-      }
-    } else if (keyCode === 9) { // TAB pressed
-      event.preventDefault();
-    }
-  }
 
-  
-  /**
-  * HANDLE: cmd+enter, shiftKey+enter, alt+enter, ctrl+enter
-  * @param event 
-  */
-  onkeydown(event){
-    const keyCode = event.which || event.keyCode;
-    // metaKey -> COMMAND ,  shiftKey -> SHIFT, altKey -> ALT, ctrlKey -> CONTROL
-    if( (event.metaKey || event.shiftKey || event.altKey || event.ctrlKey) && keyCode===13){  
+    if (keyCode === 13) { // ENTER
+      const hasModifier = event.metaKey || event.shiftKey || event.altKey || event.ctrlKey;
+      if (hasModifier) {
+        // Let the textarea insert a newline on its own (do not preventDefault).
+        return;
+      }
+
+      // Plain Enter -> send the message
       event.preventDefault();
-      this.textInputTextArea += '\r\n';
-      this.resizeInputField();
+
+      if (this.showAlertEmoji) {
+        return;
+      }
+
+      const target = document.getElementById('chat21-main-message-context') as HTMLInputElement;
+      if (target) {
+        this.textInputTextArea = target.value;
+      }
+
+      if (this.textInputTextArea && this.textInputTextArea.trim() !== '') {
+        this.sendMessage(this.textInputTextArea, TYPE_MSG_TEXT);
+      }
+      return;
+    }
+
+    if (keyCode === 9) { // TAB
+      event.preventDefault();
     }
   }
   

@@ -24,13 +24,17 @@
     font-size: 14px;
     // margin: 0 25px;
 }
-.wrapper div.arrow {
+.wrapper button.arrow {
     top: 50%;
     height: 40px;
     width: 40px;
     cursor: pointer;
     position: absolute;
     background: #fff;
+    border: none;
+    padding: 0;
+    -webkit-appearance: none;
+    appearance: none;
     border-radius: 50%;
     box-shadow: 0 3px 6px rgba(0,0,0,0.23);
     transform: translateY(-50%);
@@ -41,13 +45,13 @@
     justify-content: center;
     align-items: center;
 }
-.wrapper div.arrow:active{
+.wrapper button.arrow:active{
     transform: translateY(-50%) scale(0.85);
 }
-.wrapper div.arrow:first-child{
+.wrapper button.arrow:first-child{
     left: -22px;
 }
-.wrapper div.arrow:last-child{
+.wrapper button.arrow:last-child{
     right: -22px;
 }
 .wrapper .carousel{
@@ -192,13 +196,18 @@
 
 
     .single-button{
-        // border-top-color: rgb(219, 225, 232);
-
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0;
+        border: none;
+        border-top: 1px dashed rgba(0, 0, 0, 0.08);
+        text-align: center;
+        -webkit-appearance: none;
+        appearance: none;
         -webkit-box-align: center;
         -ms-flex-align: center;
         align-items: center;
         justify-content: center;
-        border-top: 1px dashed rgba(0, 0, 0, 0.08);
         cursor: pointer;
         display: -webkit-box;
         display: -ms-flexbox;
@@ -222,7 +231,6 @@
         line-height: 16px;
         padding: 8px 16px!important;
 
-        &:focus,
         &:hover {
             color: var(--hoverTextColor);
             background:  var(--hoverBackgroundColor);
@@ -232,6 +240,10 @@
                     fill: var(--hoverTextColor);
                 }
             }
+        }
+        &:focus-visible {
+            outline: 2px solid var(--hoverBackgroundColor, #1565c0);
+            outline-offset: 2px;
         }
         &:after {
             content: "";

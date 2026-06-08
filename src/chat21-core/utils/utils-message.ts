@@ -50,6 +50,13 @@ export function isAudio(message: any) {
   return false;
 }
 
+export function isAudioTTS(message: any) {
+  if (message && message.type && message.type === 'tts' && message.metadata && message.metadata.src && message.metadata.type.includes('audio') ) {
+    return true;
+  }
+  return false;
+}
+
 export function isJsonSources(message: any) {
   if (message && message.type && message.type === 'url_preview') {
     return true;

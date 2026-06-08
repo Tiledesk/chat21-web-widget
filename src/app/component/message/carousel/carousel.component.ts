@@ -15,6 +15,7 @@ export class CarouselComponent implements OnInit{
   @Input() isConversationArchived: boolean;
   @Input() isLastMessage: boolean;
   @Input() stylesMap: Map<string, string>;
+  @Input() translationMap: Map<string, string>;
   @Output() onAttachmentButtonClicked = new EventEmitter<any>();
   @Output() onElementRendered = new EventEmitter<{element: string, status: boolean}>()
   // ========= end:: Input/Output values ============//
@@ -106,6 +107,21 @@ export class CarouselComponent implements OnInit{
     // this.carousel.scrollLeft += width;
     // this.carousel.classList.remove("no-transition");
 
+  }
+
+  /**
+   * Builds an accessible label for each carousel slide, e.g. "Slide 2 of 5".
+   * Uses the i18n template `CAROUSEL_SLIDE_LABEL` if available, otherwise falls back to English.
+   */
+  getSlideLabel(current: number, total: number): string {
+    const template = this.translationMap?.get('CAROUSEL_SLIDE_LABEL');
+    const safeTotal = total || 0;
+    if (template && typeof template === 'string') {
+      return template
+        .replace('{current}', String(current))
+        .replace('{total}', String(safeTotal));
+    }
+    return `Slide ${current} of ${safeTotal}`;
   }
 
   actionButtonClick(ev, button, index){

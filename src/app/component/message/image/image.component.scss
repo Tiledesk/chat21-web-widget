@@ -21,6 +21,22 @@ img {
     transform: scale(1.05);
 }
 
+.c21-image-trigger {
+    display: block;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--borderRadius);
+    width: 100%;
+    cursor: pointer;
+    line-height: 0;
+}
+.c21-image-trigger:focus-visible {
+    outline: 2px solid var(--c21-focus-ring, #1a73e8);
+    outline-offset: 2px;
+}
+
   
 .c21-img-container {
     text-align: center;
