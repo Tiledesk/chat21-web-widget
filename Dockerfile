@@ -1,7 +1,7 @@
 ### STAGE 1: Build ###
 
 # We label our stage as ‘builder’
-FROM --platform=$BUILDPLATFORM node:20.12.2-alpine3.19 as builder
+FROM --platform=$BUILDPLATFORM node:20.12.2-bookworm-slim AS builder
 
 COPY package.json package-lock.json ./
 
@@ -15,8 +15,8 @@ COPY . .
 
 ## Build the angular app in production mode and store the artifacts in dist folder
 
-
 RUN npx ng build --configuration="prod" --output-path=dist --base-href=./ --output-hashing=none
+
 
 ### STAGE 2: Setup ###
 FROM --platform=$BUILDPLATFORM nginx:1.14.1-alpine
