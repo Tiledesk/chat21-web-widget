@@ -3,8 +3,9 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { MAX_WIDTH_IMAGES, MIN_WIDTH_IMAGES } from 'src/chat21-core/utils/constants';
-import { VoiceService } from 'src/app/providers/voice/voice.service';
+import { calcImageSize } from 'src/chat21-core/utils/utils-message';
 import { JsonSourcesParserService } from 'src/app/providers/json-sources-parser.service';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
 
 import { BubbleMessageComponent } from './bubble-message.component';
 
@@ -12,15 +13,16 @@ describe('BubbleMessageComponent', () => {
   let component: BubbleMessageComponent;
   let fixture: ComponentFixture<BubbleMessageComponent>;
 
+  const jsonSourcesParserMock = {
+    getUrlPreviewPayload: () => null,
+    parseBaseFromMessage: jasmine.createSpy('parseBaseFromMessage').and.returnValue(null),
+    enrichSources: jasmine.createSpy('enrichSources').and.resolveTo([]),
+  };
+
   const voiceServiceMock = {
     isWssVoiceActive: false,
     markProxyHandled: jasmine.createSpy('markProxyHandled'),
     voiceTtsKaraoke$: of({ text: '', words: [], activeIndex: -1 }),
-  };
-
-  const jsonSourcesParserMock = {
-    parseBaseFromMessage: jasmine.createSpy('parseBaseFromMessage').and.returnValue(null),
-    enrichSources: jasmine.createSpy('enrichSources').and.resolveTo(null),
   };
 
   const textMessage: any = {
@@ -75,6 +77,33 @@ describe('BubbleMessageComponent', () => {
     fixture.detectChanges();
     const textChild = fixture.debugElement.query(By.css('chat-text'));
     expect(textChild.properties.text).toEqual(textMessage.text);
+  });
+
+  describe('calcImageSize', () => {
+    it('should scale down when width exceeds MAX_WIDTH_IMAGES', () => {
+      const meta = { width: MAX_WIDTH_IMAGES * 2, height: 100 };
+      const s = calcImageSize(meta);
+      expect(s.width).toBe(MAX_WIDTH_IMAGES);
+    });
+
+    it('should apply MIN_WIDTH when thumbnail width is small', () => {
+      const meta = { width: 40, height: 80 };
+      const s = calcImageSize(meta);
+      expect(s.width).toBe(MIN_WIDTH_IMAGES);
+    });
+
+    it('should keep metadata dimensions for mid-sized images', () => {
+      const meta = { width: 120, height: 60 };
+      const s = calcImageSize(meta);
+      expect(s.width).toBe(120);
+      expect(s.height).toBe(60);
+    });
+
+    it('should return raw metadata when width branch not matched', () => {
+      const s = calcImageSize({ width: undefined, height: 10 });
+      expect(s.width).toBeUndefined();
+      expect(s.height).toBe(10);
+    });
   });
 
   describe('ngOnChanges', () => {

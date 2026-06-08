@@ -263,5 +263,4 @@ describe('ConversationContentComponent', () => {
       expect(spy).not.toHaveBeenCalled();
     });
   });
-
 });

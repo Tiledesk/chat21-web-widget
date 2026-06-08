@@ -53,6 +53,8 @@
 # 5.1.32-rc14
 - **changed**: minor ui fixed
 
+# 5.2.0 
+
 # 5.1.32-rc13
 - **added**: VAD speech state events (`speechStart$`, `speechEnd$`) to improve UI/state transitions around user speech
 - **changed**: stream audio footer UI — stream button expands into a “Terminate” pill with animated level bars driven by mic intensity; recorder icon hidden while streaming; textarea width adjusted while streaming

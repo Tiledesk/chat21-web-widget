@@ -1,4 +1,4 @@
-<div class="bubble-message messages primary-color">
+<div class="bubble-message messages primary-color" *ngIf="hasRenderableContent()">
     <div>
 
       <div *ngIf="messageType(MESSAGE_TYPE_OTHERS, message) && !isSameSender"

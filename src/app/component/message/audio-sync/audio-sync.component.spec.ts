@@ -1,5 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Subject } from 'rxjs';
 
 import { AudioSyncComponent } from './audio-sync.component';
 import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
@@ -9,12 +10,22 @@ import { Globals } from 'src/app/utils/globals';
 describe('AudioSyncComponent', () => {
   let component: AudioSyncComponent;
   let fixture: ComponentFixture<AudioSyncComponent>;
-  let voiceService: { proxyTtsStreamUrl: string | null; proxyTtsUrl: string | null };
+  let voiceService: {
+    proxyTtsStreamUrl: string | null;
+    proxyTtsUrl: string | null;
+    speechStart$: ReturnType<Subject<void>['asObservable']>;
+  };
 
   beforeEach(async () => {
+    const speechStartSource = new Subject<void>();
+    const cancelAllSource = new Subject<void>();
+    const stopAllSource = new Subject<void>();
+    const preemptSource = new Subject<string>();
+
     voiceService = {
       proxyTtsStreamUrl: 'https://speech.example.com/api/tts/stream',
       proxyTtsUrl: 'https://speech.example.com/api/tts',
+      speechStart$: speechStartSource.asObservable(),
     };
 
     await TestBed.configureTestingModule({
@@ -27,15 +38,15 @@ describe('AudioSyncComponent', () => {
             requestStart: (_ownerId: string, start: () => void) => start(),
             releaseIfCurrent: jasmine.createSpy('releaseIfCurrent'),
             release: jasmine.createSpy('release'),
-            stopAllPlayback$: { subscribe: () => ({ unsubscribe: () => undefined }) },
-            preemptPlayback$: { subscribe: () => ({ unsubscribe: () => undefined }) },
+            stopAllPlayback$: stopAllSource.asObservable(),
+            preemptPlayback$: preemptSource.asObservable(),
+            cancelAll$: cancelAllSource.asObservable(),
           },
         },
         { provide: Globals, useValue: { tiledeskToken: 'JWT test-token', jwt: '' } },
         { provide: VoiceService, useValue: voiceService },
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AudioSyncComponent);
     component = fixture.componentInstance;
@@ -79,7 +90,6 @@ describe('AudioSyncComponent', () => {
 
     expect(body).toEqual({
       text: 'hello',
-      streaming: true,
       outputFormat: 'mp3_44100_128',
     });
   });
@@ -96,7 +106,6 @@ describe('AudioSyncComponent', () => {
 
     expect(body).toEqual({
       text: 'hello',
-      streaming: true,
       outputFormat: 'pcm_16000',
     });
   });

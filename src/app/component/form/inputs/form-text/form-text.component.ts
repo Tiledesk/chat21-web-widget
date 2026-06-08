@@ -47,7 +47,6 @@ export class FormTextComponent implements OnInit, OnDestroy {
     return this.form.controls[name].invalid ? 'true' : 'false';
   }
 
-
   constructor(private rootFormGroup: FormGroupDirective,
               private elementRef: ElementRef) { }
 
