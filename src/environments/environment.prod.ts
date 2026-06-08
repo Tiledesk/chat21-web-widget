@@ -7,7 +7,7 @@ export const environment = {
   production: true,
   version: require('../../package.json').version, // https://stackoverflow.com/questions/34907682/how-to-display-app-version-in-angular2
   remoteConfig: true,
-  remoteConfigUrl: '/widget-config-aws-stage.json',
+  remoteConfigUrl: '/widget-config.json',
   loadRemoteTranslations: true,
   remoteTranslationsUrl: 'http://localhost:3000/',
   chatEngine: 'CHANGEIT',
