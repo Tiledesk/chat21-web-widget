@@ -65,3 +65,4 @@ mocks/voice-websocket-mock/temp/
 
 deploy_amazon_*.sh
 .claude
+test.md
