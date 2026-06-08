@@ -205,14 +205,6 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
     this.jsonSources = enriched;
   }
 
-  trackWord(_index: number, item: { word: string; index: number }): number {
-    return item.index;
-  }
-
-  trackKaraokeWord(index: number): number {
-    return index;
-  }
-
   onBeforeMessageRenderFN(event: any): void {
     this.onBeforeMessageRender.emit({ message: this.message, sanitizer: this.sanitizer, messageEl: event.messageEl, component: event.component });
   }
