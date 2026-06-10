@@ -85,10 +85,27 @@ export class BubbleMessageComponent {
     const urlPreviewPayload = this.jsonSourcesParser.getUrlPreviewPayload(this.message);
     this.isUrlPreviewMessage = !!urlPreviewPayload;
     if (urlPreviewPayload) {
-      this.jsonSourcesDisplayFields = urlPreviewPayload.displayFields;
-      this.jsonSourcesBackgroundColor = urlPreviewPayload.previewBackgroundColor;
+      // displayFields / previewBackgroundColor may travel on the root, the metadata
+      // OR the attributes container depending on how the backend serializes the
+      // message. Resolve them with an explicit fallback so we always pick them up.
+      this.jsonSourcesDisplayFields = this.firstDefined<UrlPreviewDisplayFields>(
+        urlPreviewPayload.displayFields,
+        (this.message as any)?.displayFields,
+        (this.message as any)?.metadata?.displayFields,
+        (this.message as any)?.attributes?.displayFields,
+      );
+      this.jsonSourcesBackgroundColor = this.firstDefined<string>(
+        urlPreviewPayload.previewBackgroundColor,
+        (this.message as any)?.previewBackgroundColor,
+        (this.message as any)?.metadata?.previewBackgroundColor,
+        (this.message as any)?.attributes?.previewBackgroundColor,
+      );
       this.loadJsonSourcesFromUrlPreviewMessage();
     }
+  }
+
+  private firstDefined<T>(...values: Array<T | undefined>): T | undefined {
+    return values.find((v) => v !== undefined && v !== null);
   }
 
   private async loadJsonSourcesFromUrlPreviewMessage(): Promise<void> {

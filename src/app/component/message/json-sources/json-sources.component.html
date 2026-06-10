@@ -21,7 +21,7 @@
     <div class="source-row__left">
       <div class="source-row__title">{{ getTitleText(item) }}</div>
       <div class="source-row__desc" *ngIf="isFieldVisible('description') && item.description">{{ item.description }}</div>
-      <div class="source-row__meta">
+      <div class="source-row__meta" *ngIf="isFieldVisible('source')">
         <img class="source-row__favicon" *ngIf="getFavicon(item)" [src]="getFavicon(item)" alt="" loading="lazy" />
         <span class="source-row__host">{{ getHostname(item) }}</span>
       </div>

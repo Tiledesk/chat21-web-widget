@@ -9,6 +9,7 @@ export type UrlPreviewDisplayFields = {
   title?: boolean;
   description?: boolean;
   image?: boolean;
+  source?: boolean;
 };
 
 export type UrlPreviewMessage = {
