@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.2.2-rc1
+- **added**:  added "source" parameter to URL preview
+
 # 5.1.34-rc2
 - **added**: updated url preview, added displayed fields
 
