@@ -6,8 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# 5.2.2
-- **changed**: set only one line on the preview url title
+
+# 5.2.3
+- **changed**: added "source" parameter to URL preview
 
 # 5.2.1
 - **bug fixed**: prevent avatar display when audio stream is active in conversation content
