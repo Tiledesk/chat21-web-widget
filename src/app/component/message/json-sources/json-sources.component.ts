@@ -14,6 +14,7 @@ export type JsonSourcesDisplayFields = {
   title?: boolean;
   description?: boolean;
   image?: boolean;
+  source?: boolean;
 };
 
 @Component({
