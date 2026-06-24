@@ -14,7 +14,7 @@
         (onButtonClicked)="returnOnAttachmentButtonClicked($event)">
       </chat-text-button-attachment>
 
-      <chat-link-button-attachment *ngIf="button.type === 'url'" class="div-button"
+      <chat-link-button-attachment *ngIf="button.type === 'url' && isLastMessage === true" class="div-button"
         [button]="button"
         [fontSize]="stylesMap.get('buttonFontSize')"
         [backgroundColor]="stylesMap.get('buttonBackgroundColor')"

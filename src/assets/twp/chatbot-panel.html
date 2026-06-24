@@ -502,7 +502,10 @@
             marginY: "50px",
             // calloutTimer: 1,
             singleConversation: true,
-            restartConversation: true,
+            // false = al reload RIPRENDE la conversazione persistita (recipientId in storage),
+            // invece di crearne una nuova ogni volta. Una nuova parte solo se non esiste
+            // (primo accesso) o se richiesto esplicitamente (es. tiledesk_restartConversation=true).
+            restartConversation: false,
             hideHeaderCloseButton: true,
             isLogEnabled:true,
             customAttributes: { sound: false },

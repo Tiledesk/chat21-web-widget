@@ -6,6 +6,13 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 6.0.0
+- `environment.ts`: `remoteConfigUrl` → `/widget-config.json` servito come asset (il path `real_data/widget-config-aws-stage.json` dava 404 in locale).
+- `widget-config.json`: rimosso `brandSrc: ${BRAND_SRC}` (placeholder non risolto in locale).
+- `test.html`: `projectid` del progetto di test locale.
+- `chatbot-panel.html`: `restartConversation: false` di default (commento) — una conversazione nuova si forza con `tiledesk_restartConversation=true` (usato dal pannello Test/Preview del Design Studio).
+- `message-attachment.component.html`: guardia `isLastMessage` sui bottoni `url` → **implementa il fix descritto in 5.1.34** qui sotto.
+
 # 5.1.34
 - **bug fixed**: if last message is ulr_preview shows previous message buttons
 

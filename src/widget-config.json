@@ -23,7 +23,5 @@
     "baseImageUrl": "http://localhost:3000/",
     "dashboardUrl": "http://localhost:4500/",
     "authPersistence": "LOCAL",
-    "enbedJs": true,
-    "brandSrc": "${BRAND_SRC}"
-    
+    "enbedJs": true
 }
