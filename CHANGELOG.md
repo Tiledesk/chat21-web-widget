@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.2.2-rc2
+- **bug-fixed**: added stringToBoolean for closeChatInConversation env variable
+
 # 5.2.2-rc1
 - **added**:  added "source" parameter to URL preview
 
