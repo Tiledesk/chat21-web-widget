@@ -67,7 +67,7 @@ export class GlobalSettingsService {
         /**SET PERSISTENCE parameter */
         this.globals.persistence = this.appConfigService.getConfig().authPersistence
         /**SET CLOSE CHAT IN CONVERSATION parameter */
-        this.globals.closeChatInConversation = this.appConfigService.getConfig().closeChatInConversation;
+        this.globals.closeChatInConversation = stringToBoolean(this.appConfigService.getConfig().closeChatInConversation);
 
         // ------------------------------- //
         /** LOAD PARAMETERS FROM SERVER
