@@ -6,6 +6,13 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+
+# 6.0.1
+- **Transport MQTT: schema `ws://`/`wss://` al posto di `mqtt://`** — `mqtt.js` nel **browser** non supporta `mqtt://` (MQTT su TCP puro: l'API per un socket TCP grezzo non esiste nel browser, e la porta TCP MQTT sarebbe la **1883**, non la 15675); il plugin `rabbitmq_web_mqtt` (porta **15675**, path `/ws`) parla MQTT-over-**WebSocket**, quindi serve `ws://`/`wss://`.
+  - `chat21client.js`: nel ramo **endpoint relativo** (`MQTTendpoint` che inizia con `/`) lo schema costruito passa da `mqtt:` a `ws:` (pagine http) / `wss:` (pagine https). **Inerte con endpoint assoluti** (`ws://…`/`wss://…`, che prendono il ramo `else`); corregge i setup dietro reverse-proxy con path relativo.
+  - `environment.ts`: fallback locale `MQTTendpoint` `mqtt://localhost:15675/ws` → `ws://localhost:15675/ws` (già allineato in `widget-config.json`).
+  - **Nota**: la **produzione non è toccata** — usa `environment.prod.ts` + `widget-config.json` con `MQTTendpoint` **assoluto** (da `${MQTT_ENDPOINT}`), che prende il ramo `else` e non esercita questo codice; `environment.prod.ts` resta a `mqtt://…` (solo fallback, mai usato in prod). **Non risolve la latenza del widget**: la causa è a valle del transport, non nello schema.
+
 # 6.0.0
 - `environment.ts`: `remoteConfigUrl` → `/widget-config.json` servito come asset (il path `real_data/widget-config-aws-stage.json` dava 404 in locale).
 - `widget-config.json`: rimosso `brandSrc: ${BRAND_SRC}` (placeholder non risolto in locale).

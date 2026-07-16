@@ -30,7 +30,7 @@ export const environment = {
   },
   chat21Config: {
     appId: 'tilechat',
-    MQTTendpoint: 'mqtt://localhost:15675/ws', // MQTT endpoint
+    MQTTendpoint: 'ws://localhost:15675/ws', // MQTT endpoint (web-mqtt WS su :15675 → schema ws://, non mqtt:// che in browser = TCP e fallisce)
     APIendpoint: 'http://localhost:8004/api'
   },
   apiUrl: 'http://localhost:3000/',

@@ -36,12 +36,10 @@ class Chat21Client {
                     loc = window.parent.location
                 }
                 if (loc.protocol === "https:") {
-                    // new_uri = "wss:";
-                    new_uri = "mqtt:";
-                    
+                    // web-mqtt su WebSocket: schema ws/wss (mqtt.js in browser NON supporta mqtt:// = TCP)
+                    new_uri = "wss:";
                 } else {
-                    // new_uri = "ws:";
-                    new_uri = "mqtt:";
+                    new_uri = "ws:";
                 }
                 new_uri += "//" + loc.host;
                 // new_uri += loc.pathname + "/to/ws";
