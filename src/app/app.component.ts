@@ -493,7 +493,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 // this.initConversationsHandler(this.g.tenant, that.g.senderId);
                 /* If singleConversation mode is active wait to showWidget: do it later in initConversationsHandler */
                 const hasBotsRules = Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0;
-                if ((autoStart || hasBotsRules) && !that.g.singleConversation) { 
+                const botRulesEnabled = this.g.project.profile?.customization?.botRulesEnabled;
+                console.log('botRulesEnabled ----------------->', botRulesEnabled);
+                console.log('hasBotsRules ----------------->', hasBotsRules);
+                console.log('autoStart ----------------->', autoStart);
+                if ((autoStart || (hasBotsRules && botRulesEnabled)) && !that.g.singleConversation) { 
                     that.showWidget();
                 }
 
@@ -521,10 +525,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 // that.hideWidget();
                 // that.g.setParameter('isShown', false, true);
                 that.triggerOnAuthStateChanged(that.stateLoggedUser);
+                /**
+                 * Auto-authenticate if:
+                 * - autoStart is true
+                 * - onPageChangeVisibilityDesktop is open
+                 * - onPageChangeVisibilityMobile is open
+                 * - botsRules is enabled and not empty
+                 */
                 const shouldAutoAuthenticate = autoStart ||
                     this.g.onPageChangeVisibilityDesktop === 'open' ||
                     this.g.onPageChangeVisibilityMobile === 'open' ||
-                    (Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0)
+                    (Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0 && this.g.project.profile?.customization?.botRulesEnabled)
                     // || this.g.hasCalloutInWidgetConfig;
                 if (shouldAutoAuthenticate) {
                     that.authenticate();
