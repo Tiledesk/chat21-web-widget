@@ -493,7 +493,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 // this.initConversationsHandler(this.g.tenant, that.g.senderId);
                 /* If singleConversation mode is active wait to showWidget: do it later in initConversationsHandler */
                 const hasBotsRules = Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0;
-                const botRulesEnabled = this.g.project.profile?.customization?.botRulesEnabled;
+                const botRulesEnabled = this.g.project.profile?.customization?.rules;
                 console.log('botRulesEnabled ----------------->', botRulesEnabled);
                 console.log('hasBotsRules ----------------->', hasBotsRules);
                 console.log('autoStart ----------------->', autoStart);
