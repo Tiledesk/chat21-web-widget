@@ -228,6 +228,8 @@ export class Globals {
   fontFamilySource: string; // *******  new ********
 
   size: 'min' | 'max' | 'top'; // *******  new ********
+
+  closeChatInConversation: boolean; // *******  new ********
   constructor(
   ) { }
 
@@ -444,7 +446,8 @@ export class Globals {
     this.hasCalloutInWidgetConfig = false;
     /** set widget size from 3 different positions: min, max, top */
     this.size = 'min';
-
+    /** enable to close the chat in conversation */
+    this.closeChatInConversation = false;
     // ============ END: SET EXTERNAL PARAMETERS ==============//
 
 
@@ -524,6 +527,7 @@ export class Globals {
       'calloutTitle': this.calloutTitle, 'calloutMsg': this.calloutMsg,
       'calloutTimer': this.calloutTimer, 'calloutStaus': this.calloutStaus,
       'channelType': this.channelType,
+      'closeChatInConversation': this.closeChatInConversation,
       'dynamicWaitTimeReply': this.dynamicWaitTimeReply,
       'fontSize': this.fontSize, 'fontFamily': this.fontFamily, 
       'fullscreenMode': this.fullscreenMode,

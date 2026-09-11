@@ -118,5 +118,6 @@
     "CAROUSEL_NEXT": "Diapositiva siguiente",
     "CAROUSEL_LABEL": "Carrusel de tarjetas",
     "CAROUSEL_SLIDE_LABEL": "Diapositiva {current} de {total}",
-    "SKIP_TO_COMPOSER": "Saltar al cuadro de mensaje"
+    "SKIP_TO_COMPOSER": "Saltar al cuadro de mensaje",
+    "MAX_ATTACHMENT_ERROR": "El archivo supera el tamaño máximo permitido"
 }

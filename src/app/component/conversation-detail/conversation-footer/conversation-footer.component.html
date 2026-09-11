@@ -75,6 +75,17 @@
                 </svg>
             </span>
         </label>
+
+        <!-- ICON REC -->
+        <div *ngIf="showAudioRecorderFooterButton && !textInputTextArea" tabindex="-1" class="chat21-audio-button" [class.active]="isStopRec" id="chat21-button-rec">
+            <chat-audio-recorder
+                (startRecordingEvent)="onStartRecording()"
+                (deleteRecordingEvent)="onDeleteRecording()"
+                (endRecordingEvent)="onEndRecording($event)"
+                (sendRecordingEvent)="onSendRecording($event)"
+                [stylesMap]="stylesMap">
+            </chat-audio-recorder>
+        </div>
     </div>
 
     <div *ngIf="!isStopRec"

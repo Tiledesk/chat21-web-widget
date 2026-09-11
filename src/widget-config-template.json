@@ -24,5 +24,6 @@
     "dashboardUrl": "${DASHBOARD_URL}",
     "authPersistence": "${AUTH_PERSISTENCE}",
     "enbedJs": "${ENBED_JS}",
-    "brandSrc": "${BRAND_SRC}"
+    "brandSrc": "${BRAND_SRC}",
+    "closeChatInConversation": "${CLOSE_CHAT_IN_CONVERSATION}"
 }
