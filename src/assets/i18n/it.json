@@ -117,5 +117,5 @@
     "CAROUSEL_LABEL": "Carosello di card",
     "CAROUSEL_SLIDE_LABEL": "Diapositiva {current} di {total}",
     "SKIP_TO_COMPOSER": "Salta al campo del messaggio",
-    "MAX_ATTACHMENT_ERROR": "Il file supera la dimensione massima consentita",
+    "MAX_ATTACHMENT_ERROR": "Il file supera la dimensione massima consentita"
 }
