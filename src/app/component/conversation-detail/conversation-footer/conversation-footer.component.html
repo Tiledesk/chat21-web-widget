@@ -75,40 +75,26 @@
                 </svg>
             </span>
         </label>
-
-        <!-- ICON REC -->
-        <div *ngIf="showAudioRecorderFooterButton && !textInputTextArea" tabindex="-1" class="chat21-audio-button" [class.active]="isStopRec" id="chat21-button-rec">
-            <chat-audio-recorder
-                (startRecordingEvent)="onStartRecording()"
-                (deleteRecordingEvent)="onDeleteRecording()"
-                (endRecordingEvent)="onEndRecording($event)"
-                (sendRecordingEvent)="onSendRecording($event)"
-                [stylesMap]="stylesMap">
-            </chat-audio-recorder>
-        </div>
     </div>
 
-    <div *ngIf="!isStopRec"
-         class="visible-text-area"
-         [class.hasError]="showAlertEmoji"
-         [class.disabled]="(isConversationArchived || hideTextReply)? true : null">
-      <textarea
-        [attr.disabled]="(hideTextReply)? true : null"
-        [attr.placeholder]="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
-        [attr.aria-label]="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
-        [attr.aria-multiline]="true"
-        [attr.aria-invalid]="showAlertEmoji ? 'true' : 'false'"
-        start-focus-chat21-conversation-component
-        inputTextArea
-        #textbox
-        rows="1"
-        id="chat21-main-message-context"
-        class='f21textarea c21-button-clean'
-        [(ngModel)]="textInputTextArea"
-        (ngModelChange)="onTextAreaChange()"
-        (keydown)="onkeydown($event)"
-        (paste)="onPaste($event)">
-      </textarea>
+    <div *ngIf="!isStopRec" class="visible-text-area" class.hasError]="showAlertEmoji" [class.disabled]="(isConversationArchived || hideTextReply)? true : null">
+        <textarea
+            [attr.disabled]="(hideTextReply)? true : null"
+            [attr.placeholder]="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
+            [attr.aria-label]="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
+            [attr.aria-multiline]="true"
+            [attr.aria-invalid]="showAlertEmoji ? 'true' : 'false'"
+            start-focus-chat21-conversation-component
+            inputTextArea
+            #textbox
+            rows="1"
+            id="chat21-main-message-context"
+            class='f21textarea c21-button-clean'
+            [(ngModel)]="textInputTextArea"
+            (ngModelChange)="onTextAreaChange()"
+            (keydown)="onkeydown($event)"
+            (paste)="onPaste($event)">
+        </textarea>
     </div>
 
     <!-- ICON SEND -->
@@ -142,6 +128,7 @@
             [stylesMap]="stylesMap">
         </chat-audio-recorder>
     </div>
+
 </div>
 
 
