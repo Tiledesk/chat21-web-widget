@@ -535,7 +535,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 const shouldAutoAuthenticate = autoStart ||
                     this.g.onPageChangeVisibilityDesktop === 'open' ||
                     this.g.onPageChangeVisibilityMobile === 'open' ||
-                    (Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0 && this.g.project.profile?.customization?.botRulesEnabled)
+                    (Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0 && this.g.project.profile?.customization?.rules)
                     // || this.g.hasCalloutInWidgetConfig;
                 if (shouldAutoAuthenticate) {
                     that.authenticate();
