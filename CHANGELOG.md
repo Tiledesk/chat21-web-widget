@@ -6,9 +6,19 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.36-ar
+- **bug fixed**: texarea with is not responsive
 
+# 5.1.35-ar
+- **bug fixed**: if last message is ulr_preview shows previous message buttons
 
-# this branch
+# 5.1.34-ar
+- **added**: closeChatInConversation env parameter to manage 'Close Chat' button in conversation
+
+# 5.1.33-ar
+- **bug fixed**: widget not loaded because blob block loading in lauch.js
+
+# 5.1.32-ar
 - **changed**: start with authentication if hasCalloutInWidgetConfig is true
 - **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
 - **changed**: Set the default autoStart value to false
@@ -73,12 +83,7 @@
 # 5.1.7-rc8
 - **changed**: Updated the translations of the tooltips in the footer-component
 - **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
-
-# 5.1.7-rc7
-- **bug-fixed**: button new_conversation always appear. added subscription to conversationAdded
-
-# 5.1.7-rc6
-- **added**: Added MAX_ATTACHMENT_ERROR error message when uploading a file larger than 10 MB
+- **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
 
 # this branch
 - **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)

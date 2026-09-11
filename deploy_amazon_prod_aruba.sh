@@ -4,7 +4,7 @@ echo "version $version"
 
 npm i
 
-cp src/environments/real_data/environment.prod.ts src/environments/environment.prod.ts
+cp src/environments/real_data/environment.prod-aruba.ts src/environments/environment.prod.ts
 
 # --build-optimizer=false if localstorage is disabled (webview) appears https://github.com/firebase/angularfire/issues/970
 ng build --configuration="prod" --aot=true
@@ -25,10 +25,10 @@ node ./src/build_launch.js
 # #### MQTT #####
 cd dist/browser
 # aws s3 sync . s3://tiledesk-widget/v5/latest/
-aws s3 sync . s3://tiledesk-widget/v6/$version/ --cache-control max-age=86400 --exclude='launch.js' #8days
-aws s3 sync . s3://tiledesk-widget/v6/$version/ --cache-control "no-store,no-cache,private" --exclude='*' --include='launch.js'
-#aws s3 sync . s3://tiledesk-widget/v6/ --cache-control max-age=86400 --exclude='launch.js' #8days
-#aws s3 sync . s3://tiledesk-widget/v6/ --cache-control "no-store,no-cache,private" --exclude='*' --include='launch.js'
+aws s3 sync . s3://tiledesk-widget/aruba/v6/$version/ --cache-control max-age=86400 --exclude='launch.js' #8days
+aws s3 sync . s3://tiledesk-widget/aruba/v6/$version/ --cache-control "no-store,no-cache,private" --exclude='*' --include='launch.js'
+aws s3 sync . s3://tiledesk-widget/aruba/v6/ --cache-control max-age=86400 --exclude='launch.js' #8days
+aws s3 sync . s3://tiledesk-widget/aruba/v6/ --cache-control "no-store,no-cache,private" --exclude='*' --include='launch.js'
 cd ../..
 
 aws  cloudfront create-invalidation --distribution-id E3EJDWEHY08CZZ --paths "/*"
@@ -36,6 +36,6 @@ aws  cloudfront create-invalidation --distribution-id E3EJDWEHY08CZZ --paths "/*
 git restore src/environments/environment.prod.ts
 
 echo new version deployed $version on s3://tiledesk-widget/v6
-echo available on https://s3.eu-west-1.amazonaws.com/tiledesk-widget/v6/index.html
-echo https://widget.tiledesk.com/v6/index.html
-echo https://widget.tiledesk.com/v6/$version/index.html
+echo available on https://s3.eu-west-1.amazonaws.com/tiledesk-widget/aruba/v6/index.html
+echo https://widget.tiledesk.com/aruba/v6/index.html
+echo https://widget.tiledesk.com/aruba/v6/$version/index.html

@@ -92,7 +92,6 @@ export class ConversationContentComponent implements OnInit {
 
   }
 
-
   /**
    *
    * @param message

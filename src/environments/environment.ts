@@ -7,7 +7,8 @@ export const environment = {
   production: false,
   version: require('../../package.json').version, // https://stackoverflow.com/questions/34907682/how-to-display-app-version-in-angular2
   remoteConfig: true,
-  remoteConfigUrl: '/widget-config.json',
+  // remoteConfigUrl: '/widget-config.json',
+  remoteConfigUrl: '/environments/real_data/widget-config-aws-stage.json',
   loadRemoteTranslations: true,
   remoteTranslationsUrl: 'http://localhost:3000/',
   chatEngine: 'mqtt',
@@ -36,5 +37,7 @@ export const environment = {
   storage_prefix : 'widget_sv5',
   authPersistence: 'LOCAL',
   supportMode: true,
-  enbedJs: true
+  enbedJs: true,
+  voiceProxyWsUrl: '',
+  voiceProxyApiBaseUrl: '',
 };

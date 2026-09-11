@@ -44,7 +44,7 @@
                 top: 0;
                 right: 0;
                 left: 0;
-                bottom: calc(var(--chat-footer-logo-height) + var(--chat-footer-height));
+                bottom: calc(var(--chat-footer-logo-height) + var(--chat-footer-height) + var(--chat-footer-close-button-height));
                 overflow: hidden;
                 .time{
                     margin-bottom: 20px;
@@ -164,6 +164,12 @@
                         min-width: 14px;
                         border: 0.1px solid #0000000f;
                     }
+                    .msg_sent.json-resources{
+                        border: 0 !important;
+                        width: 100%;
+                        max-width: 652px;
+                        flex: 1 1 auto;
+                    }
                     .message_innerhtml {
                         padding: 8px;
                     }
@@ -236,6 +242,13 @@
                         height: fit-content;
                         width: auto;
 
+                    }
+                    .msg_receive.json-resources{
+                        min-height: unset;
+                        padding: 0;
+                        width: 100%;
+                        max-width: 652px;
+                        flex: 1 1 auto;
                     }
                     
 
