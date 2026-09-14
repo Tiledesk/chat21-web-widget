@@ -36,7 +36,10 @@ describe('ActionButtonComponent', () => {
     });
     const el = fixture.nativeElement.querySelector('.action') as HTMLElement;
     expect(el.style.getPropertyValue('--buttonFontSize').trim()).toBe('16px');
-    expect(el.style.getPropertyValue('--buttonBackgroundColor').trim()).toBeTruthy();
+    expect(el.style.getPropertyValue('--buttonBackgroundColor').trim()).toBe('#111');
+    expect(el.style.getPropertyValue('--buttonTextColor').trim()).toBe('#222');
+    expect(el.style.getPropertyValue('--hoverBackgroundColor').trim()).toBe('#333');
+    expect(el.style.getPropertyValue('--hoverTextColor').trim()).toBe('#444');
   });
 
   it('actionButtonAction should emit when action present', fakeAsync(() => {
@@ -66,4 +69,22 @@ describe('ActionButtonComponent', () => {
     const el = fixture.nativeElement.querySelector('.action');
     expect(el.classList.contains('disabled')).toBe(true);
   });
+
+  it('actionButtonAction should add then remove active class', fakeAsync(() => {
+    const span = fixture.nativeElement.querySelector('.action') as HTMLElement;
+    component.actionButtonAction();
+    expect(span.classList.contains('active')).toBe(true);
+    tick(400);
+    expect(span.classList.contains('active')).toBe(false);
+  }));
+
+  it('actionButtonAction should not re-add active when already present', fakeAsync(() => {
+    const span = fixture.nativeElement.querySelector('.action') as HTMLElement;
+    span.classList.add('active');
+    spyOn(span.classList, 'add').and.callThrough();
+    component.actionButtonAction();
+    expect(span.classList.add).not.toHaveBeenCalled();
+    tick(400);
+    expect(span.classList.contains('active')).toBe(false);
+  }));
 });

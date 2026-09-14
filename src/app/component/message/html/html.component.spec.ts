@@ -43,4 +43,20 @@ describe('HtmlComponent', () => {
     const pre = fixture.nativeElement.querySelector('pre');
     expect(pre?.textContent).toContain('<script>');
   });
+
+  it('ngOnChanges should skip CSS vars when inputs are falsy', () => {
+    const host = fixture.nativeElement as HTMLElement;
+    component.fontSize = undefined as any;
+    component.themeColor = undefined as any;
+    component.foregroundColor = undefined as any;
+    component.ngOnChanges({});
+    expect(host.style.getPropertyValue('--buttonFontSize')).toBe('');
+  });
+
+  it('should render empty pre when htmlText is empty', () => {
+    component.htmlText = '';
+    fixture.detectChanges();
+    const pre = fixture.nativeElement.querySelector('pre');
+    expect(pre?.textContent).toBe('');
+  });
 });

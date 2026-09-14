@@ -116,4 +116,35 @@ describe('AvatarComponent', () => {
     expect(img?.getAttribute('alt')).toBeTruthy();
     expect(img?.getAttribute('role')).toBe('img');
   });
+
+  it('ngOnInit should treat fullname containing bot as bot even without bot_ id', () => {
+    spyOn(AvatarComponent.prototype as any, 'checkImageExists').and.callFake((_url: string, cb: (b: boolean) => void) => {
+      cb(false);
+    });
+    component.senderID = 'user_1';
+    component.senderFullname = 'Support Bot';
+    component.ngOnInit();
+    expect(component.url).toBe(component.baseLocation + '/assets/images/tommy_bot_tiledesk.svg');
+  });
+
+  it('ngOnInit should skip when senderID is missing', () => {
+    component.senderID = undefined as any;
+    expect(() => component.ngOnInit()).not.toThrow();
+    expect(component.url).toBeUndefined();
+  });
+
+  it('onLoadedBot and onLoadedHuman should not throw', () => {
+    expect(() => component.onLoadedBot({} as any)).not.toThrow();
+    expect(() => component.onLoadedHuman({} as any)).not.toThrow();
+  });
+
+  it('template should expose User alt on human avatar', () => {
+    spyOn(AvatarComponent.prototype as any, 'checkImageExists').and.stub();
+    component.senderID = 'user_1';
+    component.senderFullname = 'Alice';
+    fixture.detectChanges();
+    const img = (fixture.nativeElement as HTMLElement).querySelector('img');
+    expect(img?.getAttribute('alt')).toBe('Alice');
+    expect(img?.getAttribute('role')).toBe('img');
+  });
 });

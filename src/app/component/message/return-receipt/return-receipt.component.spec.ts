@@ -58,4 +58,10 @@ describe('ReturnReceiptComponent', () => {
     expect(component.MSG_STATUS_SENT_SERVER).toBe(MSG_STATUS_SENT_SERVER);
     expect(component.MSG_STATUS_RETURN_RECEIPT).toBe(MSG_STATUS_RETURN_RECEIPT);
   });
+
+  it('should render no icon for unknown status', () => {
+    component.status = 999;
+    fixture.detectChanges();
+    expect(fixture.debugElement.queryAll(By.css('.icon')).length).toBe(0);
+  });
 });

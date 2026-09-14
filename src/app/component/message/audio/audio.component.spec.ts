@@ -155,4 +155,76 @@ describe('AudioComponent', () => {
     await component.getAudioDuration();
     expect(component.audioDuration).toBe(90);
   });
+
+  it('extractFirstColor should parse rgb without alpha', () => {
+    expect(component.extractFirstColor('rgb(1, 2, 3)')).toBe('rgb(1, 2, 3)');
+  });
+
+  it('ngAfterViewInit with empty stylesMap should not throw', async () => {
+    component.stylesMap = new Map();
+    component.audioBlob = null;
+    component.metadata = { src: 'blob:from-meta' };
+    expect(() => fixture.detectChanges()).not.toThrow();
+    await fixture.whenStable();
+  });
+
+  it('playPauseAudio ontimeupdate and onended should update state', () => {
+    spyOn(window, 'requestAnimationFrame').and.stub();
+    (component as any).audioBuffer = fakeBuffer;
+    (component as any).audioDuration = 10;
+    const play = jasmine.createSpy('play').and.returnValue(Promise.resolve());
+    const canvas = document.createElement('canvas');
+    canvas.width = 120;
+    canvas.height = 32;
+    spyOn(canvas, 'getContext').and.returnValue({
+      fillRect: jasmine.createSpy(),
+      clearRect: jasmine.createSpy(),
+    } as any);
+    (component as any).waveformCanvas = { nativeElement: canvas };
+    const audioEl: any = { paused: true, currentTime: 3, play, pause: jasmine.createSpy(), ontimeupdate: null, onended: null };
+    (component as any).audioElement = { nativeElement: audioEl };
+    (component as any).audioContext = { resume: jasmine.createSpy().and.returnValue(Promise.resolve()) };
+
+    component.playPauseAudio();
+    expect(typeof audioEl.ontimeupdate).toBe('function');
+    expect(typeof audioEl.onended).toBe('function');
+    audioEl.ontimeupdate();
+    expect(component.currentTime).toBe(3);
+    audioEl.onended();
+    expect(component.isPlaying).toBe(false);
+  });
+
+  it('updateWaveform should schedule RAF while playing', () => {
+    const raf = spyOn(window, 'requestAnimationFrame').and.stub();
+    (component as any).audioBuffer = fakeBuffer;
+    (component as any).audioDuration = 10;
+    const canvas = document.createElement('canvas');
+    canvas.width = 120;
+    canvas.height = 32;
+    spyOn(canvas, 'getContext').and.returnValue({
+      fillRect: jasmine.createSpy(),
+      clearRect: jasmine.createSpy(),
+    } as any);
+    (component as any).waveformCanvas = { nativeElement: canvas };
+    (component as any).audioElement = { nativeElement: { currentTime: 0 } };
+    component.isPlaying = true;
+    component.updateWaveform();
+    expect(raf).toHaveBeenCalled();
+  });
+
+  it('drawWaveform should use solid color for played bars', () => {
+    const fillRect = jasmine.createSpy('fillRect');
+    const clearRect = jasmine.createSpy('clearRect');
+    const ctx: any = { fillRect, clearRect, fillStyle: '' };
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 40;
+    spyOn(canvas, 'getContext').and.returnValue(ctx);
+    (component as any).waveformCanvas = { nativeElement: canvas };
+    (component as any).audioElement = { nativeElement: { currentTime: 5 } };
+    (component as any).audioDuration = 10;
+    component.color = '#ff0000';
+    component.drawWaveform(fakeBuffer);
+    expect(ctx.fillStyle).toBeTruthy();
+  });
 });
