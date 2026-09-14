@@ -84,6 +84,69 @@ describe('BubbleMessageComponent', () => {
       expect(s.width).toBeUndefined();
       expect(s.height).toBe(10);
     });
+
+    it('should keep width when it equals MAX_WIDTH_IMAGES', () => {
+      const s = component.getMetadataSize({ width: MAX_WIDTH_IMAGES, height: 50 });
+      expect(s.width).toBe(MAX_WIDTH_IMAGES);
+      expect(s.height).toBe(50);
+    });
+  });
+
+  describe('reply types from chatbot (image / frame / audio / html)', () => {
+    it('should render chat-image for image metadata', () => {
+      component.message = {
+        ...textMessage,
+        type: 'image',
+        metadata: { src: 'https://cdn.example/img.png', width: 100, height: 50 },
+      };
+      fixture.detectChanges();
+      expect(fixture.debugElement.query(By.css('chat-image'))).toBeTruthy();
+    });
+
+    it('should render chat-frame for frame metadata', () => {
+      component.message = {
+        ...textMessage,
+        type: 'frame',
+        metadata: { src: 'https://player.example/v/1', width: 400, height: 300 },
+      };
+      fixture.detectChanges();
+      expect(fixture.debugElement.query(By.css('chat-frame'))).toBeTruthy();
+    });
+
+    it('should render chat-audio and hide chat-text for audio files', () => {
+      component.message = {
+        ...textMessage,
+        type: 'file',
+        text: 'voice',
+        metadata: { src: 'blob:audio', type: 'audio/wav' },
+      };
+      fixture.detectChanges();
+      expect(fixture.debugElement.query(By.css('chat-audio'))).toBeTruthy();
+      expect(fixture.debugElement.query(By.css('chat-text'))).toBeNull();
+    });
+
+    it('should render chat-html when message type is html', () => {
+      component.message = { ...textMessage, type: 'html', text: '<b>hi</b>' };
+      fixture.detectChanges();
+      expect(fixture.debugElement.query(By.css('chat-html'))).toBeTruthy();
+      expect(fixture.debugElement.query(By.css('chat-text'))).toBeNull();
+    });
+
+    it('should show sender fullname for others when not same sender', () => {
+      component.message = { ...textMessage, isSender: false, sender_fullname: 'Reply types Chatbot' };
+      component.isSameSender = false;
+      fixture.detectChanges();
+      const name = fixture.debugElement.query(By.css('.message_sender_fullname'));
+      expect(name).toBeTruthy();
+      expect(name.nativeElement.textContent).toContain('Reply types Chatbot');
+    });
+
+    it('should hide sender fullname when isSameSender', () => {
+      component.message = { ...textMessage, isSender: false, sender_fullname: 'Reply types Chatbot' };
+      component.isSameSender = true;
+      fixture.detectChanges();
+      expect(fixture.debugElement.query(By.css('.message_sender_fullname'))).toBeNull();
+    });
   });
 
   describe('ngOnChanges', () => {
@@ -112,6 +175,13 @@ describe('BubbleMessageComponent', () => {
     it('should prefer sender fullname color when name present', () => {
       component.message = { ...textMessage, sender_fullname: 'Anna' };
       component.fontColor = '#00ff00';
+      component.ngOnChanges();
+      expect(component.fullnameColor).toBeTruthy();
+    });
+
+    it('should not override fontColor when sender_fullname is whitespace', () => {
+      component.message = { ...textMessage, sender_fullname: '   ' };
+      component.fontColor = '#ff0000';
       component.ngOnChanges();
       expect(component.fullnameColor).toBeTruthy();
     });

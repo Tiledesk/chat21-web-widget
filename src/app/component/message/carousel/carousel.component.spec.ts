@@ -97,4 +97,52 @@ describe('CarouselComponent', () => {
   it('TYPE_BUTTON should be exposed for template', () => {
     expect(component.TYPE_BUTTON).toBe(TYPE_BUTTON);
   });
+
+  describe('getSlideLabel', () => {
+    it('should fall back to English when i18n map missing', () => {
+      component.translationMap = undefined as any;
+      expect(component.getSlideLabel(2, 5)).toBe('Slide 2 of 5');
+    });
+
+    it('should replace current and total in CAROUSEL_SLIDE_LABEL', () => {
+      component.translationMap = new Map([['CAROUSEL_SLIDE_LABEL', 'Diapositiva {current} di {total}']]);
+      expect(component.getSlideLabel(2, 5)).toBe('Diapositiva 2 di 5');
+    });
+
+    it('should treat falsy total as 0', () => {
+      component.translationMap = undefined as any;
+      expect(component.getSlideLabel(1, 0)).toBe('Slide 1 of 0');
+    });
+  });
+
+  it('ngOnChanges should copy gallery from message attributes', () => {
+    const nextGallery = [{ preview: { src: 'https://c.png' }, title: 'C', description: '', buttons: [] }];
+    component.gallery = undefined as any;
+    component.message = { attributes: { attachment: { gallery: nextGallery } } } as any;
+    component.ngOnChanges({});
+    expect(component.gallery).toBe(nextGallery);
+  });
+
+  it('actionButtonClick should emit when only link is set', () => {
+    spyOn(component.onAttachmentButtonClicked, 'emit');
+    const linkBtn = { type: TYPE_BUTTON.URL, value: 'Open', action: '', link: 'https://x', text: '', active: false };
+    component.gallery = [{ preview: { src: 'https://a.png' }, title: 'A', description: '', buttons: [linkBtn] }];
+    component.actionButtonClick({ target: { classList: { add: jasmine.createSpy('add') } } } as any, linkBtn, 0);
+    expect(component.onAttachmentButtonClicked.emit).toHaveBeenCalled();
+    expect(linkBtn.active).toBe(true);
+  });
+
+  it('should show placeholder when preview src is empty', () => {
+    component.gallery = [{ preview: { src: '' }, title: 'Empty', description: '', buttons: [] }];
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.card-image-placeholder')).toBeTruthy();
+    expect(fixture.nativeElement.textContent).toContain('Image not available');
+  });
+
+  it('should disable card buttons when conversation is archived', () => {
+    component.isConversationArchived = true;
+    fixture.detectChanges();
+    const btn = fixture.nativeElement.querySelector('.single-button');
+    expect(btn.classList.contains('disabled')).toBe(true);
+  });
 });

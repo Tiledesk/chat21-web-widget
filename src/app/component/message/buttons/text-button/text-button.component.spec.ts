@@ -37,12 +37,19 @@ describe('TextButtonComponent', () => {
     });
     const el = fixture.nativeElement.querySelector('.text') as HTMLElement;
     expect(el.style.getPropertyValue('--buttonFontSize').trim()).toBe('13px');
+    expect(el.style.getPropertyValue('--buttonBackgroundColor').trim()).toBe('#111');
+    expect(el.style.getPropertyValue('--buttonTextColor').trim()).toBe('#222');
+    expect(el.style.getPropertyValue('--buttonHoverBackgroundColor').trim()).toBe('#333');
+    expect(el.style.getPropertyValue('--buttonHoverTextColor').trim()).toBe('#444');
   });
 
   it('actionButtonText should emit click payload', () => {
     spyOn(component.onButtonClicked, 'emit');
     component.actionButtonText();
     expect(component.onButtonClicked.emit).toHaveBeenCalled();
+    const arg = (component.onButtonClicked.emit as jasmine.Spy).calls.mostRecent().args[0];
+    expect(arg.target).toBe(component);
+    expect(arg.currentTarget).toBe(component);
   });
 
   it('click on template should invoke actionButtonText', () => {

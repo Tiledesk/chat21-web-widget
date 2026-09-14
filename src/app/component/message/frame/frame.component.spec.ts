@@ -53,4 +53,23 @@ describe('FrameComponent', () => {
     component.ngOnDestroy();
     expect(component.url).toBeNull();
   });
+
+  it('ngOnInit should set frameTitle from hostname', () => {
+    component.metadata = { src: 'https://player.example/v/1' };
+    component.ngOnInit();
+    expect(component.frameTitle).toBe('Embedded content from player.example');
+  });
+
+  it('ngOnInit should keep default frameTitle when src is not a URL', () => {
+    component.metadata = { src: 'not a url' };
+    component.ngOnInit();
+    expect(component.url).toBeTruthy();
+    expect(component.frameTitle).toBe('Embedded content');
+  });
+
+  it('ngOnInit should tolerate null metadata', () => {
+    component.metadata = null;
+    expect(() => component.ngOnInit()).not.toThrow();
+    expect(component.url).toBeNull();
+  });
 });
