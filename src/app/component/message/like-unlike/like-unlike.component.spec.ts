@@ -50,4 +50,10 @@ describe('LikeUnlikeComponent', () => {
     fixture.debugElement.queryAll(By.css('button'))[0].triggerEventHandler('click', {});
     expect((component as any).logger.debug).toHaveBeenCalledWith('[LIKE-UNLIKE] onClick-->', 'like');
   });
+
+  it('clicking unlike should invoke logger with unlike', () => {
+    spyOn((component as any).logger, 'debug');
+    fixture.debugElement.queryAll(By.css('button'))[1].triggerEventHandler('click', {});
+    expect((component as any).logger.debug).toHaveBeenCalledWith('[LIKE-UNLIKE] onClick-->', 'unlike');
+  });
 });
