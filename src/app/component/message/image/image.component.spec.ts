@@ -118,4 +118,140 @@ describe('ImageComponent', () => {
     const img = (fixture.nativeElement as HTMLElement).querySelector('img');
     expect(img?.getAttribute('alt')).toBe('logo_fb.png');
   });
+
+  it('trigger button should use Open image fallback when name missing', () => {
+    component.metadata = { ...metadata, name: undefined };
+    fixture.detectChanges();
+    const btn = (fixture.nativeElement as HTMLElement).querySelector('.c21-image-trigger');
+    expect(btn?.getAttribute('aria-label')).toBe('Open image preview');
+  });
+
+  it('onClickImage srcdoc should use tooltipMessage as close label', () => {
+    component.tooltipMessage = 'Chiudi';
+    const iframes: HTMLIFrameElement[] = [];
+    const origCreate = document.createElement.bind(document);
+    spyOn(document, 'createElement').and.callFake((tag: string) => {
+      const el = origCreate(tag) as HTMLElement;
+      if (tag === 'iframe') {
+        iframes.push(el as HTMLIFrameElement);
+      }
+      return el;
+    });
+    spyOn(document.body, 'appendChild').and.callThrough();
+    component.onClickImage();
+    expect(iframes[0].srcdoc).toContain('aria-label="Chiudi"');
+    expect(iframes[0].srcdoc).toContain('logo_fb.png');
+    document.body.removeChild(iframes[0]);
+  });
+
+  it('onClickImage onload should return when iframe document is missing', () => {
+    const origCreate = document.createElement.bind(document);
+    const fakeIframe: any = {
+      setAttribute: jasmine.createSpy('setAttribute'),
+      style: {},
+      srcdoc: '',
+      onload: null as null | ((ev: Event) => void),
+    };
+    spyOn(document, 'createElement').and.callFake((tag: string) => (tag === 'iframe' ? fakeIframe : origCreate(tag)));
+    spyOn(document.body, 'appendChild').and.callFake((node: any) => node);
+    component.onClickImage();
+    fakeIframe.contentWindow = undefined;
+    expect(() => fakeIframe.onload({} as any)).not.toThrow();
+  });
+
+  it('onClickImage onload should close on close button and restore focus', () => {
+    const origCreate = document.createElement.bind(document);
+    const origGetById = document.getElementById.bind(document);
+    const previouslyFocused = document.createElement('button');
+    document.body.appendChild(previouslyFocused);
+    previouslyFocused.focus();
+    spyOn(previouslyFocused, 'focus');
+
+    const fakeIframe: any = {
+      setAttribute: jasmine.createSpy('setAttribute'),
+      style: {},
+      srcdoc: '',
+      onload: null as null | ((ev: Event) => void),
+    };
+    spyOn(document, 'createElement').and.callFake((tag: string) => (tag === 'iframe' ? fakeIframe : origCreate(tag)));
+    spyOn(document, 'getElementById').and.callFake((id: string) =>
+      id === 'tiledesk-image-preview' ? fakeIframe : origGetById(id),
+    );
+    spyOn(document.body, 'appendChild').and.callFake((node: any) => {
+      node.parentNode = document.body;
+      return node;
+    });
+    spyOn(document.body, 'removeChild').and.stub();
+
+    component.onClickImage();
+    const closeBtn = document.createElement('button');
+    const backdrop = document.createElement('div');
+    const image = document.createElement('img');
+    spyOn(closeBtn, 'focus');
+    const docMock: any = {
+      getElementById: (id: string) => {
+        if (id === 'closeButton') {
+          return closeBtn;
+        }
+        if (id === 'popup-backdrop') {
+          return backdrop;
+        }
+        if (id === 'image-popup') {
+          return image;
+        }
+        return null;
+      },
+      addEventListener: jasmine.createSpy('addEventListener'),
+    };
+    fakeIframe.contentWindow = { document: docMock };
+    fakeIframe.onload({} as any);
+    expect(closeBtn.focus).toHaveBeenCalled();
+    closeBtn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    expect(document.body.removeChild).toHaveBeenCalledWith(fakeIframe);
+    expect(previouslyFocused.focus).toHaveBeenCalled();
+    document.body.removeChild(previouslyFocused);
+  });
+
+  it('onClickImage onload should close on backdrop click and stop image click', () => {
+    const origCreate = document.createElement.bind(document);
+    const origGetById = document.getElementById.bind(document);
+    const fakeIframe: any = {
+      setAttribute: jasmine.createSpy('setAttribute'),
+      style: {},
+      srcdoc: '',
+      onload: null as null | ((ev: Event) => void),
+    };
+    spyOn(document, 'createElement').and.callFake((tag: string) => (tag === 'iframe' ? fakeIframe : origCreate(tag)));
+    spyOn(document, 'getElementById').and.callFake((id: string) =>
+      id === 'tiledesk-image-preview' ? fakeIframe : origGetById(id),
+    );
+    spyOn(document.body, 'appendChild').and.callFake((node: any) => {
+      node.parentNode = document.body;
+      return node;
+    });
+    spyOn(document.body, 'removeChild').and.stub();
+    component.onClickImage();
+    const closeBtn = document.createElement('button');
+    const backdrop = document.createElement('div');
+    const image = document.createElement('img');
+    const docMock: any = {
+      getElementById: (id: string) => {
+        if (id === 'closeButton') {
+          return closeBtn;
+        }
+        if (id === 'popup-backdrop') {
+          return backdrop;
+        }
+        if (id === 'image-popup') {
+          return image;
+        }
+        return null;
+      },
+      addEventListener: jasmine.createSpy('addEventListener'),
+    };
+    fakeIframe.contentWindow = { document: docMock };
+    fakeIframe.onload({} as any);
+    backdrop.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(document.body.removeChild).toHaveBeenCalledWith(fakeIframe);
+  });
 });

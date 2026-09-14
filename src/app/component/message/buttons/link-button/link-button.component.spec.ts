@@ -36,6 +36,10 @@ describe('LinkButtonComponent', () => {
     });
     const el = fixture.nativeElement.querySelector('.url') as HTMLElement;
     expect(el.style.getPropertyValue('--buttonFontSize').trim()).toBe('12px');
+    expect(el.style.getPropertyValue('--buttonBackgroundColor').trim()).toBe('#aaa');
+    expect(el.style.getPropertyValue('--buttonTextColor').trim()).toBe('#bbb');
+    expect(el.style.getPropertyValue('--hoverBackgroundColor').trim()).toBe('#ccc');
+    expect(el.style.getPropertyValue('--hoverTextColor').trim()).toBe('#ddd');
   });
 
   it('actionButtonUrl should emit when link set', () => {
@@ -66,5 +70,18 @@ describe('LinkButtonComponent', () => {
   it('mouseover and mouseout should not throw', () => {
     expect(() => component.onMouseOver({} as any)).not.toThrow();
     expect(() => component.onMouseOut({} as any)).not.toThrow();
+  });
+
+  it('click on template should invoke actionButtonUrl', () => {
+    spyOn(component, 'actionButtonUrl');
+    fixture.debugElement.query(By.css('.url')).triggerEventHandler('click', {});
+    expect(component.actionButtonUrl).toHaveBeenCalled();
+  });
+
+  it('actionButtonUrl should not emit when button is null', () => {
+    component.button = null;
+    spyOn(component.onButtonClicked, 'emit');
+    component.actionButtonUrl();
+    expect(component.onButtonClicked.emit).not.toHaveBeenCalled();
   });
 });
