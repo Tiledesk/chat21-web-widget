@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.2.19",
-    "@angular/cli": "^18.2.19",
+    "@angular/cli": "^18.2.21",
     "@angular/compiler-cli": "^18.2.13",
     "@angular/language-service": "^18.2.13",
     "@playwright/test": "^1.59.1",
