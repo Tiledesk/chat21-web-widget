@@ -1,6 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { JsonSourcesParserService } from 'src/app/providers/json-sources-parser.service';
 import { MAX_WIDTH_IMAGES, MIN_WIDTH_IMAGES } from 'src/chat21-core/utils/constants';
 
 import { BubbleMessageComponent } from './bubble-message.component';
@@ -28,6 +29,15 @@ describe('BubbleMessageComponent', () => {
     TestBed.configureTestingModule({
       declarations: [BubbleMessageComponent],
       schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        {
+          provide: JsonSourcesParserService,
+          useValue: {
+            parseBaseFromMessage: () => [],
+            enrichSources: () => Promise.resolve([]),
+          },
+        },
+      ],
     }).compileComponents();
   }));
 
@@ -59,28 +69,31 @@ describe('BubbleMessageComponent', () => {
     expect(textChild.properties.text).toEqual(textMessage.text);
   });
 
-  describe('getMetadataSize', () => {
+  describe('sizeImage via calcImageSize', () => {
+    function sizeFromMetadata(meta: { width?: number; height?: number }) {
+      component.message = { ...textMessage, metadata: meta };
+      component.ngOnChanges();
+      return component.sizeImage;
+    }
+
     it('should scale down when width exceeds MAX_WIDTH_IMAGES', () => {
-      const meta = { width: MAX_WIDTH_IMAGES * 2, height: 100 };
-      const s = component.getMetadataSize(meta);
+      const s = sizeFromMetadata({ width: MAX_WIDTH_IMAGES * 2, height: 100 });
       expect(s.width).toBe(MAX_WIDTH_IMAGES);
     });
 
     it('should apply MIN_WIDTH when thumbnail width is small', () => {
-      const meta = { width: 40, height: 80 };
-      const s = component.getMetadataSize(meta);
+      const s = sizeFromMetadata({ width: 40, height: 80 });
       expect(s.width).toBe(MIN_WIDTH_IMAGES);
     });
 
     it('should keep metadata dimensions for mid-sized images', () => {
-      const meta = { width: 120, height: 60 };
-      const s = component.getMetadataSize(meta);
+      const s = sizeFromMetadata({ width: 120, height: 60 });
       expect(s.width).toBe(120);
       expect(s.height).toBe(60);
     });
 
     it('should return raw metadata when width branch not matched', () => {
-      const s = component.getMetadataSize({ width: undefined, height: 10 });
+      const s = sizeFromMetadata({ width: undefined, height: 10 });
       expect(s.width).toBeUndefined();
       expect(s.height).toBe(10);
     });

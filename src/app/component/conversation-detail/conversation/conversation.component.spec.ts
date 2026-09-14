@@ -285,12 +285,13 @@ describe('ConversationComponent', () => {
       expect(result).toBe(true);
     }));
 
-    it('should recover when getMyRequests rejects (component catch returns empty list)', async () => {
+    it('should recover when getMyRequests rejects (empty list falls through to not archived)', async () => {
       chatManagerStub.conversationsHandlerService.getConversationDetail.and.callFake((id: string, cb: any) => cb(null));
       chatManagerStub.archivedConversationsService.getConversationDetail.and.callFake((id: string, cb: any) => cb(null));
       tiledeskStub.getMyRequests.and.returnValue(Promise.reject(new Error('network')));
-      await component.getConversationDetail();
-      expect(component.isConversationArchived).toBe(true);
+      const result = await component.getConversationDetail();
+      expect(result).toBeNull();
+      expect(component.isConversationArchived).toBe(false);
     });
 
     it('should match request by request_id', fakeAsync(() => {
