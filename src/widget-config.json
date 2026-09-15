@@ -2,7 +2,7 @@
   "chatEngine": "mqtt",
   "uploadEngine": "native",
   "pushEngine": "none",
-  "logLevel": "info"    ,
+  "logLevel": "info",
   "remoteTranslationsUrl": "https://localhost:3000/api/",
   "firebaseConfig": {
     "apiKey": "CHANGEIT",
@@ -25,6 +25,7 @@
   "authPersistence": "LOCAL",
   "enbedJs": "true",
   "brandSrc": "",
+  "closeChatInConversation": false,
   "voiceProxyWsUrl": "wss://localhost:3000/speech/ws/voice",
   "voiceProxyApiBaseUrl": "https://localhost:3000/speech/"
 }

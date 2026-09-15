@@ -1,5 +1,5 @@
 :host {
-  --panel-bck: #f7f8fa;
+  --panel-bck: #ffffff; // #f7f8fa;
   --row-sep: rgba(66, 133, 244, 0.18);
   --text: rgba(0, 0, 0, 0.90);
   --muted: rgba(0, 0, 0, 0.62);
@@ -22,7 +22,7 @@
 }
 
 .sources-header {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 8px;
   padding: 2px 4px 8px 4px;
@@ -56,7 +56,7 @@
 .sources-panel {
   display: flex;
   flex-direction: column;
-  padding: 12px 12px 10px 12px;
+  padding: 18px 12px 10px 12px;
   background: var(--panel-bck);
   border-radius: 18px;
   font-size: 14px;
@@ -79,6 +79,10 @@
   width: 100%;
   box-sizing: border-box;
 
+  border-bottom: 1px solid var(--row-sep);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+
   &:hover {
     background: rgba(255, 255, 255, 0.55);
     .source-row__title {
@@ -86,11 +90,11 @@
     }
   }
 
-  & + & {
-    border-top: 1px solid var(--row-sep);
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  }
+  // & + & {
+  //   border-top: 1px solid var(--row-sep);
+  //   border-top-left-radius: 0;
+  //   border-top-right-radius: 0;
+  // }
 
   .source-row__left {
     min-width: 0;

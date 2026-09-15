@@ -6,108 +6,19 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.36-ar
+- **bug fixed**: texarea with is not responsive
 
-# 5.1.33-rc7
-- **added**: added more URL source types in kb_json_sources
+# 5.1.35-ar
+- **bug fixed**: if last message is ulr_preview shows previous message buttons
 
-# 5.1.33-rc5
-- **added**: cssSource tiledeskSettings property to manage and override widget style 
+# 5.1.34-ar
+- **added**: closeChatInConversation env parameter to manage 'Close Chat' button in conversation
 
-# 5.1.33-rc4
-- **bug fixed**: bug fixed extractUrlsFromText
+# 5.1.33-ar
+- **bug fixed**: widget not loaded because blob block loading in lauch.js
 
-# 5.1.32-rc18
-- **bug fixed**: bug fix css kb_json_sources
-
-# 5.1.32-rc17
-- **bug fixed**: empty message in preview URLs
-
-# 5.1.32-rc16
-- **added**: added chat-json-sources to preview URLs
-
-# 5.1.32-rc15
-- **changed**: redemptionMs: 800
-
-# 5.1.32-rc14
-- **changed**: minor ui fixed
-
-# 5.1.32-rc13
-- **added**: VAD speech state events (`speechStart$`, `speechEnd$`) to improve UI/state transitions around user speech
-- **changed**: stream audio footer UI — stream button expands into a “Terminate” pill with animated level bars driven by mic intensity; recorder icon hidden while streaming; textarea width adjusted while streaming
-- **changed**: `StreamAudioSpectrum` — consolidated stream spectrum + stream button visuals into a single component with improved silence vs speaking handling and volume-driven bar heights
-- **changed**: conversation layout while streaming — adjusted received bubble sizing (`fullSizeMessage`) and loading spinner spacing (`fullSize`) for full-width stream mode
-
-
-
-# 5.1.32-rc12
-- **changed**: voice acquisition blocking during TTS response — pause VAD after user speech ends until the TTS response cycle completes; added safety timeout and `isAcquisitionBlocked$` to drive UI (e.g. greyed spectrum)
-- **chore**: version bump to `5.1.32-rc12`
-
-# 5.1.32-rc11
-- **added**: global TTS stop — `TtsAudioPlaybackCoordinator.stopAll()` + `stopAllPlayback$` to abort current and queued TTS playback and reveal full message text
-- **changed**: stop TTS playback when closing stream audio
-- **chore**: version bump to `5.1.32-rc11`
-
-# 5.1.32-rc10
-- **added**: TTS playback state (`isTTSPlaying$`) to coordinate voice UI and suppress mic segment emission while the bot is speaking
-- **changed**: stream spectrum theme color turns grey while TTS is playing
-
-
-# 5.1.32-rc9
-- **added**: mic-triggered TTS interruption — when VAD detects user speech, stop current TTS playback, clear the queue, and reveal the full message text
-- **added**: global TTS stop API (`TtsAudioPlaybackCoordinator.stopAll()` + `stopAllPlayback$`) to stop current + queued TTS playback from UI/events (e.g. close stream)
-- **changed**: `chat-audio-sync` TTS playback now streams audio via authenticated POST to `message.metadata.src`, sending `voiceSettings` + `text` and `streaming: true`
-- **changed**: stream UI spectrum — removed circular orb and stretched the spectrum line to fill the `#streamAudioAlert` width with 10px side padding
-- **changed**: conversation content layout while streaming — adjusted received bubble left margin and loading spinner margins for full-size mode
-
-
-# 5.1.32-rc8
-- **changed**: updated the dev environment defaults to align with the stage setup (remote config URL, API endpoints, logging level, storage prefix, and related settings)
-
-# 5.1.32-rc7
-- **added**: `StreamAudioSpectrum` component for audio visualization in the streaming footer UI
-- **added**: TTS playback coordinator queue — ensures TTS messages play sequentially without interrupting the previous one
-- **changed**: `chat-audio-sync` — updated TTS audio handling to support streaming playback and improved autoplay/animation timing
-- **changed**: iframe loader (`launch.js`, `launch_template.js`) — streamlined loading logic and improved error handling, with fixes for localhost environments
-
-# 5.1.32-rc4
-- **added**: “Close stream” control (`.close-stream-button`) — content and sheet bottom offset in fullscreen using `--chat-footer-stream-button-height` only while the stream is listening (`isStreamAudioActive`); variables in `_variables.scss`.
-- **added**: `VoiceService.discardCurrentRecordingSegment()` — when a message arrives from another sender during streaming, the current WebM segment is discarded (no upload) without stopping mic/VAD; `interruptStreamDueToPeerMessage()` in the footer no longer clears `isStreamAudioActive`.
-- **changed**: `#streamAudioAlert` — band above the footer with a frosted-glass look (`backdrop-filter`, semi-transparent `color-mix`).
-
-# 5.1.32-rc3
-- **changed**: `nginx.conf` (Docker image) — explicit MIME types for `.mjs`, `.wasm`, `.onnx` and `default_type` at `http` level (avoids `text/plain` on ONNX/VAD modules behind containerized deploys).
-- **chore**: removed deprecated Amazon beta/prod deploy scripts from the repository.
-
-# 5.1.32-rc2
-- **bug fixed**: minor streaming icon UI fixed
-- **changed**: Refactor stream audio button UI in the conversation footer (layout / classes).
-
-# 5.1.32-rc1
-- **added**: Voice pipeline — VAD (`@ricky0123/vad-web`) with ONNX Runtime WASM served from `/assets/onnx` (`copy-onnx-wasm`), `VoiceService` with `audioSegment$` (WebM segments) and optional STT/TTS via unified OpenAI provider using `HttpClient`, transcript / error fields on segment payloads.
-- **added**: Stream audio UI in conversation footer — toggle, real-time volume stream and animated waveform (`volume$`); mic session lifecycle wired to upload segments on speech end.
-- **added**: `MessageModel.isJustRecived` — set when ingesting messages (MQTT/Firebase `addCommandMessage` for `command.type === "message"`, and default for non-command messages in `addedMessage` / `addedNew`) to distinguish “new in session” vs history.
-- **added**: `chat-audio-sync` for TTS messages — karaoke-style word sync to audio, full `message` input, typography aligned with text bubbles; skips animation when `isJustRecived === false`; after playback ends sets `message.isJustRecived = false` so replays show full text without re-animating.
-- **bug fixed**: `AnalyserNode.getByteFrequencyData` TypeScript error — `Uint8Array` created from an explicit `ArrayBuffer` for correct DOM typings.
-- **bug fixed**: `isStreamAudioActive` no longer derived from per-frame mic level (`volume > 1`), which caused the stream button / active state to flash continuously while listening.
-
-# 5.1.30
-- **bug fixed**: startHidden is not working properly
-
-# 5.1.30-rc3
-- **bug fixed**: bug fix user-typing with human is not available
-
-# 5.1.30-rc2
-- **bug fixed**: bug fix disabled user-typing with human
-
-# 5.1.30-rc1
-- **bug fixed**: startHidden is not working properly
-
-# 5.1.28
-- **bug fixed**: fixed Bot/Human conversation detection by correctly classifying bot replies
-
-# 5.1.27
-- **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
+# 5.1.32-ar
 - **changed**: start with authentication if hasCalloutInWidgetConfig is true
 - **changed**: Force authentication if ageChangeVisibilityDesktop or PageChangeVisibilityMobile is OPEN
 - **changed**: Set the default autoStart value to false
@@ -125,6 +36,12 @@
 - **added**: close chat button under textarea footer component
 
 # 5.1.26-rc6
+# 5.1.31-ar
+- **bug fixed**: bug fix disabled user-typing with human and user-typing with human is not available
+
+# 5.1.29-ar
+- **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
+- **bug fixed**: refactor conversation header button to remove mobile condition for visibility
 - **changed**: mobile always opens fullscreen and ignores legacy stored size”.
 - **changed**: changed user-typing 
 
@@ -132,29 +49,17 @@
 - **changed**: Hide the resize-widget button when on mobile
 - **added**: added "I'm thinking" when the bot responds
 
-# 5.1.26
-- **bug fixed**: attachment buttons text alignment
+# 5.1.26-ar
+- **bug fixed**: attachment buttons text alignment 
 
-# 5.1.25
-- **bug fixed**: attachment buttons in messages now respect the container max width and wrap/break long labels instead of being clipped
+# 5.1.24-ar
+- **changed**: attachment buttons in messages now respect the container max width and wrap/break long labels instead of being clipped
 
-# 5.1.24
-- **security**: hardened Markdown link rendering by blocking dangerous protocols (e.g. `javascript:`, `data:`, `vbscript:`) and preventing unsafe links from being rendered as anchors
-- **changed**: refactored `MarkedPipe` to simplify Markdown parsing, improve link rendering via a custom `marked` renderer, and streamline newline handling (`\\n` → `\n`)
-
-# 5.1.23
+# 5.1.22-ar 
 - **changed**: API for upload a file/iamges
+- **changed**: marked pipe do not render /n
 
-# 5.1.22
-- **changed**: Updated Launch.js for Wix and Shopify by bypassing scrdoc
-
-# 5.1.21 
-- **bug fixed**: saved the widget's size state to local storage (in HP conversations)
-
-# 5.1.20
-- **changed**: marked pipe do not render /n 
-
-# 5.1.19 
+# 5.1.14-ar 
 - **bug fixed**: show bottom scroll button and unread message badge only when I'm not at the bottom of the page
 - **changed**: allow HTML code to be inserted into messages, but do not parse the code. Ensure coexistence with Markdown.
 - **bug fixed**: after sending a multi-line message, the text area remains open on multiple lines.
@@ -163,27 +68,28 @@
 - **bug-fixed**: when i move to top mode and close the widget, the balloon moves to the right
 - **changed**: saved the widget's size state to local storage. The parameter flow is (default → storage → settings → URL)
 
-# 5.1.18
+# 5.1.13-ar
 - **added**: Implemented Shadow DOM in the text component to isolate HTML and Markdown rendering in a safe and protected context
 - **changed**: Adapted text component styles to support Shadow DOM (removed ::ng-deep, added styles for common markdown elements)
 - **security**: HTML/Markdown content is now rendered in an isolated Shadow DOM, improving security and preventing interference with the rest of the application
-
-# 5.1.17
+- **changed**: bootstrap version from 3 to 5.3.3
+- **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
 - **bug-fixed**: set the maximum width on a message with iframe
 
-# 5.1.16
-- **changed**: "close chat" header conversation menu button enabled in chatbot-panel.html 
 
-# 5.1.15 
+# 5.1.11-ar
 - **changed**: Load local translations before remote ones
 
-# 5.1.14 
-- **bug-fixed**: stopped loading local language json file
+# 5.1.10-ar
+- **bug-fixed**: set callout with correct message
 
-# 5.1.13 
+# 5.1.9-ar
 - **bug-fixed**: set default widget size
 - **changed**: Updated the translations of the tooltips in the footer-component
 - **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
+- **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
+
+# this branch
 - **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
 
 # 5.1.12

@@ -125,6 +125,7 @@ export class Globals {
   WAITING_TIME_NOT_FOUND: string;
   CLOSED: string;
   LABEL_PREVIEW: string;
+  BUTTON_OPEN_CHAT: string;
 
   // ============ BEGIN: EXTERNAL PARAMETERS ==============//
   autoStart: boolean;
@@ -542,6 +543,7 @@ export class Globals {
       'calloutTitle': this.calloutTitle, 'calloutMsg': this.calloutMsg,
       'calloutTimer': this.calloutTimer, 'calloutStaus': this.calloutStaus,
       'channelType': this.channelType,
+      'closeChatInConversation': this.closeChatInConversation,
       'dynamicWaitTimeReply': this.dynamicWaitTimeReply,
       'fontSize': this.fontSize, 'fontFamily': this.fontFamily, 
       'fullscreenMode': this.fullscreenMode,

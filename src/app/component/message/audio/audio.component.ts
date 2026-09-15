@@ -18,6 +18,7 @@ export class AudioComponent implements AfterViewInit {
   @Input() metadata: any | null = null;
   @Input() color: string;
   @Input() stylesMap: Map<string, string>;
+  @Input() translationMap: Map<string, string>;
 
   audioUrl: SafeUrl | null = null;
   rawAudioUrl: string | null = null;

@@ -23,6 +23,7 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
   @Input() isSameSender: boolean;
   @Input() fontColor: string;
   @Input() stylesMap: Map<string, string>;
+  @Input() translationMap: Map<string, string>;
   /** When true, a newly-arrived bot text message reveals its words one by one. */
   @Input() streamOnArrival = false;
   /** One-shot flag: set once in ngOnChanges, never reverts so animation isn't replayed. */
@@ -33,12 +34,25 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
   _wssKaraokeWords$?: Observable<VoiceTtsKaraokeWord[]>;
 
   private _kSub?: Subscription;
+  
   @Output() onBeforeMessageRender = new EventEmitter();
   @Output() onAfterMessageRender = new EventEmitter();
   @Output() onElementRendered = new EventEmitter<{ element: string; status: boolean }>();
 
   @HostBinding('class.no-background') get hostNoBackground() { return this.jsonSources !== null && this.jsonSources.length > 0; }
   @HostBinding('class.json-resources') get hostIsJsonResources() { return this.jsonSources !== null && this.jsonSources.length > 0; }
+  @HostBinding('class.hidden-bubble') get hostHiddenBubble() { return !this.hasRenderableContent(); }
+
+  hasRenderableContent(): boolean {
+    const msg = this.message;
+    if (!msg) return false;
+    if (isImage(msg) || isFile(msg) || isFrame(msg) || isAudio(msg)) return true;
+    if (this.jsonSources && this.jsonSources.length > 0) return true;
+    // For url_preview messages, `text` may carry the raw JSON payload (not display text):
+    // if sources parsing yielded nothing, the bubble must stay hidden.
+    if (this.isUrlPreviewMessage) return false;
+    return !!(msg.text && String(msg.text).trim().length > 0);
+  }
 
   readonly isImage = isImage;
   readonly isFile = isFile;
@@ -54,6 +68,7 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
   sizeImage: { width: number; height: number } = { width: 0, height: 0 };
   fullnameColor: string = '';
   jsonSources: JsonSourceItem[] | null = null;
+  isUrlPreviewMessage = false;
 
   private urlPreviewReqId = 0;
 
@@ -138,6 +153,7 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
       this.message?.type === TYPE_MSG_URL_PREVIEW
       || this.message?.metadata?.type === TYPE_MSG_URL_PREVIEW
       || this.message?.attributes?.type === TYPE_MSG_URL_PREVIEW;
+    this.isUrlPreviewMessage = !!urlPreviewLike;
     if (urlPreviewLike) this.loadJsonSourcesFromUrlPreviewMessage();
   }
 

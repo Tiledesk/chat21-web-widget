@@ -6,7 +6,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Globals } from '../utils/globals';
 import { convertColorToRGBA, detectIfIsMobile, getImageUrlThumb, getParameterByName, stringToBoolean, stringToNumber } from '../utils/utils';
 
-import { TemplateBindingParseResult } from '@angular/compiler';
 import { AppStorageService } from '../../chat21-core/providers/abstract/app-storage.service';
 import { LoggerService } from '../../chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from '../../chat21-core/providers/logger/loggerInstance';
@@ -67,6 +66,8 @@ export class GlobalSettingsService {
         this.globals.logLevel = this.appConfigService.getConfig().logLevel
         /**SET PERSISTENCE parameter */
         this.globals.persistence = this.appConfigService.getConfig().authPersistence
+        /**SET CLOSE CHAT IN CONVERSATION parameter */
+        this.globals.closeChatInConversation = stringToBoolean(this.appConfigService.getConfig().closeChatInConversation);
 
         // ------------------------------- //
         /** LOAD PARAMETERS FROM SERVER
@@ -74,37 +75,37 @@ export class GlobalSettingsService {
          * set parameters in globals
         */
         // const projectid = globals.projectid;
-        this.getProjectParametersById(projectid).subscribe( response => {
-            const project = response['project'];
-            if (project) {
-                that.globals.project.initialize(
-                    project['id'],
-                    project['activeOperatingHours'],
-                    project['channels'],
-                    project['name'],
-                    project['createdAt'],
-                    project['createdBy'],
-                    project['isActiveSubscription'],
-                    project['profile'],
-                    project['agents'],
-                    project['trialDays'],
-                    project['type'],
-                    project['status'],
-                    project['trialDaysLeft'],
-                    project['trialExpired'],
-                    project['updatedAt'],
-                    project['settings'],
-                    project['versions']
-                );
-            }
-            // console.log('globals.project ----------------->', that.globals.project);
-            that.setParameters(response);
-        }, (error) => {
-            // console.log('2 - ::getProjectParametersById', error);
-            that.setParameters(null);
-        }, () => {
-            // console.log('3 - setParameters ');
-            // that.setParameters(null);
+        this.getProjectParametersById(projectid).subscribe({
+            next: (response) => {
+                const project = response['project'];
+                if (project) {
+                    that.globals.project.initialize(
+                        project['id'],
+                        project['activeOperatingHours'],
+                        project['channels'],
+                        project['name'],
+                        project['createdAt'],
+                        project['createdBy'],
+                        project['isActiveSubscription'],
+                        project['profile'],
+                        project['agents'],
+                        project['trialDays'],
+                        project['type'],
+                        project['status'],
+                        project['trialDaysLeft'],
+                        project['trialExpired'],
+                        project['updatedAt'],
+                        project['settings'],
+                        project['versions']
+                    );
+                }
+                // console.log('globals.project ----------------->', that.globals.project);
+                that.setParameters(response);
+            },
+            error: () => {
+                // console.log('2 - ::getProjectParametersById', error);
+                that.setParameters(null);
+            },
         });
 
     }
@@ -734,7 +735,7 @@ export class GlobalSettingsService {
         }
         TEMP = tiledeskSettings['lang'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > lang:: ', TEMP);
-        if (TemplateBindingParseResult) {
+        if (TEMP !== undefined) {
             globals.lang = TEMP;
             // globals.setParameter('lang', TEMP);
         }
