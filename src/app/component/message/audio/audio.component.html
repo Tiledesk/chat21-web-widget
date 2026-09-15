@@ -5,7 +5,13 @@
 <div class="audio-container">
   
     <div class="audio-track">
-        <button *ngIf="!isPlaying" class="play-pause" (click)="playPauseAudio()">
+        <button *ngIf="!isPlaying" 
+        class="play-pause" 
+        [attr.aria-label]="isPlaying
+        ? (translationMap?.get('BUTTON_PAUSE_AUDIO') || 'Pause audio')
+        : (translationMap?.get('BUTTON_PLAY_AUDIO') || 'Play audio')"
+        [attr.aria-pressed]="isPlaying ? 'true' : 'false'"
+        (click)="playPauseAudio()">
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
                 <path d="M320-200v-560l440 280-440 280Z"/>
             </svg>
