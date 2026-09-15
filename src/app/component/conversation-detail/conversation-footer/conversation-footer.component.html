@@ -117,30 +117,30 @@
                 <span class="voice-inline-label">{{ voiceStatusLabel }}</span>
             </div>
             <!-- Normal mode: textarea -->
-        <textarea 
-            *ngIf="!(isStreamAudioActive || isStreamAudioConnecting)"
-            [attr.disabled]="(hideTextReply)? true : null"
-            [attr.placeholder]="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
-            [attr.aria-label]="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
-            [attr.aria-multiline]="true"
-            [attr.aria-invalid]="showAlertEmoji ? 'true' : 'false'"
-            start-focus-chat21-conversation-component
-            inputTextArea
-            #textbox
-            rows="1"
-            id="chat21-main-message-context"
-            class='f21textarea c21-button-clean'
-            [(ngModel)]="textInputTextArea"
-            (ngModelChange)="onTextAreaChange()"
-            (keydown)="onkeydown($event)"
-            (paste)="onPaste($event)">
-        </textarea>
+            <textarea 
+                *ngIf="!(isStreamAudioActive || isStreamAudioConnecting)"
+                [attr.disabled]="(hideTextReply)? true : null"
+                [attr.placeholder]="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
+                [attr.aria-label]="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
+                [attr.aria-multiline]="true"
+                [attr.aria-invalid]="showAlertEmoji ? 'true' : 'false'"
+                start-focus-chat21-conversation-component
+                inputTextArea
+                #textbox
+                rows="1"
+                id="chat21-main-message-context"
+                class='f21textarea c21-button-clean'
+                [(ngModel)]="textInputTextArea"
+                (ngModelChange)="onTextAreaChange()"
+                (keydown)="onkeydown($event)"
+                (paste)="onPaste($event)">
+            </textarea>
         
         </div>
 
         <!-- ICON SEND -->
         <button type="button"
-            *ngIf="(textInputTextArea !== '' && !isStopRec) || !showAudioRecorderFooterButton"
+            *ngIf="(textInputTextArea !== '' && !isStopRec) || !showAudioRecorderFooterButton && !(isStreamAudioActive || isStreamAudioConnecting)"
             class="chat21-textarea-button c21-button-clean"
             [class.disabled]="showAlertEmoji"
             [class.active]="textInputTextArea && !hideTextReply"
