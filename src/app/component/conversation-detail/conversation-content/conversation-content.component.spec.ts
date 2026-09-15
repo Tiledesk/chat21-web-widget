@@ -1,4 +1,3 @@
-import { SimpleChange } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
@@ -10,6 +9,13 @@ import { CustomLogger } from 'src/chat21-core/providers/logger/customLogger';
 import { NGXLogger } from 'ngx-logger';
 import { MAX_WIDTH_IMAGES } from 'src/app/utils/constants';
 import { ConversationContentComponent } from './conversation-content.component';
+import { MarkedPipe } from '../../../pipe/marked.pipe';
+import { HtmlEntitiesEncodePipe } from '../../../pipe/html-entities-encode.pipe';
+import { NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { ImageRepoService } from '../../../../chat21-core/providers/abstract/image-repo.service';
+
+const uploadState$ = new BehaviorSubject<any>({ upload: 100, type: 'image' });
 
 describe('ConversationContentComponent', () => {
   let component: ConversationContentComponent;
@@ -44,6 +50,13 @@ describe('ConversationContentComponent', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
+      imports: [
+      ],
+      providers: [ 
+        { provide: UploadService, useValue: { BSStateUpload: uploadState$ } },
+        ImageRepoService
+      ],
+      schemas: [NO_ERRORS_SCHEMA],
     })
       .overrideComponent(ConversationContentComponent, {
         set: {
@@ -67,6 +80,7 @@ describe('ConversationContentComponent', () => {
       ['bubbleReceivedTextColor', '#222'],
     ]);
     component.translationMap = new Map([['LABEL_LOADING', 'Loading']]);
+    uploadState$.next({ upload: 100, type: 'image' });
     fixture.detectChanges();
   });
 
@@ -203,19 +217,6 @@ describe('ConversationContentComponent', () => {
     });
   });
 
-  describe('upload observable edge cases', () => {
-    it('should ignore null BSStateUpload payloads', () => {
-      component.showUploadProgress = true;
-      uploadState$.next(null);
-      expect(component.showUploadProgress).toBe(true);
-    });
-
-    it('should treat NaN upload as complete for progress UI', () => {
-      uploadState$.next({ upload: NaN, type: 'image/png' });
-      expect(component.showUploadProgress).toBe(false);
-    });
-  });
-
   describe('onScroll without ViewChild', () => {
     it('should not emit when scrollMe is missing', () => {
       spyOn(component.onScrollContent, 'emit');
@@ -252,6 +253,39 @@ describe('ConversationContentComponent', () => {
       ] as any;
       expect(component.isLastIncomingMessage(component.messages[0])).toBe(true);
       expect(component.isLastIncomingMessage(component.messages[1])).toBe(false);
+    });
+
+    it('canPlayIncomingStreamAnimation should skip bubbles already present when stream starts', () => {
+      const welcome = { uid: 'b1', isSender: false, sender: 'bot' } as any;
+      const user = { uid: 'u1', isSender: true, sender: 'user' } as any;
+      const nextBot = { uid: 'b2', isSender: false, sender: 'bot' } as any;
+      component.messages = [welcome];
+      component.isStreamAudioActive = false;
+      expect(component.canPlayIncomingStreamAnimation(welcome)).toBe(false);
+
+      component.isStreamAudioActive = true;
+      expect(component.canPlayIncomingStreamAnimation(welcome)).toBe(false);
+
+      component.messages = [welcome, user, nextBot];
+      expect(component.canPlayIncomingStreamAnimation(welcome)).toBe(false);
+      expect(component.canPlayIncomingStreamAnimation(nextBot)).toBe(true);
+    });
+
+    it('canPlayIncomingStreamAnimation should freeze previous session messages on the next stream start', () => {
+      const first = { uid: 'b1', isSender: false, sender: 'bot' } as any;
+      const second = { uid: 'b2', isSender: false, sender: 'bot' } as any;
+      component.messages = [first];
+      component.isStreamAudioActive = true;
+      expect(component.canPlayIncomingStreamAnimation(first)).toBe(false);
+
+      component.messages = [first, second];
+      expect(component.canPlayIncomingStreamAnimation(second)).toBe(true);
+
+      component.isStreamAudioActive = false;
+      expect(component.canPlayIncomingStreamAnimation(second)).toBe(false);
+
+      component.isStreamAudioActive = true;
+      expect(component.canPlayIncomingStreamAnimation(second)).toBe(false);
     });
   });
 

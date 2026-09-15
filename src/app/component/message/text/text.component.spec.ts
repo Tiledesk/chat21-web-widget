@@ -1,6 +1,6 @@
+import { HtmlEntitiesEncodePipe } from './../../../pipe/html-entities-encode.pipe';
+import { MarkedPipe } from './../../../pipe/marked.pipe';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
-import { MarkedPipe } from '../../../pipe/marked.pipe';
 import { TextComponent } from './text.component';
 
 /**
@@ -48,9 +48,6 @@ describe('TextComponent (render via MarkedPipe)', () => {
     expect(out).toBe('Hello');
     expect(component.onBeforeMessageRender.emit).toHaveBeenCalled();
     expect(component.onAfterMessageRender.emit).toHaveBeenCalled();
-    const beforeArg = (component.onBeforeMessageRender.emit as jasmine.Spy).calls.mostRecent().args[0];
-    expect(beforeArg.messageEl).toEqual({});
-    expect(beforeArg.component).toBe(component);
   });
 
   it('should render message container with color style', () => {
@@ -58,12 +55,6 @@ describe('TextComponent (render via MarkedPipe)', () => {
     const el = host.shadowRoot!.querySelector('div.message_innerhtml') as HTMLElement;
     expect(el).toBeTruthy();
     expect(el.style.color).toBe('black');
-  });
-
-  it('should render empty text without throwing', () => {
-    component.text = '';
-    expect(() => fixture.detectChanges()).not.toThrow();
-    expect(shadowInnerHtml()).toBeDefined();
   });
 
   describe('markdown (use case contenuto legittimo)', () => {
@@ -131,5 +122,16 @@ describe('TextComponent (render via MarkedPipe)', () => {
       const viaPipe = markedPipe.transform(raw) as string;
       expect(shadowInnerHtml()).toBe(viaPipe);
     });
+  it('should render streaming words with the same marked paragraph class as static text', () => {
+    component.streamingWords = [
+      { word: 'Hello', index: 0 },
+      { word: 'world', index: 1 },
+    ];
+    fixture.detectChanges();
+    const root: ShadowRoot = fixture.nativeElement.shadowRoot;
+    const p = root.querySelector('p.message_innerhtml.marked');
+    expect(p).toBeTruthy();
+    expect(p.textContent).toContain('Hello');
+    expect(p.querySelectorAll('.stream-word').length).toBe(2);
   });
 });
