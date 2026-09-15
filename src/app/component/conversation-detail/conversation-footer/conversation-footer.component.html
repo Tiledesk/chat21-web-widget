@@ -138,7 +138,7 @@
 
         <!-- ICON SEND -->
         <button type="button"
-            *ngIf="(textInputTextArea !== '' && !isStopRec) || !showAudioRecorderFooterButton && !(isStreamAudioActive || isStreamAudioConnecting)"
+            *ngIf="(textInputTextArea !== '' && !isStopRec) || !showAudioRecorderFooterButton "
             class="chat21-textarea-button c21-button-clean"
             [class.disabled]="showAlertEmoji"
             [class.active]="textInputTextArea && !hideTextReply"
@@ -154,7 +154,10 @@
         </button>
 
         <!-- ICON REC -->
-        <div *ngIf="showAudioRecorderFooterButton && !textInputTextArea && !isStreamAudioActive && !isStreamAudioConnecting" tabindex="-1" class="chat21-audio-button" [class.active]="isStopRec" id="chat21-button-rec">
+        <div *ngIf="showAudioRecorderFooterButton && !textInputTextArea && !(isStreamAudioActive || isStreamAudioConnecting)"
+            class="chat21-audio-button"
+            [class.active]="isStopRec"
+            id="chat21-button-rec">
             <chat-audio-recorder
                 (startRecordingEvent)="onStartRecording()"
                 (deleteRecordingEvent)="onDeleteRecording()"
