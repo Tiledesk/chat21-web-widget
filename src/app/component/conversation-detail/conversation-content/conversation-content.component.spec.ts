@@ -244,6 +244,15 @@ describe('ConversationContentComponent', () => {
       expect(component.isSameSender('alice', 1)).toBe(true);
       expect(component.isFirstMessage('alice', 0)).toBe(true);
     });
+
+    it('isLastIncomingMessage should ignore the last row if it is the user', () => {
+      component.messages = [
+        { uid: 'b1', isSender: false, sender: 'bot' },
+        { uid: 'u1', isSender: true, sender: 'user' },
+      ] as any;
+      expect(component.isLastIncomingMessage(component.messages[0])).toBe(true);
+      expect(component.isLastIncomingMessage(component.messages[1])).toBe(false);
+    });
   });
 
   describe('getMetadataSize string width', () => {

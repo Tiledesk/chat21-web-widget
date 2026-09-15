@@ -211,6 +211,20 @@ export class ConversationContentComponent implements OnInit, OnDestroy {
     // return false;
   }
 
+  /** Latest bot/incoming message in the thread (not the last row if the user just replied). */
+  isLastIncomingMessage(message: MessageModel): boolean {
+    if (!message?.uid || !this.messages?.length) {
+      return false;
+    }
+    for (let i = this.messages.length - 1; i >= 0; i--) {
+      const candidate = this.messages[i];
+      if (this.messageType(this.MESSAGE_TYPE_OTHERS, candidate)) {
+        return candidate.uid === message.uid;
+      }
+    }
+    return false;
+  }
+
   isSameSender(senderId, index):boolean{
     return isSameSender(this.messages, senderId, index)
     // if(senderId && this.messages[index - 1] && (senderId === this.messages[index - 1].sender)){
