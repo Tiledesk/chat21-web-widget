@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { of, Subject } from 'rxjs';
 import { JsonSourcesParserService } from 'src/app/providers/json-sources-parser.service';
@@ -6,14 +6,34 @@ import { VoiceService } from 'src/app/providers/voice/voice.service';
 import { MAX_WIDTH_IMAGES, MIN_WIDTH_IMAGES } from 'src/chat21-core/utils/constants';
 
 import { BubbleMessageComponent } from './bubble-message.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
+import { calcImageSize } from 'src/chat21-core/utils/utils-message';
+
+const textMessage: any = {
+  attributes: { projectId: 'p1' },
+  channel_type: 'group',
+  recipient: 'support-group-x',
+  recipient_fullname: 'Guest',
+  sender: 'bot_1',
+  sender_fullname: 'BOT',
+  status: 150,
+  text: 'Hello',
+  timestamp: 1629273999970,
+  type: 'text',
+  uid: 'msg-hello',
+  isSender: false,
+};
+
+function sizeFromMetadata(metadata: any) {
+  return calcImageSize(metadata);
+}
 
 describe('BubbleMessageComponent', () => {
   let component: BubbleMessageComponent;
   let fixture: ComponentFixture<BubbleMessageComponent>;
   const karaoke$ = new Subject<any>();
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BubbleMessageComponent ],
       schemas: [NO_ERRORS_SCHEMA],
@@ -43,6 +63,7 @@ describe('BubbleMessageComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BubbleMessageComponent);
     component = fixture.componentInstance;
+    component.stylesMap = new Map();
     fixture.detectChanges();
   });
 
@@ -100,6 +121,8 @@ describe('BubbleMessageComponent', () => {
     const textChild = fixture.debugElement.query(By.css('chat-text'))
     expect(textChild.properties.text).toEqual(messages.text)
   })
+
+  describe('sizeFromMetadata', () => {
     it('should scale down when width exceeds MAX_WIDTH_IMAGES', () => {
       const s = sizeFromMetadata({ width: MAX_WIDTH_IMAGES * 2, height: 100 });
       expect(s.width).toBe(MAX_WIDTH_IMAGES);
@@ -281,6 +304,50 @@ describe('BubbleMessageComponent', () => {
       component.isLastIncoming = false;
       component.ngOnChanges();
       expect(component._isStreaming).toBe(false);
+    });
+
+    it('should not start word stream when stream-audio is toggled on an already visible bubble', () => {
+      component.message = { ...textMessage, isJustRecived: true, isSender: false };
+      component.streamOnArrival = false;
+      component.isLastIncoming = true;
+      component.ngOnChanges();
+      expect(component._hasRenderedStatic).toBe(true);
+      expect(component._isStreaming).toBe(false);
+
+      component.streamOnArrival = true;
+      component.ngOnChanges({
+        streamOnArrival: new SimpleChange(false, true, false),
+      });
+      expect(component._isStreaming).toBe(false);
+    });
+
+    it('should keep karaoke static on a bubble that was already visible', () => {
+      const tts = {
+        ...textMessage,
+        type: 'tts',
+        uid: 'old-tts',
+        text: 'Hello world',
+        metadata: { src: 'blob:x', type: 'audio/mpeg' },
+      };
+      component.message = tts;
+      component.streamOnArrival = false;
+      component.isLastIncoming = true;
+      component.ngOnChanges();
+      component.ngOnInit();
+      const seen: string[][] = [];
+      const sub = component._wssKaraokeWords$!.subscribe((words) => {
+        seen.push(words.map((w) => w.state));
+      });
+      karaoke$.next({
+        text: 'Hello world',
+        words: [
+          { text: 'Hello', state: 'active' },
+          { text: 'world', state: 'future' },
+        ],
+        activeIndex: 0,
+      });
+      expect(seen[seen.length - 1]).toEqual(['past', 'past']);
+      sub.unsubscribe();
     });
 
     it('should ignore karaoke frames on older bubbles that share the spoken text', () => {

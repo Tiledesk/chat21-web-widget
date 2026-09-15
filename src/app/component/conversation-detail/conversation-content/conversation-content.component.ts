@@ -75,6 +75,13 @@ export class ConversationContentComponent implements OnInit, OnDestroy {
   fileType: string;
   private logger: LoggerService = LoggerInstance.getInstance();
   private uploadSub?: Subscription;
+  /**
+   * Message UIDs already on screen when the current stream-audio session started.
+   * Word-stream / karaoke must never replay on these, even if they are still
+   * the last incoming bubble and `isJustRecived` is still true.
+   */
+  private streamAnimFrozenUids = new Set<string>();
+  private streamAnimSessionActive = false;
 
   constructor(private cdref: ChangeDetectorRef,
               private elementRef: ElementRef,
@@ -223,6 +230,37 @@ export class ConversationContentComponent implements OnInit, OnDestroy {
       }
     }
     return false;
+  }
+
+  /**
+   * True only for a bot message that arrived after the current stream-audio
+   * session started, and only while it is still the last incoming bubble.
+   */
+  canPlayIncomingStreamAnimation(message: MessageModel): boolean {
+    this.syncStreamAnimSnapshot();
+    if (!this.isStreamAudioActive || !message?.uid) {
+      return false;
+    }
+    if (this.streamAnimFrozenUids.has(message.uid)) {
+      return false;
+    }
+    return this.isLastIncomingMessage(message);
+  }
+
+  private syncStreamAnimSnapshot(): void {
+    if (!this.isStreamAudioActive) {
+      this.streamAnimSessionActive = false;
+      this.streamAnimFrozenUids.clear();
+      return;
+    }
+    if (!this.streamAnimSessionActive) {
+      this.streamAnimSessionActive = true;
+      this.streamAnimFrozenUids = new Set(
+        (this.messages ?? [])
+          .map((m) => m?.uid)
+          .filter((uid): uid is string => !!uid)
+      );
+    }
   }
 
   isSameSender(senderId, index):boolean{
