@@ -31,7 +31,7 @@ describe('VoiceService', () => {
 
     voiceStreamingMock = jasmine.createSpyObj<VoiceStreamingService>(
       'VoiceStreamingService',
-      ['start', 'stop', 'setAudioMuted', 'sendPlaybackComplete', 'sendBargeIn'],
+      ['start', 'stop', 'setAudioMuted', 'sendPlaybackComplete'],
     );
     voiceStreamingMock.start.and.returnValue(Promise.resolve());
     voiceStreamingMock.stop.and.returnValue(
@@ -224,7 +224,7 @@ describe('VoiceService', () => {
     wsControl$.next({ event: 'done' } as VoiceWsControlMessage); // _unblockAfterTts = true
 
     // Proxy detects user speech and sends barge_in
-    wsControl$.next({ event: 'barge_in' } as VoiceWsControlMessage);
+    wsControl$.next({ event: 'barge_in' } as unknown as VoiceWsControlMessage);
 
     // Audio should be cancelled (mic unmuted, acquisition unblocked)
     expect(voiceStreamingMock.setAudioMuted).toHaveBeenCalledWith(false);
@@ -242,7 +242,7 @@ describe('VoiceService', () => {
 
     // No speaking event — mic was never muted
     expect(() => {
-      wsControl$.next({ event: 'barge_in' } as VoiceWsControlMessage);
+      wsControl$.next({ event: 'barge_in' } as unknown as VoiceWsControlMessage);
     }).not.toThrow();
 
     expect(voiceStreamingMock.sendPlaybackComplete).not.toHaveBeenCalled();
