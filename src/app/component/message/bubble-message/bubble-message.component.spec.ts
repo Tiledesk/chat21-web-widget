@@ -1,7 +1,9 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { of, Subject } from 'rxjs';
 import { JsonSourcesParserService } from 'src/app/providers/json-sources-parser.service';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
 import { MAX_WIDTH_IMAGES, MIN_WIDTH_IMAGES } from 'src/chat21-core/utils/constants';
 
 import { BubbleMessageComponent } from './bubble-message.component';
@@ -9,6 +11,7 @@ import { BubbleMessageComponent } from './bubble-message.component';
 describe('BubbleMessageComponent', () => {
   let component: BubbleMessageComponent;
   let fixture: ComponentFixture<BubbleMessageComponent>;
+  const karaoke$ = new Subject<any>();
 
   const textMessage: any = {
     attributes: { projectId: 'p1' },
@@ -35,6 +38,16 @@ describe('BubbleMessageComponent', () => {
           useValue: {
             parseBaseFromMessage: () => [],
             enrichSources: () => Promise.resolve([]),
+          },
+        },
+        {
+          provide: VoiceService,
+          useValue: {
+            voiceTtsKaraoke$: karaoke$,
+            isWssVoiceActive$: of(true),
+            isWssVoiceActive: true,
+            markProxyHandled: jasmine.createSpy('markProxyHandled'),
+            wasProxyHandled: () => false,
           },
         },
       ],
@@ -99,7 +112,7 @@ describe('BubbleMessageComponent', () => {
     });
 
     it('should keep width when it equals MAX_WIDTH_IMAGES', () => {
-      const s = component.getMetadataSize({ width: MAX_WIDTH_IMAGES, height: 50 });
+      const s = sizeFromMetadata({ width: MAX_WIDTH_IMAGES, height: 50 });
       expect(s.width).toBe(MAX_WIDTH_IMAGES);
       expect(s.height).toBe(50);
     });
@@ -175,7 +188,7 @@ describe('BubbleMessageComponent', () => {
     it('should ignore non-object metadata', () => {
       component.message = { ...textMessage, metadata: 'x' as any };
       component.ngOnChanges();
-      expect(component.sizeImage).toBeUndefined();
+      expect(component.sizeImage).toEqual({ width: 0, height: 0 });
     });
 
     it('should derive fullnameColor from fontColor', () => {
@@ -226,6 +239,75 @@ describe('BubbleMessageComponent', () => {
       spyOn(component.onElementRendered, 'emit');
       component.onElementRenderedFN({ element: 'image', status: true });
       expect(component.onElementRendered.emit).toHaveBeenCalledWith({ element: 'image', status: true });
+    });
+  });
+
+  describe('incoming stream animation', () => {
+    it('should not stream words on an older incoming message with the same text', () => {
+      component.message = { ...textMessage, isJustRecived: true, isSender: false };
+      component.streamOnArrival = true;
+      component.isLastIncoming = false;
+      component.ngOnChanges();
+      expect(component._isStreaming).toBe(false);
+    });
+
+    it('should stream words only on the last incoming message', () => {
+      component.message = { ...textMessage, isJustRecived: true, isSender: false };
+      component.streamOnArrival = true;
+      component.isLastIncoming = true;
+      component.ngOnChanges();
+      expect(component._isStreaming).toBe(true);
+      expect(component._streamingWords.map((w) => w.word)).toEqual(['Hello']);
+    });
+
+    it('should freeze streaming when the bubble is no longer last incoming', () => {
+      component.message = { ...textMessage, isJustRecived: true, isSender: false };
+      component.streamOnArrival = true;
+      component.isLastIncoming = true;
+      component.ngOnChanges();
+      expect(component._isStreaming).toBe(true);
+      component.streamOnArrival = false;
+      component.isLastIncoming = false;
+      component.ngOnChanges();
+      expect(component._isStreaming).toBe(false);
+    });
+
+    it('should ignore karaoke frames on older bubbles that share the spoken text', () => {
+      const tts = {
+        ...textMessage,
+        type: 'tts',
+        uid: 'old-tts',
+        text: 'Hello world',
+        metadata: { src: 'blob:x', type: 'audio/mpeg' },
+      };
+      component.message = tts;
+      component.isLastIncoming = false;
+      component.ngOnInit();
+      const seen: string[][] = [];
+      const sub = component._wssKaraokeWords$!.subscribe((words) => {
+        seen.push(words.map((w) => w.state));
+      });
+      karaoke$.next({
+        text: 'Hello world',
+        words: [
+          { text: 'Hello', state: 'active' },
+          { text: 'world', state: 'future' },
+        ],
+        activeIndex: 0,
+      });
+      expect(seen[seen.length - 1]).toEqual(['past', 'past']);
+
+      component.isLastIncoming = true;
+      karaoke$.next({
+        text: 'Hello world',
+        words: [
+          { text: 'Hello', state: 'active' },
+          { text: 'world', state: 'future' },
+        ],
+        activeIndex: 0,
+      });
+      expect(seen[seen.length - 1]).toEqual(['active', 'future']);
+      sub.unsubscribe();
     });
   });
 });

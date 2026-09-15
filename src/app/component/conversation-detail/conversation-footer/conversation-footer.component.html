@@ -112,29 +112,29 @@
                 <span class="voice-inline-label">{{ voiceStatusLabel }}</span>
             </div>
             <!-- Normal mode: textarea -->
-        <textarea 
-            *ngIf="!(isStreamAudioActive || isStreamAudioConnecting)"
-            [attr.disabled] = "(hideTextReply)? true : null"
-            [attr.placeholder] ="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
-            start-focus-chat21-conversation-component
-            inputTextArea
-            #textbox
-            tabindex="1501"
-            aria-labelledby="altTextArea"
-            rows="1"
-            id="chat21-main-message-context"
-            class='f21textarea c21-button-clean'
-            [(ngModel)]="textInputTextArea"
-            (ngModelChange)="onTextAreaChange()"
-            (keydown)="onkeydown($event)"
-            (paste)="onPaste($event)">
-        </textarea>
+            <textarea 
+                *ngIf="!(isStreamAudioActive || isStreamAudioConnecting)"
+                [attr.disabled] = "(hideTextReply)? true : null"
+                [attr.placeholder] ="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
+                start-focus-chat21-conversation-component
+                inputTextArea
+                #textbox
+                tabindex="1501"
+                aria-labelledby="altTextArea"
+                rows="1"
+                id="chat21-main-message-context"
+                class='f21textarea c21-button-clean'
+                [(ngModel)]="textInputTextArea"
+                (ngModelChange)="onTextAreaChange()"
+                (keydown)="onkeydown($event)"
+                (paste)="onPaste($event)">
+            </textarea>
         
         </div>
     
         <!-- ICON SEND -->
         <button type="button"
-            *ngIf="(textInputTextArea !== '' && !isStopRec) || !showAudioRecorderFooterButton"
+            *ngIf="(textInputTextArea !== '' && !isStopRec) || !showAudioRecorderFooterButton && !(isStreamAudioActive || isStreamAudioConnecting)"
             class="chat21-textarea-button c21-button-clean"
             [class.disabled]="showAlertEmoji"
             [class.active]="textInputTextArea && !hideTextReply"
@@ -211,16 +211,16 @@
     [attr.aria-label]="translationMap?.get('EMOJI')"
     #emoji_mart_container>
         <emoji-mart id="emoji-mart"
-        *ngIf="showEmojiPicker"
-        class="emoji-mart"
-        [showPreview]="emojiiOptions?.showPreview"
-        [color]="stylesMap?.get('themeColor')"
-        [perLine]="emojiiOptions?.emojiPerLine"
-        [totalFrequentLines]="emojiiOptions?.totalFrequentLines"
-        [enableSearch]="emojiiOptions?.enableSearch"
-        [darkMode]="emojiiOptions?.darkMode"
-        [include]="emojiiOptions?.include"
-        (emojiSelect)="addEmoji($event)">
+            *ngIf="showEmojiPicker"
+            class="emoji-mart"
+            [showPreview]="emojiiOptions?.showPreview"
+            [color]="stylesMap?.get('themeColor')"
+            [perLine]="emojiiOptions?.emojiPerLine"
+            [totalFrequentLines]="emojiiOptions?.totalFrequentLines"
+            [enableSearch]="emojiiOptions?.enableSearch"
+            [darkMode]="emojiiOptions?.darkMode"
+            [include]="emojiiOptions?.include"
+            (emojiSelect)="addEmoji($event)">
     </emoji-mart>
 </div>
 
