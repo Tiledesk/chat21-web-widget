@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MessageModel } from 'src/chat21-core/models/message';
@@ -25,6 +25,20 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
   @Input() stylesMap: Map<string, string>;
   /** When true, a newly-arrived bot text message reveals its words one by one. */
   @Input() streamOnArrival = false;
+  /**
+   * True only for the latest incoming (bot) message. Karaoke / word-stream
+   * must not replay on older bubbles that happen to share the same text.
+   */
+  @Input()
+  set isLastIncoming(value: boolean) {
+    this._isLastIncoming = !!value;
+    this._isLastIncoming$.next(this._isLastIncoming);
+  }
+  get isLastIncoming(): boolean {
+    return this._isLastIncoming;
+  }
+  private _isLastIncoming = false;
+  private readonly _isLastIncoming$ = new BehaviorSubject<boolean>(false);
   /** One-shot flag: set once in ngOnChanges, never reverts so animation isn't replayed. */
   _isStreaming = false;
   /** Precomputed word list; rebuilt only when the message text changes. */
@@ -79,10 +93,14 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
       // 'future' here would dimm old/history messages the moment voice opens.
       const initialWords: VoiceTtsKaraokeWord[] = rawWords.map((w) => ({ text: w, state: 'past' as const }));
 
-      this._wssKaraokeWords$ = this.voiceService.voiceTtsKaraoke$.pipe(
-        startWith({ text, words: initialWords, activeIndex: -1 }),
-        map((frame) =>
-          frame.text === text
+      this._wssKaraokeWords$ = combineLatest([
+        this.voiceService.voiceTtsKaraoke$.pipe(
+          startWith({ text, words: initialWords, activeIndex: -1 }),
+        ),
+        this._isLastIncoming$,
+      ]).pipe(
+        map(([frame, isLast]) =>
+          isLast && frame.text === text
             ? (frame.words as VoiceTtsKaraokeWord[])
             : initialWords,
         ),
@@ -108,11 +126,17 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
       this.fullnameColor = getColorBck(this.message.sender_fullname);
     }
 
-    // One-shot: activate word streaming for newly-arrived bot text messages during a voice session.
-    // Reset isJustRecived so the animation never replays on subsequent change detection cycles.
+    // Freeze previous bubbles as static text so CSS word-in does not replay.
+    if (this._isStreaming && !this.streamOnArrival) {
+      this._isStreaming = false;
+    }
+
+    // One-shot: activate word streaming only for the latest incoming bot text
+    // during a voice session. isJustRecived is cleared so it cannot replay.
     if (
       !this._isStreaming &&
       this.streamOnArrival &&
+      this.isLastIncoming &&
       this.message?.isJustRecived === true &&
       this.messageType(this.MESSAGE_TYPE_OTHERS, this.message) &&
       !this.isAudio(this.message) &&

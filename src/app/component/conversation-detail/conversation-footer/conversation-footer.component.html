@@ -93,29 +93,36 @@
                 <span class="voice-inline-label">{{ voiceStatusLabel }}</span>
             </div>
             <!-- Normal mode: textarea -->
-        <textarea 
-            *ngIf="!(isStreamAudioActive || isStreamAudioConnecting)"
-            [attr.disabled] = "(hideTextReply)? true : null"
-            [attr.placeholder] ="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
-            start-focus-chat21-conversation-component
-            inputTextArea
-            #textbox
-            tabindex="1501"
-            aria-labelledby="altTextArea"
-            rows="1"
-            id="chat21-main-message-context"
-            class='f21textarea c21-button-clean'
-            [(ngModel)]="textInputTextArea"
-            (ngModelChange)="onTextAreaChange()"
-            (keypress)="onkeypress($event)"
-            (keydown)="onkeydown($event)"
-            (paste)="onPaste($event)">
-        </textarea>
+            <textarea 
+                *ngIf="!(isStreamAudioActive || isStreamAudioConnecting)"
+                [attr.disabled] = "(hideTextReply)? true : null"
+                [attr.placeholder] ="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
+                start-focus-chat21-conversation-component
+                inputTextArea
+                #textbox
+                tabindex="1501"
+                aria-labelledby="altTextArea"
+                rows="1"
+                id="chat21-main-message-context"
+                class='f21textarea c21-button-clean'
+                [(ngModel)]="textInputTextArea"
+                (ngModelChange)="onTextAreaChange()"
+                (keydown)="onkeydown($event)"
+                (paste)="onPaste($event)">
+            </textarea>
         
         </div>
 
         <!-- ICON SEND -->
-        <div *ngIf="((textInputTextArea !== '' && !isStopRec && !isStreamAudioActive) || !showAudioRecorderFooterButton)" tabindex="-1" class="chat21-textarea-button" [class.disabled]="showAlertEmoji" [class.active]="textInputTextArea && !hideTextReply" id="chat21-button-send" (click)="onSendPressed($event)">
+        <button type="button"
+            *ngIf="(textInputTextArea !== '' && !isStopRec) || !showAudioRecorderFooterButton && !(isStreamAudioActive || isStreamAudioConnecting)"
+            class="chat21-textarea-button c21-button-clean"
+            [class.disabled]="showAlertEmoji"
+            [class.active]="textInputTextArea && !hideTextReply"
+            [attr.aria-label]="translationMap?.get('BUTTON_SEND_MESSAGE')"
+            [attr.disabled]="(showAlertEmoji || !textInputTextArea || hideTextReply) ? true : null"
+            id="chat21-button-send"
+            (click)="onSendPressed($event)">
             <span class="v-align-center">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  height="24" width="24" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve" fill="currentColor">
                     <path d="M1.8,20.6V3.4l20.2,8.6L1.8,20.6ZM3.9,17.3l12.6-5.4L3.9,6.6v3.7l6.4,1.6-6.4,1.6v3.8ZM3.9,17.3V6.6v10.7Z"/>
@@ -177,11 +184,11 @@
 <!-- EMOJII PICKER-->
 <div [style.visibility]="isEmojiiPickerShow?'visible':'hidden'"  class="emoji-container"  id="emoji-mart-container" #emoji_mart_container>
     <!-- <ng-container #emojii_container></ng-container> -->
-        <emoji-mart id="emoji-mart"
+    <emoji-mart id="emoji-mart"
         *ngIf="showEmojiPicker"
         class="emoji-mart"
         [showPreview]="emojiiOptions?.showPreview"
-        [color]="stylesMap?.get('themeColor')" 
+        [color]="stylesMap?.get('themeColor')"
         [perLine]="emojiiOptions?.emojiPerLine"
         [totalFrequentLines]="emojiiOptions?.totalFrequentLines"
         [enableSearch]="emojiiOptions?.enableSearch"
