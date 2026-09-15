@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.37-ar
+- **bug fixed**: in stream audio mode, incoming message animation (karaoke / word-stream) no longer replays on already received bubbles that share the same text; animation runs only on the last incoming message
+
 # 5.1.36-ar
 - **bug fixed**: texarea with is not responsive
 
