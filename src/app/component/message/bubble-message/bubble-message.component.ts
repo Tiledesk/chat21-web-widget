@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -17,7 +17,7 @@ import { VoiceTtsKaraokeWord } from 'src/app/providers/voice/voice-streaming.typ
   templateUrl: './bubble-message.component.html',
   styleUrls: ['./bubble-message.component.scss']
 })
-export class BubbleMessageComponent implements OnInit, OnDestroy {
+export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() message: MessageModel;
   @Input() isSameSender: boolean;
@@ -41,6 +41,11 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
   }
   private _isLastIncoming = false;
   private readonly _isLastIncoming$ = new BehaviorSubject<boolean>(false);
+  /**
+   * Once this bubble has been shown as static text, never start word-stream /
+   * karaoke on it. Prevents replay when stream-audio is toggled on later.
+   */
+  _hasRenderedStatic = false;
   /** One-shot flag: set once in ngOnChanges, never reverts so animation isn't replayed. */
   _isStreaming = false;
   /** Precomputed word list; rebuilt only when the message text changes. */
@@ -91,7 +96,7 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
         this._isLastIncoming$,
       ]).pipe(
         map(([frame, isLast]) =>
-          isLast && frame.text === text
+          !this._hasRenderedStatic && isLast && frame.text === text
             ? (frame.words as VoiceTtsKaraokeWord[])
             : initialWords,
         ),
@@ -130,7 +135,7 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
     private jsonSourcesParser: JsonSourcesParserService
   ) {}
 
-  ngOnChanges(): void {
+  ngOnChanges(changes?: SimpleChanges): void {
     if (this.message?.metadata && typeof this.message.metadata === 'object') {
       this.sizeImage = calcImageSize(this.message.metadata);
     }
@@ -143,18 +148,32 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
       this.fullnameColor = getColorBck(this.message.sender_fullname);
     }
 
+    // Already-visible bubbles must stay static when stream-audio is toggled on.
+    if (this.message && !this.streamOnArrival) {
+      this._hasRenderedStatic = true;
+    }
+
     // Freeze previous bubbles as static text so CSS word-in does not replay.
     if (this._isStreaming && !this.streamOnArrival) {
       this._isStreaming = false;
     }
 
-    // One-shot: activate word streaming only for the latest incoming bot text
-    // during a voice session. isJustRecived is cleared so it cannot replay.
+    const streamToggledOnExistingBubble = !!(
+      changes?.['streamOnArrival'] &&
+      changes['streamOnArrival'].currentValue === true &&
+      changes['streamOnArrival'].previousValue !== true &&
+      !changes['message']
+    );
+
+    // One-shot: only a message that arrives while stream is already allowed
+    // may play the word-in animation. Toggling stream on a bubble that was
+    // already on screen must never start it.
     if (
+      !this._hasRenderedStatic &&
       !this._isStreaming &&
+      !streamToggledOnExistingBubble &&
       this.streamOnArrival &&
       this.isLastIncoming &&
-      this.message?.isJustRecived === true &&
       this.messageType(this.MESSAGE_TYPE_OTHERS, this.message) &&
       !this.isAudio(this.message) &&
       !this.isAudioTTS(this.message) &&
@@ -166,7 +185,9 @@ export class BubbleMessageComponent implements OnInit, OnDestroy {
         .split(/\s+/)
         .filter(w => w.length > 0)
         .map((word, index) => ({ word, index }));
-      this.message.isJustRecived = false;
+      if (this.message) {
+        this.message.isJustRecived = false;
+      }
     }
 
     // Reset on every message change: we must not "leak" sources across different messages.
