@@ -1,12 +1,14 @@
-<!-- [ngStyle] = "{ 'max-width': width +'px', 'max-height': height +'px' }" style="position: relative; text-align: center; margin: auto"-->
 <div class="c21-img-container">
-  <img 
-    class="message-contentX message-content-imageX" 
-    [alt]="metadata?.name"
-    [ngClass]="{'isLoadingImage': loading}"
-    [ngStyle] = "{ 'width': width + 'px', 'height': height+'px' }"
-    [src]="metadata.src" 
-    (load)="onLoaded($event)"
-    (click)="onClickImage()"/>
-    <!-- downloadImage(metadata.src, metadata.name);  -->
+  <button type="button"
+    class="c21-image-trigger c21-button-clean"
+    [attr.aria-label]="metadata?.name ? ('Open image: ' + metadata.name) : 'Open image preview'"
+    (click)="onClickImage()">
+    <img
+      class="message-contentX message-content-imageX"
+      [alt]="metadata?.name || ''"
+      [ngClass]="{'isLoadingImage': loading}"
+      [ngStyle]="{ 'width': width + 'px', 'height': height+'px' }"
+      [src]="metadata.src"
+      (load)="onLoaded($event)"/>
+  </button>
 </div>

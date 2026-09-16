@@ -16,6 +16,9 @@
     gap: 15px;
     .text{
         max-width: calc(100% - 30px);
+        margin: 0;
+        font-size: 1em;
+        font-weight: 500;
     }
     .options{
         display: flex;

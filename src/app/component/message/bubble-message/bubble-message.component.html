@@ -28,17 +28,7 @@
         [ngStyle]="{'margin': (isImage(message) || isFrame(message))? '12px 16px 8px 16px': '12px 16px 0px 16px'}" class="message_sender_fullname">
         {{message?.sender_fullname}}
       </div>
-      <!-- message type:: image -->
-      <!-- <div *ngIf="message.type == 'image' && message.metadata"  [ngStyle] = "{ 'max-width': getSizeImg(message).width, 'max-height': getSizeImg(message).height }">
-          <img class="message-contentX message-content-imageX" [src]="message.metadata.src" />
-      </div> -->
-  
-      <!-- <img *ngIf="message.type == 'image' && message.metadata" class="message-contentX message-content-imageX"
-      [src]="message.metadata.src" [width]="getSizeImg(message).width"
-      [height]="getSizeImg(message).height" /> -->
 
-      <!-- [width]="getMetadataSize(message.metadata).width"
-      [height]="getMetadataSize(message.metadata).height" -->
       <chat-image *ngIf="isImage(message)"
         [metadata]="message.metadata"
         [width]="sizeImage?.width"
@@ -53,24 +43,41 @@
         (onElementRendered)="onElementRenderedFN($event)">
       </chat-frame>
 
-      <!-- <chat-audio *ngIf="isAudio(message)"
-        [metadata]="message.metadata" 
-        (onElementRendered)="onElementRenderedFN($event)">
-      </chat-audio> -->
 
       <chat-audio *ngIf="isAudio(message)"
         [metadata]="message.metadata"
         [color]="fontColor"
-        [stylesMap]="stylesMap">
+        [stylesMap]="stylesMap"
+        [translationMap]="translationMap">
       </chat-audio>
-
+      
+      <!-- Json sources -->
       <chat-json-sources *ngIf="jsonSources !== null && jsonSources.length > 0"
         [items]="jsonSources"
         [displayFields]="jsonSourcesDisplayFields"
         [backgroundColor]="jsonSourcesBackgroundColor"
         (onElementRendered)="onElementRenderedFN($event)">
       </chat-json-sources>
+      
+      <!-- TTS player: only when voice proxy is NOT active (avoids double playback)
+           and the message was not already played by the proxy (avoids replay on session end) -->
+      <chat-audio-sync *ngIf="isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && !voiceService.wasProxyHandled(message?.uid)"
+        [message]="message"
+        [color]="fontColor">
+      </chat-audio-sync>
 
+      <!-- Karaoke display for TTS messages while a WSS voice session is active -->
+      <chat-text *ngIf="isAudioTTS(message) && (voiceService.isWssVoiceActive$ | async) && _wssKaraokeWords$"
+        [text]="message?.text"
+        [color]="fontColor"
+        [karaokeWords]="_wssKaraokeWords$ | async">
+      </chat-text>
+
+      <!-- Text fallback for TTS messages after the voice proxy session ended -->
+      <chat-text *ngIf="isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && voiceService.wasProxyHandled(message?.uid) && message?.text"
+        [text]="message?.text"
+        [color]="fontColor">
+      </chat-text>
 
       <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"
         [metadata]="message.metadata"
@@ -82,12 +89,12 @@
       <!-- <div *ngIf="message.type == 'text'"> -->     
 
       <!-- tooltip="{{message.timestamp | dateAgo}} ({{message.timestamp | date:'shortDate'}} {{message.timestamp | date:'HH:mm:ss'}})" placement="bottom" -->
-      <div *ngIf="(message?.text && !isAudio(message)) && !isJsonSources(message)">
+      <div *ngIf="message?.text && (!isAudio(message) && !isAudioTTS(message)) && !isJsonSources(message)" >
 
-        <!-- [htmlEnabled]="(message?.type==='html')? true : false" -->
         <chat-text *ngIf="jsonSources === null && message?.type !=='html'"
           [text]="message?.text"
           [color]="fontColor"
+          [streamingWords]="_isStreaming ? _streamingWords : null"
           (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
           (onAfterMessageRender)="onAfterMessageRenderFN($event)">
         </chat-text>
@@ -100,13 +107,5 @@
         </chat-html>
 
       </div>
-  
     </div>
-  
-  </div>
-
-
-  
-
-
-
+</div>

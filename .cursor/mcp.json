@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "angular-cli": {
+      "command": "/Users/gabriele95/.angular-mcp-runner/run-angular-mcp.sh",
+      "args": []
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest", "--caps=testing"],
+      "env": {
+        "PATH": "/Users/gabriele95/.nvm/versions/node/v20.19.2/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    }
+  }
+}

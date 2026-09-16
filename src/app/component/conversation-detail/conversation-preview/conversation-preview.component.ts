@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MIN_WIDTH_IMAGES } from 'src/app/utils/constants';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
@@ -244,27 +244,47 @@ export class ConversationPreviewComponent implements OnInit {
     this.setFocusOnId('chat21-main-message-context-preview');
   }
 
-  /*
-  * @param event
-  */
-  onkeypress(event) {
+  /**
+   * Single keyboard handler for the preview textarea:
+   * - Enter (no modifier)               -> send the attachment with the typed message
+   * - Shift / Alt / Ctrl / Meta + Enter -> insert a newline (default browser behavior)
+   * - Escape                            -> close the preview modal
+   * Tab navigation is handled by CDK cdkTrapFocus on the dialog wrapper.
+   * @param event
+   */
+  onkeydown(event: KeyboardEvent) {
     const keyCode = event.which || event.keyCode;
-    this.textInputTextArea = ((document.getElementById('chat21-main-message-context-preview') as HTMLInputElement).value);
-    if (keyCode === 13) {
+
+    if (keyCode === 27) { // Esc
+      this.onClickClose();
+      return;
+    }
+
+    if (keyCode === 13) { // ENTER
+      const hasModifier = event.metaKey || event.shiftKey || event.altKey || event.ctrlKey;
+      if (hasModifier) {
+        return;
+      }
+
+      event.preventDefault();
+      const target = document.getElementById('chat21-main-message-context-preview') as HTMLInputElement;
+      if (target) {
+        this.textInputTextArea = target.value;
+      }
       if (this.textInputTextArea && this.textInputTextArea.trim() !== '') {
         this.onSendAttachment.emit(this.textInputTextArea);
         this.restoreTextArea();
       }
-    } else if (keyCode === 9) {
-      event.preventDefault();
+      return;
     }
   }
 
-  onkeydown(event){
-    const keyCode = event.which || event.keyCode;
-    if (keyCode === 27) { // Esc keyboard code
-      this.onClickClose()
-    }
+  /** Component-level Esc handler to close the modal even when focus is not on the textarea. */
+  @HostListener('keydown.escape', ['$event'])
+  onHostEscape(event: KeyboardEvent){
+    event.preventDefault();
+    event.stopPropagation();
+    this.onClickClose();
   }
 
   onPaste(event){

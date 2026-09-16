@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { MAX_WIDTH_IMAGES, MSG_STATUS_RETURN_RECEIPT, MSG_STATUS_SENT, MSG_STATUS_SENT_SERVER } from 'src/app/utils/constants';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
@@ -12,7 +13,7 @@ import { isCarousel, isEmojii, isFirstMessage, isFrame, isImage, isInfo, isLastM
   templateUrl: './conversation-content.component.html',
   styleUrls: ['./conversation-content.component.scss']
 })
-export class ConversationContentComponent implements OnInit {
+export class ConversationContentComponent implements OnInit, OnDestroy {
   @ViewChild('scrollMe') public scrollMe: ElementRef;
   
   @Input() messages: MessageModel[]
@@ -26,6 +27,7 @@ export class ConversationContentComponent implements OnInit {
   @Input() showThinkingMessage: boolean;
   @Input() lastServerSenderKind: 'bot' | 'human' | null;
   @Input() fullscreenMode: boolean;
+  @Input() isStreamAudioActive: boolean;
   @Input() translationMap: Map< string, string>;
   @Input() stylesMap: Map<string, string>;
   @Output() onBeforeMessageRender = new EventEmitter();
@@ -72,6 +74,14 @@ export class ConversationContentComponent implements OnInit {
   showUploadProgress: boolean = false;
   fileType: string;
   private logger: LoggerService = LoggerInstance.getInstance();
+  private uploadSub?: Subscription;
+  /**
+   * Message UIDs already on screen when the current stream-audio session started.
+   * Word-stream / karaoke must never replay on these, even if they are still
+   * the last incoming bubble and `isJustRecived` is still true.
+   */
+  private streamAnimFrozenUids = new Set<string>();
+  private streamAnimSessionActive = false;
 
   constructor(private cdref: ChangeDetectorRef,
               private elementRef: ElementRef,
@@ -81,8 +91,8 @@ export class ConversationContentComponent implements OnInit {
     this.listenToUploadFileProgress();
   }
 
-  ngAfterContentChecked() {
-    this.cdref.detectChanges();
+  ngOnDestroy() {
+    this.uploadSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges){
@@ -120,7 +130,7 @@ export class ConversationContentComponent implements OnInit {
 
   // ENABLE HTML SECTION 'FILE PENDING UPLOAD'
   listenToUploadFileProgress() {
-    this.uploadService.BSStateUpload.subscribe((data: any) => {
+    this.uploadSub = this.uploadService.BSStateUpload.subscribe((data: any) => {
       this.logger.debug('[CONV-CONTENT] BSStateUpload', data);
       // && data.type.startsWith("application")
       if (data) { 
@@ -206,6 +216,51 @@ export class ConversationContentComponent implements OnInit {
     //   return true;
     // }
     // return false;
+  }
+
+  /** Latest bot/incoming message in the thread (not the last row if the user just replied). */
+  isLastIncomingMessage(message: MessageModel): boolean {
+    if (!message?.uid || !this.messages?.length) {
+      return false;
+    }
+    for (let i = this.messages.length - 1; i >= 0; i--) {
+      const candidate = this.messages[i];
+      if (this.messageType(this.MESSAGE_TYPE_OTHERS, candidate)) {
+        return candidate.uid === message.uid;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * True only for a bot message that arrived after the current stream-audio
+   * session started, and only while it is still the last incoming bubble.
+   */
+  canPlayIncomingStreamAnimation(message: MessageModel): boolean {
+    this.syncStreamAnimSnapshot();
+    if (!this.isStreamAudioActive || !message?.uid) {
+      return false;
+    }
+    if (this.streamAnimFrozenUids.has(message.uid)) {
+      return false;
+    }
+    return this.isLastIncomingMessage(message);
+  }
+
+  private syncStreamAnimSnapshot(): void {
+    if (!this.isStreamAudioActive) {
+      this.streamAnimSessionActive = false;
+      this.streamAnimFrozenUids.clear();
+      return;
+    }
+    if (!this.streamAnimSessionActive) {
+      this.streamAnimSessionActive = true;
+      this.streamAnimFrozenUids = new Set(
+        (this.messages ?? [])
+          .map((m) => m?.uid)
+          .filter((uid): uid is string => !!uid)
+      );
+    }
   }
 
   isSameSender(senderId, index):boolean{

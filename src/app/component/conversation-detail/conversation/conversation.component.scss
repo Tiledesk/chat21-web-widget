@@ -13,6 +13,34 @@
     bottom: var(--chat-footer-height) !important
 }
 
+/* Skip-link visible only when focused via keyboard (WCAG 2.4.1) */
+.c21-skip-link {
+    position: absolute;
+    top: -40px;
+    left: 8px;
+    z-index: 100;
+    padding: 6px 12px;
+    background-color: #1a73e8;
+    color: #ffffff !important;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+    transition: top 0.15s ease-in-out;
+}
+
+.c21-skip-link:focus,
+.c21-skip-link:focus-visible {
+    top: 8px;
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .c21-skip-link {
+        transition: none;
+    }
+}
+
 // ============= CSS #chat21-conversation-component ================= //
 #chat21-conversation-component {
     // background-color: #ffffff;
@@ -241,6 +269,16 @@ dialog:-internal-dialog-in-top-layer{
 
     ::ng-deep .chat21-sheet-content{
         bottom: calc(var(--chat-footer-logo-height) + var(--chat-footer-height) + var(--chat-footer-close-button-height) + 34px)!important;
+    }
+
+    /* Con `.close-stream-button` (stream in ascolto): spazio per alert stream sopra il footer */
+    #chat21-conversation-component.chat21-conversation--close-stream-active ::ng-deep .chat21-sheet-content {
+        bottom: calc(
+            var(--chat-footer-logo-height) +
+            var(--chat-footer-height) +
+            var(--chat-footer-stream-button-height) +
+            34px
+        ) !important;
     }
     
 }

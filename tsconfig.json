@@ -23,6 +23,11 @@
       "dom"
     ],
     "resolveJsonModule": true,
+    "paths": {
+      "onnxruntime-web/wasm": [
+        "src/app/shims/onnxruntime-web-wasm.ts"
+      ]
+    }
   },
   "skipLibCheck": true,
   "angularCompilerOptions": {

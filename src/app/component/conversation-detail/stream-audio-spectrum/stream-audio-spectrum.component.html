@@ -1,0 +1,46 @@
+<ng-container [ngSwitch]="mode">
+    <!-- ALERT: spectrum line (fills streamAudioAlert width) -->
+    <div *ngSwitchCase="'alert'" class="stream-audio-spectrum" [ngStyle]="accentColor ? { color: accentColor } : null">
+        <svg class="stream-audio-spectrum__svg" viewBox="0 0 100 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+                <linearGradient [attr.id]="gradientId" x1="0" y1="16" x2="100" y2="16" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="currentColor" stop-opacity="0.45"/>
+                    <stop offset="50%" stop-color="currentColor" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="currentColor" stop-opacity="0.45"/>
+                </linearGradient>
+            </defs>
+            <path class="stream-audio-spectrum__line"
+                [attr.d]="spectrumLinePath"
+                fill="none"
+                [attr.stroke]="'url(#' + gradientId + ')'"
+                stroke-width="2.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <!-- BUTTON: inactive icon / expanded pill content -->
+    <ng-container *ngSwitchCase="'button'">
+        <span class="stream-audio-button__icon" *ngIf="!active" aria-hidden="true">
+            <svg role="img" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 23 23" aria-labelledby="altIconTitle">
+                <rect x="0" y="7.5" height="6px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
+                <rect x="4" y="5.5" height="10px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
+                <rect x="8" y="2.5" height="16px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
+                <rect x="12" y="5.5" height="10px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
+                <rect x="16" y="2.5" height="16px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
+                <rect x="20" y="7.5" height="6px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
+                <title id="altIconTitle">{{ translationMap.get('STREAM_AUDIO') }}</title>
+            </svg>
+        </span>
+
+        <span class="stream-audio-button__expanded" *ngIf="active">
+            <span class="stream-audio-button__bars" aria-hidden="true">
+                <span class="bar" [style.transform]="'scaleY(' + barScales[0] + ')'"></span>
+                <span class="bar" [style.transform]="'scaleY(' + barScales[1] + ')'"></span>
+                <span class="bar" [style.transform]="'scaleY(' + barScales[2] + ')'"></span>
+                <span class="bar" [style.transform]="'scaleY(' + barScales[3] + ')'"></span>
+            </span>
+            <span class="stream-audio-button__label">{{ translationMap.get('CLOSE') }}</span>
+        </span>
+    </ng-container>
+</ng-container>

@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.36-ar
+- **bug fixed**: texarea with is not responsive
+
 # 5.1.35-ar
 - **bug fixed**: if last message is ulr_preview shows previous message buttons
 
@@ -22,6 +25,17 @@
 - **added**: Added the open widget loading spinner
 - **changed**: Load the widget without authentication and display the speech bubble
 
+# 5.1.27-rc3
+- **bug fixed**: fixed Bot/Human conversation detection by correctly classifying bot replies
+
+# 5.1.27-rc2
+- **bug fixed**: centralized fullscreen management on mobile and handled the case of the closed widget that remained fullscreen
+
+# 5.1.27-rc1
+- **added**: closeChatInConversation parameters
+- **added**: close chat button under textarea footer component
+
+# 5.1.26-rc6
 # 5.1.31-ar
 - **bug fixed**: bug fix disabled user-typing with human and user-typing with human is not available
 
@@ -30,6 +44,8 @@
 - **bug fixed**: refactor conversation header button to remove mobile condition for visibility
 - **changed**: mobile always opens fullscreen and ignores legacy stored size”.
 - **changed**: changed user-typing 
+
+# 5.1.26-rc5
 - **changed**: Hide the resize-widget button when on mobile
 - **added**: added "I'm thinking" when the bot responds
 
@@ -69,15 +85,6 @@
 
 # 5.1.9-ar
 - **bug-fixed**: set default widget size
-
-# 5.1.8-ar
-- **changed**: update emoji detection logic in conversation-footer and utils
-- **bug-fixed**: 'DOMAIN_NOT_ALLOWED' in textarea footer component
-- **bug-fixed**: departmentId and departmentName is incorrect in attributes
-
-# 5.1.8
-
-# 5.1.7-rc8
 - **changed**: Updated the translations of the tooltips in the footer-component
 - **changed**: Refactored the network-offline component and made it generic for displaying errors (now error-alert.component)
 - **bug-fixed**: set the color of the buttons with visibility control to the font color (setButtonColors function)
@@ -114,6 +121,8 @@
 - **bug-fixed**: bug fixed button color
 - **bug-fixed**: bug fixed min-height message-receive
 - **bug-fixed**: bug-fixed css footer
+
+# 5.1.7
 
 # 5.1.6
 

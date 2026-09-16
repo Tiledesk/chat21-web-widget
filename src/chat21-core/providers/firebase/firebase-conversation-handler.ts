@@ -253,9 +253,7 @@ export class FirebaseConversationHandler extends ConversationHandlerService {
                 }
             }
 
-    
 
-            
             this.addRepalceMessageInArray(msg.uid, msg);
             this.messageAdded.next(msg);
         } else {
@@ -494,6 +492,9 @@ export class FirebaseConversationHandler extends ConversationHandlerService {
                             commands[i+1]? commands[i+1].time = 0 : null
                         }
                     }
+
+                    command.message.isJustRecived = isJustRecived( that.startTime.getTime(), msg.timestamp );
+
                     that.generateMessageObject(msg, command.message, function () {
                         i += 1
                         if (i < commands.length) {
