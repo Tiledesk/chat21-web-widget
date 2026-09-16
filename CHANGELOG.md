@@ -6,6 +6,12 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.2.2-rc3
+- **bug-fixed**: **Stream audio** — incoming word-stream / karaoke animation no longer replays on already received bubbles (including the last incoming message or bubbles that share the same text). Animation runs only on bot messages that arrive after the current stream session starts.
+- **changed**: **Stream audio** — word-stream and karaoke are rendered inside `chat-text` so animated messages keep the original typography and padding.
+- **bug-fixed**: hide the audio recorder footer button while stream audio is active or connecting.
+- **changed**: widget visibility and auto-authentication now require `botRulesEnabled` when bot rules are present.
+
 # 5.2.2-rc2
 - **bug-fixed**: added stringToBoolean for closeChatInConversation env variable
 
