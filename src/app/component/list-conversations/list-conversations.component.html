@@ -42,7 +42,7 @@
           <div [class.not-read]="conversation.is_new" [class.archived]="conversation.archived" class="truncate c21-msg">{{conversation.last_message_text}}</div>
         </div>
 
-        <div *ngIf="conversation.is_new" [ngStyle]="{ 'background-color': stylesMap.get('themeColor') }" class="c21-divBudge" aria-hidden="true">{{conversation.badge}}</div>
+        <div *ngIf="conversation.is_new" [ngStyle]="{ 'background-color': stylesMap.get('themeColor') }" class="c21-divBudge" aria-hidden="true">{{$any(conversation).badge}}</div>
         <div class="c21-icon-archived-chat" *ngIf="conversation.archived">
           <span class="c21-header-button c21-right c21-close" [attr.aria-label]="translationMap.get('CLOSED')" role="img">
             <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" fill="#aaaaaa"

@@ -9,6 +9,7 @@ export class FormArray {
       public regex?: string,
       public value?: any,
       public options?: Array<any>,
-      public tabIndex?: number
+      public tabIndex?: number,
+      public rows?: number
     ) { }
 }

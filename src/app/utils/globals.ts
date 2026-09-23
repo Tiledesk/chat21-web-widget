@@ -44,7 +44,7 @@ export class Globals {
    * Remote: full URL starting with `http://` or `https://`.
    */
   keyboardSoundFile: string;
-  BUILD_VERSION: String;
+  BUILD_VERSION: string;
   baseLocation: string;
   availableAgents: Array<UserAgent> = [];
   

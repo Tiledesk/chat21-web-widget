@@ -90,7 +90,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   hideFooterTextReply: boolean = false;
   hideTextAreaContent: boolean = false;
   footerMessagePlaceholder: string = '';
-  textInputTextArea: String;
+  textInputTextArea: string;
   isTrascriptDownloadEnabled = false;
   // showContinueConversationButton: boolean = false
   // ========= begin:: gestione scroll view messaggi ======= //
