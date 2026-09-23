@@ -48,6 +48,9 @@ describe('TextComponent (render via MarkedPipe)', () => {
     expect(out).toBe('Hello');
     expect(component.onBeforeMessageRender.emit).toHaveBeenCalled();
     expect(component.onAfterMessageRender.emit).toHaveBeenCalled();
+    const beforeArg = (component.onBeforeMessageRender.emit as jasmine.Spy).calls.mostRecent().args[0];
+    expect(beforeArg.messageEl).toEqual({});
+    expect(beforeArg.component).toBe(component);
   });
 
   it('should render message container with color style', () => {
@@ -55,6 +58,12 @@ describe('TextComponent (render via MarkedPipe)', () => {
     const el = host.shadowRoot!.querySelector('div.message_innerhtml') as HTMLElement;
     expect(el).toBeTruthy();
     expect(el.style.color).toBe('black');
+  });
+
+  it('should render empty text without throwing', () => {
+    component.text = '';
+    expect(() => fixture.detectChanges()).not.toThrow();
+    expect(shadowInnerHtml()).toBeDefined();
   });
 
   describe('markdown (use case contenuto legittimo)', () => {

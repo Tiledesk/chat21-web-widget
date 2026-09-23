@@ -148,6 +148,22 @@ export class VoiceService {
   // with 'listening' within the timeout window, the UI is force-unblocked so the
   // user is not left stuck waiting indefinitely.
   private _listeningFallbackTimer: ReturnType<typeof setTimeout> | null = null;
+  // Flow-level barge-in, from the proxy's session_started (BARGE_IN chatbot global).
+  // When on, the mic keeps streaming while the bot speaks so the user can interrupt it.
+  private _bargeInEnabled = false;
+  // Barge-in "duck, then confirm": a local VAD lowers the bot's volume the moment the user
+  // starts talking over it, so the overlap (and the echo canceller fighting the user's voice)
+  // ends almost at once. The proxy's barge_in — real words transcribed — then stops the bot;
+  // if it doesn't come, the volume returns.
+  private static readonly TTS_DUCK_GAIN = 0.15;
+  private static readonly DUCK_RELEASE_MS = 1200;  // after the user stops, wait this long for barge_in
+  private static readonly DUCK_MAX_MS = 6000;      // never stay ducked longer than this
+  private _bargeInVad?: MicVAD;
+  private _botSpeaking = false;
+  private _ttsGain?: GainNode;
+  private _ttsDucked = false;
+  private _duckReleaseTimer: ReturnType<typeof setTimeout> | null = null;
+  private _duckMaxTimer: ReturnType<typeof setTimeout> | null = null;
   // Track when the last TTS chunk is expected to finish playing.
   // Used to calculate a proper safety timer duration for long messages.
   private _ttsExpectedEndTime = 0;
@@ -318,7 +334,9 @@ export class VoiceService {
     this.logger.log('[VoiceService] ← ws-control', msg.event, msg);
     switch (msg.event) {
       case 'session_started':
-        this.logger.log('[VoiceService] session_started', { requestId: msg.requestId ?? '' });
+        this._bargeInEnabled = msg.bargeIn === true;
+        this.logger.log('[VoiceService] session_started', { requestId: msg.requestId ?? '', bargeIn: this._bargeInEnabled });
+        if (this._bargeInEnabled) void this._initBargeInVad();
         break;
       case 'listening':
         // Proxy confirmed it is in LISTENING state — unblock the UI and resume
@@ -333,6 +351,7 @@ export class VoiceService {
         this._stopKeyboardSound();
         this._isAcquisitionBlocked$.next(false);
         this.voiceStreaming.resumeRecording();
+        this._stopBargeInMonitoring();
         this.logger.log('[VoiceService] listening – acquisition unblocked, recording resumed');
         break;
       case 'transcript': {
@@ -357,6 +376,7 @@ export class VoiceService {
         // confirms LISTENING (i.e. after TTS playback has fully finished).
         this._isAcquisitionBlocked$.next(true);
         this.voiceStreaming.pauseRecording();
+        this._stopBargeInMonitoring();
         // Play keyboard typing sound to mask the silence while the bot generates its response.
         this._startKeyboardSound();
         this.logger.log('[VoiceService] thinking – acquisition blocked, recording paused', { activeTtsSources: this._activeTtsSources });
@@ -375,6 +395,15 @@ export class VoiceService {
         this._ttsExpectedEndTime = 0;
         const preview = typeof msg.text === 'string' ? msg.text.slice(0, 80) : '';
         this.logger.log('[VoiceService] speaking – acquisition blocked, TTS text preview', { preview });
+        if (this._bargeInEnabled) {
+          // Barge-in: stream the mic while the bot speaks (paused on 'thinking') so the
+          // proxy can hear the user talk over it. Echo cancellation keeps the bot's own
+          // voice out; the UI stays in 'bot speaking' and transcripts stay discarded.
+          this.voiceStreaming.resumeRecording();
+          this._botSpeaking = true;
+          this._restoreTtsVolume();
+          void this._bargeInVad?.start();
+        }
         // Keep keyboard sound going (or start it as a fallback if 'thinking' was missed)
         // until the first TTS audio chunk actually starts playing.
         this._startKeyboardSound();
@@ -415,6 +444,21 @@ export class VoiceService {
           this._unblockSafetyTimer = setTimeout(() => this._flushTtsUnblock(true), 10000);
         }
         break;
+      case 'barge_in':
+        // The user spoke over the bot: the proxy has stopped TTS and is back in LISTENING.
+        // Drop all scheduled/in-flight audio and any pending unblock for this turn — it was
+        // interrupted, not completed, so no tts_playback_complete. The 'listening' event the
+        // proxy sends right after unblocks the UI.
+        this._cancelAllTtsAudio();
+        this._stopKeyboardSound();
+        this._stopBargeInMonitoring();
+        this._unblockAfterTts = false;
+        if (this._unblockSafetyTimer !== null) {
+          clearTimeout(this._unblockSafetyTimer);
+          this._unblockSafetyTimer = null;
+        }
+        this.logger.log('[VoiceService] barge_in – TTS cancelled, waiting for listening');
+        break;
       case 'error': {
         const errorMsg = typeof msg.message === 'string' ? msg.message : 'Voice session error';
         this.logger.error('[VoiceService] WSS error', errorMsg);
@@ -451,6 +495,9 @@ export class VoiceService {
     try {
       if (!this.ttsPlayContext || this.ttsPlayContext.state === 'closed') {
         this.ttsPlayContext = new AudioContext();
+        // All TTS sources go through one gain node so barge-in can duck the bot's voice.
+        this._ttsGain = this.ttsPlayContext.createGain();
+        this._ttsGain.connect(this.ttsPlayContext.destination);
         this.ttsNextPlayTime = this.ttsPlayContext.currentTime;
         this.logger.info('[VoiceService] TTS AudioContext created');
       }
@@ -496,7 +543,7 @@ export class VoiceService {
 
       const src = ctx.createBufferSource();
       src.buffer = audioBuf;
-      src.connect(ctx.destination);
+      src.connect(this._ttsGain ?? ctx.destination);
       const t0 = Math.max(ctx.currentTime, this.ttsNextPlayTime);
       src.start(t0);
       this.ttsNextPlayTime = t0 + audioBuf.duration;
@@ -590,6 +637,84 @@ export class VoiceService {
       this._isAcquisitionBlocked$.next(false);
       this.voiceStreaming.resumeRecording();
     }, 3000);
+  }
+
+  // ── Barge-in: duck, then confirm ──────────────────────────────────────────
+
+  /** Load the local VAD on the session's microphone (barge-in flows only). */
+  private async _initBargeInVad(): Promise<void> {
+    if (this._bargeInVad || !this.stream) return;
+    const vad = await this.vadService.createMicVad({
+      getStream: async () => this.stream as MediaStream,
+      // The microphone is shared with the proxy upload: pausing the VAD must not stop it.
+      pauseStream: async () => undefined,
+      resumeStream: async () => this.stream as MediaStream,
+      onSpeechStart: () => this._onBargeInSpeechStart(),
+      onSpeechEnd: () => this._onBargeInSpeechEnd(),
+      onVADMisfire: () => this._restoreTtsVolume(),
+      minSpeechMs: 250,
+      redemptionMs: 600,
+    });
+    if (!this._bargeInEnabled) {
+      // The session ended while the model was loading.
+      await vad.destroy();
+      return;
+    }
+    this._bargeInVad = vad;
+    if (this._botSpeaking) void vad.start();
+    this.logger.log('[VoiceService] barge-in local VAD ready');
+  }
+
+  private _onBargeInSpeechStart(): void {
+    if (!this._bargeInEnabled || !this._botSpeaking) return;
+    this._clearDuckReleaseTimer();
+    if (this._ttsDucked) return;
+    this._ttsDucked = true;
+    this._applyTtsGain(VoiceService.TTS_DUCK_GAIN);
+    this._duckMaxTimer = setTimeout(() => this._restoreTtsVolume(), VoiceService.DUCK_MAX_MS);
+    this.logger.log('[VoiceService] barge-in: user speaking over the bot – TTS ducked');
+  }
+
+  private _onBargeInSpeechEnd(): void {
+    if (!this._ttsDucked) return;
+    this._clearDuckReleaseTimer();
+    // No barge_in yet: the proxy may still be transcribing. Give it a moment, then give up.
+    this._duckReleaseTimer = setTimeout(() => this._restoreTtsVolume(), VoiceService.DUCK_RELEASE_MS);
+  }
+
+  private _restoreTtsVolume(): void {
+    this._clearDuckReleaseTimer();
+    if (this._duckMaxTimer !== null) {
+      clearTimeout(this._duckMaxTimer);
+      this._duckMaxTimer = null;
+    }
+    if (!this._ttsDucked) return;
+    this._ttsDucked = false;
+    this._applyTtsGain(1);
+    this.logger.log('[VoiceService] barge-in: not confirmed – TTS volume restored');
+  }
+
+  private _clearDuckReleaseTimer(): void {
+    if (this._duckReleaseTimer !== null) {
+      clearTimeout(this._duckReleaseTimer);
+      this._duckReleaseTimer = null;
+    }
+  }
+
+  /** The bot's turn is over (listening, thinking, barge_in, stop): stop watching for speech. */
+  private _stopBargeInMonitoring(): void {
+    this._botSpeaking = false;
+    this._restoreTtsVolume();
+    void this._bargeInVad?.pause();
+  }
+
+  private _applyTtsGain(value: number): void {
+    const gain = this._ttsGain;
+    const ctx = this.ttsPlayContext;
+    if (!gain || !ctx) return;
+    // A 30 ms time constant: fast enough to feel instant, smooth enough not to click.
+    gain.gain.cancelScheduledValues(ctx.currentTime);
+    gain.gain.setTargetAtTime(value, ctx.currentTime, 0.03);
   }
 
   // ── WSS TTS Karaoke helpers ───────────────────────────────────────────────
@@ -700,6 +825,16 @@ export class VoiceService {
     this.wsControlSub = undefined;
     this.ttsChunkSub?.unsubscribe();
     this.ttsChunkSub = undefined;
+    this._bargeInEnabled = false;
+    this._stopBargeInMonitoring();
+    const bargeInVad = this._bargeInVad;
+    this._bargeInVad = undefined;
+    try {
+      // MicVAD.destroy() throws if the VAD was never started (the bot never spoke).
+      await bargeInVad?.destroy();
+    } catch (e) {
+      this.logger.warn('[VoiceService] barge-in local VAD destroy failed', e);
+    }
 
     try {
       if (this.ttsPlayContext && this.ttsPlayContext.state !== 'closed') {
@@ -710,6 +845,7 @@ export class VoiceService {
     }
     this._cancelAllTtsAudio();
     this.ttsPlayContext = undefined;
+    this._ttsGain = undefined;
     this.ttsNextPlayTime = 0;
     this._stopKeyboardSound();
 

@@ -551,6 +551,10 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       return this.isConversationArchived;
     }
 
+    // Not found in the live list, the archived list, or Tiledesk's request list at all —
+    // this is a brand-new conversation that hasn't sent its first message yet (no request
+    // record exists server-side until then), not an archived one. Defaulting to archived
+    // here hides the compose box and makes it impossible to ever send that first message.
     this.isConversationArchived = false;
     return null;
   }

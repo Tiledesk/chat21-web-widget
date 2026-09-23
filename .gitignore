@@ -74,3 +74,4 @@ node_modules/
 *.jpeg
 *.jpg
 .claude
+test.md

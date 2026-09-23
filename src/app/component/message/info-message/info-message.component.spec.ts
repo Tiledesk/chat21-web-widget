@@ -45,4 +45,9 @@ describe('InfoMessageComponent', () => {
     component.message = undefined as any;
     expect(() => component.ngOnInit()).not.toThrow();
   });
+
+  it('ngOnInit should tolerate message without text', () => {
+    component.message = { timestamp: Date.now() } as MessageModel;
+    expect(() => component.ngOnInit()).not.toThrow();
+  });
 });
