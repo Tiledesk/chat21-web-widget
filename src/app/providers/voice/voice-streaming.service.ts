@@ -235,6 +235,13 @@ export class VoiceStreamingService {
         sender: config.sender,
         recipient: config.recipient,
         lang: config.lang ?? 'it',
+        text: config.text ?? '',
+        type: config.type ?? 'text',
+        recipient_fullname: config.recipient_fullname ?? '',
+        sender_fullname: config.sender_fullname ?? '',
+        attributes: config.attributes ?? {},
+        metadata: config.metadata ?? '',
+        channel_type: config.channel_type ?? ''
       });
       socket.send(JSON.stringify({
         sender: config.sender,

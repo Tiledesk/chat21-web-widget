@@ -236,7 +236,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
       });
       return null;
     }
-    const { recipientFullname, attributes, channelType } = this.buildSendMessageContext();
+    const { recipientFullname, attributes, channelType } = this.buildSendMessageContext({voiceStreaming: true});
     this.logger.log('[CONV-FOOTER] buildVoiceIngressStreamConfig', { sender, recipient, channelType });
     return {
       token,
