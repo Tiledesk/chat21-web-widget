@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.2.4-rc1
+- **changed**: **Stream audio** — the voice session config sent to the speech proxy now includes `voiceStreaming: true` in message attributes (same attribute set as a normal Chat21 message). The proxy can mark the utterance it publishes on the conversation as coming from voice streaming.
+
+
 # 5.2.2-rc5
 - **added**: **Stream audio** — barge-in: when the chatbot's flow enables it (Voice settings → Barge-in), the user can interrupt the bot while it is speaking. The bot's voice drops as soon as the user starts talking and stops once the speech proxy recognises real words; a cough or noise only dips it for a moment. Requires the speech proxy with barge-in support; with barge-in off nothing changes.
 - **bug-fixed**: the production build compiles again with `strictTemplates` enabled (template type fixes only).
