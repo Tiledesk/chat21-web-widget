@@ -3,20 +3,30 @@ name: Publish Docker Community image tags
 on:
   push:
     tags:
-      - '**'           # Push events to every tag including hierarchical tags like
-jobs:
+      - '**'  # Trigger su qualsiasi tag
 
+jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+
     steps:
-     - name: Check out the repo
-       uses: actions/checkout@v2
-     - name: Push to Docker Hub
-       uses: docker/build-push-action@v1
-       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-        repository: chat21/chat21-web-widget
-        push: true
-        tag_with_ref: true
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push multiarch Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: chat21/chat21-web-widget:${{ github.ref_name }}

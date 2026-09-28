@@ -44,7 +44,7 @@ export class Globals {
    * Remote: full URL starting with `http://` or `https://`.
    */
   keyboardSoundFile: string;
-  BUILD_VERSION: String;
+  BUILD_VERSION: string;
   baseLocation: string;
   availableAgents: Array<UserAgent> = [];
   
@@ -235,8 +235,11 @@ export class Globals {
   hasCalloutInWidgetConfig: boolean; // *******  new ********
 
   fontFamilySource: string; // *******  new ********
+  cssSource: string; // *******  new ********
 
   size: 'min' | 'max' | 'top'; // *******  new ********
+
+  closeChatInConversation: boolean; // *******  new ********
   constructor(
   ) { }
 
@@ -455,7 +458,10 @@ export class Globals {
     this.hasCalloutInWidgetConfig = false;
     /** set widget size from 3 different positions: min, max, top */
     this.size = 'min';
-
+    /** remote CSS override URL (from window.tiledeskSettings.cssSource only) */
+    this.cssSource = '';
+    /** enable to close the chat in conversation */
+    this.closeChatInConversation = false;
     // ============ END: SET EXTERNAL PARAMETERS ==============//
 
 
@@ -474,7 +480,7 @@ export class Globals {
     this.BUILD_VERSION = 'v.' + environment.version;
 
     this.soundEnabled = true;
-    this.keyboardSoundVolume = 0.3;
+    this.keyboardSoundVolume = 0.0; //0.3;
     this.keyboardSoundFile = 'keyboard.mp3';
 
     this.conversationsBadge = 0;
@@ -537,6 +543,7 @@ export class Globals {
       'calloutTitle': this.calloutTitle, 'calloutMsg': this.calloutMsg,
       'calloutTimer': this.calloutTimer, 'calloutStaus': this.calloutStaus,
       'channelType': this.channelType,
+      'closeChatInConversation': this.closeChatInConversation,
       'dynamicWaitTimeReply': this.dynamicWaitTimeReply,
       'fontSize': this.fontSize, 'fontFamily': this.fontFamily, 
       'fullscreenMode': this.fullscreenMode,

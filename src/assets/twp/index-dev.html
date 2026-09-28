@@ -801,6 +801,13 @@
             window.Tiledesk('openConversationById', request_id)
         }
 
+        function onClickCssSource(){
+            let cssSource = document.getElementById('cssSource').value
+            window.tiledeskSettings['cssSource'] = cssSource
+            console.log('onClickCssSource: cssSource-->',window.tiledeskSettings);
+            window.Tiledesk('restart')
+        }
+
         // function onClickParameter(elementName){
         //     console.log('onClickParameter: ',elementName)
         //     const radios = document.getElementsByName(elementName)
@@ -1805,6 +1812,17 @@
                         </div>
                         <div class="row" style="text-align: right; margin:5px 0px">
                             <button class="btn btn-light" onclick="onClickOpenConversationById()">Open conversation <i class="fa-regular fa-comment" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                    <div class="row section">
+                        <div><h3 style="line-height: 0.3;">MANAGE <em><strong> global CSS</strong></em></h3></div>
+
+                        <div>Insert an <em><strong>URL</strong></em> of a CSS file to override the global CSS </div>
+                        <div class="row" style="margin: 0">
+                            <textarea class="form-control" id="cssSource" placeholder="https://example.com/custom-style.css" rows="1" cols="60"></textarea>
+                        </div>
+                        <div class="row" style="text-align: right; margin:5px 0px">
+                            <button class="btn btn-light" onclick="onClickCssSource()">Test this setting <i class="fa fa-magic" aria-hidden="true"></i></button>
                         </div>
                     </div>
                     <!-- WIDGET POSITION SECTION : start-->

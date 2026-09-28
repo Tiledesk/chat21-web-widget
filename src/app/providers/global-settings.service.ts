@@ -66,6 +66,8 @@ export class GlobalSettingsService {
         this.globals.logLevel = this.appConfigService.getConfig().logLevel
         /**SET PERSISTENCE parameter */
         this.globals.persistence = this.appConfigService.getConfig().authPersistence
+        /**SET CLOSE CHAT IN CONVERSATION parameter */
+        this.globals.closeChatInConversation = stringToBoolean(this.appConfigService.getConfig().closeChatInConversation);
 
         // ------------------------------- //
         /** LOAD PARAMETERS FROM SERVER
@@ -73,37 +75,37 @@ export class GlobalSettingsService {
          * set parameters in globals
         */
         // const projectid = globals.projectid;
-        this.getProjectParametersById(projectid).subscribe( response => {
-            const project = response['project'];
-            if (project) {
-                that.globals.project.initialize(
-                    project['id'],
-                    project['activeOperatingHours'],
-                    project['channels'],
-                    project['name'],
-                    project['createdAt'],
-                    project['createdBy'],
-                    project['isActiveSubscription'],
-                    project['profile'],
-                    project['agents'],
-                    project['trialDays'],
-                    project['type'],
-                    project['status'],
-                    project['trialDaysLeft'],
-                    project['trialExpired'],
-                    project['updatedAt'],
-                    project['settings'],
-                    project['versions']
-                );
-            }
-            // console.log('globals.project ----------------->', that.globals.project);
-            that.setParameters(response);
-        }, (error) => {
-            // console.log('2 - ::getProjectParametersById', error);
-            that.setParameters(null);
-        }, () => {
-            // console.log('3 - setParameters ');
-            // that.setParameters(null);
+        this.getProjectParametersById(projectid).subscribe({
+            next: (response) => {
+                const project = response['project'];
+                if (project) {
+                    that.globals.project.initialize(
+                        project['id'],
+                        project['activeOperatingHours'],
+                        project['channels'],
+                        project['name'],
+                        project['createdAt'],
+                        project['createdBy'],
+                        project['isActiveSubscription'],
+                        project['profile'],
+                        project['agents'],
+                        project['trialDays'],
+                        project['type'],
+                        project['status'],
+                        project['trialDaysLeft'],
+                        project['trialExpired'],
+                        project['updatedAt'],
+                        project['settings'],
+                        project['versions']
+                    );
+                }
+                // console.log('globals.project ----------------->', that.globals.project);
+                that.setParameters(response);
+            },
+            error: () => {
+                // console.log('2 - ::getProjectParametersById', error);
+                that.setParameters(null);
+            },
         });
 
     }
@@ -338,6 +340,8 @@ export class GlobalSettingsService {
         this.setCssIframe();
         /** set main style */
         this.setStyle();
+        /** external CSS override: last stylesheet in document head (max cascade priority vs bundle) */
+        this.applyCustomCssOverrideFromGlobals();
         this.obsSettingsService.next(true);
     }
 
@@ -417,6 +421,28 @@ export class GlobalSettingsService {
         document.head.appendChild(link);
 
         document.documentElement.style.setProperty('--font-family', family);
+    }
+
+    /**
+     * Loads `globals.cssSource` (set only from tiledeskSettings) as the last stylesheet in head
+     * so rules with the same specificity override local / bundled CSS.
+     */
+    private applyCustomCssOverrideFromGlobals(): void {
+        const id = 'tiledesk-widget-css-override';
+        document.getElementById(id)?.remove();
+
+        const href = (this.globals.cssSource || '').trim();
+        console.log('href', href);
+        if (!href) {
+            return;
+        }
+
+        const link = document.createElement('link');
+        link.id = id;
+        link.rel = 'stylesheet';
+        link.href = href;
+        link.setAttribute('data-tiledesk-css-override', 'true');
+        document.head.appendChild(link);
     }
     /**
      * A: setVariablesFromService
@@ -641,6 +667,11 @@ export class GlobalSettingsService {
         let TEMP: any;
         const tiledeskSettings = windowContext['tiledeskSettings'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > tiledeskSettings: ', tiledeskSettings);
+        /** css override URL: solo tiledeskSettings, mai da URL / query params */
+        TEMP = tiledeskSettings['cssSource'];
+        if (TEMP !== undefined) {
+            globals.cssSource = TEMP;
+        }
         TEMP = tiledeskSettings['tenant'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings >  tenant:: ', TEMP);
         if (TEMP !== undefined) {
@@ -1145,6 +1176,12 @@ export class GlobalSettingsService {
         if (TEMP !== undefined) {
             globals.size = TEMP;
         } 
+
+        TEMP = tiledeskSettings['closeChatInConversation'];
+        // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > closeChatInConversation:: ', TEMP]);
+        if (TEMP !== undefined) {
+            globals.closeChatInConversation = (TEMP === true) ? true : false;
+        }
     }
 
     /**
@@ -1913,6 +1950,11 @@ export class GlobalSettingsService {
         TEMP = getParameterByName(windowContext, 'tiledesk_size');
         if (TEMP) {
             globals.size = TEMP;
+        }
+
+        TEMP = getParameterByName(windowContext, 'tiledesk_closeChatInConversation');
+        if (TEMP) {
+            globals.closeChatInConversation = stringToBoolean(TEMP);
         }
         
     }

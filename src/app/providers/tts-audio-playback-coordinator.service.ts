@@ -15,6 +15,7 @@ export class TtsAudioPlaybackCoordinator {
   /** Emesso quando la riproduzione TTS va interrotta globalmente (es. l’utente parla al microfono). */
   readonly cancelAll$: Observable<void> = this.cancelAllSource.asObservable();
 
+
   /** Emits true while any TTS is playing or queued; false when the queue is fully drained. */
   private readonly _isTTSPlaying$ = new BehaviorSubject<boolean>(false);
   readonly isTTSPlaying$ = this._isTTSPlaying$.asObservable();

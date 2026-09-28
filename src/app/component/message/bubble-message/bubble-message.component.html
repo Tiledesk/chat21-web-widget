@@ -29,6 +29,14 @@
         [translationMap]="translationMap">
       </chat-audio>
 
+      <!-- Json sources -->
+      <chat-json-sources *ngIf="jsonSources !== null && jsonSources.length > 0"
+        [items]="jsonSources"
+        [displayFields]="jsonSourcesDisplayFields"
+        [backgroundColor]="jsonSourcesBackgroundColor"
+        (onElementRendered)="onElementRenderedFN($event)">
+      </chat-json-sources>
+
       <!-- TTS player: only when voice proxy is NOT active (avoids double playback)
            and the message was not already played by the proxy (avoids replay on session end) -->
       <chat-audio-sync *ngIf="isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && !voiceService.wasProxyHandled(message?.uid)"
@@ -36,12 +44,6 @@
         [color]="fontColor">
       </chat-audio-sync>
 
-      <chat-json-sources *ngIf="jsonSources !== null && jsonSources.length > 0"
-        [items]="jsonSources"
-        [displayFields]="jsonSourcesDisplayFields"
-        [backgroundColor]="jsonSourcesBackgroundColor"
-        (onElementRendered)="onElementRenderedFN($event)">
-      </chat-json-sources>
 
       <!-- Karaoke display for TTS messages while a WSS voice session is active -->
       <chat-text *ngIf="isAudioTTS(message) && (voiceService.isWssVoiceActive$ | async) && _wssKaraokeWords$"
@@ -57,6 +59,7 @@
       </chat-text>
 
 
+
       <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"
         [metadata]="message.metadata"
         [width]="message.metadata.width"
@@ -67,7 +70,7 @@
       <!-- <div *ngIf="message.type == 'text'"> -->     
 
       <!-- tooltip="{{message.timestamp | dateAgo}} ({{message.timestamp | date:'shortDate'}} {{message.timestamp | date:'HH:mm:ss'}})" placement="bottom" -->
-      <div *ngIf="(message?.text && !isAudio(message) && !isAudioTTS(message)) && !isJsonSources(message)">
+      <div *ngIf="message?.text && (!isAudio(message) && !isAudioTTS(message)) && !isJsonSources(message)" >
 
         <chat-text *ngIf="jsonSources === null && message?.type !=='html'"
           [text]="message?.text"

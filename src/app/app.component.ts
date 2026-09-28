@@ -106,17 +106,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   
   forceDisconnect: boolean = false;
 
+  //network status
+  isOnline: boolean = true;
+  loading: boolean = false;
+  private calloutScheduleTimeout: any = null;
+  
   // alert error message 
   isShowErrorMessage: boolean = false;
   errorMessage: string = '';
   errorKeyMessage: string = null;
   errorParams: Record<string, any> = {};
-
-  //network status
-  isOnline: boolean = true;
-
-  loading: boolean = false;
-  private calloutScheduleTimeout: any = null;
   
   private logger: LoggerService = LoggerInstance.getInstance();
   constructor(
@@ -170,13 +169,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     if (conversation.attributes && conversation.attributes['subtype'] === 'info') {
                         return;
                     }
-                    if (conversation.is_new && this.isInitialized) {
+                    if (conversation.is_new && that.isInitialized) {
                         that.manageTabNotification(false, 'conv-added')
                         // this.soundMessage(); 
                     }
-                    if(this.g.isOpen === false){
-                        that.lastConversation = conversation;
+                    if(this.g.isOpen === false && conversation.sender !== this.g.senderId && !isInfo(conversation)){
                         that.g.isOpenNewMessage = true;
+                        that.lastConversation = conversation;
                     }
                 } else {
                     //widget closed
@@ -224,6 +223,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                             that.lastConversation = conversation;
                             that.g.isOpenNewMessage = true;
                             that.logger.debug('[APP-COMP] lastconversationnn', that.lastConversation)
+                            that.logger.debug('[APP-COMP] lastconversationnn message' + JSON.stringify(that.lastConversation?.attributes?.commands))
                         }
                         let badgeNewConverstionNumber = that.conversationsHandlerService.countIsNew()
                         that.g.setParameter('conversationsBadge', badgeNewConverstionNumber);
@@ -493,7 +493,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 // this.initConversationsHandler(this.g.tenant, that.g.senderId);
                 /* If singleConversation mode is active wait to showWidget: do it later in initConversationsHandler */
                 const hasBotsRules = Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0;
-                if ((autoStart || hasBotsRules) && !that.g.singleConversation) { 
+                const botRulesEnabled = this.g.project.profile?.customization?.rules;
+                this.logger.log('botRulesEnabled ----------------->', botRulesEnabled);
+                this.logger.log('hasBotsRules ----------------->', hasBotsRules);
+                this.logger.log('autoStart ----------------->', autoStart);
+                if ((autoStart || (hasBotsRules && botRulesEnabled)) && !that.g.singleConversation) { 
                     that.showWidget();
                 }
 
@@ -521,10 +525,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 // that.hideWidget();
                 // that.g.setParameter('isShown', false, true);
                 that.triggerOnAuthStateChanged(that.stateLoggedUser);
+                /**
+                 * Auto-authenticate if:
+                 * - autoStart is true
+                 * - onPageChangeVisibilityDesktop is open
+                 * - onPageChangeVisibilityMobile is open
+                 * - botsRules is enabled and not empty
+                 */
                 const shouldAutoAuthenticate = autoStart ||
                     this.g.onPageChangeVisibilityDesktop === 'open' ||
                     this.g.onPageChangeVisibilityMobile === 'open' ||
-                    (Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0)
+                    (Array.isArray(this.g.botsRules) && this.g.botsRules.length > 0 && this.g.project.profile?.customization?.rules)
                     // || this.g.hasCalloutInWidgetConfig;
                 if (shouldAutoAuthenticate) {
                     that.authenticate();
@@ -2319,6 +2330,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.el.nativeElement.style.setProperty('--chat-header-height', this.g.hideHeaderConversation? '0px': null)
         this.el.nativeElement.style.setProperty('--font-size-bubble-message', this.g.fontSize)
         this.el.nativeElement.style.setProperty('--font-family-bubble-message', this.g.fontFamily)
+        this.el.nativeElement.style.setProperty('--chat-footer-close-button-height', this.g.closeChatInConversation? '30px': '0px')
 
     }
 

@@ -1,0 +1,14 @@
+/**
+ * Esempio di override remoto (tiledeskSettings.cssSource).
+ * Con ng serve: usa un path assoluto dalla root dell'app, es. /assets/widget-css-override-example.css
+ */
+
+/* Attenzione: il primo id deve essere l'intera stringa #tiledesk-container (errori tipo #tilede non matchano nulla nel DOM). */
+#tiledesk-container #chat21-home-component .c21-header {
+  background-image: linear-gradient(135deg, #c0392b 0%, #8e44ad 100%) !important;
+}
+
+/* Bottone launcher: contorno molto visibile (non richiede di battere background-color inline) */
+#tiledesk-container #c21-launcher-button {
+  box-shadow: 0 0 0 3px #f39c12, 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+}

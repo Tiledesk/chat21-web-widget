@@ -27,7 +27,7 @@
                       <div *ngFor="let message of messages; let first = first; let last = last; let i = index" class="rowMsg">
 
                           <!-- message SENDER:: -->
-                          <div role="article" *ngIf="messageType(MESSAGE_TYPE_MINE, message) && !message.isJustRecived" class="msg_container base_sent">
+                           <div role="article" *ngIf="messageType(MESSAGE_TYPE_MINE, message) && !message.isJustRecived" class="msg_container base_sent">
                           
                             <!--backgroundColor non viene ancora usato -->
                             <!-- class="messages msg_sent slide-in-right" -->
