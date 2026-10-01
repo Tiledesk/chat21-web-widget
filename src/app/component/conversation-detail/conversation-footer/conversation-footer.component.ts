@@ -20,6 +20,7 @@ import { VoiceService } from 'src/app/providers/voice/voice.service';
 import { VoiceStreamingSessionConfig } from 'src/app/providers/voice/voice-streaming.types';
 import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
 import { TiledeskAuthService } from 'src/chat21-core/providers/tiledesk/tiledesk-auth.service';
+import { AppStorageService } from 'src/chat21-core/providers/abstract/app-storage.service';
 
 @Component({
   selector: 'chat-conversation-footer',
@@ -137,6 +138,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     private voiceService: VoiceService,
     private ttsPlayback: TtsAudioPlaybackCoordinator,
     private tiledeskAuthService: TiledeskAuthService,
+    private appStorageService: AppStorageService,
     public g: Globals,
   ) {}
 
@@ -236,7 +238,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
       });
       return null;
     }
-    const { recipientFullname, attributes, channelType } = this.buildSendMessageContext({voiceStreaming: true});
+    const { recipientFullname, attributes, channelType } = this.buildSendMessageContext({voice_mode: true});
     this.logger.log('[CONV-FOOTER] buildVoiceIngressStreamConfig', { sender, recipient, channelType });
     return {
       token,
@@ -262,15 +264,24 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   private buildSendMessageContext(additional_attributes?: any) {
     let recipientFullname = this.translationMap.get('GUEST_LABEL');
     const g_attributes = this.attributes;
-    const attributes = <any>{};
+    const storedAttributes = <any>{};
     if (g_attributes) {
       for (const [key, value] of Object.entries(g_attributes)) {
-        attributes[key] = value;
+        storedAttributes[key] = value;
       }
+    }
+    storedAttributes['voice_mode'] = false;
+
+    const attributes = <any>{};
+    for (const [key, value] of Object.entries(storedAttributes)) {
+      attributes[key] = value;
     }
     if (additional_attributes) {
       for (const [key, value] of Object.entries(additional_attributes)) {
         attributes[key] = value;
+        if (Object.prototype.hasOwnProperty.call(storedAttributes, key)) {
+          storedAttributes[key] = value;
+        }
       }
     }
     const senderId = this.senderId;
@@ -289,6 +300,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     } else {
       recipientFullname = this.translationMap.get('GUEST_LABEL');
     }
+
+    this.g.setParameter('attributes', storedAttributes);
+    this.attributes = storedAttributes;
+    this.appStorageService.setItem('attributes', JSON.stringify(storedAttributes));
 
     return {
       recipientFullname,
@@ -317,6 +332,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     this.isBotSpeaking = false;
 
     await this.voiceService.stopSession(options);
+    if (this.translationMap && this.project) {
+      this.buildSendMessageContext();
+    }
     this.currentVolume = 0;
     this.textInputTextArea = '';
     this.lastVoiceTranscript = '';

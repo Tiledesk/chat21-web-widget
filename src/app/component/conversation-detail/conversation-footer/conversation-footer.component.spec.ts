@@ -17,6 +17,7 @@ import { VoiceService } from 'src/app/providers/voice/voice.service';
 import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
 import { TiledeskAuthService } from 'src/chat21-core/providers/tiledesk/tiledesk-auth.service';
 import { Globals } from 'src/app/utils/globals';
+import { AppStorageService } from 'src/chat21-core/providers/abstract/app-storage.service';
 
 describe('ConversationFooterComponent', () => {
   let component: ConversationFooterComponent;
@@ -72,6 +73,7 @@ describe('ConversationFooterComponent', () => {
         { provide: VoiceService, useValue: voiceServiceMock },
         { provide: TtsAudioPlaybackCoordinator, useValue: ttsMock },
         { provide: TiledeskAuthService, useValue: { getTiledeskToken: () => '' } },
+        { provide: AppStorageService, useValue: { getItem: () => null, setItem: () => undefined, removeItem: () => undefined } },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
