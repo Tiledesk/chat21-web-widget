@@ -882,6 +882,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         if (widgetVersion) {
             attributes['widgetVer'] = widgetVersion;
         }
+        attributes['voice_mode'] = false;
         try {
             // attributes['payload'] = this.g.customAttributes.payload;
             attributes['payload'] = []
@@ -1440,7 +1441,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
                 // set default attributes
                 const g_attributes = _globals.attributes;
-                const attributes = <any>{};
+                const attributes = <any>{ voice_mode: false };
                 if (g_attributes) {
                     for (const [key, value] of Object.entries(g_attributes)) {
                         attributes[key] = value;
@@ -1493,7 +1494,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     metadata = {};
                 }
                 const g_attributes = _globals.attributes;
-                const attributes = <any>{};
+                const attributes = <any>{ voice_mode: false };
                 if (g_attributes) {
                     for (const [key, value] of Object.entries(g_attributes)) {
                         attributes[key] = value;
