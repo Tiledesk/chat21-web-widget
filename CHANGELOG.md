@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.2.4-rc2
+- **changed**: **Stream audio** — message attributes use `voice_mode` instead of `voiceStreaming`. It is `false` by default, including on widget start even if storage still had `true`, and `true` only while a voice session is active. After the attributes are built they are written back to storage so the flag stays in sync.
+
 # 5.2.4-rc1
 - **changed**: **Stream audio** — the voice session config sent to the speech proxy now includes `voiceStreaming: true` in message attributes (same attribute set as a normal Chat21 message). The proxy can mark the utterance it publishes on the conversation as coming from voice streaming.
 
