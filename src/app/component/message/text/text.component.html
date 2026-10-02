@@ -1,11 +1,11 @@
-<p *ngIf="streamingWords?.length"
+<!-- Text message -->
+<p *ngIf="!streamingWords?.length && !karaokeWords?.length"
+   #messageEl
    class="message_innerhtml marked"
-   [style.color]="color">
-  <span *ngFor="let w of streamingWords; trackBy: trackStreamingWord"
-        class="stream-word"
-        [style.animation-delay]="(w.index * 80) + 'ms'">{{ w.word }} </span>
-</p>
+   [innerHTML]="printMessage(text, messageEl, this) | marked"
+   [style.color]="color"></p>
 
+<!-- Karaoke words: TTS message while a WSS voice session is active -->
 <p *ngIf="!streamingWords?.length && karaokeWords?.length"
    class="message_innerhtml marked"
    [style.color]="color">
@@ -16,8 +16,15 @@
         [class.past]="w.state === 'past'">{{ w.text }}&nbsp;</span>
 </p>
 
-<p *ngIf="!streamingWords?.length && !karaokeWords?.length"
-   #messageEl
+<!-- Streaming words: TTS message while a WSS voice session is NOT active -->
+<p *ngIf="streamingWords?.length"
    class="message_innerhtml marked"
-   [innerHTML]="printMessage(text, messageEl, this) | marked"
-   [style.color]="color"></p>
+   [style.color]="color">
+  <span *ngFor="let w of streamingWords; trackBy: trackStreamingWord"
+        class="stream-word"
+        [style.animation-delay]="(w.index * 80) + 'ms'">{{ w.word }} </span>
+</p>
+
+
+
+
