@@ -14,6 +14,7 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
+    "test:initialization": "ng test widget --watch=false --browsers=ChromeHeadless --ts-config=tsconfig.initialization.spec.json --include=src/app/providers/global-settings-initialization.service.spec.ts --code-coverage=false",
     "test:e2e": "playwright test",
     "lint": "ng lint",
     "e2e": "ng e2e",

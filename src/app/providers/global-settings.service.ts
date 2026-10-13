@@ -52,6 +52,12 @@ export class GlobalSettingsService {
         let projectid: string;
         try {
             projectid = this.setProjectId();
+            if (!projectid) {
+                throw new Error(
+                    'Cannot initialize widget without a project ID. ' +
+                    'Set tiledeskSettings.projectid, a projectid attribute, or tiledesk_projectid in the URL.'
+                );
+            }
         } catch (error) {
             this.logger.error('[GLOBAL-SET] > Error :' + error);
             return;
@@ -117,7 +123,7 @@ export class GlobalSettingsService {
     setProjectId() {
         // get projectid for settings//
         try {
-            const projectid = this.globals.windowContext['tiledeskSettings']['projectid'];
+            const projectid = this.globals.windowContext['tiledeskSettings']?.['projectid'];
             if (projectid) { this.globals.projectid = projectid; }
             // this.globals.setParameter('projectid', projectid);
         } catch (error) {
@@ -160,14 +166,14 @@ export class GlobalSettingsService {
     setMainParametersFromSettings(globals: Globals) {
         let tiledeskSettings: any;
         try {
-            const baseLocation = this.globals.windowContext['tiledesk'].getBaseLocation();
+            const baseLocation = this.globals.windowContext['tiledesk']?.getBaseLocation();
             this.logger.debug('[GLOBAL-SET] 1 > baseLocation: ', baseLocation);
             if (typeof baseLocation !== 'undefined') { this.globals.baseLocation = baseLocation; }
         } catch (error) {
             this.logger.error('[GLOBAL-SET] setMainParametersFromSettings baseLocation > Error :', error);
         }
         try {
-            tiledeskSettings = this.globals.windowContext['tiledeskSettings'];
+            tiledeskSettings = this.globals.windowContext['tiledeskSettings'] || {};
         } catch (error) {
             this.logger.error('[GLOBAL-SET] setMainParametersFromSettings tiledeskSettings > Error :', error);
         }
@@ -639,7 +645,7 @@ export class GlobalSettingsService {
             }
         }
         let TEMP: any;
-        const tiledeskSettings = windowContext['tiledeskSettings'];
+        const tiledeskSettings = windowContext['tiledeskSettings'] || {};
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > tiledeskSettings: ', tiledeskSettings);
         TEMP = tiledeskSettings['tenant'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings >  tenant:: ', TEMP);
