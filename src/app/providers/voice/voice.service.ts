@@ -39,7 +39,7 @@ export class VoiceService {
   private sessionConstraints: MediaStreamConstraints = DEFAULT_VOICE_MEDIA_STREAM_CONSTRAINTS;
   private onRecordingComplete?: (result: VoiceSegmentPayload) => void;
   private enableTranscription = true;
-  private voiceIngressConfig?: VoiceStreamingSessionConfig | null = null;
+  private voiceIngressConfig: VoiceStreamingSessionConfig | null = null;
 
   private readonly audioSegmentSubject = new Subject<VoiceSegmentPayload>();
   
@@ -64,6 +64,7 @@ export class VoiceService {
   private readonly _wsError$ = new Subject<string>();
   readonly wsError$: Observable<string> = this._wsError$.asObservable();
 
+  // 🔊 REALTIME VOLUME STREAM
   private readonly volumeSubject = new BehaviorSubject<number>(0);
   readonly volume$: Observable<number> = this.volumeSubject.asObservable();
 

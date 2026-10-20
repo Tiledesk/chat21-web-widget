@@ -42,60 +42,99 @@ export class ImageComponent implements OnInit {
     // this.onClickImage()
   }
 
+  /**
+   * Opens the image in an accessible lightbox.
+   *
+   * Accessibility features (WCAG 2.1.1, 2.1.2, 2.4.3, 4.1.2):
+   * - Lightbox container is rendered as role="dialog" aria-modal="true" with aria-label.
+   * - A real <button> with aria-label closes the dialog.
+   * - The dialog can be dismissed via Escape, click on the backdrop, or the close button.
+   * - The previously focused element is restored when the lightbox closes.
+   * - Focus is moved to the close button on open to keep keyboard users inside the dialog.
+   */
   onClickImage(){
-    const that = this;
-    var ifrm = document.createElement("iframe");
-    ifrm.setAttribute("frameborder", "0");
-    // ifrm.setAttribute("border", "0");
-    ifrm.setAttribute('id','tiledesk-image-preview');
-    ifrm.setAttribute('tiledesk_context','parent');
-    ifrm.setAttribute('style', 'width: 100%; height: 100%; position: absolute; z-index: 2147483003;')
-    
-    var iframeContent = '<head>'
-    iframeContent += '<style> .tiledesk-popup {position: absolute; inset: 1px; outline-offset: -5px; background-color: rgba(0, 0, 0, 0.35); border-radius:16px; will-change: opacity;}'
-    iframeContent +=    '.tiledesk-popup-content { position: fixed; inset: 0px; width: 100%;  height: 100%; display: flex;  justify-content: center; align-items: center; outline: 0px;}'
-    iframeContent +=    '.tiledesk-popup-button { display: flex; align-items: center; justify-content: center; width: 35px; height: 35px; position: absolute; top: 0px; right: 0px; background-color: transparent; border: none; cursor: pointer; margin: 9px; padding: 0px; }'
-    iframeContent +=    '.tiledesk-popup-image { max-height: 80vh; max-width: 80vw; }'
-    iframeContent += '</style>'
-    iframeContent += '</head>';
-    iframeContent += '<body>'
-    iframeContent +=  '<div class="frame-root" id="frame-root">'
-    iframeContent +=    '<div class="frame-content">'
-    iframeContent +=      '<div class="tiledesk-popup" style="opacity: 1;"></div>'
-    iframeContent +=      '<div role="button" tabindex="-1" class="tiledesk-popup-content">'
-    // iframeContent +=         '<button id="button" type="button" data-testid="closeButton" class="tiledesk-popup-button">'
-    // iframeContent +=           '<svg id="ic_close" fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg>'
-    // iframeContent +=         '</button>'
-    iframeContent +=         '<a href="'+this.metadata.src+'" data-testid="popupImage-wrapper" class="tidio-popup-vgwcqv" style="opacity: 1; transform: translate3d(0px, 0px, 0px);">'
-    iframeContent +=           '<img src="'+this.metadata.src+'" class="tiledesk-popup-image" id="image-popup">'
-    iframeContent +=         '</a>'
-    iframeContent +=      '</div>'
-    iframeContent +=   '</div>'
-    iframeContent +='</body>'
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const altText = this.metadata?.name || 'Image preview';
+    const closeLabel = this.tooltipMessage || 'Close';
 
-    // ifrm.src = 'data:text/html;charset=utf-8,' + encodeURI(iframeContent);
-    ifrm.srcdoc = iframeContent
-    window.document.body.appendChild(ifrm)
+    const ifrm = document.createElement('iframe');
+    ifrm.setAttribute('frameborder', '0');
+    ifrm.setAttribute('id', 'tiledesk-image-preview');
+    ifrm.setAttribute('tiledesk_context', 'parent');
+    ifrm.setAttribute('title', altText);
+    ifrm.setAttribute('aria-label', altText);
+    ifrm.setAttribute('style', 'width: 100%; height: 100%; position: absolute; z-index: 2147483003; border: 0;');
 
+    let iframeContent = '<!doctype html><html lang="' + (document.documentElement.lang || 'en') + '"><head>';
+    iframeContent += '<meta charset="utf-8"/>';
+    iframeContent += '<title>' + altText.replace(/[<>]/g, '') + '</title>';
+    iframeContent += '<style>';
+    iframeContent += 'html,body{margin:0;padding:0;height:100%;}';
+    iframeContent += '.tiledesk-popup-backdrop{position:fixed;inset:0;background-color:rgba(0,0,0,0.6);}';
+    iframeContent += '.tiledesk-popup-content{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;padding:32px;}';
+    iframeContent += '.tiledesk-popup-image{max-height:85vh;max-width:90vw;border-radius:8px;}';
+    iframeContent += '.tiledesk-popup-button{position:fixed;top:16px;right:16px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background-color:rgba(255,255,255,0.95);border:1px solid rgba(0,0,0,0.1);border-radius:50%;cursor:pointer;padding:0;}';
+    iframeContent += '.tiledesk-popup-button:focus-visible{outline:3px solid #1a73e8;outline-offset:2px;}';
+    iframeContent += '.tiledesk-popup-button svg{width:20px;height:20px;fill:#000;}';
+    iframeContent += '@media (prefers-reduced-motion: reduce){.tiledesk-popup-backdrop{transition:none;}}';
+    iframeContent += '</style></head><body>';
+    iframeContent += '<div role="dialog" aria-modal="true" aria-label="' + altText.replace(/"/g, '&quot;') + '" id="frame-root">';
+    iframeContent += '<div class="tiledesk-popup-backdrop" id="popup-backdrop"></div>';
+    iframeContent += '<div class="tiledesk-popup-content">';
+    iframeContent += '<img src="' + this.metadata.src + '" class="tiledesk-popup-image" id="image-popup" alt="' + altText.replace(/"/g, '&quot;') + '">';
+    iframeContent += '</div>';
+    iframeContent += '<button type="button" id="closeButton" class="tiledesk-popup-button" aria-label="' + closeLabel.replace(/"/g, '&quot;') + '">';
+    iframeContent += '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
+    iframeContent += '</button>';
+    iframeContent += '</div>';
+    iframeContent += '</body></html>';
 
-    ifrm.onload = function(ev) {
-      var iframe = window.document.getElementById('tiledesk-image-preview')
-      // var button = ifrm.contentWindow.document.getElementById("button");
-      // button.addEventListener("click", function(event){
-      //   window.document.body.removeChild(iframe)
-      // });
-      var div = ifrm.contentWindow.document.getElementById('frame-root')
-      div.addEventListener("click", function(event){
-        window.document.body.removeChild(iframe)
-      });
-      // var image = ifrm.contentWindow.document.getElementById('image-popup')
-      // image.addEventListener("click", function(event){
-      //   event.preventDefault();
-      //   event.stopPropagation();
-      //   that.downloadImage(that.metadata.src, that.metadata.name)
-      // });
+    ifrm.srcdoc = iframeContent;
+    window.document.body.appendChild(ifrm);
+
+    const closeLightbox = () => {
+      const node = window.document.getElementById('tiledesk-image-preview');
+      if (node && node.parentNode) {
+        node.parentNode.removeChild(node);
+      }
+      if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+        try { previouslyFocused.focus(); } catch(e) { /* noop */ }
+      }
     };
-    
+
+    ifrm.onload = function () {
+      const doc = ifrm.contentWindow?.document;
+      if (!doc) { return; }
+
+      const closeBtn = doc.getElementById('closeButton') as HTMLButtonElement | null;
+      const backdrop = doc.getElementById('popup-backdrop');
+      const image = doc.getElementById('image-popup');
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          closeLightbox();
+        });
+        closeBtn.focus();
+      }
+
+      if (backdrop) {
+        backdrop.addEventListener('click', () => closeLightbox());
+      }
+
+      if (image) {
+        image.addEventListener('click', (e) => e.stopPropagation());
+      }
+
+      // Escape key handler from inside the lightbox iframe
+      doc.addEventListener('keydown', (event: KeyboardEvent) => {
+        if (event.key === 'Escape' || event.keyCode === 27) {
+          event.preventDefault();
+          closeLightbox();
+        }
+      });
+    };
   }
 
 

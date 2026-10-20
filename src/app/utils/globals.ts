@@ -125,6 +125,7 @@ export class Globals {
   WAITING_TIME_NOT_FOUND: string;
   CLOSED: string;
   LABEL_PREVIEW: string;
+  BUTTON_OPEN_CHAT: string;
 
   // ============ BEGIN: EXTERNAL PARAMETERS ==============//
   autoStart: boolean;
@@ -448,7 +449,7 @@ export class Globals {
     /** show/hide rec audio option in footer chat-detail page */
     this.showAudioRecorderFooterButton = true;
     /** show/hide stream audio option in footer chat-detail page */
-    this.showAudioStreamFooterButton = true;
+    this.showAudioStreamFooterButton = false;
     /** enabled to set a list of pattern url able to load the widget **/
     this.allowedOnSpecificUrl = false
     /** set a list of pattern url able to load the widget */

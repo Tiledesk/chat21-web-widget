@@ -1,4 +1,22 @@
-@import 'variables';
+$trasp-black: rgba(0, 0, 0, 0.8);
+
+/**
+ * Respect the user's reduced-motion preference (WCAG 2.3.3 Animation from Interactions).
+ * When `prefers-reduced-motion: reduce` is active, neutralize all CSS animations and transitions
+ * inside the widget so users do not experience non-essential motion.
+ */
+@media (prefers-reduced-motion: reduce) {
+    chat-root *,
+    chat-root *::before,
+    chat-root *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.001ms !important;
+        transition-delay: 0ms !important;
+        scroll-behavior: auto !important;
+    }
+}
 
 /**
  * ----------------------------------------

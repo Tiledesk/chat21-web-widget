@@ -41,13 +41,18 @@
   }
 
   /* Remove input border colour */
-  input:focus,
+  input:focus:not(:focus-visible),
   input:active,
   input:hover,
   input:visited {
       box-shadow: none;
       background-color: #ffffff;
       outline: none;
+  }
+
+  input:focus-visible {
+      outline: 2px solid var(--themeColor, #1a73e8);
+      outline-offset: 2px;
   }
   
   /* Remove input background colour for Chrome autocomplete */
@@ -177,6 +182,11 @@ input {
   background-size: 100% 2px, 100% 1px;
   box-shadow: none;
   transition-duration: 0.3s;
+}
+
+.form-group.is-focused .form-control:focus-visible {
+  outline: 2px solid var(--themeColor, #1a73e8) !important;
+  outline-offset: 2px;
 }
 
 .form-group.is-focused.form-info .form-control {

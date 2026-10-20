@@ -21,6 +21,22 @@
         height: 30px !important;
         margin: 0px !important;
     }
+<<<<<<< HEAD
+=======
+    //if attachment icon AND emoji icon is not in DOM -> increment textarea width
+    &:has(:not(#chat21-start-upload-doc)):has(:not(#chat21-emoticon-picker)) .visible-text-area {
+        width: 90%;
+    }
+
+>>>>>>> master
+}
+
+.close-chat-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .icons-container{
@@ -53,6 +69,18 @@
         display: flex;
         align-items: center;
     }
+<<<<<<< HEAD
+=======
+
+    //if attachment icon OR emoji icon is not in DOM -> increment textarea width
+    &:has(:not(#chat21-start-upload-doc), :not(#chat21-emoticon-picker)) .visible-text-area {
+        width: 80%;
+    }
+    //if attachment icon AND emoji icon is not in DOM -> increment textarea width
+    &:has(:not(#chat21-start-upload-doc)):has(:not(#chat21-emoticon-picker)) .visible-text-area {
+        width: 90%;
+    }
+>>>>>>> master
 }
 
 .chat21-textarea-button {
@@ -420,7 +448,12 @@ textarea:active{
     position: absolute;
     // padding: 8px 16px;
     overflow: hidden;
+<<<<<<< HEAD
     background-color: color-mix(in srgb, var(--content-background-color) 34%, transparent);
+=======
+    background-color: var(--content-background-color);
+    // background-color: color-mix(in srgb, var(--content-background-color) 34%, transparent);
+>>>>>>> master
     backdrop-filter: blur(20px) saturate(1.2);
     -webkit-backdrop-filter: blur(20px) saturate(1.2);
     box-shadow:

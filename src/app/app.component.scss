@@ -50,8 +50,18 @@ body {
     margin:0px;
 }
 
-:focus {outline: none !important;}
-::-moz-focus-inner {border:0;}
+/* Keyboard focus ring scoped to the widget host only (WCAG 2.4.7) */
+chat-root *:focus:not(:focus-visible) {
+    outline: none;
+}
+chat-root *:focus-visible {
+    outline: 2px solid var(--c21-focus-ring, #1a73e8);
+    outline-offset: 2px;
+}
+
+::-moz-focus-inner {
+    border: 0;
+}
 
 
 
@@ -242,10 +252,7 @@ chat-root {
     height: 100%;
     
     // ========= BEGIN: RESET CSS TAG ========= //
-    *:focus {
-        outline: none;
-    }
-    button{
+    button {
         cursor: pointer;
     }
 
@@ -255,14 +262,19 @@ chat-root {
 
     textarea,
     textarea:visited,
-    textarea:focus,
     textarea:hover,
-    textarea:active{
-        // all: unset;
+    textarea:active {
         line-height: 20px!important;
-        outline: none!important;
-        box-shadow:none!important;
+        box-shadow: none!important;
         border: 0px solid var(--trasp-light-black)!important;
+    }
+
+    textarea:focus:not(:focus-visible) {
+        outline: none!important;
+    }
+
+    textarea:focus-visible {
+        outline: 0px !important;
     }
 
     // ========= BEGIN: CSS APP.COMPONENT ========= //
@@ -403,7 +415,7 @@ chat-root {
             }
         }
         button.c21-button-primary:hover,
-        button.c21-button-primary:focus,
+        button.c21-button-primary:focus:not(:focus-visible),
         button.c21-button-primary:active {
             //outline-width: 0px;
             opacity: 0.8;
@@ -419,10 +431,9 @@ chat-root {
             cursor: pointer;
         }
         button.c21-button-link:hover,
-        button.c21-button-link:focus,
+        button.c21-button-link:focus:not(:focus-visible),
         button.c21-button-link:active {
             text-decoration: underline;
-            outline: none;
         }
 
         .c21-divBudge {

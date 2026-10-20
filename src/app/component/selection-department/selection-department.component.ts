@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild } from '@angular/core';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { Globals } from '../../utils/globals';
 
@@ -170,6 +170,13 @@ export class SelectionDepartmentComponent implements OnInit, AfterViewInit {
     closePage() {
         this.logger.debug('[SELECT-DEP] closePage');
         this.onClose.emit();
+    }
+
+    @HostListener('keydown.escape', ['$event'])
+    onEscape(event: KeyboardEvent){
+        event.preventDefault();
+        event.stopPropagation();
+        this.closePage();
     }
 
     cancelPage() {

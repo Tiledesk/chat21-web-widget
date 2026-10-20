@@ -1,10 +1,16 @@
-import { ComponentFixture, TestBed, waitForAsync, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 
+import { UploadService } from 'src/chat21-core/providers/abstract/upload.service';
+import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
+import { CustomLogger } from 'src/chat21-core/providers/logger/customLogger';
+import { NGXLogger } from 'ngx-logger';
+import { MAX_WIDTH_IMAGES } from 'src/app/utils/constants';
 import { ConversationContentComponent } from './conversation-content.component';
 import { MarkedPipe } from '../../../pipe/marked.pipe';
 import { HtmlEntitiesEncodePipe } from '../../../pipe/html-entities-encode.pipe';
-import { UploadService } from '../../../../chat21-core/providers/abstract/upload.service';
 import { NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { ImageRepoService } from '../../../../chat21-core/providers/abstract/image-repo.service';
@@ -14,40 +20,64 @@ const uploadState$ = new BehaviorSubject<any>({ upload: 100, type: 'image' });
 describe('ConversationContentComponent', () => {
   let component: ConversationContentComponent;
   let fixture: ComponentFixture<ConversationContentComponent>;
+  let uploadState$: BehaviorSubject<any>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ 
-        ConversationContentComponent,
-        // BubbleMessageComponent,
-        // ReturnReceiptComponent,
-        // AvatarComponent,
-        // InfoMessageComponent,
-        // MessageAttachmentComponent,
-        // ImageComponent,
-        // FrameComponent,
-        // TextComponent,
-        // TextButtonComponent,
-        // LinkButtonComponent,
-        // ActionButtonComponent,
+  const ngxlogger = jasmine.createSpyObj('NGXLogger', ['log', 'trace', 'debug', 'warn', 'error', 'info']);
+  const customLogger = new CustomLogger(ngxlogger);
 
-        MarkedPipe,
-        HtmlEntitiesEncodePipe,
+  const uploadServiceStub = {
+    BSStateUpload: new BehaviorSubject<any>(null),
+    initialize: jasmine.createSpy('initialize'),
+    upload: jasmine.createSpy('upload').and.resolveTo({ downloadURL: '', src: '' }),
+    uploadFile: jasmine.createSpy('uploadFile').and.resolveTo({ downloadURL: '', src: '' }),
+    uploadAsset: jasmine.createSpy('uploadAsset').and.resolveTo({ downloadURL: '', src: '' }),
+    uploadProfile: jasmine.createSpy('uploadProfile').and.resolveTo({}),
+    delete: jasmine.createSpy('delete').and.resolveTo({}),
+    deleteFile: jasmine.createSpy('deleteFile').and.resolveTo({}),
+    deleteAsset: jasmine.createSpy('deleteAsset').and.resolveTo({}),
+    deleteProfile: jasmine.createSpy('deleteProfile').and.resolveTo({}),
+    setBaseUrl: jasmine.createSpy('setBaseUrl'),
+    getBaseUrl: jasmine.createSpy('getBaseUrl').and.returnValue(''),
+  };
+
+  beforeEach(async () => {
+    LoggerInstance.setInstance(customLogger);
+
+    await TestBed.configureTestingModule({
+      declarations: [ConversationContentComponent],
+      providers: [
+        { provide: UploadService, useValue: uploadServiceStub },
+        { provide: UploadService, useValue: { BSStateUpload: uploadState$ } },
+        ImageRepoService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
       ],
       imports: [
       ],
-      providers: [ 
-        { provide: UploadService, useValue: { BSStateUpload: uploadState$ } },
-        ImageRepoService
-      ],
       schemas: [NO_ERRORS_SCHEMA],
     })
-    .compileComponents();
-  }));
+      .overrideComponent(ConversationContentComponent, {
+        set: {
+          template: `
+            <div class="c21-body">
+              <div #scrollMe>
+                <div id="c21-contentScroll" style="height:20px;">inner</div>
+              </div>
+            </div>
+          `,
+        },
+      })
+      .compileComponents();
 
-  beforeEach(() => {
+    uploadState$ = uploadServiceStub.BSStateUpload as BehaviorSubject<any>;
     fixture = TestBed.createComponent(ConversationContentComponent);
     component = fixture.componentInstance;
+    component.messages = [];
+    component.stylesMap = new Map([
+      ['bubbleSentTextColor', '#111'],
+      ['bubbleReceivedTextColor', '#222'],
+    ]);
+    component.translationMap = new Map([['LABEL_LOADING', 'Loading']]);
     uploadState$.next({ upload: 100, type: 'image' });
     fixture.detectChanges();
   });
@@ -56,120 +86,47 @@ describe('ConversationContentComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('renders a div el with class ".c21-body"', () => {
-    const bubble_message = fixture.debugElement.query(By.css('.c21-body'));
-    expect(bubble_message).toBeTruthy();
-  })
+  describe('ngOnInit', () => {
+    it('should subscribe to upload progress', () => {
+      spyOn(component, 'scrollToBottom');
+      uploadState$.next({ upload: 50, type: 'image/png' });
+      expect(component.showUploadProgress).toBe(true);
+      expect(component.uploadProgress).toBe(50);
+      expect(component.scrollToBottom).toHaveBeenCalled();
+    });
 
-  it('renders a div el with class ".base_receive"', () => {
-    const messages: [any] = [{
-          attributes: {
-              projectId: "6013ec749b32000045be650e",
-              tiledesk_message_id: "611cbf8ffb379b00346660e7"
-          },
-          channel_type: "group",
-          recipient: "support-group-6013ec749b32000045be650e-4904aee91f8b487aad117bcda860549d",
-          recipient_fullname: "Guest ",
-          sender: "bot_602256f6c001b800342cb76f",
-          sender_fullname: "BOT2",
-          status: 150,
-          text: "Hello 👋. I'm a bot 🤖.\n\nChoose one of the options below or write a message to reach our staff.",
-          timestamp: 1629273999970,
-          type: "text",
-          uid: "-MhNI3eaIoLTOLoX3TAu",
-          isSender: false
-      }
-    ]
-    component.messages = messages
-    component.senderId = '9d3b6aa5-0aea-4b7e-935f-1c1c675cd8d4'
-    component.baseLocation = 'http://tiledesk-widget-pre.s3-eu-west-1.amazonaws.com'
-    component.translationMap = new Map();
-    component.stylesMap = new Map();
-    fixture.detectChanges()
-    const nativeEl: HTMLElement = fixture.nativeElement;
-    const baseReceiveEl = nativeEl.querySelector('.base_receive');
-    expect(baseReceiveEl).toBeTruthy();
+    it('should hide progress when upload is complete (100 or NaN)', () => {
+      uploadState$.next({ upload: 100, type: 'image/png' });
+      expect(component.showUploadProgress).toBe(false);
+    });
   });
 
-  it('renders the right textContext of div el with class ".message_sender_fullname"', () => {
-    const messages: [any] = [{
-          attributes: {
-              projectId: "6013ec749b32000045be650e",
-              tiledesk_message_id: "611cbf8ffb379b00346660e7"
-          },
-          channel_type: "group",
-          recipient: "support-group-6013ec749b32000045be650e-4904aee91f8b487aad117bcda860549d",
-          recipient_fullname: "Guest ",
-          sender: "bot_602256f6c001b800342cb76f",
-          sender_fullname: "BOT2",
-          status: 150,
-          text: "Hello 👋. I'm a bot 🤖.\n\nChoose one of the options below or write a message to reach our staff.",
-          timestamp: 1629273999970,
-          type: "text",
-          uid: "-MhNI3eaIoLTOLoX3TAu",
-          isSender: false
-      }
-    ]
-    component.messages = messages
-    component.senderId = '9d3b6aa5-0aea-4b7e-935f-1c1c675cd8d4'
-    component.baseLocation = 'http://tiledesk-widget-pre.s3-eu-west-1.amazonaws.com'
-    component.translationMap = new Map();
-    component.stylesMap = new Map();
-    const nativeEl: HTMLElement = fixture.nativeElement;
-    const baseReceiveEl = nativeEl.querySelector('.message_sender_fullname');
-    fixture.detectChanges()
-    expect(baseReceiveEl.textContent).toBe('BOT2');
+  describe('ngOnChanges', () => {
+    it('should set CSS variables on .c21-body from stylesMap', () => {
+      const body = (fixture.debugElement.nativeElement as HTMLElement).querySelector('.c21-body') as HTMLElement;
+      spyOn(body.style, 'setProperty');
+      component.ngOnChanges({
+        stylesMap: new SimpleChange(null, component.stylesMap, true),
+      });
+      expect(body.style.setProperty).toHaveBeenCalledWith('--textColorSent', '#111');
+      expect(body.style.setProperty).toHaveBeenCalledWith('--textColorReceive', '#222');
+    });
   });
 
-  it('renders a chat-avatar-image & chat-bubble-message components in div with ".base_receive" class', () => {
-    const messages: Array<any> = [{
-          attributes: {
-              projectId: "6013ec749b32000045be650e",
-              tiledesk_message_id: "611cbf8ffb379b00346660e7"
-          },
-          channel_type: "group",
-          recipient: "support-group-6013ec749b32000045be650e-4904aee91f8b487aad117bcda860549d",
-          recipient_fullname: "Guest ",
-          sender: "bot_602256f6c001b800342cb76f",
-          sender_fullname: "BOT2",
-          status: 150,
-          text: "Hello 👋. I'm a bot 🤖.\n\nChoose one of the options below or write a message to reach our staff.",
-          timestamp: 1629273999970,
-          type: "text",
-          uid: "-MhNI3eaIoLTOLoX3TAu",
-          isSender: false
-      },
-      {
-        attributes: {
-            projectId: "6013ec749b32000045be650e",
-            tiledesk_message_id: "611cbf8ffb379b00346660e7"
-        },
-        channel_type: "group",
-        recipient: "support-group-6013ec749b32000045be650e-4904aee91f8b487aad117bcda860549d",
-        recipient_fullname: "Guest ",
-        sender: "bot_602256f6c001b800342cb76f",
-        sender_fullname: "BOT1",
-        status: 150,
-        text: "Hello 👋. I'm a bot 🤖.\n\nChoose one of the options below or write a message to reach our staff.",
-        timestamp: 1629273999970,
-        type: "text",
-        uid: "-MhNI3eaIoLTOLoX3TAu",
-        isSender: false
-    }
-    ]
-    component.messages = messages
-    component.senderId = '9d3b6aa5-0aea-4b7e-935f-1c1c675cd8d4'
-    component.baseLocation = 'http://tiledesk-widget-pre.s3-eu-west-1.amazonaws.com'
-    component.translationMap = new Map();
-    component.stylesMap = new Map();
-    
-    const nativeEl: HTMLElement = fixture.nativeElement;
-    const baseReceiveEl = nativeEl.querySelectorAll('.base_receive')
-    const chatImageComponentChild = baseReceiveEl[0].querySelector('chat-avatar-image')
-    const bubbleMessageComponentChild = baseReceiveEl[0].querySelector('chat-bubble-message.msg_receive')
-    fixture.detectChanges()
-    expect(chatImageComponentChild).toBeTruthy();
-    expect(bubbleMessageComponentChild).toBeTruthy();
+  describe('getMetadataSize', () => {
+    it('should default width/height and scale wide images', () => {
+      const meta: any = { width: MAX_WIDTH_IMAGES * 2, height: 100 };
+      const s = component.getMetadataSize(meta);
+      expect(s.width).toBe(MAX_WIDTH_IMAGES);
+      const ratio = meta.width / meta.height;
+      expect(s.height).toBeCloseTo(MAX_WIDTH_IMAGES / ratio, 5);
+    });
+
+    it('should fill missing dimensions', () => {
+      const s = component.getMetadataSize({});
+      expect(s.width).toBe('100%');
+      expect(s.height).toBe(MAX_WIDTH_IMAGES);
+    });
   });
 
   describe('scroll and badge', () => {

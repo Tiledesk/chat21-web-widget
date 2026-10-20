@@ -7,8 +7,9 @@
         min-height: 38px;
     }  
 }
-:host .previewNewMessagge ::ng-deep > chat-bubble-message > #bubble-message > div > div > chat-text {
-    p {
+:host .previewNewMessagge ::ng-deep > chat-bubble-message > .bubble-message > div > div > chat-text {
+    p,
+    .message_innerhtml {
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
@@ -109,6 +110,19 @@
     margin-right: 16px;
     border-radius: 12px 12px 12px 12px;
     padding: 0px 5px;
+}
+
+button.previewNewMessagge {
+    display: block;
+    align-self: stretch;
+    max-width: 100%;
+    text-align: left;
+    font: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
 }
 
 .previewNewMessagge.no-background{

@@ -3,13 +3,13 @@ import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MessageModel } from 'src/chat21-core/models/message';
-import { MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, TYPE_MSG_URL_PREVIEW } from 'src/chat21-core/utils/constants';
+import { MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS } from 'src/chat21-core/utils/constants';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
-import { JsonSourcesParserService } from 'src/app/providers/json-sources-parser.service';
 import { calcImageSize, isAudio, isAudioTTS, isFile, isFrame, isImage, isJsonSources, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
-import { VoiceService } from 'src/app/providers/voice/voice.service';
+import { JsonSourcesParserService, UrlPreviewDisplayFields } from 'src/app/providers/json-sources-parser.service';
 import { JsonSourceItem } from '../json-sources/json-sources.component';
+import { VoiceService } from 'src/app/providers/voice/voice.service';
 import { VoiceTtsKaraokeWord } from 'src/app/providers/voice/voice-streaming.types';
 
 @Component({
@@ -59,29 +59,18 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
 
   @HostBinding('class.no-background') get hostNoBackground() { return this.jsonSources !== null && this.jsonSources.length > 0; }
   @HostBinding('class.json-resources') get hostIsJsonResources() { return this.jsonSources !== null && this.jsonSources.length > 0; }
+  @HostBinding('class.hidden-bubble') get hostHiddenBubble() { return !this.hasRenderableContent(); }
 
-  readonly isImage = isImage;
-  readonly isFile = isFile;
-  readonly isFrame = isFrame;
-  readonly isAudio = isAudio;
-  readonly isJsonSources = isJsonSources;
-  readonly isAudioTTS = isAudioTTS;
-  readonly messageType = messageType;
-  readonly convertColorToRGBA = convertColorToRGBA;
-  readonly MESSAGE_TYPE_MINE = MESSAGE_TYPE_MINE;
-  readonly MESSAGE_TYPE_OTHERS = MESSAGE_TYPE_OTHERS;
-
-  sizeImage: { width: number; height: number } = { width: 0, height: 0 };
-  fullnameColor: string = '';
-  jsonSources: JsonSourceItem[] | null = null;
-
-  private urlPreviewReqId = 0;
-
-  constructor(
-    public sanitizer: DomSanitizer, 
-    public voiceService: VoiceService, 
-    private jsonSourcesParser: JsonSourcesParserService
-  ) { }
+  hasRenderableContent(): boolean {
+    const msg = this.message;
+    if (!msg) return false;
+    if (isImage(msg) || isFile(msg) || isFrame(msg) || isAudio(msg)) return true;
+    if (this.jsonSources && this.jsonSources.length > 0) return true;
+    // For url_preview messages, `text` may carry the raw JSON payload (not display text):
+    // if sources parsing yielded nothing, the bubble must stay hidden.
+    if (this.isUrlPreviewMessage) return false;
+    return !!(msg.text && String(msg.text).trim().length > 0);
+  }
 
   ngOnInit() {
     // If this TTS message arrived while the voice proxy was active, mark it so
@@ -118,6 +107,32 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
     this._kSub?.unsubscribe();
     this._kSub = undefined;
   }
+
+  readonly isImage = isImage;
+  readonly isFile = isFile;
+  readonly isFrame = isFrame;
+  readonly isAudio = isAudio;
+  readonly isAudioTTS = isAudioTTS;
+  readonly isJsonSources = isJsonSources;
+  readonly messageType = messageType;
+  readonly convertColorToRGBA = convertColorToRGBA;
+  readonly MESSAGE_TYPE_MINE = MESSAGE_TYPE_MINE;
+  readonly MESSAGE_TYPE_OTHERS = MESSAGE_TYPE_OTHERS;
+
+  sizeImage: { width: number; height: number } = { width: 0, height: 0 };
+  fullnameColor: string = '';
+  jsonSources: JsonSourceItem[] | null = null;
+  isUrlPreviewMessage = false;
+  jsonSourcesDisplayFields?: UrlPreviewDisplayFields;
+  jsonSourcesBackgroundColor?: string;
+
+  private urlPreviewReqId = 0;
+
+  constructor(
+    public sanitizer: DomSanitizer,
+    private jsonSourcesParser: JsonSourcesParserService,
+    public voiceService: VoiceService,
+  ) {}
 
   ngOnChanges(changes?: SimpleChanges): void {
     if (this.message?.metadata && typeof this.message.metadata === 'object') {
@@ -174,17 +189,44 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    if (this.message?.type !== TYPE_MSG_URL_PREVIEW) {
-      this.jsonSources = null;
-      return;
-    }
+    // Reset on every message change: we must not "leak" sources across different messages.
+    this.jsonSources = null;
+    this.jsonSourcesDisplayFields = undefined;
+    this.jsonSourcesBackgroundColor = undefined;
 
     // url_preview payload can live on message root OR inside metadata/attributes depending on the integration.
-    const urlPreviewLike =
-      this.message?.type === TYPE_MSG_URL_PREVIEW
-      || this.message?.metadata?.type === TYPE_MSG_URL_PREVIEW
-      || this.message?.attributes?.type === TYPE_MSG_URL_PREVIEW;
-    if (urlPreviewLike) this.loadJsonSourcesFromUrlPreviewMessage();
+    const urlPreviewPayload = this.jsonSourcesParser.getUrlPreviewPayload(this.message);
+    this.isUrlPreviewMessage = !!urlPreviewPayload;
+    if (urlPreviewPayload) {
+      // displayFields / previewBackgroundColor may travel on the root, the metadata
+      // OR the attributes container depending on how the backend serializes the
+      // message. Resolve them with an explicit fallback so we always pick them up.
+      this.jsonSourcesDisplayFields = this.firstDefined<UrlPreviewDisplayFields>(
+        urlPreviewPayload.displayFields,
+        (this.message as any)?.displayFields,
+        (this.message as any)?.metadata?.displayFields,
+        (this.message as any)?.attributes?.displayFields,
+      );
+      this.jsonSourcesBackgroundColor = this.firstDefined<string>(
+        urlPreviewPayload.previewBackgroundColor,
+        (this.message as any)?.previewBackgroundColor,
+        (this.message as any)?.metadata?.previewBackgroundColor,
+        (this.message as any)?.attributes?.previewBackgroundColor,
+      );
+      this.loadJsonSourcesFromUrlPreviewMessage();
+    }
+  }
+
+  trackWord(_index: number, item: { word: string; index: number }): number {
+    return item.index;
+  }
+
+  trackKaraokeWord(index: number): number {
+    return index;
+  }
+  
+  private firstDefined<T>(...values: Array<T | undefined>): T | undefined {
+    return values.find((v) => v !== undefined && v !== null);
   }
 
   private async loadJsonSourcesFromUrlPreviewMessage(): Promise<void> {

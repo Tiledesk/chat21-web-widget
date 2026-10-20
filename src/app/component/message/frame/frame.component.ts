@@ -15,14 +15,19 @@ export class FrameComponent implements OnInit {
   
   url: SafeResourceUrl = null
   loading: boolean = true
+  frameTitle: string = 'Embedded content'
   constructor(private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
     if(this.metadata && this.metadata.src){
       this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.metadata.src);
+      try {
+        const host = new URL(this.metadata.src).hostname;
+        this.frameTitle = `Embedded content from ${host}`;
+      } catch (_) {
+        this.frameTitle = 'Embedded content';
+      }
     }
-    // this.width = this.getSizeImg(this.metadata).width;
-    // this.height = this.getSizeImg(this.metadata).height;
   }
 
   ngOnDestroy(){

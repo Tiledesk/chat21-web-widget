@@ -1,9 +1,9 @@
 <div class="c21-icon-avatar">
   <div class="c21-avatar-image profile_image">
       <!-- is a BOT -->
-      <img *ngIf="senderID?.indexOf('bot_') !== -1 || senderFullname.toLowerCase().includes('bot')" [src]="url" (error)="onBotImgError($event)" (load)="onLoadedBot($event)"/>
+      <img *ngIf="senderID?.indexOf('bot_') !== -1 || senderFullname.toLowerCase().includes('bot')" [src]="url" [attr.alt]="senderFullname || 'Bot'" role="img" (error)="onBotImgError($event)" (load)="onLoadedBot($event)"/>
       <!-- is a HUMAN -->
-      <img *ngIf="senderID?.indexOf('bot_') === -1 && !senderFullname.toLowerCase().includes('bot')" [src]="url" (error)="onHumanImgError($event)" (load)="onLoadedHuman($event)"/>
+      <img *ngIf="senderID?.indexOf('bot_') === -1 && !senderFullname.toLowerCase().includes('bot')" [src]="url" [attr.alt]="senderFullname || 'User'" role="img" (error)="onHumanImgError($event)" (load)="onLoadedHuman($event)"/>
   </div> 
 </div>
 
