@@ -49,7 +49,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   @Input() isEmojiiPickerShow: boolean;
   @Input() footerMessagePlaceholder: string;
   @Input() fileUploadAccept: string;
-  @Input() closeChatInConversation: boolean;
   @Input() dropEvent: Event;
   @Input() poweredBy: string;
   @Input() stylesMap: Map<string, string>
