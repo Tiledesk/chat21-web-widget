@@ -6,8 +6,6 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-<<<<<<< HEAD
-=======
 
 # 5.2.3
 - **changed**: added "source" parameter to URL preview
@@ -41,7 +39,6 @@
 
 # 5.1.33
 - **bug fixed**: widget not loaded because blob block loading in lauch.js
->>>>>>> master
 
 # 5.1.33-rc7
 - **added**: added more URL source types in kb_json_sources
