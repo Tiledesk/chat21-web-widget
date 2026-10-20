@@ -131,16 +131,17 @@ describe('TextComponent (render via MarkedPipe)', () => {
       const viaPipe = markedPipe.transform(raw) as string;
       expect(shadowInnerHtml()).toBe(viaPipe);
     });
-  it('should render streaming words with the same marked paragraph class as static text', () => {
-    component.streamingWords = [
-      { word: 'Hello', index: 0 },
-      { word: 'world', index: 1 },
-    ];
-    fixture.detectChanges();
-    const root: ShadowRoot = fixture.nativeElement.shadowRoot;
-    const p = root.querySelector('p.message_innerhtml.marked');
-    expect(p).toBeTruthy();
-    expect(p.textContent).toContain('Hello');
-    expect(p.querySelectorAll('.stream-word').length).toBe(2);
-  });
+    it('should render streaming words with the same marked paragraph class as static text', () => {
+      component.streamingWords = [
+        { word: 'Hello', index: 0 },
+        { word: 'world', index: 1 },
+      ];
+      fixture.detectChanges();
+      const root: ShadowRoot = fixture.nativeElement.shadowRoot;
+      const p = root.querySelector('p.message_innerhtml.marked');
+      expect(p).toBeTruthy();
+      expect(p.textContent).toContain('Hello');
+      expect(p.querySelectorAll('.stream-word').length).toBe(2);
+    });
+  })
 });

@@ -317,6 +317,7 @@ export class TranslatorService {
       'CLOSED',
       'LABEL_PREVIEW',
       'MAX_ATTACHMENT',
+      'MAX_ATTACHMENT_ERROR',
       'EMOJI',
       'BUTTON_OPEN_CHAT'
     ];
@@ -374,6 +375,7 @@ export class TranslatorService {
       globals.LABEL_PREVIEW = res['LABEL_PREVIEW']
       globals.LABEL_ERROR_FIELD_REQUIRED= res['LABEL_ERROR_FIELD_REQUIRED']
       globals.MAX_ATTACHMENT = res['MAX_ATTACHMENT']
+      globals.MAX_ATTACHMENT_ERROR = res['MAX_ATTACHMENT_ERROR']
       globals.EMOJI = res['EMOJI']
       globals.BUTTON_OPEN_CHAT = res['BUTTON_OPEN_CHAT']
       

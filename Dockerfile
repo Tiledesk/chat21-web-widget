@@ -15,8 +15,8 @@ COPY . .
 
 ## Build the angular app in production mode and store the artifacts in dist folder
 
-RUN npx ng build --configuration="prod" --output-path=dist --base-href=./ --output-hashing=none
 
+RUN npx ng build --configuration="prod" --output-path=dist --base-href=./ --output-hashing=none
 
 ### STAGE 2: Setup ###
 FROM --platform=$BUILDPLATFORM nginx:1.14.1-alpine

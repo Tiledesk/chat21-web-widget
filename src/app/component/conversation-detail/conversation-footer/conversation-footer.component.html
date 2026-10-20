@@ -37,6 +37,26 @@
         </chat-stream-audio-spectrum>
     </div>
 
+    <!-- STREAM AUDIO: status + waveform panel above footer -->
+    <div id="streamAudioAlert" *ngIf="!hideTextAreaContent && (isStreamAudioActive || isStreamAudioConnecting)"
+         class="fade-in-bottom stream-audio-alert" [class.hideTextReply]="hideTextReply"
+         role="status" [attr.aria-label]="voiceStatusLabel">
+        <div class="voice-status-row">
+            <span class="voice-status-dot"
+                  [class.voice-status-dot--connecting]="isStreamAudioConnecting && !isStreamAudioActive"
+                  [class.voice-status-dot--listening]="isStreamAudioActive && !isBotSpeaking"
+                  [class.voice-status-dot--processing]="isStreamAudioActive && isBotSpeaking">
+            </span>
+            <span class="voice-status-text">{{ voiceStatusLabel }}</span>
+            <span class="voice-transcript-text" *ngIf="lastVoiceTranscript">{{ lastVoiceTranscript }}</span>
+        </div>
+        <chat-stream-audio-spectrum
+            mode="alert"
+            [volume]="isBotSpeaking ? 0 : currentVolume"
+            [accentColor]="stylesMap?.get('themeColor')">
+        </chat-stream-audio-spectrum>
+    </div>
+
 </div>
 
 <div class="textarea-container-wrapper" *ngIf="!hideTextAreaContent && !hideTextReply">
@@ -159,6 +179,7 @@
             [class.active]="isStopRec"
             id="chat21-button-rec">
             <chat-audio-recorder
+                [translationMap]="translationMap"
                 (startRecordingEvent)="onStartRecording()"
                 (deleteRecordingEvent)="onDeleteRecording()"
                 (endRecordingEvent)="onEndRecording($event)"
@@ -201,7 +222,6 @@
 
     </div>
 </div>
-
 
 <!-- EMOJII PICKER-->
 <div [style.visibility]="isEmojiiPickerShow?'visible':'hidden'"
