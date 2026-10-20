@@ -480,7 +480,7 @@ export class Globals {
     this.BUILD_VERSION = 'v.' + environment.version;
 
     this.soundEnabled = true;
-    this.keyboardSoundVolume = 0.3;
+    this.keyboardSoundVolume = 0.0; //0.3;
     this.keyboardSoundFile = 'keyboard.mp3';
 
     this.conversationsBadge = 0;
