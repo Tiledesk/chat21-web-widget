@@ -6,6 +6,14 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.3.0
+- **added**: you can talk with the assistant in real time. A voice mode button in the message box starts and stops the conversation; what you say appears in the chat, and the reply is both spoken and written
+- **added**: while the assistant is speaking, the words light up one by one so you can follow the text along with the voice. Older messages stay as they are
+- **added**: if interruption is enabled, you can start talking again while the assistant is still speaking. It lowers its voice right away and then stops to listen to you
+- **added**: a soft keyboard sound plays while the assistant is preparing its answer, so the wait is not silent
+- **changed**: the voice-note button stays hidden while a live voice conversation is in progress
+- **changed**: audio controls are easier to use with a keyboard or a screen reader, and their labels follow the widget language
+- **bug fixed**: a brand-new chat no longer looks archived, so you can write and send the first message
 
 # 5.2.3
 - **changed**: added "source" parameter to URL preview
