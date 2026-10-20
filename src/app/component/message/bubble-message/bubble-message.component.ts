@@ -24,7 +24,6 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
   @Input() fontColor: string;
   @Input() stylesMap: Map<string, string>;
   @Input() translationMap: Map<string, string>;
-
   /** When true, a newly-arrived bot text message reveals its words one by one. */
   @Input() streamOnArrival = false;
   /**
@@ -120,8 +119,8 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
   readonly MESSAGE_TYPE_MINE = MESSAGE_TYPE_MINE;
   readonly MESSAGE_TYPE_OTHERS = MESSAGE_TYPE_OTHERS;
 
-  sizeImage: { width: number; height: number };
-  fullnameColor: string;
+  sizeImage: { width: number; height: number } = { width: 0, height: 0 };
+  fullnameColor: string = '';
   jsonSources: JsonSourceItem[] | null = null;
   isUrlPreviewMessage = false;
   jsonSourcesDisplayFields?: UrlPreviewDisplayFields;

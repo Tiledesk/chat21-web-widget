@@ -265,7 +265,8 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       'VOICE_CONNECTING',
       'VOICE_LISTENING',
       'VOICE_PROCESSING',
-      'STREAM_AUDIO'
+      'STREAM_AUDIO',
+      'MAX_ATTACHMENT'
     ];
 
     const keysContent = [
@@ -528,7 +529,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       return this.isConversationArchived;
     }
 
-    //FALLBACK TO TILEDESK
+    //   //FALLBACK TO TILEDESK
     const requests_list = await this.tiledeskRequestService.getMyRequests().catch(err => {
       this.logger.error('[CONV-COMP] getConversationDetail: error getting request from Tiledesk', err);
       this.isConversationArchived=true
@@ -906,6 +907,20 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
             this.logger.debug('[CONV-COMP] updateConversationBadge...')
             that.updateConversationBadge();
           }
+        }
+      });
+      const subscribe = {key: subscribtionKey, value: subscribtion };
+      this.subscriptions.push(subscribe);
+    }
+
+    subscribtionKey = 'conversationsAdded';
+    subscribtion = this.subscriptions.find(item => item.key === subscribtionKey);
+    if(!subscribtion){
+
+      subscribtion = this.chatManager.conversationsHandlerService.conversationChanged.pipe(takeUntil(this.unsubscribe$)).subscribe((conversation) => {
+        this.logger.debug('[CONV-COMP] ***** DATAIL conversationsChanged *****', conversation, this.conversationWith, this.isConversationArchived);
+        if(conversation && conversation.recipient === this.conversationId){
+          this.isConversationArchived = false
         }
       });
       const subscribe = {key: subscribtionKey, value: subscribtion };
@@ -1434,7 +1449,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.onNewConversationButtonClicked.emit()
   }
 
-  /** CALLED BY: conv-footer component */
+  /** CALLED BY: conv-footer streaming audio button */
   onStreamAudioActiveChange(event: boolean){
     this.isStreamAudioActive = event
   }
@@ -1447,6 +1462,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     this.logger.debug('[CONV-COMP] onCloseChatButtonClicked::::', event)
     this.onCloseChat()
   }
+  // =========== END: event emitter function ====== //
 
   /**
    * True quando è visibile il pulsante chiudi stream (`.close-stream-button`, `isStreamAudioActive`).
@@ -1455,8 +1471,6 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   closeStreamButtonActiveForSheetBottom(): boolean {
     return !!(this.g?.showAudioStreamFooterButton && (this.isStreamAudioActive || this.isStreamAudioConnecting));
   }
-  // =========== END: event emitter function ====== //
-
 
   openInputFiles() {
     alert('ok');

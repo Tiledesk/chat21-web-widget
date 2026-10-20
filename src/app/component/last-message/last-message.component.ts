@@ -12,7 +12,7 @@ import { MIN_WIDTH_IMAGES } from 'src/app/utils/constants';
 import { ConversationModel } from 'src/chat21-core/models/conversation';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
-import { commandToMessage, conversationToMessage, isEmojii, isFrame, isImage, isSameSender } from 'src/chat21-core/utils/utils-message';
+import { commandToMessage, conversationToMessage, isEmojii, isFrame, isImage, isMine, isSameSender, isSender } from 'src/chat21-core/utils/utils-message';
 
 
 @Component({
@@ -59,6 +59,9 @@ export class LastMessageComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnChanges(changes: SimpleChanges) {
     this.logger.debug('[LASTMESSAGE] onChanges', changes)
     if(this.conversation){
+      
+      /** if the message is sent by the logged user, do not add it to the messages array */
+      if(isSender(this.conversation.sender, this.g.senderId)) return;
 
       if(this.conversation.attributes && this.conversation.attributes.commands){
         this.addCommandMessage(this.conversation)

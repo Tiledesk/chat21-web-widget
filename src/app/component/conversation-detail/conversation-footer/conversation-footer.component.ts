@@ -125,8 +125,15 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     return this.translationMap?.get('VOICE_LISTENING') || 'Listening...';
   }
 
+  get maxAttachmentLabel(): string {
+    const template = this.translationMap?.get('MAX_ATTACHMENT')
+      || `Max allowed size {{FILE_SIZE_LIMIT}}Mb`;
+    return template.replace(/\{\{FILE_SIZE_LIMIT\}\}/g, String(this.file_size_limit));
+  }
+
   file_size_limit = FILE_SIZE_LIMIT;
   attachmentTooltip: string = '';
+  isErrorNetwork: boolean = false;
 
 
   convertColorToRGBA = convertColorToRGBA;
@@ -150,7 +157,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     if(changes['conversationWith'] && changes['conversationWith'].currentValue !== undefined){
       this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
       this.isStreamAudioActive = false;
-      this.ttsPlayback.cancelAll();
       void this.stopVoice();
     }
     if(changes['hideTextReply'] && changes['hideTextReply'].currentValue !== undefined){
