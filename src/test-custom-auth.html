@@ -5,46 +5,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="application/javascript"> 
-      // Handler for .ready() called.
+
       window.tiledeskSettings = 
       {
-          // PRE:   
-          projectid: "6013ec749b32000045be650e",
-          // PROD: 
-          // projectid: "5ebf9cc892befe00190552d6",
-          persistence: 'session',
-          isLogEnabled: true,
-          autoStart: false
-          // startFromHome: true
+          projectid: "<YOUR-PROJECTID>",
+          isLogEnabled: false,
+          autoStart: false,
+          marginX: "100px",
+          marginY: "100px"
       };
+      (function(d, s, id) { 
+              var w=window; var d=document; var i=function(){i.c(arguments);};
+              i.q=[]; i.c=function(args){i.q.push(args);}; w.Tiledesk=i;                    
+              var js, fjs=d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) return;
+              js=d.createElement(s); 
+              js.id=id; js.async=true; js.src="https://widget.tiledesk.com/v6/launch.js";
+              fjs.parentNode.insertBefore(js, fjs);
+          }(document,'script','tiledesk-jssdk'));
 
-      (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); 
-        js.id = id; //js.async=!0;
-        // PRE
-        js.src = "./launch.js"; //
-        // js.src = "https://widget-pre.tiledesk.com/v2/launch.js"; 
-        // PROD
-        // js.src = "https://widget.tiledesk.com/v4/launch.js";
-        fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'tiledesk-jssdk'));
       
-     
-      window.tileDeskAsyncInit = function() {
-       
-        window.tiledesk.on('onLoadParams', function(event_data) {
-          setTimeout(function() {
-            // token PRE
-            window.tiledesk.signInWithCustomToken("JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDEzZWM3NDliMzIwMDAwNDViZTY1MGVfMTIzNDU2NzgiLCJmaXJzdG5hbWUiOiJBbmRyZWEiLCJsYXN0bmFtZSI6IkxlbyIsImVtYWlsIjoiYW5kcmVhLmxlb0BlbWFpbC5jb20iLCJjdXN0b21BdHRyIjoiYzEiLCJzdWIiOiJ1c2VyZXh0ZXJuYWwiLCJhdWQiOiJodHRwczovL3RpbGVkZXNrLmNvbS9wcm9qZWN0cy82MDEzZWM3NDliMzIwMDAwNDViZTY1MGUifQ.eJ7oV9xVmEHIFDviQHFJm0hjkgqC2uHqnWqVKWhqt9I");
-            // token PROD
-            // window.tiledesk.signInWithCustomToken("JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIxMjMiLCJmaXJzdG5hbWUiOiJhbmRyZWFjdXN0b20iLCJsYXN0bmFtZSI6Imxlb2N1c3RvbSIsImVtYWlsIjoiZW1haWwyQGVtYWlsLmNvbSIsImN1c3RvbUF0dHIiOiJjMSIsInN1YiI6InVzZXJleHRlcm5hbCIsImF1ZCI6Imh0dHBzOi8vdGlsZWRlc2suY29tL3Byb2plY3RzLzVlYmY5Y2M4OTJiZWZlMDAxOTA1NTJkNiJ9.al6ovk6KvsboENrVnWe6AdpezhDc6hW7shQHm0-tzX0");
-          }, 3000)
+      window.Tiledesk('onLoadParams', function(event_data) {
+        authenticate("<EMAIL>", "<PASSWORD>", (err, token) => {
+          document.getElementById("status").innerHTML = "Signed in.";
+          window.tiledesk.signInWithCustomToken(token);
         });
-      };
+      })
+      
+      window.Tiledesk('onAuthStateChanged', function(event_data) {
+        if(event_data.detail.isLogged){
+          window.Tiledesk('show')
+        }
+      });
+
+      function authenticate(email, password, callback) {
+        const options = {
+            url: `<YOUR-AUTH-API>`,
+            method: 'POST'
+        };
+        let xmlhttp = new XMLHttpRequest();
+        xmlhttp.open(options.method, options.url, true);
+        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xmlhttp.onreadystatechange = function() {
+          if (callback && xmlhttp.readyState == 4 && xmlhttp.status == 200 && xmlhttp.responseText) {
+            try {
+              const json = JSON.parse(xmlhttp.responseText);
+              let token = json.token;
+              if (token && !token.startsWith("JWT ")) {
+                token = "JWT " + token;
+              }
+              callback(null, token);
+            }
+            catch (err) {
+              callback(err, null);
+            }
+          }
+        };
+        xmlhttp.send(JSON.stringify({
+          "email": email,
+          "password": password
+        }));
+      }
+      
     </script>
   </head>
   <body>
+    <h1>Tiledesk Custom JWT Authentication live App</h1>
+    <h2 id="status">Authenticating...</h2>
   </body>
 </html>
