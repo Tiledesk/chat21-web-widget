@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.37-ar
+- **bug fixed**: uploadService and tiledeskRequestSerivce cannot able to get tiledeskToken until widget is opened 
+
 # 5.1.36-ar
 - **bug fixed**: texarea with is not responsive
 
