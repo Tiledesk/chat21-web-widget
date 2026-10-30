@@ -1,0 +1,111 @@
+name: Update Tiledesk Argo stage
+
+# Updates on Tiledesk/tiledesk-argo (branch stage), in helm/values.yaml:
+#  - webwidget.image.tag
+
+on:
+  push:
+    tags:
+      - '**'
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Image tag to write on webwidget.image.tag (defaults to the pushed git tag)'
+        required: false
+        type: string
+
+concurrency:
+  group: update-argo-stage
+  cancel-in-progress: false
+
+jobs:
+
+  update_cds_stage:
+    name: Update webwidget.image.tag on tiledesk-argo stage
+    runs-on: ubuntu-latest
+    steps:
+
+     - name: Resolve image tag
+       id: image_tag
+       run: |
+          RAW="${{ github.event.inputs.image_tag || github.ref_name }}"
+          # docker/metadata-action publishes semver tags without the leading v
+          echo "value=${RAW#v}" >> "$GITHUB_OUTPUT"
+          echo "Image tag to deploy: ${RAW#v}"
+          
+     - name: Check out tiledesk-argo stage
+       uses: actions/checkout@v4
+       with:
+        repository: Tiledesk/tiledesk-argo
+        ref: stage
+        token: ${{ secrets.ARGO_REPO_TOKEN }}
+    
+     - name: Wait 1 minute before commit
+       run: sleep 60
+ 
+     - name: Pull latest stage
+       run: git pull --ff-only origin stage
+
+     - name: Update webwidget.image.tag in helm/values.yaml
+       env:
+        IMAGE_TAG: ${{ steps.image_tag.outputs.value }}
+       run: |
+          # Rewrite only webwidget.image.tag, leaving the rest of the file untouched.
+          # Fails if the section is not found, so a rename cannot silently skip the update.
+          awk -v tag="$IMAGE_TAG" '
+            BEGIN { replaced = 0 }
+            /^[A-Za-z_][A-Za-z0-9_]*:/ {
+              section = $1
+              sub(/:$/, "", section)
+              in_image = 0
+            }
+            section == "webwidget" {
+              if ($0 ~ /^  image:[[:space:]]*$/) {
+                in_image = 1
+              } else if ($0 ~ /^  [^ ]/) {
+                in_image = 0
+              }
+              if (in_image && $0 ~ /^    tag:[[:space:]]/) {
+                print "    tag: " tag
+                replaced++
+                next
+              }
+            }
+            { print }
+            END {
+              if (replaced != 1) {
+                print "ERROR: expected 1 tag replacement in helm/values.yaml, made " replaced > "/dev/stderr"
+                exit 1
+              }
+            }
+          ' helm/values.yaml > helm/values.yaml.new
+          mv helm/values.yaml.new helm/values.yaml
+          git --no-pager diff -- helm/values.yaml
+
+     - name: Commit and push on stage
+       env:
+        IMAGE_TAG: ${{ steps.image_tag.outputs.value }}
+       run: |
+          if git diff --quiet -- helm/values.yaml; then
+            echo "helm/values.yaml is already on $IMAGE_TAG, nothing to commit"
+            exit 0
+          fi
+          git config user.name "Tiledesk Developer[bot]"
+          git config user.email "tiledeskdeveloper@gmail.com"
+          git commit -m "🔔 Widget $IMAGE_TAG on stage ✅" -- helm/values.yaml
+          # Another workflow may have pushed to stage while this job was running.
+          # Rebase this commit on the remote tip, then push. Retry if stage moves again.
+          for attempt in 1 2 3 4 5; do
+            if ! git pull --rebase origin stage; then
+              git rebase --abort || true
+              echo "rebase of stage failed"
+              exit 1
+            fi
+            if git push origin HEAD:stage; then
+              exit 0
+            fi
+            echo "stage moved ahead, retrying push ($attempt)"
+            sleep 5
+          done
+          echo "could not push to stage"
+          exit 1
