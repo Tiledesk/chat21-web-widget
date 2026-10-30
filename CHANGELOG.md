@@ -6,8 +6,11 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# 5.1.37-ar
+# 5.1.39-ar
 - **bug fixed**: uploadService and tiledeskRequestSerivce cannot able to get tiledeskToken until widget is opened 
+
+# 5.1.38-ar
+ **changed**: comment showWaitTime() function 
 
 # 5.1.36-ar
 - **bug fixed**: texarea with is not responsive
