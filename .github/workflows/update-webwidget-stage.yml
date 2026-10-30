@@ -40,8 +40,8 @@ jobs:
         ref: stage
         token: ${{ secrets.ARGO_REPO_TOKEN }}
     
-     - name: Wait 1 minute before commit
-       run: sleep 60
+     - name: Wait 2 minutes before commit
+       run: sleep 120
  
      - name: Pull latest stage
        run: git pull --ff-only origin stage
