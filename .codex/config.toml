@@ -1,0 +1,13 @@
+[mcp_servers.angular-cli]
+command = "/Users/gabriele95/.angular-mcp-runner/run-angular-mcp.sh"
+
+[mcp_servers.playwright]
+command = "npx"
+args = [
+    "-y",
+    "@playwright/mcp@latest",
+    "--caps=testing",
+]
+
+[mcp_servers.playwright.env]
+PATH = "/Users/gabriele95/.nvm/versions/node/v20.19.2/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"

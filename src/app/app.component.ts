@@ -265,10 +265,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         });
         this.appStorageService.initialize(environment.storage_prefix, this.g.persistence, this.g.projectid)
         this.tiledeskAuthService.initialize(this.appConfigService.getConfig().apiUrl)
-        this.tiledeskRequestsService.initialize(this.appConfigService.getConfig().apiUrl, this.g.projectid)
         this.messagingAuthService.initialize();
         this.chatManager.initialize();
-        this.uploadService.initialize(this.g.projectid);
     }
 
 
@@ -474,6 +472,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 that.g.setParameter('attributes', that.setAttributesFromStorageService());
                 // that.startUI();
                 this.initConversationsHandler(this.g.tenant, that.g.senderId);
+
+                //INIT TILEDESK SERVICES
+                this.tiledeskRequestsService.initialize(this.appConfigService.getConfig().apiUrl, this.g.projectid)
+                this.uploadService.initialize(this.g.projectid)
                 
                 /* If singleConversation mode is active wait to startUI: do it later in initConversationsHandler */
                 that.g.singleConversation? null: that.startUI();
