@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.2.4-rc3
+- **bug fixed**: uploadService and tiledeskRequestSerivce cannot able to get tiledeskToken until widget is opened 
+
 # 5.2.4-rc2
 - **changed**: **Stream audio** — message attributes use `voice_mode` instead of `voiceStreaming`. It is `false` by default, including on widget start even if storage still had `true`, and `true` only while a voice session is active. After the attributes are built they are written back to storage so the flag stays in sync.
 
