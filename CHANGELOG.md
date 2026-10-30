@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.3.1
+- **bug fixed**: uploadService and tiledeskRequestSerivce cannot able to get tiledeskToken until widget is opened 
+
 # 5.3.0
 - **added**: you can talk with the assistant in real time. A voice mode button in the message box starts and stops the conversation; what you say appears in the chat, and the reply is both spoken and written
 - **added**: while the assistant is speaking, the words light up one by one so you can follow the text along with the voice. Older messages stay as they are
