@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { LOCALSTORAGE_KEYS } from 'src/app/utils/constants';
 import { Globals } from 'src/app/utils/globals';
 import { AppStorageService } from 'src/chat21-core/providers/abstract/app-storage.service';
 
@@ -109,7 +110,7 @@ export class PrechatFormComponent implements OnInit, AfterViewInit {
       // attributes['userFullname'] = this.userFullname;
       // attributes['userEmail'] = this.userEmail;
       // this.g.setParameter('attributes', attributes);
-      this.appStorageService.setItem('attributes', JSON.stringify(attributes));
+      this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(attributes));
       this.onCloseForm.emit();
     } else {
       // mostro messaggio di errore
@@ -139,7 +140,7 @@ export class PrechatFormComponent implements OnInit, AfterViewInit {
         this.g.setParameter('userEmail', form['userEmail']);
       }
       this.g.attributes['preChatForm'] = form
-      this.appStorageService.setItem('attributes', JSON.stringify(this.g.attributes));
+      this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(this.g.attributes));
       this.onCloseForm.emit();
     }
   }

@@ -7,6 +7,7 @@ import { getDateDifference } from 'src/chat21-core/utils/utils';
 import { Rule } from 'src/models/rule';
 import { UserModel } from './../../chat21-core/models/user';
 import { Globals } from './globals';
+import { LOCALSTORAGE_KEYS } from './constants';
 
 
 @Injectable({
@@ -67,7 +68,7 @@ export class Rules {
 
 
     private checkIfAlreadyDone(rule: Rule): boolean{
-        let storedRules = JSON.parse(this.appStorageService.getItem('_rules')) || {}
+        let storedRules = JSON.parse(this.appStorageService.getItem(LOCALSTORAGE_KEYS.RULES)) || {}
         let canHandleAction: boolean = false
         if(storedRules && storedRules.hasOwnProperty(rule.uid)){
             let timeDifference = getDateDifference(storedRules[rule.uid], Date.now())
@@ -82,7 +83,7 @@ export class Rules {
             storedRules[rule.uid]= Date.now()
             
         }
-        this.appStorageService.setItem('_rules', JSON.stringify(storedRules))
+        this.appStorageService.setItem(LOCALSTORAGE_KEYS.RULES, JSON.stringify(storedRules))
         return canHandleAction
     }
 

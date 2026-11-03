@@ -6,6 +6,7 @@ import { TiledeskAuthService } from './tiledesk-auth.service';
 import { NGXLogger } from 'ngx-logger';
 import { CustomLogger } from '../logger/customLogger';
 import { LoggerInstance } from '../logger/loggerInstance';
+import { LocalSessionStorage } from '../localSessionStorage';
 
 describe('TiledeskAuthService', () => {
   // let httpClientMock;
@@ -55,6 +56,25 @@ describe('TiledeskAuthService', () => {
     expect(service['URL_TILEDESK_SIGNIN_ANONYMOUSLY']).not.toBeUndefined()
     expect(service['URL_TILEDESK_SIGNIN_WITH_CUSTOM_TOKEN']).not.toBeUndefined();
   })
+
+  it('logOut removes tiledeskToken, currentUser, recipientId and recipientIdOwner', () => {
+    const storage = new LocalSessionStorage();
+    storage.initialize('widget_sv5', 'local', 'proj-123');
+    service.appStorage = storage;
+    storage.setItem('tiledeskToken', 'JWT token');
+    storage.setItem('currentUser', '{}');
+    storage.setItem('recipientId', 'support-group-proj-123-aaa');
+    storage.setItem('recipientIdOwner', 'user-A');
+
+    service.logOut();
+
+    expect(storage.getItem('tiledeskToken')).toBeNull();
+    expect(storage.getItem('currentUser')).toBeNull();
+    expect(storage.getItem('recipientId')).toBeNull();
+    expect(storage.getItem('recipientIdOwner')).toBeNull();
+    expect(service.getCurrentUser()).toBeNull();
+    localStorage.clear();
+  });
 
   const dummyResponseSignInAnonymously = {
     success:true,

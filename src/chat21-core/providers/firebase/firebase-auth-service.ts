@@ -61,8 +61,8 @@ export class FirebaseAuthService extends MessagingAuthService {
    */
   // checkIsAuth() {
   //   this.logger.debug(' ---------------- AuthService checkIsAuth ---------------- ')
-  //   this.tiledeskToken = this.appStorage.getItem('tiledeskToken')
-  //   this.currentUser = JSON.parse(this.appStorage.getItem('currentUser'));
+  //   this.tiledeskToken = this.appStorage.getItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN)
+  //   this.currentUser = JSON.parse(this.appStorage.getItem(LOCALSTORAGE_KEYS.CURRENT_USER));
   //   if (this.tiledeskToken) {
   //     this.logger.debug(' ---------------- MI LOGGO CON UN TOKEN ESISTENTE NEL LOCAL STORAGE O PASSATO NEI PARAMS URL ---------------- ')
   //     this.createFirebaseCustomToken();
@@ -184,8 +184,8 @@ export class FirebaseAuthService extends MessagingAuthService {
     return new Promise((resolve, reject)=> {that.firebase.auth().signOut().then(() => {
       that.logger.debug('[FIREBASEAuthSERVICE] firebase-sign-out');
         // cancello token
-        // this.appStorage.removeItem('tiledeskToken');
-        //localStorage.removeItem('firebaseToken');
+        // this.appStorage.removeItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN);
+        //localStorage.removeItem(LOCALSTORAGE_KEYS.FIREBASE_TOKEN);
         that.BSSignOut.next(true);
         resolve(true)
       }).catch((error) => {
@@ -226,7 +226,7 @@ export class FirebaseAuthService extends MessagingAuthService {
     const that = this;
     this.http.post(this.URL_TILEDESK_CREATE_CUSTOM_TOKEN, postData, { headers, responseType }).subscribe(data => {
       that.firebaseToken = data;
-      //localStorage.setItem('firebaseToken', that.firebaseToken);
+      //localStorage.setItem(LOCALSTORAGE_KEYS.FIREBASE_TOKEN, that.firebaseToken);
       that.signInFirebaseWithCustomToken(data)
     }, error => {
       that.logger.error('[FIREBASEAuthSERVICE] createFirebaseCustomToken ERR ', error) 

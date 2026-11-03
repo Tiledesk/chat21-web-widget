@@ -5,7 +5,8 @@ import { UserModel } from '../../models/user';
 import { avatarPlaceholder, getColorBck } from '../../utils/utils-user';
 import { AppStorageService } from '../abstract/app-storage.service';
 import { LoggerInstance } from '../logger/loggerInstance';
-
+import { clearStoredRecipientId } from '../../utils/recipient-id-storage';
+import { LOCALSTORAGE_KEYS } from '../../../app/utils/constants';
 // @Injectable({ providedIn: 'root' })
 @Injectable()
 export class TiledeskAuthService {
@@ -58,7 +59,7 @@ export class TiledeskAuthService {
         if (data['success'] && data['token']) {
           that.tiledeskToken = data['token'];
           that.createCompleteUser(data['user']);
-          that.appStorage.setItem('tiledeskToken', that.tiledeskToken);
+          that.appStorage.setItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN, that.tiledeskToken);
           resolve(that.tiledeskToken)
         }
       }, (error) => {
@@ -87,7 +88,7 @@ export class TiledeskAuthService {
         if (data['success'] && data['token']) {
           that.tiledeskToken = data['token'];
           that.createCompleteUser(data['user']);
-          that.appStorage.setItem('tiledeskToken', that.tiledeskToken);
+          that.appStorage.setItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN, that.tiledeskToken);
           resolve(that.tiledeskToken)
         }
       }, (error) => {
@@ -128,8 +129,9 @@ export class TiledeskAuthService {
 
   logOut(){
     this.logger.debug('[TILEDESK-AUTH] logOut()');
-    this.appStorage.removeItem('tiledeskToken');
-    this.appStorage.removeItem('currentUser');
+    this.appStorage.removeItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN);
+    this.appStorage.removeItem(LOCALSTORAGE_KEYS.CURRENT_USER);
+    clearStoredRecipientId(this.appStorage);
     this.setCurrentUser(null);
     this.setTiledeskToken(null);
   }
@@ -159,7 +161,7 @@ export class TiledeskAuthService {
       member.color = color;
       this.currentUser = member; 
       this.logger.debug('[TILEDESK-AUTH] - createCompleteUser member ', member)
-      this.appStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      this.appStorage.setItem(LOCALSTORAGE_KEYS.CURRENT_USER, JSON.stringify(this.currentUser));
     } catch (err) {
       this.logger.error('[TILEDESK-AUTH]- createCompleteUser ERR ', err) 
     }
@@ -168,14 +170,14 @@ export class TiledeskAuthService {
 
   private checkAndSetInStorageTiledeskToken(tiledeskToken) {
     this.logger.log('[TILEDESK-AUTH] - checkAndSetInStorageTiledeskToken tiledeskToken from request', tiledeskToken)
-    const storedTiledeskToken = this.appStorage.getItem('tiledeskToken');
+    const storedTiledeskToken = this.appStorage.getItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN);
     this.logger.log('[TILEDESK-AUTH] - checkAndSetInStorageTiledeskToken storedTiledeskToken ', storedTiledeskToken)
     if (!storedTiledeskToken) {
       this.logger.log('[TILEDESK-AUTH] - checkAndSetInStorageTiledeskToken TOKEN DOES NOT EXIST - RUN SET ')
-      this.appStorage.setItem('tiledeskToken', tiledeskToken);
+      this.appStorage.setItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN, tiledeskToken);
     } else if (storedTiledeskToken && storedTiledeskToken !== tiledeskToken) {
       this.logger.log('[TILEDESK-AUTH] - checkAndSetInStorageTiledeskToken STORED-TOKEN EXIST BUT IS != FROM TOKEN - RUN SET ')
-      this.appStorage.setItem('tiledeskToken', tiledeskToken);
+      this.appStorage.setItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN, tiledeskToken);
     } else if (storedTiledeskToken && storedTiledeskToken === tiledeskToken) {
       this.logger.log('[TILEDESK-AUTH] - checkAndSetInStorageTiledeskToken STORED-TOKEN EXIST AND IS = TO TOKEN ')
     }
