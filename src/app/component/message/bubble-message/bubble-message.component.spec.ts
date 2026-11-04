@@ -35,18 +35,14 @@ describe('BubbleMessageComponent', () => {
 
   const jsonSourcesParserMock = {
     getUrlPreviewPayload: () => null,
-    parseBaseFromMessage: () => null,
+    parseBaseFromMessage: jasmine.createSpy('parseBaseFromMessage').and.returnValue(null),
     enrichSources: jasmine.createSpy('enrichSources').and.resolveTo([]),
   };
 
   const voiceServiceMock = {
     isWssVoiceActive: false,
     markProxyHandled: jasmine.createSpy('markProxyHandled'),
-    voiceTtsKaraoke$: {
-      pipe: () => ({
-        subscribe: () => ({ unsubscribe: () => undefined }),
-      }),
-    },
+    voiceTtsKaraoke$: of({ text: '', words: [], activeIndex: -1 }),
   };
 
   const textMessage: any = {
@@ -270,10 +266,49 @@ describe('BubbleMessageComponent', () => {
       expect(component.sizeImage.width).toBe(100);
     });
 
+    it('should cap width when metadata exceeds MAX_WIDTH_IMAGES (calcImageSize)', () => {
+      component.message = {
+        ...textMessage,
+        metadata: { width: MAX_WIDTH_IMAGES * 2, height: 100 },
+      };
+      component.ngOnChanges();
+      expect(component.sizeImage.width).toBe(MAX_WIDTH_IMAGES);
+    });
+
+    it('should scale up narrow thumbnails when width <= 55 (calcImageSize)', () => {
+      component.message = {
+        ...textMessage,
+        metadata: { width: 40, height: 80 },
+      };
+      component.ngOnChanges();
+      expect(component.sizeImage.width).toBe(MIN_WIDTH_IMAGES);
+      expect(component.sizeImage.height).toBe(MIN_WIDTH_IMAGES / (40 / 80));
+    });
+
+    it('should keep metadata dimensions for mid-sized images', () => {
+      component.message = {
+        ...textMessage,
+        metadata: { width: 120, height: 60 },
+      };
+      component.ngOnChanges();
+      expect(component.sizeImage.width).toBe(120);
+      expect(component.sizeImage.height).toBe(60);
+    });
+
+    it('should leave width undefined when metadata has no width (calcImageSize)', () => {
+      component.message = {
+        ...textMessage,
+        metadata: { width: undefined, height: 10 },
+      };
+      component.ngOnChanges();
+      expect(component.sizeImage.width).toBeUndefined();
+      expect(component.sizeImage.height).toBe(10);
+    });
+
     it('should ignore non-object metadata', () => {
       component.message = { ...textMessage, metadata: 'x' as any };
       component.ngOnChanges();
-      expect(component.sizeImage).toBeUndefined();
+      expect(component.sizeImage).toEqual({ width: 0, height: 0 });
     });
 
     it('should derive fullnameColor from fontColor', () => {

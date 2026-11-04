@@ -157,6 +157,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     if(changes['conversationWith'] && changes['conversationWith'].currentValue !== undefined){
       this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
       this.isStreamAudioActive = false;
+      this.ttsPlayback.cancelAll();
       void this.stopVoice();
     }
     if(changes['hideTextReply'] && changes['hideTextReply'].currentValue !== undefined){

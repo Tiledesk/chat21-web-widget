@@ -28,7 +28,7 @@
     </div>
 
     <div class="source-row__thumb" *ngIf="isFieldVisible('image') && item.image">
-      <img [src]="getThumbUrl(item)" alt="" loading="lazy" (error)="$event.target.closest('.source-row__thumb').remove()" />
+      <img [src]="getThumbUrl(item)" alt="" loading="lazy" (error)="$any($event.target).closest('.source-row__thumb').remove()" />
     </div>
   </a>
 
