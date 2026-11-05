@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.spec.json",
+  "files": ["src/polyfills.ts"],
+  "include": [
+    "src/app/providers/global-settings-initialization.service.spec.ts",
+    "src/**/*.d.ts"
+  ]
+}
