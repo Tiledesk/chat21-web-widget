@@ -10,7 +10,7 @@ describe('ImageRepoService', () => {
   );
 
   it('should be created', () => {
-    const service: ImageRepoService = TestBed.get(ImageRepoService);
+    const service: ImageRepoService = TestBed.inject(ImageRepoService);
     expect(service).toBeTruthy();
   });
 });

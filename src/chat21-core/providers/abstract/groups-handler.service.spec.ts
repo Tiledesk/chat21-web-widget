@@ -10,7 +10,7 @@ describe('GroupsHandlerService', () => {
   );
 
   it('should be created', () => {
-    const service: GroupsHandlerService = TestBed.get(GroupsHandlerService);
+    const service: GroupsHandlerService = TestBed.inject(GroupsHandlerService);
     expect(service).toBeTruthy();
   });
 });

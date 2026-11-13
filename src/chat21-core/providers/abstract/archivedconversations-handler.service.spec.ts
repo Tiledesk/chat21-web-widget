@@ -10,7 +10,7 @@ describe('ArchivedconversationsHandlerService', () => {
   });
 
   it('should be created', () => {
-    const service: ArchivedConversationsHandlerService = TestBed.get(ArchivedConversationsHandlerService);
+    const service: ArchivedConversationsHandlerService = TestBed.inject(ArchivedConversationsHandlerService);
     expect(service).toBeTruthy();
   });
 });

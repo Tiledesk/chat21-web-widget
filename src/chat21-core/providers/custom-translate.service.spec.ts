@@ -12,7 +12,7 @@ describe('CustomTranslateService', () => {
   );
 
   it('should be created', () => {
-    const service: CustomTranslateService = TestBed.get(CustomTranslateService);
+    const service: CustomTranslateService = TestBed.inject(CustomTranslateService);
     expect(service).toBeTruthy();
   });
 });

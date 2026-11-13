@@ -10,7 +10,7 @@ describe('ConversationHandlerBuilderService', () => {
   );
 
   it('should be created', () => {
-    const service: ConversationHandlerBuilderService = TestBed.get(ConversationHandlerBuilderService);
+    const service: ConversationHandlerBuilderService = TestBed.inject(ConversationHandlerBuilderService);
     expect(service).toBeTruthy();
   });
 });

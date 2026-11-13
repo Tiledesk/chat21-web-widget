@@ -10,7 +10,7 @@ describe('PresenceService', () => {
   );
 
   it('should be created', () => {
-    const service: PresenceService = TestBed.get(PresenceService);
+    const service: PresenceService = TestBed.inject(PresenceService);
     expect(service).toBeTruthy();
   });
 });

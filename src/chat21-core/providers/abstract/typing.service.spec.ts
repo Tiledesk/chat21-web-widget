@@ -10,7 +10,7 @@ describe('TypingService', () => {
   );
 
   it('should be created', () => {
-    const service: TypingService = TestBed.get(TypingService);
+    const service: TypingService = TestBed.inject(TypingService);
     expect(service).toBeTruthy();
   });
 });

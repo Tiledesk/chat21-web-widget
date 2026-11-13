@@ -10,7 +10,7 @@ describe('MessagingAuthService', () => {
   );
 
   it('should be created', () => {
-    const service: MessagingAuthService = TestBed.get(MessagingAuthService);
+    const service: MessagingAuthService = TestBed.inject(MessagingAuthService);
     expect(service).toBeTruthy();
   });
 });
