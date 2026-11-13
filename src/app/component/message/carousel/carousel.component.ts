@@ -4,9 +4,10 @@ import { TYPE_BUTTON } from 'src/chat21-core/utils/constants';
 import { isCarousel } from 'src/chat21-core/utils/utils-message';
 
 @Component({
-  selector: 'chat-carousel',
-  templateUrl: './carousel.component.html',
-  styleUrls: ['./carousel.component.scss']
+    selector: 'chat-carousel',
+    templateUrl: './carousel.component.html',
+    styleUrls: ['./carousel.component.scss'],
+    standalone: false
 })
 export class CarouselComponent implements OnInit{
 

@@ -2,9 +2,10 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Globals } from '../../utils/globals';
 
 @Component({
-  selector: 'chat-send-button',
-  templateUrl: './send-button.component.html',
-  styleUrls: ['./send-button.component.scss']
+    selector: 'chat-send-button',
+    templateUrl: './send-button.component.html',
+    styleUrls: ['./send-button.component.scss'],
+    standalone: false
 })
 export class SendButtonComponent implements OnInit {
 

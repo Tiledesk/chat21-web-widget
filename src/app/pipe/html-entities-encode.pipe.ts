@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { htmlEntities, replaceEndOfLine } from 'src/chat21-core/utils/utils';
 
 @Pipe({
-  name: 'htmlEntitiesEncode'
+    name: 'htmlEntitiesEncode',
+    standalone: false
 })
 
 export class HtmlEntitiesEncodePipe implements PipeTransform {

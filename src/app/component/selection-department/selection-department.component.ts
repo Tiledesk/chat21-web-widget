@@ -9,7 +9,8 @@ import { DepartmentModel } from 'src/models/department';
 @Component({
     selector: 'chat-selection-department',
     templateUrl: './selection-department.component.html',
-    styleUrls: ['./selection-department.component.scss']
+    styleUrls: ['./selection-department.component.scss'],
+    standalone: false
 })
 
 export class SelectionDepartmentComponent implements OnInit, AfterViewInit {

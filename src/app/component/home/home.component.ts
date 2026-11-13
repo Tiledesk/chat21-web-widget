@@ -9,10 +9,11 @@ import { Globals } from '../../utils/globals';
 import { HEADER_MENU_OPTION } from '../../utils/constants';
 
 @Component({
-  selector: 'chat-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  encapsulation: ViewEncapsulation.None, /* it allows to customize 'Powered By' */
+    selector: 'chat-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class HomeComponent implements OnInit, AfterViewInit {
 

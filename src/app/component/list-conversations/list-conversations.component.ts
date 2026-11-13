@@ -5,9 +5,10 @@ import { LoggerInstance } from '../../../chat21-core/providers/logger/loggerInst
 import { avatarPlaceholder, convertMessage, setColorFromString } from '../../utils/utils';
 
 @Component({
-  selector: 'chat-list-conversations',
-  templateUrl: './list-conversations.component.html',
-  styleUrls: ['./list-conversations.component.scss']
+    selector: 'chat-list-conversations',
+    templateUrl: './list-conversations.component.html',
+    styleUrls: ['./list-conversations.component.scss'],
+    standalone: false
 })
 export class ListConversationsComponent implements OnInit {
 

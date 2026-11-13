@@ -4,9 +4,10 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MessageModel } from 'src/chat21-core/models/message';
 
 @Component({
-  selector: 'chat-message-attachment',
-  templateUrl: './message-attachment.component.html',
-  styleUrls: ['./message-attachment.component.scss']
+    selector: 'chat-message-attachment',
+    templateUrl: './message-attachment.component.html',
+    styleUrls: ['./message-attachment.component.scss'],
+    standalone: false
 })
 export class MessageAttachmentComponent implements OnInit {
 

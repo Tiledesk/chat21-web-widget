@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { marked, Tokens } from 'marked';
 
 @Pipe({
-  name: 'marked'
+    name: 'marked',
+    standalone: false
 })
 export class MarkedPipe implements PipeTransform {
   private static renderer: any = null;

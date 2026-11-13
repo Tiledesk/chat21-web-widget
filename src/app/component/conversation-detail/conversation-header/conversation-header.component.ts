@@ -7,9 +7,10 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 
 @Component({
-  selector: 'chat-conversation-header',
-  templateUrl: './conversation-header.component.html',
-  styleUrls: ['./conversation-header.component.scss']
+    selector: 'chat-conversation-header',
+    templateUrl: './conversation-header.component.html',
+    styleUrls: ['./conversation-header.component.scss'],
+    standalone: false
 })
 export class ConversationHeaderComponent implements OnInit, OnChanges {
 

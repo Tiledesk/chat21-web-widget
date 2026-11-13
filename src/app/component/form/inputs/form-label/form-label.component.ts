@@ -3,9 +3,10 @@ import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { FormArray } from '../../../../../chat21-core/models/formArray';
 
 @Component({
-  selector: 'chat-form-label',
-  templateUrl: './form-label.component.html',
-  styleUrls: ['./form-label.component.scss']
+    selector: 'chat-form-label',
+    templateUrl: './form-label.component.html',
+    styleUrls: ['./form-label.component.scss'],
+    standalone: false
 })
 export class FormLabelComponent implements OnInit {
 

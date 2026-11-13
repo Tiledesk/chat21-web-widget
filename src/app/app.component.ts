@@ -60,11 +60,13 @@ interface MessageObj {
 }
 
 @Component({
-  selector: 'chat-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  encapsulation: ViewEncapsulation.None /* it allows to customize 'Powered By' */
-  // providers: [AgentAvailabilityService, TranslatorService]
+    selector: 'chat-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    encapsulation: ViewEncapsulation.None /* it allows to customize 'Powered By' */
+    // providers: [AgentAvailabilityService, TranslatorService]
+    ,
+    standalone: false
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 

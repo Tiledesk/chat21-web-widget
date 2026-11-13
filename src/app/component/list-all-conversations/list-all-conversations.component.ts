@@ -12,9 +12,10 @@ import { CustomTranslateService } from 'src/chat21-core/providers/custom-transla
 import { ConversationModel } from 'src/chat21-core/models/conversation';
 
 @Component({
-  selector: 'chat-list-all-conversations',
-  templateUrl: './list-all-conversations.component.html',
-  styleUrls: ['./list-all-conversations.component.scss']
+    selector: 'chat-list-all-conversations',
+    templateUrl: './list-all-conversations.component.html',
+    styleUrls: ['./list-all-conversations.component.scss'],
+    standalone: false
 })
 
 

@@ -3,9 +3,10 @@ import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { FormArray } from '../../../../../chat21-core/models/formArray';
 
 @Component({
-  selector: 'chat-form-textarea',
-  templateUrl: './form-textarea.component.html',
-  styleUrls: ['./form-textarea.component.scss']
+    selector: 'chat-form-textarea',
+    templateUrl: './form-textarea.component.html',
+    styleUrls: ['./form-textarea.component.scss'],
+    standalone: false
 })
 export class FormTextareaComponent implements OnInit {
 

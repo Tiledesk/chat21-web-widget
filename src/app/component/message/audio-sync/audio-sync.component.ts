@@ -20,9 +20,10 @@ const HAVE_METADATA = 1;
 const BROWSER_TTS_OUTPUT_FORMAT = 'mp3_44100_128';
 
 @Component({
-  selector: 'chat-audio-sync',
-  templateUrl: './audio-sync.component.html',
-  styleUrl: './audio-sync.component.scss',
+    selector: 'chat-audio-sync',
+    templateUrl: './audio-sync.component.html',
+    styleUrl: './audio-sync.component.scss',
+    standalone: false
 })
 export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() message: MessageModel | null = null;

@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy, Input, ElementRef } from '@angular/core';
 
 @Component({
-  selector: 'user-typing',
-  templateUrl: './user-typing.component.html',
-  styleUrls: ['./user-typing.component.scss'],
+    selector: 'user-typing',
+    templateUrl: './user-typing.component.html',
+    styleUrls: ['./user-typing.component.scss'],
+    standalone: false
 })
 export class UserTypingComponent implements OnInit, OnDestroy {
 

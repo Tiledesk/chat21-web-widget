@@ -7,9 +7,10 @@ import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 
 @Component({
-  selector: 'chat-prechat-form',
-  templateUrl: './prechat-form.component.html',
-  styleUrls: ['./prechat-form.component.scss']
+    selector: 'chat-prechat-form',
+    templateUrl: './prechat-form.component.html',
+    styleUrls: ['./prechat-form.component.scss'],
+    standalone: false
 })
 export class PrechatFormComponent implements OnInit, AfterViewInit {
 

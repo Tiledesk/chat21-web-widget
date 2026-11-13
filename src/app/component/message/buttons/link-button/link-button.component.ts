@@ -1,9 +1,10 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 
 @Component({
-  selector: 'chat-link-button-attachment',
-  templateUrl: './link-button.component.html',
-  styleUrls: ['./link-button.component.scss']
+    selector: 'chat-link-button-attachment',
+    templateUrl: './link-button.component.html',
+    styleUrls: ['./link-button.component.scss'],
+    standalone: false
 })
 export class LinkButtonComponent implements OnInit {
 

@@ -13,9 +13,10 @@ import { VoiceService } from 'src/app/providers/voice/voice.service';
 import { VoiceTtsKaraokeWord } from 'src/app/providers/voice/voice-streaming.types';
 
 @Component({
-  selector: 'chat-bubble-message',
-  templateUrl: './bubble-message.component.html',
-  styleUrls: ['./bubble-message.component.scss']
+    selector: 'chat-bubble-message',
+    templateUrl: './bubble-message.component.html',
+    styleUrls: ['./bubble-message.component.scss'],
+    standalone: false
 })
 export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
 

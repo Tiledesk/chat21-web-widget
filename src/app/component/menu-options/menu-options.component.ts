@@ -5,9 +5,10 @@ import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 
 
 @Component({
-  selector: 'chat-menu-options',
-  templateUrl: './menu-options.component.html',
-  styleUrls: ['./menu-options.component.scss']
+    selector: 'chat-menu-options',
+    templateUrl: './menu-options.component.html',
+    styleUrls: ['./menu-options.component.scss'],
+    standalone: false
 })
 export class MenuOptionsComponent implements OnInit {
 

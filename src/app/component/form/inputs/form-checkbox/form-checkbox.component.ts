@@ -3,9 +3,10 @@ import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { FormArray } from '../../../../../chat21-core/models/formArray';
 
 @Component({
-  selector: 'chat-form-checkbox',
-  templateUrl: './form-checkbox.component.html',
-  styleUrls: ['./form-checkbox.component.scss']
+    selector: 'chat-form-checkbox',
+    templateUrl: './form-checkbox.component.html',
+    styleUrls: ['./form-checkbox.component.scss'],
+    standalone: false
 })
 export class FormCheckboxComponent implements OnInit {
 

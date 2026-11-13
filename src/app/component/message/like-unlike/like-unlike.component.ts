@@ -3,9 +3,10 @@ import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service
 import { LoggerInstance } from './../../../../chat21-core/providers/logger/loggerInstance';
 
 @Component({
-  selector: 'chat-like-unlike',
-  templateUrl: './like-unlike.component.html',
-  styleUrls: ['./like-unlike.component.scss']
+    selector: 'chat-like-unlike',
+    templateUrl: './like-unlike.component.html',
+    styleUrls: ['./like-unlike.component.scss'],
+    standalone: false
 })
 export class LikeUnlikeComponent implements OnInit {
 

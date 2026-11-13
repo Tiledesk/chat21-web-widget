@@ -44,11 +44,12 @@ import { computeConversationBadgeState } from 'src/app/utils/conversation-sender
 // import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'chat-conversation',
-  templateUrl: './conversation.component.html',
-  styleUrls: ['./conversation.component.scss'],
-  // tslint:disable-next-line:use-host-property-decorator
-  host: {'(window:resize)': 'onResize($event)'}
+    selector: 'chat-conversation',
+    templateUrl: './conversation.component.html',
+    styleUrls: ['./conversation.component.scss'],
+    // tslint:disable-next-line:use-host-property-decorator
+    host: { '(window:resize)': 'onResize($event)' },
+    standalone: false
 })
 export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('afConversationComponent') private afConversationComponent: ElementRef; // l'ID del div da scrollare

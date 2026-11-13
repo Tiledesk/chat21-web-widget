@@ -22,9 +22,10 @@ import { ConversationModel } from '../../../chat21-core/models/conversation';
 
 
 @Component({
-  selector: 'chat-home-conversations',
-  templateUrl: './home-conversations.component.html',
-  styleUrls: ['./home-conversations.component.scss']
+    selector: 'chat-home-conversations',
+    templateUrl: './home-conversations.component.html',
+    styleUrls: ['./home-conversations.component.scss'],
+    standalone: false
 })
 
 

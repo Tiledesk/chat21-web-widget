@@ -15,8 +15,6 @@ import { NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { ImageRepoService } from '../../../../chat21-core/providers/abstract/image-repo.service';
 
-const uploadState$ = new BehaviorSubject<any>({ upload: 100, type: 'image' });
-
 describe('ConversationContentComponent', () => {
   let component: ConversationContentComponent;
   let fixture: ComponentFixture<ConversationContentComponent>;
@@ -47,7 +45,6 @@ describe('ConversationContentComponent', () => {
       declarations: [ConversationContentComponent],
       providers: [
         { provide: UploadService, useValue: uploadServiceStub },
-        { provide: UploadService, useValue: { BSStateUpload: uploadState$ } },
         ImageRepoService,
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),

@@ -7,17 +7,18 @@ import { LoggerService } from '../../../chat21-core/providers/abstract/logger.se
 import { LoggerInstance } from '../../../chat21-core/providers/logger/loggerInstance';
 
 @Component({
-  selector: 'chat-eyeeye-catcher-card',
-  templateUrl: './eyeeye-catcher-card.component.html',
-  styleUrls: ['./eyeeye-catcher-card.component.scss'],
-  animations: [
-    trigger('rotatedState', [
+    selector: 'chat-eyeeye-catcher-card',
+    templateUrl: './eyeeye-catcher-card.component.html',
+    styleUrls: ['./eyeeye-catcher-card.component.scss'],
+    animations: [
+        trigger('rotatedState', [
         // state('default', style({ transform: 'scale(0)' })),
         // state('rotated', style({ transform: 'scale(1)' })),
         // transition('rotated => default', animate('1000ms ease-out')),
         // transition('default => rotated', animate('1000ms ease-in'))
-    ])
-  ]
+        ])
+    ],
+    standalone: false
 })
 export class EyeeyeCatcherCardComponent implements OnInit {
 

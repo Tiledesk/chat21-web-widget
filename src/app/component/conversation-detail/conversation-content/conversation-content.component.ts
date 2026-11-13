@@ -9,9 +9,10 @@ import { MESSAGE_TYPE_INFO, MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS } from 'src/c
 import { isCarousel, isEmojii, isFirstMessage, isFrame, isImage, isInfo, isLastMessage, isMine, isSameSender, messageType } from 'src/chat21-core/utils/utils-message';
 
 @Component({
-  selector: 'chat-conversation-content',
-  templateUrl: './conversation-content.component.html',
-  styleUrls: ['./conversation-content.component.scss']
+    selector: 'chat-conversation-content',
+    templateUrl: './conversation-content.component.html',
+    styleUrls: ['./conversation-content.component.scss'],
+    standalone: false
 })
 export class ConversationContentComponent implements OnInit, OnDestroy {
   @ViewChild('scrollMe') public scrollMe: ElementRef;

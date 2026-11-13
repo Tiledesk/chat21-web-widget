@@ -6,23 +6,22 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 
 @Component({
-  selector: 'chat-internal-frame',
-  templateUrl: './conversation-internal-frame.component.html',
-  styleUrls: ['./conversation-internal-frame.component.scss'],
-  animations: [
-    trigger(
-      'enterAnimation', [
-        transition(':enter', [
-          style({transform: 'translateX(100%)', opacity: 0}),
-          animate('400ms', style({transform: 'translateX(0)', opacity: 1}))
-        ]),
-        transition(':leave', [
-          style({transform: 'translateX(0)', opacity: 1}),
-          animate('400ms', style({transform: 'translateX(100%)', opacity: 0}))
+    selector: 'chat-internal-frame',
+    templateUrl: './conversation-internal-frame.component.html',
+    styleUrls: ['./conversation-internal-frame.component.scss'],
+    animations: [
+        trigger('enterAnimation', [
+            transition(':enter', [
+                style({ transform: 'translateX(100%)', opacity: 0 }),
+                animate('400ms', style({ transform: 'translateX(0)', opacity: 1 }))
+            ]),
+            transition(':leave', [
+                style({ transform: 'translateX(0)', opacity: 1 }),
+                animate('400ms', style({ transform: 'translateX(100%)', opacity: 0 }))
+            ])
         ])
-      ]
-    )
-  ]
+    ],
+    standalone: false
 })
 export class ConversationInternalFrameComponent implements OnInit {
   @ViewChild('iframe') iframe: ElementRef;

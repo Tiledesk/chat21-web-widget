@@ -7,35 +7,32 @@ import { AppStorageService } from '../../../chat21-core/providers/abstract/app-s
 // vedi: https://angular.io/guide/animations
 
 @Component({
-  selector: 'chat-launcher-button',
-  templateUrl: './launcher-button.component.html',
-  styleUrls: ['./launcher-button.component.scss'],
-  animations: [
-    trigger(
-      'enterCloseAnimation', [
-        transition(':enter', [
-          style({ transform: 'rotate(-90deg)', opacity: 1 }),
-          animate('450ms ease-out', style({ transform: 'rotate(0deg)', opacity: 1 }))
+    selector: 'chat-launcher-button',
+    templateUrl: './launcher-button.component.html',
+    styleUrls: ['./launcher-button.component.scss'],
+    animations: [
+        trigger('enterCloseAnimation', [
+            transition(':enter', [
+                style({ transform: 'rotate(-90deg)', opacity: 1 }),
+                animate('450ms ease-out', style({ transform: 'rotate(0deg)', opacity: 1 }))
+            ]),
+            transition(':leave', [
+                style({ transform: 'scale(1)', opacity: 1 }),
+                animate('200ms ease-in', style({ transform: 'scale(0.5)', opacity: 0 }))
+            ])
         ]),
-        transition(':leave', [
-          style({ transform: 'scale(1)', opacity: 1 }),
-          animate('200ms ease-in', style({ transform: 'scale(0.5)', opacity: 0 }))
+        trigger('enterBubbleAnimation', [
+            transition(':enter', [
+                style({ transform: 'scale(0.5)', opacity: 0 }),
+                animate('200ms ease-out', style({ transform: 'scale(1)', opacity: 1 }))
+            ]),
+            transition(':leave', [
+                style({ transform: 'scale(1)', opacity: 1 }),
+                animate('200ms ease-in', style({ transform: 'scale(0.5)', opacity: 0 }))
+            ])
         ])
-      ]
-    ),
-    trigger(
-      'enterBubbleAnimation', [
-        transition(':enter', [
-          style({ transform: 'scale(0.5)', opacity: 0 }),
-          animate('200ms ease-out', style({ transform: 'scale(1)', opacity: 1 }))
-        ]),
-        transition(':leave', [
-          style({ transform: 'scale(1)', opacity: 1 }),
-          animate('200ms ease-in', style({ transform: 'scale(0.5)', opacity: 0 }))
-        ])
-      ]
-    )
-  ]
+    ],
+    standalone: false
 })
 
 export class LauncherButtonComponent implements OnInit, AfterViewInit {

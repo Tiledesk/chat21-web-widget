@@ -2,9 +2,10 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChang
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
 
 @Component({
-  selector: 'chat-action-button-attachment',
-  templateUrl: './action-button.component.html',
-  styleUrls: ['./action-button.component.scss']
+    selector: 'chat-action-button-attachment',
+    templateUrl: './action-button.component.html',
+    styleUrls: ['./action-button.component.scss'],
+    standalone: false
 })
 export class ActionButtonComponent implements OnInit {
 

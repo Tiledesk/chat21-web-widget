@@ -18,9 +18,10 @@ export type JsonSourcesDisplayFields = {
 };
 
 @Component({
-  selector: 'chat-json-sources',
-  templateUrl: './json-sources.component.html',
-  styleUrls: ['./json-sources.component.scss']
+    selector: 'chat-json-sources',
+    templateUrl: './json-sources.component.html',
+    styleUrls: ['./json-sources.component.scss'],
+    standalone: false
 })
 export class JsonSourcesComponent {
   @Input() items: JsonSourceItem[] = [];

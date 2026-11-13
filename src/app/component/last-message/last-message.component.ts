@@ -16,9 +16,10 @@ import { commandToMessage, conversationToMessage, isEmojii, isFrame, isImage, is
 
 
 @Component({
-  selector: 'chat-last-message',
-  templateUrl: './last-message.component.html',
-  styleUrls: ['./last-message.component.scss']
+    selector: 'chat-last-message',
+    templateUrl: './last-message.component.html',
+    styleUrls: ['./last-message.component.scss'],
+    standalone: false
 })
 export class LastMessageComponent implements OnInit, AfterViewInit, OnDestroy {
 

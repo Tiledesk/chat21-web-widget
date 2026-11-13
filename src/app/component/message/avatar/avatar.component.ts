@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ImageRepoService } from '../../../../chat21-core/providers/abstract/image-repo.service';
 @Component({
-  selector: 'chat-avatar-image',
-  templateUrl: './avatar.component.html',
-  styleUrls: ['./avatar.component.scss']
+    selector: 'chat-avatar-image',
+    templateUrl: './avatar.component.html',
+    styleUrls: ['./avatar.component.scss'],
+    standalone: false
 })
 export class AvatarComponent implements OnInit {
 

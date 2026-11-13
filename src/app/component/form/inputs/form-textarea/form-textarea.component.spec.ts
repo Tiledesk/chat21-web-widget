@@ -8,7 +8,7 @@ import { clonePrechatFormJsonMock } from '../../prechat-form-test-mock';
 import { FormTextareaComponent } from './form-textarea.component';
 
 @Component({
-  template: `
+    template: `
     <form [formGroup]="form">
       <chat-form-textarea
         [element]="element"
@@ -19,6 +19,7 @@ import { FormTextareaComponent } from './form-textarea.component';
         [hasSubmitted]="hasSubmitted">
       </chat-form-textarea>
     </form>`,
+    standalone: false
 })
 class FormTextareaHostComponent {
   form = new FormBuilder().group({

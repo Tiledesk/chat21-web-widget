@@ -5,9 +5,10 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 
 @Component({
-  selector: 'chat-audio',
-  templateUrl: './audio.component.html',
-  styleUrls: ['./audio.component.scss']
+    selector: 'chat-audio',
+    templateUrl: './audio.component.html',
+    styleUrls: ['./audio.component.scss'],
+    standalone: false
 })
 export class AudioComponent implements AfterViewInit {
 

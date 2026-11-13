@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 
 @Component({
-  selector: 'chat-text',
-  templateUrl: './text.component.html',
-  styleUrls: ['./text.component.scss'],
-  encapsulation: ViewEncapsulation.ShadowDom
+    selector: 'chat-text',
+    templateUrl: './text.component.html',
+    styleUrls: ['./text.component.scss'],
+    encapsulation: ViewEncapsulation.ShadowDom,
+    standalone: false
 })
 export class TextComponent implements OnInit {
 

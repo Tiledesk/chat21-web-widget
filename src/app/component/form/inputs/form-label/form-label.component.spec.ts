@@ -7,7 +7,7 @@ import { FormArray } from 'src/chat21-core/models/formArray';
 import { FormLabelComponent } from './form-label.component';
 
 @Component({
-  template: `
+    template: `
     <form [formGroup]="form">
       <chat-form-label
         [element]="element"
@@ -15,6 +15,7 @@ import { FormLabelComponent } from './form-label.component';
         [hasSubmitted]="hasSubmitted"
       ></chat-form-label>
     </form>`,
+    standalone: false
 })
 class FormLabelHostComponent {
   form = new FormBuilder().group({});

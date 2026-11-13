@@ -9,9 +9,10 @@ export type StreamAudioSpectrumMode = 'alert' | 'button';
  * Il parent (es. conversation-footer) aggiorna solo {@link volume} da VoiceService.
  */
 @Component({
-  selector: 'chat-stream-audio-spectrum',
-  templateUrl: './stream-audio-spectrum.component.html',
-  styleUrl: './stream-audio-spectrum.component.scss',
+    selector: 'chat-stream-audio-spectrum',
+    templateUrl: './stream-audio-spectrum.component.html',
+    styleUrl: './stream-audio-spectrum.component.scss',
+    standalone: false
 })
 export class StreamAudioSpectrumComponent implements OnInit, OnChanges {
   private static gradSeq = 0;

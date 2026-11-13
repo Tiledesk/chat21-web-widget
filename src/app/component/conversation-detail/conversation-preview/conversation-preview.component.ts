@@ -5,9 +5,10 @@ import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 
 @Component({
-  selector: 'chat-conversation-attachment-preview',
-  templateUrl: './conversation-preview.component.html',
-  styleUrls: ['./conversation-preview.component.scss']
+    selector: 'chat-conversation-attachment-preview',
+    templateUrl: './conversation-preview.component.html',
+    styleUrls: ['./conversation-preview.component.scss'],
+    standalone: false
 })
 export class ConversationPreviewComponent implements OnInit {
   @ViewChild('divPreview') public scrollMe: ElementRef;

@@ -8,9 +8,10 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
 import { validateRegex } from 'src/chat21-core/utils/utils';
 
 @Component({
-  selector: 'chat-form-builder',
-  templateUrl: './form-builder.component.html',
-  styleUrls: ['./form-builder.component.scss']
+    selector: 'chat-form-builder',
+    templateUrl: './form-builder.component.html',
+    styleUrls: ['./form-builder.component.scss'],
+    standalone: false
 })
 export class FormBuilderComponent implements OnInit {
 

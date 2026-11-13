@@ -4,9 +4,10 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
 
 
 @Component({
-  selector: 'chat-confirm-close',
-  templateUrl: './confirm-close.component.html',
-  styleUrls: ['./confirm-close.component.scss']
+    selector: 'chat-confirm-close',
+    templateUrl: './confirm-close.component.html',
+    styleUrls: ['./confirm-close.component.scss'],
+    standalone: false
 })
 export class ConfirmCloseComponent implements OnInit{
 

@@ -2,7 +2,8 @@ import { Directive, ElementRef, HostListener, Input, Renderer2 } from '@angular/
 import { isOnMobileDevice } from 'src/chat21-core/utils/utils';
 
 @Directive({
-  selector: '[tooltip]'
+    selector: '[tooltip]',
+    standalone: false
 })
 export class TooltipDirective {
 

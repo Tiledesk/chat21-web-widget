@@ -6,9 +6,10 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
 
 
 @Component({
-  selector: 'chat-star-rating-widget',
-  templateUrl: './star-rating-widget.component.html',
-  styleUrls: ['./star-rating-widget.component.scss']
+    selector: 'chat-star-rating-widget',
+    templateUrl: './star-rating-widget.component.html',
+    styleUrls: ['./star-rating-widget.component.scss'],
+    standalone: false
 })
 export class StarRatingWidgetComponent implements OnInit {
 

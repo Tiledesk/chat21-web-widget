@@ -3,9 +3,10 @@ import { CustomTranslateService } from 'src/chat21-core/providers/custom-transla
 import * as CONSTANTS from 'src/app/utils/constants';
 
 @Component({
-  selector: 'chat-error-alert',
-  templateUrl: './error-alert.component.html',
-  styleUrls: ['./error-alert.component.scss']
+    selector: 'chat-error-alert',
+    templateUrl: './error-alert.component.html',
+    styleUrls: ['./error-alert.component.scss'],
+    standalone: false
 })
 export class ErrorAlertComponent implements OnInit {
 

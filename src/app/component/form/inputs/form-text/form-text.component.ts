@@ -4,9 +4,10 @@ import { Subscription } from 'rxjs';
 import { FormArray } from '../../../../../chat21-core/models/formArray';
 
 @Component({
-  selector: 'chat-form-text',
-  templateUrl: './form-text.component.html',
-  styleUrls: ['./form-text.component.scss']
+    selector: 'chat-form-text',
+    templateUrl: './form-text.component.html',
+    styleUrls: ['./form-text.component.scss'],
+    standalone: false
 })
 export class FormTextComponent implements OnInit, OnDestroy {
 

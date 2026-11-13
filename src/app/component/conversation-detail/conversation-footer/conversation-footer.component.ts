@@ -23,9 +23,10 @@ import { TiledeskAuthService } from 'src/chat21-core/providers/tiledesk/tiledesk
 import { AppStorageService } from 'src/chat21-core/providers/abstract/app-storage.service';
 
 @Component({
-  selector: 'chat-conversation-footer',
-  templateUrl: './conversation-footer.component.html',
-  styleUrls: ['./conversation-footer.component.scss']
+    selector: 'chat-conversation-footer',
+    templateUrl: './conversation-footer.component.html',
+    styleUrls: ['./conversation-footer.component.scss'],
+    standalone: false
 })
 export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy {
 

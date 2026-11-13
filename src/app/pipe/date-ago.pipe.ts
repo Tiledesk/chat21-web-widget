@@ -5,8 +5,9 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime)
 
 @Pipe({
-  name: 'dateAgo',
-  pure: true
+    name: 'dateAgo',
+    pure: true,
+    standalone: false
 })
 export class DateAgoPipe implements PipeTransform {
 

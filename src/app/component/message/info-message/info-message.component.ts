@@ -5,9 +5,10 @@ import { LoggerService } from '../../../../chat21-core/providers/abstract/logger
 import { LoggerInstance } from '../../../../chat21-core/providers/logger/loggerInstance';
 
 @Component({
-  selector: 'chat-info-message',
-  templateUrl: './info-message.component.html',
-  styleUrls: ['./info-message.component.scss']
+    selector: 'chat-info-message',
+    templateUrl: './info-message.component.html',
+    styleUrls: ['./info-message.component.scss'],
+    standalone: false
 })
 export class InfoMessageComponent implements OnInit {
 

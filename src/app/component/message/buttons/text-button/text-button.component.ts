@@ -2,9 +2,10 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChang
 
 
 @Component({
-  selector: 'chat-text-button-attachment',
-  templateUrl: './text-button.component.html',
-  styleUrls: ['./text-button.component.scss']
+    selector: 'chat-text-button-attachment',
+    templateUrl: './text-button.component.html',
+    styleUrls: ['./text-button.component.scss'],
+    standalone: false
 })
 export class TextButtonComponent implements OnInit {
 

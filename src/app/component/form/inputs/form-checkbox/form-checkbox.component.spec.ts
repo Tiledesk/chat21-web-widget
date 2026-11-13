@@ -7,7 +7,7 @@ import { FormArray } from 'src/chat21-core/models/formArray';
 import { FormCheckboxComponent } from './form-checkbox.component';
 
 @Component({
-  template: `
+    template: `
     <form [formGroup]="form">
       <chat-form-checkbox
         [element]="element"
@@ -17,6 +17,7 @@ import { FormCheckboxComponent } from './form-checkbox.component';
         [hasSubmitted]="hasSubmitted"
       ></chat-form-checkbox>
     </form>`,
+    standalone: false
 })
 class FormCheckboxHostComponent {
   form = new FormBuilder().group({

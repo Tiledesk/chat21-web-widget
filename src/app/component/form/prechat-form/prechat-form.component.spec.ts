@@ -11,8 +11,9 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
 import { PrechatFormComponent } from './prechat-form.component';
 
 @Component({
-  selector: 'chat-form-builder',
-  template: '',
+    selector: 'chat-form-builder',
+    template: '',
+    standalone: false
 })
 class ChatFormBuilderStubComponent {
   @Input() formArray: unknown;
