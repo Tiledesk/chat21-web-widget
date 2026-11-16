@@ -47,7 +47,6 @@ describe('ConversationContentComponent', () => {
       declarations: [ConversationContentComponent],
       providers: [
         { provide: UploadService, useValue: uploadServiceStub },
-        { provide: UploadService, useValue: { BSStateUpload: uploadState$ } },
         ImageRepoService,
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),

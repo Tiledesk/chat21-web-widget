@@ -1634,4 +1634,3 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
 }
-

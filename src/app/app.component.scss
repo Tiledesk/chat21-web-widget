@@ -252,6 +252,11 @@ chat-root {
     height: 100%;
     
     // ========= BEGIN: RESET CSS TAG ========= //
+    // Keep mouse clicks outline-free without overriding the keyboard :focus-visible ring (WCAG 2.4.7).
+    *:focus:not(:focus-visible) {
+        outline: none;
+    }
+
     button {
         cursor: pointer;
     }
@@ -271,10 +276,6 @@ chat-root {
 
     textarea:focus:not(:focus-visible) {
         outline: none!important;
-    }
-
-    textarea:focus-visible {
-        outline: 0px !important;
     }
 
     // ========= BEGIN: CSS APP.COMPONENT ========= //
@@ -415,9 +416,7 @@ chat-root {
             }
         }
         button.c21-button-primary:hover,
-        button.c21-button-primary:focus:not(:focus-visible),
         button.c21-button-primary:active {
-            //outline-width: 0px;
             opacity: 0.8;
         }
 
@@ -431,7 +430,7 @@ chat-root {
             cursor: pointer;
         }
         button.c21-button-link:hover,
-        button.c21-button-link:focus:not(:focus-visible),
+        button.c21-button-link:focus-visible,
         button.c21-button-link:active {
             text-decoration: underline;
         }
