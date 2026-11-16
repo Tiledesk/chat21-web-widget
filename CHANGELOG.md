@@ -6,54 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
-# 5.3.2-rc1
+# 5.1.40-ar
 - **bug fixed**: a new guest could reopen and write in the conversation of a previous guest in the same browser (e.g. after the host site ran `localStorage.clear()`). The stored `recipientId` is now bound to the user that owns it (`recipientIdOwner`) and is discarded when another user is authenticated, after an anonymous sign-in, on `logOut()` and when the logged user changes
 - **bug fixed**: `clear()` of the widget storage now clears `sessionStorage` when `persistence` is `session` (before it always cleared `localStorage`), so `logout` and `reInit` really remove the widget keys
-
-# 5.3.1
-- **bug fixed**: uploadService and tiledeskRequestSerivce cannot able to get tiledeskToken until widget is opened 
-
-# 5.3.0
-- **added**: you can talk with the assistant in real time. A voice mode button in the message box starts and stops the conversation; what you say appears in the chat, and the reply is both spoken and written
-- **added**: while the assistant is speaking, the words light up one by one so you can follow the text along with the voice. Older messages stay as they are
-- **added**: if interruption is enabled, you can start talking again while the assistant is still speaking. It lowers its voice right away and then stops to listen to you
-- **added**: a soft keyboard sound plays while the assistant is preparing its answer, so the wait is not silent
-- **changed**: the voice-note button stays hidden while a live voice conversation is in progress
-- **changed**: audio controls are easier to use with a keyboard or a screen reader, and their labels follow the widget language
-- **bug fixed**: a brand-new chat no longer looks archived, so you can write and send the first message
-
-# 5.2.3
-- **changed**: added "source" parameter to URL preview
-
-# 5.2.1
-- **bug fixed**: prevent avatar display when audio stream is active in conversation content
-- **changed**: refined message margin logic and updated widget/firebase configuration for local development
-- **changed**: simplified textarea background color and removed unused image in conversation footer
-- **changed**: updated `remoteConfigUrl` settings for widget configuration
-- **changed**: switched Docker builder stage base image to `node:20.12.2-bookworm-slim`
-- **changed**: upgraded Angular and build tool dependencies to align with version 5.2.1
-- **changed**: cleaned up and enhanced unit tests for conversation and audio components
-- **added**: integrated Playwright for end-to-end testing
-- **added**: comprehensive accessibility documentation for the Tiledesk Web Widget
-
-# 5.2.0 
-
-# 5.1.32-rc13
-- **added**: VAD speech state events (`speechStart$`, `speechEnd$`) to improve UI/state transitions around user speech
-- **changed**: stream audio footer UI — stream button expands into a “Terminate” pill with animated level bars driven by mic intensity; recorder icon hidden while streaming; textarea width adjusted while streaming
-- **changed**: `StreamAudioSpectrum` — consolidated stream spectrum + stream button visuals into a single component with improved silence vs speaking handling and volume-driven bar heights
-- **changed**: conversation layout while streaming — adjusted received bubble sizing (`fullSizeMessage`) and loading spinner spacing (`fullSize`) for full-width stream mode
-
-
-
-# 5.1.35
-- **bug fixed**: updated url preview, added displayed fields
-
-# 5.1.34
-- **bug fixed**: if last message is ulr_preview shows previous message buttons
-
-# 5.1.33
-- **bug fixed**: widget not loaded because blob block loading in lauch.js
 
 # 5.1.39-ar
 - **bug fixed**: uploadService and tiledeskRequestSerivce cannot able to get tiledeskToken until widget is opened
