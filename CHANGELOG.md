@@ -6,6 +6,10 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.3.2-rc1
+- **bug fixed**: a new guest could reopen and write in the conversation of a previous guest in the same browser (e.g. after the host site ran `localStorage.clear()`). The stored `recipientId` is now bound to the user that owns it (`recipientIdOwner`) and is discarded when another user is authenticated, after an anonymous sign-in, on `logOut()` and when the logged user changes
+- **bug fixed**: `clear()` of the widget storage now clears `sessionStorage` when `persistence` is `session` (before it always cleared `localStorage`), so `logout` and `reInit` really remove the widget keys
+
 # 5.3.1
 - **bug fixed**: uploadService and tiledeskRequestSerivce cannot able to get tiledeskToken until widget is opened 
 
@@ -17,39 +21,60 @@
 - **changed**: the voice-note button stays hidden while a live voice conversation is in progress
 - **changed**: audio controls are easier to use with a keyboard or a screen reader, and their labels follow the widget language
 - **bug fixed**: a brand-new chat no longer looks archived, so you can write and send the first message
+# 5.2.4-rc3
+- **bug fixed**: uploadService and tiledeskRequestSerivce cannot able to get tiledeskToken until widget is opened 
 
-# 5.2.3
-- **changed**: added "source" parameter to URL preview
+# 5.2.4-rc2
+- **changed**: **Stream audio** — message attributes use `voice_mode` instead of `voiceStreaming`. It is `false` by default, including on widget start even if storage still had `true`, and `true` only while a voice session is active. After the attributes are built they are written back to storage so the flag stays in sync.
 
-# 5.2.1
-- **bug fixed**: prevent avatar display when audio stream is active in conversation content
-- **changed**: refined message margin logic and updated widget/firebase configuration for local development
-- **changed**: simplified textarea background color and removed unused image in conversation footer
-- **changed**: updated `remoteConfigUrl` settings for widget configuration
-- **changed**: switched Docker builder stage base image to `node:20.12.2-bookworm-slim`
-- **changed**: upgraded Angular and build tool dependencies to align with version 5.2.1
-- **changed**: cleaned up and enhanced unit tests for conversation and audio components
-- **added**: integrated Playwright for end-to-end testing
-- **added**: comprehensive accessibility documentation for the Tiledesk Web Widget
-
-# 5.2.0 
-
-# 5.1.32-rc13
-- **added**: VAD speech state events (`speechStart$`, `speechEnd$`) to improve UI/state transitions around user speech
-- **changed**: stream audio footer UI — stream button expands into a “Terminate” pill with animated level bars driven by mic intensity; recorder icon hidden while streaming; textarea width adjusted while streaming
-- **changed**: `StreamAudioSpectrum` — consolidated stream spectrum + stream button visuals into a single component with improved silence vs speaking handling and volume-driven bar heights
-- **changed**: conversation layout while streaming — adjusted received bubble sizing (`fullSizeMessage`) and loading spinner spacing (`fullSize`) for full-width stream mode
+# 5.2.4-rc1
+- **changed**: **Stream audio** — the voice session config sent to the speech proxy now includes `voiceStreaming: true` in message attributes (same attribute set as a normal Chat21 message). The proxy can mark the utterance it publishes on the conversation as coming from voice streaming.
 
 
+# 5.2.2-rc5
+- **added**: **Stream audio** — barge-in: when the chatbot's flow enables it (Voice settings → Barge-in), the user can interrupt the bot while it is speaking. The bot's voice drops as soon as the user starts talking and stops once the speech proxy recognises real words; a cough or noise only dips it for a moment. Requires the speech proxy with barge-in support; with barge-in off nothing changes.
+- **bug-fixed**: the production build compiles again with `strictTemplates` enabled (template type fixes only).
 
-# 5.1.35
-- **bug fixed**: updated url preview, added displayed fields
+# 5.2.2-rc4
+- **changed**: keyboardVolume sets to 0 by default
 
-# 5.1.34
-- **bug fixed**: if last message is ulr_preview shows previous message buttons
+# 5.2.2-rc3
+- **bug-fixed**: **Stream audio** — incoming word-stream / karaoke animation no longer replays on already received bubbles (including the last incoming message or bubbles that share the same text). Animation runs only on bot messages that arrive after the current stream session starts.
+- **changed**: **Stream audio** — word-stream and karaoke are rendered inside `chat-text` so animated messages keep the original typography and padding.
+- **bug-fixed**: hide the audio recorder footer button while stream audio is active or connecting.
+- **changed**: widget visibility and auto-authentication now require `botRulesEnabled` when bot rules are present.
 
 # 5.1.33
 - **bug fixed**: widget not loaded because blob block loading in lauch.js
+
+# 5.2.2-rc2
+- **bug-fixed**: added stringToBoolean for closeChatInConversation env variable
+
+# 5.2.2-rc1
+- **added**:  added "source" parameter to URL preview
+
+# 5.1.34-rc2
+- **added**: updated url preview, added displayed fields
+
+# 5.1.34-rc1
+- **added**: onPageChangeVisibilityDesktop:'open' and 'onPageChangeVisibilityMobile: 'open' in chatbot-panel.html file
+
+# 5.1.33-rc12
+- **bug-fixed**: if last message is ulr_preview shows previous message buttons
+
+# 5.1.33-rc11
+- **changed**: **Stream audio** — updated the streaming/voice-mode footer icon.
+- **added**: **Stream audio** — tooltip on the stream button (i18n key `STREAM_AUDIO`, e.g. “Use voice mode”) via SVG `<title>` and `aria-label`.
+
+# 5.1.33-rc10
+- **bug-fixed**: fixed bug with knowledge base json sources without URLs
+
+# 5.1.33-rc9
+- **changed**: **Conversation footer** — accessibility-focused markup (ARIA roles/labels, live regions, semantic send control), stream-audio layout (wrapper + voice mode: hide attach/emoji while streaming, inline status, stream button + spectrum), optional **Close chat** action when `closeChatInConversation` is enabled; emoji restriction alert uses assertive live region semantics.
+- **bug-fixed**: **`getConversationDetail` Tiledesk fallback** — when `getMyRequests()` rejects, the conversation is treated as archived (`isConversationArchived = true`) and the handler returns immediately instead of resetting state from an empty fallback payload.
+- **bug-fixed**: **`VoiceService`** — skip Web Audio `createMediaStreamSource` when the `MediaStream` has no audio tracks (avoids `InvalidStateError` under mocked `getUserMedia` in unit tests and edge browsers).
+- **bug-fixed**: **`TtsAudioPlaybackCoordinator`** — avoid emitting a duplicate `isTTSPlaying$` `true` when preempting an already-playing owner (keeps emission sequence stable for consumers).
+- **bug-fixed**: **Unit tests** — aligned `BubbleMessageComponent` specs with `calcImageSize` + DI mocks; `AudioSyncComponent` spec module setup (`declarations` + `CommonModule`) and TTS streaming call expectations; `VoiceService` specs with realistic mic streams and updated expectations for proxy `listening` / `barge_in` (no `setAudioMuted` on those paths); `TtsAudioPlaybackCoordinator` `stopAll` test asserts `_stopAll$` broadcast via spy; `ConversationComponent` spec for Tiledesk error path.
 
 # 5.1.33-rc7
 - **added**: added more URL source types in kb_json_sources
@@ -74,6 +99,22 @@
 
 # 5.1.32-rc14
 - **changed**: minor ui fixed
+
+# 5.2.3
+- **changed**: added "source" parameter to URL preview
+
+# 5.2.1
+- **bug fixed**: prevent avatar display when audio stream is active in conversation content
+- **changed**: refined message margin logic and updated widget/firebase configuration for local development
+- **changed**: simplified textarea background color and removed unused image in conversation footer
+- **changed**: updated `remoteConfigUrl` settings for widget configuration
+- **changed**: switched Docker builder stage base image to `node:20.12.2-bookworm-slim`
+- **changed**: upgraded Angular and build tool dependencies to align with version 5.2.1
+- **changed**: cleaned up and enhanced unit tests for conversation and audio components
+- **added**: integrated Playwright for end-to-end testing
+- **added**: comprehensive accessibility documentation for the Tiledesk Web Widget
+
+# 5.2.0 
 
 # 5.1.32-rc13
 - **added**: VAD speech state events (`speechStart$`, `speechEnd$`) to improve UI/state transitions around user speech

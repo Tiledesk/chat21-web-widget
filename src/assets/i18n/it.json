@@ -74,7 +74,7 @@
   "LABEL_PRECHAT_USER_PHONE": "Telefono",
   "LABEL_PRECHAT_USER_PHONE_ERROR": "Telefono richiesto",
   "LABEL_PRECHAT_FIRST_MESSAGE": "Il tuo messaggio per il team di supporto",
-  "LABEL_PRECHAT_STATIC_TERMS_PRIVACY": "Prima di procedere nella conversazione, accetta i nostri <a href='https://tiledesk.com/termsofservice/' target='_blank'>Termini</a> e <a href='https:/ /tiledesk.com/privacy.html' target='_blank'>Norme sulla privacy</a>",
+  "LABEL_PRECHAT_STATIC_TERMS_PRIVACY": "Prima di procedere nella conversazione, accetta i nostri <a href='https://tiledesk.com/termsofservice/' target='_blank'>Termini</a> e <a href='https://tiledesk.com/privacy.html' target='_blank'>Norme sulla privacy</a>",
   "LABEL_PRECHAT_ACCEPT_TERMS_PRIVACY": "Sono d'accordo",
   "PRECHAT_REQUIRED_ERROR": "Questo campo è obbligatorio",
   "TICKET_TAKING": "La richiesta è stata ricevuta e il personale di assistenza se ne sta occupando.\nPer aggiungere ulteriori commenti, rispondi a questa email.",

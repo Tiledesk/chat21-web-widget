@@ -5,6 +5,7 @@ import { Globals } from '../../utils/globals';
 import { AppStorageService } from 'src/chat21-core/providers/abstract/app-storage.service';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
 import { DepartmentModel } from 'src/models/department';
+import { LOCALSTORAGE_KEYS } from 'src/app/utils/constants';
 
 @Component({
     selector: 'chat-selection-department',
@@ -103,7 +104,7 @@ export class SelectionDepartmentComponent implements OnInit, AfterViewInit {
             // attributes.departmentId = department._id;
             // attributes.departmentName = department.name;
             // this.g.setParameter('attributes', attributes);
-            this.appStorageService.setItem('attributes', JSON.stringify(attributes));
+            this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(attributes));
             this.logger.debug('[SELECT-DEP] setDepartment: attributes', JSON.stringify(attributes));
         }
         // this.closePage();

@@ -6,6 +6,7 @@ import { UploadModel } from '../../models/upload';
 import { AppStorageService } from '../abstract/app-storage.service';
 import { LoggerService } from '../abstract/logger.service';
 import { LoggerInstance } from '../logger/loggerInstance';
+import { LOCALSTORAGE_KEYS } from 'src/app/utils/constants';
 
 // @Injectable({ providedIn: 'root' })
 @Injectable()
@@ -31,7 +32,7 @@ export class NativeUploadService extends UploadService {
             this.URL_TILEDESK_FILE = this.getBaseUrl() + projectId + '/files'
         }
         this.URL_TILEDESK_UPLOAD = this.getBaseUrl();
-        this.tiledeskToken = this.appStorage.getItem('tiledeskToken')
+        this.tiledeskToken = this.appStorage.getItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN)
     }
 
 

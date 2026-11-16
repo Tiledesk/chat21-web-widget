@@ -317,9 +317,10 @@ export class TranslatorService {
       'CLOSED',
       'LABEL_PREVIEW',
       'MAX_ATTACHMENT',
-      'MAX_ATTACHMENT_ERROR',
       'EMOJI',
-      'BUTTON_OPEN_CHAT'
+      'BUTTON_OPEN_CHAT',
+      'MAX_ATTACHMENT_ERROR',
+      'EMOJI'
     ];
 
 

@@ -28,7 +28,7 @@ export class LastMessageComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() baseLocation: string;
   @Input() stylesMap: Map<string, string>;
   @Output() onCloseMessagePreview  = new EventEmitter();
-  @Output() onSelectedConversation = new EventEmitter<string>();
+  @Output() onSelectedConversation = new EventEmitter<ConversationModel>();
   // ========= begin:: sottoscrizioni ======= //
   subscriptions: Subscription[] = []; /** */
   // ========= end:: sottoscrizioni ======= //

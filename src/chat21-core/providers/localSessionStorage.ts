@@ -99,17 +99,20 @@ export class LocalSessionStorage extends AppStorageService{
       } catch (e) {
           this.logger.error('[LocalSessionStorage] clear > Error :', e);
       }
+      const storage = this.getConfiguredStorage();
+      if (!storage) {
+        return;
+      }
       const prefixKey = prefix + this.projectID
       const arrayKey: Array<string>  = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key.indexOf(prefixKey) !== -1) {
+      for (let i = 0; i < storage.length; i++) {
+        const key = storage.key(i);
+        if (key && key.indexOf(prefixKey) !== -1) {
           arrayKey.push(key);
         }
       }
   
       for (const key of arrayKey) {
-        // localStorage.removeItem(arrayKey[i]);
         this.removeItemForKey(key);
       }
   
@@ -117,6 +120,16 @@ export class LocalSessionStorage extends AppStorageService{
 
 
   // ---------- PRIVATE METHODS start --------------- //
+
+  private getConfiguredStorage(): Storage | null {
+      if (this.persistence === 'none' || this.persistence === 'NONE') {
+        return null;
+      } else if (this.persistence === 'session' || this.persistence === 'SESSION') {
+        return supports_html5_session() ? sessionStorage : null;
+      } else {
+        return supports_html5_storage() ? localStorage : null;
+      }
+  }
 
   private getValueForKey(key) {
       if (this.persistence === 'local' || this.persistence === 'LOCAL') {

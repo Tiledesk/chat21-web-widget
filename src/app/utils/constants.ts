@@ -80,3 +80,18 @@ export const HEADER_MENU_OPTION = {
     TOP  :          'top'
 }
 
+export const LOCALSTORAGE_KEYS = {
+    TILEDESK_TOKEN: 'tiledeskToken',
+    RECIPIENT_ID: 'recipientId',
+    RECIPIENT_ID_OWNER: 'recipientIdOwner',
+    CURRENT_USER: 'currentUser',
+    HIDDEN_CONVERSATIONS_BADGE: 'hiddenConversationsBadge',
+    IS_OPEN: 'isOpen',
+    ATTRIBUTES: 'attributes',
+    PRE_CHAT_FORM: 'preChatForm',
+    SIZE: 'size',
+    ACTIVE_CONVERSATION: 'activeConversation',
+    SOUND_ENABLED: 'soundEnabled',
+    RULES: 'rules',
+}
+

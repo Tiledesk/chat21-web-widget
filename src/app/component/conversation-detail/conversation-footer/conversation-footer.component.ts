@@ -1,6 +1,6 @@
 import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
 import { error } from 'console';
-import { FILE_SIZE_LIMIT } from 'src/app/utils/constants';
+import { FILE_SIZE_LIMIT, LOCALSTORAGE_KEYS } from 'src/app/utils/constants';
 import { Globals } from 'src/app/utils/globals';
 import { checkAcceptedFile } from 'src/app/utils/utils';
 import { MessageModel } from 'src/chat21-core/models/message';
@@ -158,6 +158,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     if(changes['conversationWith'] && changes['conversationWith'].currentValue !== undefined){
       this.conversationHandlerService = this.chatManager.getConversationHandlerByConversationId(this.conversationWith);
       this.isStreamAudioActive = false;
+      this.ttsPlayback.cancelAll();
       void this.stopVoice();
     }
     if(changes['hideTextReply'] && changes['hideTextReply'].currentValue !== undefined){
@@ -310,7 +311,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
 
     this.g.setParameter('attributes', storedAttributes);
     this.attributes = storedAttributes;
-    this.appStorageService.setItem('attributes', JSON.stringify(storedAttributes));
+    this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(storedAttributes));
 
     return {
       recipientFullname,
