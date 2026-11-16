@@ -9,5 +9,9 @@ if (environment.production) {
   enableProdMode();
 }
 
-platformBrowser().bootstrapModule(AppModule, { applicationProviders: [provideZoneChangeDetection()], })
+const bootstrapOptions = {
+  applicationProviders: [provideZoneChangeDetection()],
+} as NonNullable<Parameters<ReturnType<typeof platformBrowser>['bootstrapModule']>[1]>;
+
+platformBrowser().bootstrapModule(AppModule, bootstrapOptions)
   .catch(err => console.error(err));

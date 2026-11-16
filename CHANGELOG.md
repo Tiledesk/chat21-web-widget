@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.4.0-rc2
+- **added**: ANGULAR 22
+
 # 5.4.0-rc1
 - **added**: ANGULAR 20 
 
