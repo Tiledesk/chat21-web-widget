@@ -51,8 +51,11 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   private destroyed = false;
   private playbackRequested = false;
   private playbackStarted = false;
+  private micInterrupted = false;
   private streamAbort?: AbortController;
   private mediaSourceObjectUrl?: string;
+  private cancelAllSub?: Subscription;
+  private micSpeechSub?: Subscription;
   private stopAllSub?: Subscription;
   private preemptSub?: Subscription;
 
@@ -92,6 +95,28 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.playbackOwnerId =
       (this.message?.uid && String(this.message.uid).trim()) ||
       `tts-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+
+    // Se l’utente parla al microfono mentre sta ascoltando, interrompi TUTTO (corrente + coda).
+    this.micSpeechSub = this.voiceService.speechStart$.subscribe(() => {
+      if (this.destroyed) {
+        return;
+      }
+      // interrompi solo se questo messaggio era in riproduzione o in attesa
+      if (this.playbackStarted || this.playbackRequested) {
+        this.micInterrupted = true;
+        this.ttsPlayback.cancelAll();
+        this.interruptPlaybackAndRevealText();
+      }
+    });
+
+    // Stop globale (es. mic) notificato dal coordinatore: ogni istanza deve fermarsi e mostrare testo intero.
+    this.cancelAllSub = this.ttsPlayback.cancelAll$.subscribe(() => {
+      if (this.destroyed) {
+        return;
+      }
+      this.micInterrupted = true;
+      this.interruptPlaybackAndRevealText();
+    });
 
     this.onPlaybackEnded = () => {
       this.playbackStarted = false;
@@ -144,12 +169,19 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.cdr.detectChanges();
 
     setTimeout(() => {
-      if (this.playbackRequested || this.destroyed) {
+      if (this.playbackRequested || this.destroyed || this.micInterrupted) {
+        if (this.micInterrupted) {
+          this.markAllWordsPast();
+          if (this.message) {
+            this.message.isJustRecived = false;
+          }
+          this.cdr.detectChanges();
+        }
         return;
       }
       this.playbackRequested = true;
       this.ttsPlayback.requestStart(this.playbackOwnerId, () => {
-        if (this.destroyed) {
+        if (this.destroyed || this.micInterrupted) {
           this.ttsPlayback.releaseIfCurrent(this.playbackOwnerId);
           return;
         }
@@ -208,6 +240,8 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.destroyed = true;
     this.playbackStarted = false;
     this.cleanupStreaming();
+    this.cancelAllSub?.unsubscribe();
+    this.micSpeechSub?.unsubscribe();
     this.stopAllSub?.unsubscribe();
     this.stopAllSub = undefined;
     this.preemptSub?.unsubscribe();
@@ -233,6 +267,31 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (this.onPlaybackEnded) {
       audio.removeEventListener('ended', this.onPlaybackEnded);
     }
+  }
+
+  private interruptPlaybackAndRevealText(): void {
+    this.playbackStarted = false;
+    this.cleanupStreaming();
+
+    const audio = this.audioRef?.nativeElement;
+    if (audio) {
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
+    }
+
+    // Rimuove se era in coda (o rilascia se era corrente).
+    this.ttsPlayback.releaseIfCurrent(this.playbackOwnerId);
+
+    // Mostra tutto il testo (niente "future" invisibili).
+    this.markAllWordsPast();
+    if (this.message) {
+      this.message.isJustRecived = false;
+    }
+    this.cdr.detectChanges();
   }
 
   private startPlayback(audio: HTMLAudioElement): void {
@@ -332,8 +391,10 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
       try {
         const headers: Record<string, string> = {
           'Content-Type': 'application/json',
-          'Authorization': `${jwt}`
         };
+        if (jwt) {
+          headers['Authorization'] = jwt;
+        }
         
         const response = await fetch(endpoint, {
           method: 'POST',
@@ -464,8 +525,21 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private getJwtToken(): string | null {
-    const token = (this.globals?.tiledeskToken || this.globals?.jwt || '').trim();
-    return token.length > 0 ? token : null;
+    const raw = (this.globals?.tiledeskToken || this.globals?.jwt || '')
+      .trim()
+      .replace(/^(JWT|Bearer)\s+/i, '')
+      .trim();
+    return raw.length > 0 ? `JWT ${raw}` : null;
+  }
+
+  /**
+   * Extracts the Tiledesk requestId from a Chat21 recipient string.
+   * Format: `support-group-<projectId>-<requestId>`
+   */
+  private parseRequestId(recipient: string): string | null {
+    const parts = recipient.split('-');
+    if (parts.length < 4) return null;
+    return parts.slice(3).join('-') || null;
   }
 
   private getVoiceSettingsBody(): unknown {
@@ -495,8 +569,10 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
     try {
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        'Authorization': `${jwt}`
       };
+      if (jwt) {
+        headers['Authorization'] = jwt;
+      }
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -526,30 +602,25 @@ export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
   private fetchFullFileFromEndpoint(audio: HTMLAudioElement, endpoint: string): void {
     const jwt = this.getJwtToken();
     const voiceSettings = this.getVoiceSettingsBody();
-    const requestBody = this.buildTtsRequestBody(voiceSettings, false);
+    const requestBody = this.buildTtsRequestBody(voiceSettings);
     void this.fetchAsBlobAndPlay(audio, endpoint, jwt, requestBody);
   }
 
-  private buildTtsRequestBody(voiceSettings: unknown, streaming = true): unknown {
+  private buildTtsRequestBody(voiceSettings: unknown): unknown {
     const text = this.message?.text ?? '';
-    if (
-      voiceSettings &&
-      typeof voiceSettings === 'object' &&
-      !Array.isArray(voiceSettings)
-    ) {
-      return {
-        outputFormat: BROWSER_TTS_OUTPUT_FORMAT,
-        ...(voiceSettings as Record<string, unknown>),
-        text,
-        streaming,
-      };
+    const projectId = String(this.globals?.projectid ?? '').trim();
+    const requestId = this.parseRequestId(this.globals?.recipientId ?? '');
+    const base: Record<string, unknown> = { outputFormat: BROWSER_TTS_OUTPUT_FORMAT, text };
+    if (projectId) base['projectId'] = projectId;
+    if (requestId) {
+      base['requestId'] = requestId;
     }
-    return {
-      voiceSettings,
-      text,
-      streaming,
-      outputFormat: BROWSER_TTS_OUTPUT_FORMAT,
-    };
+    if (voiceSettings && typeof voiceSettings === 'object' && !Array.isArray(voiceSettings)) {
+      // Spread provider-specific fields (provider, voiceId, model, language, …) at top level.
+      // Keep `text` last so it cannot be overridden by voiceSettings.
+      return { ...base, ...(voiceSettings as Record<string, unknown>), text };
+    }
+    return base;
   }
 
   private markAllWordsPast(): void {

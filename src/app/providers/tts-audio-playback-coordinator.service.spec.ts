@@ -1,12 +1,10 @@
-import { TestBed } from '@angular/core/testing';
 import { TtsAudioPlaybackCoordinator } from './tts-audio-playback-coordinator.service';
 
 describe('TtsAudioPlaybackCoordinator', () => {
   let coordinator: TtsAudioPlaybackCoordinator;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [TtsAudioPlaybackCoordinator] });
-    coordinator = TestBed.inject(TtsAudioPlaybackCoordinator);
+    coordinator = new TtsAudioPlaybackCoordinator();
   });
 
   // ── Basic lifecycle ───────────────────────────────────────────────────────
@@ -29,14 +27,14 @@ describe('TtsAudioPlaybackCoordinator', () => {
 
   it('stopAll clears the queue, sets playing=false, and emits stopAllPlayback$', () => {
     const stopAllFired: void[] = [];
-    coordinator.stopAllPlayback$.subscribe(() => stopAllFired.push());
+    coordinator.stopAllPlayback$.subscribe(() => stopAllFired.push(undefined));
 
     coordinator.requestStart('msg-1', () => {});
     coordinator.stopAll();
 
-    const states: boolean[] = [];
-    coordinator.isTTSPlaying$.subscribe((v) => states.push(v));
-    expect(states).toEqual([false]);
+    let playing = true;
+    coordinator.isTTSPlaying$.subscribe((v) => (playing = v));
+    expect(playing).toBe(false);
     expect(stopAllFired.length).toBe(1);
   });
 

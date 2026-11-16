@@ -6,8 +6,12 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.1.40-ar
+- **bug fixed**: a new guest could reopen and write in the conversation of a previous guest in the same browser (e.g. after the host site ran `localStorage.clear()`). The stored `recipientId` is now bound to the user that owns it (`recipientIdOwner`) and is discarded when another user is authenticated, after an anonymous sign-in, on `logOut()` and when the logged user changes
+- **bug fixed**: `clear()` of the widget storage now clears `sessionStorage` when `persistence` is `session` (before it always cleared `localStorage`), so `logout` and `reInit` really remove the widget keys
+
 # 5.1.39-ar
-- **bug fixed**: uploadService and tiledeskRequestSerivce cannot able to get tiledeskToken until widget is opened 
+- **bug fixed**: uploadService and tiledeskRequestSerivce cannot able to get tiledeskToken until widget is opened
 
 # 5.1.38-ar
  **changed**: comment showWaitTime() function 

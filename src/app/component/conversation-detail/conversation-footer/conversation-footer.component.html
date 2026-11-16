@@ -37,13 +37,33 @@
         </chat-stream-audio-spectrum>
     </div>
 
+    <!-- STREAM AUDIO: status + waveform panel above footer -->
+    <div id="streamAudioAlert" *ngIf="!hideTextAreaContent && (isStreamAudioActive || isStreamAudioConnecting)"
+         class="fade-in-bottom stream-audio-alert" [class.hideTextReply]="hideTextReply"
+         role="status" [attr.aria-label]="voiceStatusLabel">
+        <div class="voice-status-row">
+            <span class="voice-status-dot"
+                  [class.voice-status-dot--connecting]="isStreamAudioConnecting && !isStreamAudioActive"
+                  [class.voice-status-dot--listening]="isStreamAudioActive && !isBotSpeaking"
+                  [class.voice-status-dot--processing]="isStreamAudioActive && isBotSpeaking">
+            </span>
+            <span class="voice-status-text">{{ voiceStatusLabel }}</span>
+            <span class="voice-transcript-text" *ngIf="lastVoiceTranscript">{{ lastVoiceTranscript }}</span>
+        </div>
+        <chat-stream-audio-spectrum
+            mode="alert"
+            [volume]="isBotSpeaking ? 0 : currentVolume"
+            [accentColor]="stylesMap?.get('themeColor')">
+        </chat-stream-audio-spectrum>
+    </div>
+
 </div>
 
 <!-- TEXTAREA + ICONS: conv active-->
 <div class="textarea-container-wrapper" *ngIf="!hideTextAreaContent && !hideTextReply">
     <!-- TEXTAREA + ICONS: conv active-->
     <div class="textarea-container" [class.voice-mode]="isStreamAudioActive || isStreamAudioConnecting">
-        
+
         <div *ngIf="!isStopRec && !(isStreamAudioActive || isStreamAudioConnecting)" class="icons-container">
             <!-- ICON ATTACHMENT -->
             <label *ngIf="showAttachmentFooterButton"
@@ -62,7 +82,7 @@
                         <path d="M9.9,22.7c0,0-.1,0-.2,0-1.9.3-3.7-.2-5.2-1.4-3-2.3-3.6-6.4-1.4-9.5L9.5,2.5c.4-.5,1.1-.6,1.6-.3.5.4.6,1.1.3,1.6l-6.5,9.4c-1.4,2-1,4.8.9,6.3,1,.8,2.2,1.1,3.5.9,1.3-.2,2.4-.9,3.1-1.9l6-8.7c.9-1.2.6-3-.6-3.9-.6-.5-1.4-.6-2.1-.5-.8.1-1.4.5-1.9,1.1l-5.8,8.2c-.3.5-.2,1.1.2,1.5.2.2.5.3.8.2.3,0,.6-.2.7-.4l4.7-6.2c.4-.5,1.1-.6,1.6-.2.5.4.6,1.1.2,1.6l-4.7,6.2c-.5.7-1.4,1.2-2.3,1.3-.9.1-1.8-.2-2.5-.7-1.4-1.1-1.6-3.1-.6-4.6l5.8-8.2c.8-1.1,2-1.9,3.4-2.1,1.4-.2,2.7.1,3.8,1,2.2,1.7,2.7,4.8,1.1,7.1l-6,8.7c-1.1,1.5-2.6,2.5-4.4,2.8h0Z"/>
                     </svg>
                 </span>
-                 <input
+                <input
                     [attr.disabled]="(isFilePendingToUpload || isConversationArchived || hideTextReply)? true : null"
                     tabindex="-1"
                     type="file"
@@ -102,7 +122,11 @@
 
 
 
-        <div *ngIf="!isStopRec" class="visible-text-area" [class.stream-active]="isStreamAudioActive || isStreamAudioConnecting" [class.hasError]="showAlertEmoji" [class.disabled] = "( isConversationArchived || hideTextReply)? true : null">
+        <div *ngIf="!isStopRec" 
+            class="visible-text-area" 
+            [class.stream-active]="isStreamAudioActive || isStreamAudioConnecting" 
+            [class.hasError]="showAlertEmoji" 
+            [class.disabled] = "( isConversationArchived || hideTextReply)? true : null">
             <!-- Voice mode: inline status chip -->
             <div class="voice-inline-status" *ngIf="isStreamAudioActive || isStreamAudioConnecting" role="status" aria-live="polite">
                 <span class="voice-inline-dot"
@@ -114,13 +138,14 @@
             <!-- Normal mode: textarea -->
             <textarea 
                 *ngIf="!(isStreamAudioActive || isStreamAudioConnecting)"
-                [attr.disabled] = "(hideTextReply)? true : null"
-                [attr.placeholder] ="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
+                [attr.disabled]="(hideTextReply)? true : null"
+                [attr.placeholder]="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
+                [attr.aria-label]="(footerMessagePlaceholder)? footerMessagePlaceholder : translationMap?.get('LABEL_PLACEHOLDER')"
+                [attr.aria-multiline]="true"
+                [attr.aria-invalid]="showAlertEmoji ? 'true' : 'false'"
                 start-focus-chat21-conversation-component
                 inputTextArea
                 #textbox
-                tabindex="1501"
-                aria-labelledby="altTextArea"
                 rows="1"
                 id="chat21-main-message-context"
                 class='f21textarea c21-button-clean'
@@ -177,6 +202,25 @@
                 [translationMap]="translationMap">
             </chat-stream-audio-spectrum>
         </div>
+
+        <div class="close-chat-container" *ngIf="closeChatInConversation">
+            <button type="button" aflistconv #aflistconv  class="c21-button-primary c21-close" (click)="onCloseChat($event)" [ngStyle]="{'background-color': stylesMap.get('themeColor'), 'border-color': stylesMap.get('themeColor'), 'color': stylesMap?.get('foregroundColor')}">
+                <span class="v-align-center">
+                    <svg [ngStyle]="{'stroke': stylesMap?.get('foregroundColor'), 'fill': stylesMap?.get('foregroundColor') }" role="img" id="archive" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg"
+                        width="15px" height="15px" viewBox="0 0 512 512">
+                        <path d="M80 152v256a40.12 40.12 0 0040 40h272a40.12 40.12 0 0040-40V152" stroke-linecap="round" stroke-linejoin="round" stroke-width="50px" fill="none"></path>
+                        <rect x="48" y="64" width="416" height="80" rx="28" ry="28" stroke-linejoin="round" stroke-width="50px" fill="none" ></rect>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M320 304l-64 64-64-64M256 345.89V224" stroke-width="50px" fill="none"></path>
+                        <title id="altIconTitle">{{ translationMap?.get('CLOSE_CHAT') }}</title>
+                    </svg>
+                </span>
+                <span class="v-align-center c21-label-button">
+                    {{translationMap?.get('CLOSE_CHAT')}}
+                </span>
+                <div class="clear"></div>
+            </button>
+        </div>
+
     </div>
 
 
@@ -224,7 +268,7 @@
             [darkMode]="emojiiOptions?.darkMode"
             [include]="emojiiOptions?.include"
             (emojiSelect)="addEmoji($event)">
-    </emoji-mart>
+        </emoji-mart>
 </div>
 
 <!-- NEW CONV & CONTINE buttons: conv archived-->

@@ -83,6 +83,21 @@ describe('GlobalSettingsService', () => {
     expect(TestBed.inject(GlobalSettingsService)).toBeTruthy();
   });
 
+  describe('setVariableFromStorage (storage → Globals)', () => {
+    it('does not load recipientId from storage (it is validated against its owner after authentication)', () => {
+      const storage = TestBed.inject(AppStorageService);
+      const stored: Record<string, string> = { recipientId: 'support-group-of-previous-guest', soundEnabled: 'false' };
+      spyOn(storage, 'getItem').and.callFake((key: string) => stored[key] ?? null);
+      const g = newGlobalsWithContext(fakeWindowUrlOnly('https://host.example/page'));
+      g.recipientId = undefined;
+
+      TestBed.inject(GlobalSettingsService).setVariableFromStorage(g);
+
+      expect(g.recipientId).toBeUndefined();
+      expect(g.soundEnabled).toBe(false);
+    });
+  });
+
   describe('setVariablesFromSettings (tiledeskSettings → Globals)', () => {
     const service = () => TestBed.inject(GlobalSettingsService);
 

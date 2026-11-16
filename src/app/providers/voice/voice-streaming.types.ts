@@ -86,6 +86,7 @@ export type VoiceWsServerEventName =
   | 'thinking'
   | 'speaking'
   | 'done'
+  | 'barge_in'
   | 'error';
 
 /** Messaggio di controllo JSON dal proxy (`msg.event`); altri campi sono ignorati se non gestiti. */
@@ -95,6 +96,8 @@ export type VoiceWsControlMessage = {
   text?: string;
   isFinal?: boolean;
   message?: string;
+  /** `session_started`: the flow allows the user to interrupt the bot (BARGE_IN global). */
+  bargeIn?: boolean;
 } & Record<string, unknown>;
 
 /** Single word with its karaoke highlight state. */

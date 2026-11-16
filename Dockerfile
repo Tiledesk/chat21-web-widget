@@ -1,13 +1,13 @@
 ### STAGE 1: Build ###
 
 # We label our stage as ‘builder’
-FROM --platform=$BUILDPLATFORM node:20.12.2-alpine3.19 as builder
+FROM --platform=$BUILDPLATFORM node:20.12.2-bookworm-slim AS builder
 
 COPY package.json package-lock.json ./
 
 ## Storing node modules on a separate layer will prevent unnecessary npm installs at each build
 
-RUN npm ci && mkdir /ng-app && mv ./node_modules ./ng-app
+RUN npm install -g npm@10.9.2 && npm ci && mkdir /ng-app && mv ./node_modules ./ng-app
 
 WORKDIR /ng-app
 

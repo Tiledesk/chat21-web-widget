@@ -1,6 +1,6 @@
 import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
 import { error } from 'console';
-import { FILE_SIZE_LIMIT } from 'src/app/utils/constants';
+import { FILE_SIZE_LIMIT, LOCALSTORAGE_KEYS } from 'src/app/utils/constants';
 import { Globals } from 'src/app/utils/globals';
 import { checkAcceptedFile } from 'src/app/utils/utils';
 import { MessageModel } from 'src/chat21-core/models/message';
@@ -20,6 +20,7 @@ import { VoiceService } from 'src/app/providers/voice/voice.service';
 import { VoiceStreamingSessionConfig } from 'src/app/providers/voice/voice-streaming.types';
 import { TtsAudioPlaybackCoordinator } from 'src/app/providers/tts-audio-playback-coordinator.service';
 import { TiledeskAuthService } from 'src/chat21-core/providers/tiledesk/tiledesk-auth.service';
+import { AppStorageService } from 'src/chat21-core/providers/abstract/app-storage.service';
 
 @Component({
   selector: 'chat-conversation-footer',
@@ -41,6 +42,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   @Input() showAudioRecorderFooterButton: boolean;
   @Input() showAudioStreamFooterButton: boolean;
   // @Input() showContinueConversationButton: boolean;
+  @Input() closeChatInConversation: boolean;
   @Input() isConversationArchived: boolean;
   @Input() hideTextAreaContent: boolean;
   @Input() hideTextReply: boolean;
@@ -48,7 +50,6 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   @Input() isEmojiiPickerShow: boolean;
   @Input() footerMessagePlaceholder: string;
   @Input() fileUploadAccept: string;
-  @Input() closeChatInConversation: boolean;
   @Input() dropEvent: Event;
   @Input() poweredBy: string;
   @Input() stylesMap: Map<string, string>
@@ -144,6 +145,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     private voiceService: VoiceService,
     private ttsPlayback: TtsAudioPlaybackCoordinator,
     private tiledeskAuthService: TiledeskAuthService,
+    private appStorageService: AppStorageService,
     public g: Globals,
   ) {}
 
@@ -242,7 +244,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
       });
       return null;
     }
-    const { recipientFullname, attributes, channelType } = this.buildSendMessageContext();
+    const { recipientFullname, attributes, channelType } = this.buildSendMessageContext({voice_mode: true});
     this.logger.log('[CONV-FOOTER] buildVoiceIngressStreamConfig', { sender, recipient, channelType });
     return {
       token,
@@ -268,15 +270,24 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
   private buildSendMessageContext(additional_attributes?: any) {
     let recipientFullname = this.translationMap.get('GUEST_LABEL');
     const g_attributes = this.attributes;
-    const attributes = <any>{};
+    const storedAttributes = <any>{};
     if (g_attributes) {
       for (const [key, value] of Object.entries(g_attributes)) {
-        attributes[key] = value;
+        storedAttributes[key] = value;
       }
+    }
+    storedAttributes['voice_mode'] = false;
+
+    const attributes = <any>{};
+    for (const [key, value] of Object.entries(storedAttributes)) {
+      attributes[key] = value;
     }
     if (additional_attributes) {
       for (const [key, value] of Object.entries(additional_attributes)) {
         attributes[key] = value;
+        if (Object.prototype.hasOwnProperty.call(storedAttributes, key)) {
+          storedAttributes[key] = value;
+        }
       }
     }
     const senderId = this.senderId;
@@ -295,6 +306,10 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     } else {
       recipientFullname = this.translationMap.get('GUEST_LABEL');
     }
+
+    this.g.setParameter('attributes', storedAttributes);
+    this.attributes = storedAttributes;
+    this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(storedAttributes));
 
     return {
       recipientFullname,
@@ -323,6 +338,9 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     this.isBotSpeaking = false;
 
     await this.voiceService.stopSession(options);
+    if (this.translationMap && this.project) {
+      this.buildSendMessageContext();
+    }
     this.currentVolume = 0;
     this.textInputTextArea = '';
     this.lastVoiceTranscript = '';
@@ -857,6 +875,7 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
       } catch (e) {
         this.logger.error('[CONV-FOOTER] onStreamPressed: initVoice failed', e);
         this.isStreamAudioActive = false;
+        this.ttsPlayback.cancelAll();
       } finally {
         this.isStreamAudioConnecting = false;
         this.onStreamAudioConnectingChange.emit(false);
@@ -864,6 +883,8 @@ export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy
     } else {
       await this.stopVoice();
       this.isStreamAudioActive = false;
+      // Close-stream-button clicked: stop any playing/queued TTS audio.
+      this.ttsPlayback.cancelAll();
       this.isStreamAudioConnecting = false;
       this.onStreamAudioConnectingChange.emit(false);
     }

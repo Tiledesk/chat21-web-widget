@@ -44,6 +44,8 @@ import { UID_SUPPORT_GROUP_MESSAGES } from './utils/constants';
 import { Globals } from './utils/globals';
 import { Rules } from './utils/rules';
 import { isInfo, isUserBanned } from 'src/chat21-core/utils/utils-message';
+import { clearStoredRecipientId, getStoredRecipientId, setStoredRecipientId } from 'src/chat21-core/utils/recipient-id-storage';
+import { LOCALSTORAGE_KEYS } from './utils/constants';
 
 interface MessageObj {
   tenant?: string;
@@ -105,6 +107,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   marginBottom: number;
   
   forceDisconnect: boolean = false;
+
+  /** recipientId passed explicitly by the host site (tiledeskSettings, attribute or URL) */
+  private hostRecipientId: string = null;
+  /** uid of the last user that went online in this session */
+  private lastOnlineUid: string = null;
+  /** true only if the current user signed in with the tiledeskToken already in storage */
+  private recipientIdLegacyAllowed: boolean = false;
 
   //network status
   isOnline: boolean = true;
@@ -272,12 +281,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     saveBadgeNewConverstionNumber(){
         let badgeNewConverstionNumber = this.conversationsHandlerService.countIsNew() 
-        this.appStorageService.setItem('hiddenConversationsBadge', badgeNewConverstionNumber)
+        this.appStorageService.setItem(LOCALSTORAGE_KEYS.HIDDEN_CONVERSATIONS_BADGE, badgeNewConverstionNumber)
     }
 
     setBadgeNewConverstionNumber(){
         let badgeNewConverstionNumber = this.conversationsHandlerService.countIsNew();
-        let hiddenConversationsBadge = this.appStorageService.getItem('hiddenConversationsBadge')
+        let hiddenConversationsBadge = this.appStorageService.getItem(LOCALSTORAGE_KEYS.HIDDEN_CONVERSATIONS_BADGE)
         let newNumberBadge = badgeNewConverstionNumber - hiddenConversationsBadge;
         this.logger.debug('[APP-COMP] setBadgeNewConverstionNumber: ', newNumberBadge, badgeNewConverstionNumber, hiddenConversationsBadge)
         this.g.conversationsBadge = newNumberBadge;
@@ -294,6 +303,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.logger.setLoggerConfig(this.g.isLogEnabled, this.g.logLevel)
                 this.tabTitle = this.g.windowContext.window.document.title
                 this.appStorageService.initialize(environment.storage_prefix, this.g.persistence, this.g.projectid)
+                this.hostRecipientId = this.g.recipientId || null;
                 
                 //check if allowed to load
                 let canLoad = this.globalSettingsService.manageLoadingDomains();
@@ -313,12 +323,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 if(this.g.isMobile && this.g.onPageChangeVisibilityMobile !== 'last'){
                     let isOpen = this.g.onPageChangeVisibilityMobile === 'open'? true: false
                     this.g.setIsOpen(isOpen)
-                    this.appStorageService.setItem('isOpen', isOpen)
+                    this.appStorageService.setItem(LOCALSTORAGE_KEYS.IS_OPEN, isOpen)
                 }
                 if(!this.g.isMobile && this.g.onPageChangeVisibilityDesktop !== 'last'){
                     let isOpen = this.g.onPageChangeVisibilityDesktop === 'open'? true: false
                     this.g.setIsOpen(isOpen)
-                    this.appStorageService.setItem('isOpen', isOpen)
+                    this.appStorageService.setItem(LOCALSTORAGE_KEYS.IS_OPEN, isOpen)
                 }
 
                 if(this.g.onPageChangeVisibilityDesktop === 'last'){
@@ -340,8 +350,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     // add JWY token to localstorage and authenticate with it           this.logger.debug('[APP-COMP] token from url. isShown:', this.g.isShown, 'autostart:', this.g.autoStart)
                     this.logger.debug('[APP-COMP]  ----------------  logging in with custom token from url ---------------- ');
                     //   this.g.autoStart = false;
-                    const storedTiledeskToken = this.appStorageService.getItem('tiledeskToken')
-                    storedTiledeskToken === this.g.jwt? null: this.appStorageService.setItem('tiledeskToken', this.g.jwt);
+                    const storedTiledeskToken = this.appStorageService.getItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN)
+                    if (storedTiledeskToken !== this.g.jwt) {
+                        // a recipientId without owner cannot be attributed to the user of the new token
+                        if (!this.appStorageService.getItem(LOCALSTORAGE_KEYS.RECIPIENT_ID_OWNER)) {
+                            clearStoredRecipientId(this.appStorageService);
+                        }
+                        this.appStorageService.setItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN, this.g.jwt);
+                    }
                     this.g.tiledeskToken = this.g.jwt;
                     // this.signInWithCustomToken(this.g.jwt) // moved to authenticate() in else(tiledeskToken)
                 }
@@ -445,7 +461,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         
         const subAuthStateChanged = this.messagingAuthService.BSAuthStateChanged.subscribe(state => {
 
-            const tiledeskTokenTEMP = this.appStorageService.getItem('tiledeskToken')
+            const tiledeskTokenTEMP = this.appStorageService.getItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN)
             if (tiledeskTokenTEMP && tiledeskTokenTEMP !== undefined) {
                 that.g.tiledeskToken = tiledeskTokenTEMP;
             }
@@ -461,6 +477,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 // that.authService.resigninAnonymousAuthentication();
                 // confronto id utente tiledesk con id utente di firebase
                 // senderid deve essere == id di firebase
+
+                if (that.lastOnlineUid && that.lastOnlineUid !== user.uid) {
+                    that.resetRecipientIdForNewIdentity();
+                }
+                that.lastOnlineUid = user.uid;
 
                 // const fullName = user.firstname + ' ' + user.lastname;
                 that.g.setParameter('senderId', user.uid);
@@ -608,7 +629,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
          */
 
         const tiledeskToken = this.g.tiledeskToken;
-        const user = this.appStorageService.getItem('currentUser')
+        const user = this.appStorageService.getItem(LOCALSTORAGE_KEYS.CURRENT_USER)
         this.logger.debug('[APP-COMP] tiledesktokennn', tiledeskToken, user)
         if (tiledeskToken) {
             //     //  SONO GIA' AUTENTICATO
@@ -621,6 +642,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.logger.debug('[APP-COMP]  ---------------- 14 ---------------- ');
             this.logger.debug('[APP-COMP]  authenticateFirebaseAnonymously');
             this.tiledeskAuthService.signInAnonymously(this.g.projectid).then(token => {
+                this.resetRecipientIdForNewIdentity();
                 this.messagingAuthService.createCustomToken(token)
                 const user = this.tiledeskAuthService.getCurrentUser();
                 //check if tiledesk_userFullname exist (passed from URL or tiledeskSettings) before update userFullname parameter
@@ -642,8 +664,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private signInWithCustomToken(token: string):Promise<UserModel> {
         const that = this;
-        const storedTiledeskToken = this.appStorageService.getItem('tiledeskToken');
-        storedTiledeskToken === token? null: this.appStorageService.removeItem('recipientId')
+        const storedTiledeskToken = this.appStorageService.getItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN);
+        this.recipientIdLegacyAllowed = storedTiledeskToken === token;
+        if (!this.recipientIdLegacyAllowed) {
+            clearStoredRecipientId(this.appStorageService);
+        }
         return this.tiledeskAuthService.signInWithCustomToken(token).then((user: UserModel) => {
             this.messagingAuthService.createCustomToken(token)
             this.logger.debug('[APP-COMP] signInWithCustomToken user::', user, this.g.userFullname)
@@ -674,6 +699,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private signInAnonymous(): Promise<UserModel> {
         this.logger.debug('[APP-COMP] signInAnonymous');
         return this.tiledeskAuthService.signInAnonymously(this.g.projectid).then((tiledeskToken) => {
+            this.resetRecipientIdForNewIdentity();
             this.messagingAuthService.createCustomToken(tiledeskToken)
             const user = this.tiledeskAuthService.getCurrentUser();
             if (user.firstname || user.lastname) {
@@ -691,6 +717,28 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             return Promise.reject(error);
         });
     }
+
+    private getCurrentUid(): string {
+        return this.tiledeskAuthService.getCurrentUser()?.uid || null;
+    }
+
+    private setStoredRecipientId(convId: string, ownerUid: string = this.getCurrentUid() || this.g.senderId) {
+        setStoredRecipientId(this.appStorageService, convId, ownerUid);
+    }
+
+    private getStoredRecipientId(currentUid: string = this.getCurrentUid()): string {
+        return getStoredRecipientId(this.appStorageService, currentUid, this.recipientIdLegacyAllowed);
+    }
+
+    /** the conversation in memory and in storage belongs to the previous user: drop it */
+    private resetRecipientIdForNewIdentity() {
+        this.recipientIdLegacyAllowed = false;
+        clearStoredRecipientId(this.appStorageService);
+        if (this.g.recipientId && this.chatManager.getConversationHandlerByConversationId(this.g.recipientId)) {
+            this.chatManager.removeConversationHandler(this.g.recipientId);
+        }
+        this.g.setParameter('recipientId', this.hostRecipientId, false);
+    }
     // ========= end:: AUTHENTICATION ============//
 
     // ========= begin:: START UI ============//
@@ -704,7 +752,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.g.setParameter('isOpenPrechatForm', false);
         this.isOpenSelectionDepartment = false;
         this.isOpenAllConversation = false;
-        const recipientId : string = this.appStorageService.getItem('recipientId')
+        const recipientId : string = this.getStoredRecipientId()
         this.logger.debug('[APP-COMP]  ============ idConversation ===============', recipientId, this.g.recipientId);
         // this.g.recipientId = null;
         this.logger.debug('[APP-COMP] singleConversation conv da ...', this.g.recipientId)
@@ -741,7 +789,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.isOpenConversation = true;
             }
             this.g.setParameter('recipientId', this.g.recipientId);
-            this.appStorageService.setItem('recipientId', this.g.recipientId)
+            this.setStoredRecipientId(this.g.recipientId)
         }else if(recipientId){ 
             this.logger.debug('[APP-COMP]  conv da storagee', recipientId)
             if (this.g.isOpen) {
@@ -820,7 +868,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.logger.debug('[APP-COMP] AppComponent::startNewConversation');
         const newConvId = this.generateNewUidConversation();
         this.g.setParameter('recipientId', newConvId);
-        this.appStorageService.setItem('recipientId', newConvId)
+        this.setStoredRecipientId(newConvId)
         this.logger.debug('[APP-COMP]  recipientId: ', this.g.recipientId);
         this.isConversationArchived = false;
         
@@ -836,7 +884,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private setAttributesFromStorageService(): any {
         let attributes: any = {};
         try {
-            attributes = JSON.parse(this.appStorageService.getItem('attributes'));
+            attributes = JSON.parse(this.appStorageService.getItem(LOCALSTORAGE_KEYS.ATTRIBUTES));
         } catch (error) {
             this.logger.debug('[APP-COMP] > Error  setAttributesFromStorageService:' + error);
         }
@@ -884,6 +932,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         if (widgetVersion) {
             attributes['widgetVer'] = widgetVersion;
         }
+        attributes['voice_mode'] = false;
         try {
             // attributes['payload'] = this.g.customAttributes.payload;
             attributes['payload'] = []
@@ -903,7 +952,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.logger.debug('[APP-COMP] > Error is handled preChatForm: ', error);
         }
 
-        this.appStorageService.setItem('attributes', JSON.stringify(attributes));
+        this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(attributes));
         return attributes;
     }
     
@@ -1021,7 +1070,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     manageWidgetSingleConversation(){
         if(this.g.recipientId){
-            this.appStorageService.setItem('recipientId', this.g.recipientId)
+            this.setStoredRecipientId(this.g.recipientId)
             new Promise((resolve, reject)=>{
                 this.startUI();
                 resolve('ok')
@@ -1038,7 +1087,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 //start widget from this conversation
                 const recipientId : string = conv.uid
                 this.g.setParameter('recipientId', recipientId);
-                this.appStorageService.setItem('recipientId', recipientId)
+                this.setStoredRecipientId(recipientId)
             } else {
                 //start widget with NEW CONVERSATION
                 this.logger.debug("[APP-COMP] getConverationRESTApi: NO active conversations")
@@ -1148,9 +1197,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         if (state != null) {
             this.g.setParameter('preChatForm', state);
             if (state === true) {
-                this.appStorageService.setItem('preChatForm', state);
+                this.appStorageService.setItem(LOCALSTORAGE_KEYS.PRE_CHAT_FORM, state);
             } else {
-                this.appStorageService.removeItem('preChatForm');
+                this.appStorageService.removeItem(LOCALSTORAGE_KEYS.PRE_CHAT_FORM);
             }
         }
     }
@@ -1174,9 +1223,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private setPrivacyPolicy() {
         this.g.privacyApproved = true;
         this.g.setAttributeParameter('privacyApproved', this.g.privacyApproved);
-        this.appStorageService.setItem('attributes', JSON.stringify(this.g.attributes));
+        this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(this.g.attributes));
         this.g.setParameter('preChatForm', false);
-        this.appStorageService.removeItem('preChatForm');
+        this.appStorageService.removeItem(LOCALSTORAGE_KEYS.PRE_CHAT_FORM);
     }
 
     /**
@@ -1197,7 +1246,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.g.setParameter('isLogged', false);
             this.hideWidget();
             // that.g.setParameter('isShown', false, true);
-            this.appStorageService.removeItem('tiledeskToken');
+            this.appStorageService.removeItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN);
             if (this.g.autoStart !== false) {
                 this.authenticate();
                 this.initAll();
@@ -1275,7 +1324,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             // this.g.isOpen = true; // !this.isOpen;
             this.g.setIsOpen(true);
             this.isInitialized = true;
-            this.appStorageService.setItem('isOpen', 'true');
+            this.appStorageService.setItem(LOCALSTORAGE_KEYS.IS_OPEN, 'true');
             // this.g.displayEyeCatcherCard = 'none';
             this.triggerOnOpenEvent();
             // https://stackoverflow.com/questions/35232731/angular2-scroll-to-bottom-chat-style
@@ -1286,7 +1335,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private f21_close() {
         this.g.setIsOpen(false);
         this.g.isOpenNewMessage = false;
-        this.appStorageService.setItem('isOpen', 'false');
+        this.appStorageService.setItem(LOCALSTORAGE_KEYS.IS_OPEN, 'false');
         // this.g.setShadow(this.g.isOpen)
         this.triggerOnCloseEvent();
     }
@@ -1303,7 +1352,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         // this.g.isOpen = true; // !this.isOpen;
         this.g.setIsOpen(true);
         // this.isInitialized = true;
-        this.appStorageService.setItem('isOpen', 'true');
+        this.appStorageService.setItem(LOCALSTORAGE_KEYS.IS_OPEN, 'true');
         // this.g.displayEyeCatcherCard = 'none';
         this.triggerOnOpenEvent();
         // https://stackoverflow.com/questions/35232731/angular2-scroll-to-bottom-chat-style
@@ -1316,7 +1365,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private setAttributeParameter(parameterObj: {key: string, value: any}){
         this.g.setAttributeParameter(parameterObj.key, parameterObj.value)
-        this.appStorageService.setItem('attributes', JSON.stringify(this.g.attributes));
+        this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(this.g.attributes));
     }
 
     private removeFirebasewebsocketFromLocalStorage() {
@@ -1442,7 +1491,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
                 // set default attributes
                 const g_attributes = _globals.attributes;
-                const attributes = <any>{};
+                const attributes = <any>{ voice_mode: false };
                 if (g_attributes) {
                     for (const [key, value] of Object.entries(g_attributes)) {
                         attributes[key] = value;
@@ -1495,7 +1544,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     metadata = {};
                 }
                 const g_attributes = _globals.attributes;
-                const attributes = <any>{};
+                const attributes = <any>{ voice_mode: false };
                 if (g_attributes) {
                     for (const [key, value] of Object.entries(g_attributes)) {
                         attributes[key] = value;
@@ -1720,8 +1769,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     openCloseWidget() {
         this.g.setParameter('displayEyeCatcherCard', 'none');
         // const conversationActive: ConversationModel = JSON.parse(this.appStorageService.getItem('activeConversation'));
-        const recipientId : string = this.appStorageService.getItem('recipientId')
-        this.g.setParameter('recipientId', recipientId);
+        const currentUid = this.getCurrentUid();
+        const recipientId : string = this.getStoredRecipientId(currentUid)
+        if (currentUid) {
+            this.g.setParameter('recipientId', recipientId);
+        }
         this.logger.debug('[APP-COMP] openCloseWidget', recipientId, this.g.isOpen, this.g.startFromHome);
 
         if (this.g.isOpen === false) {
@@ -1731,7 +1783,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.messagingAuthService.createCustomToken(this.g.tiledeskToken)
                 this.forceDisconnect = false;
             }
-            if (!recipientId) {
+            if (!currentUid) {
+                // not authenticated yet: the view is chosen by startUI() / initConversationsHandler() once online
+                this.logger.debug('[APP-COMP] openCloseWidget: user not authenticated yet, defer conversation restore');
+            } else if (!recipientId) {
                 if(this.g.singleConversation){
                     this.isOpenHome = false;
                     this.g.setParameter('isOpenPrechatForm', false)
@@ -1757,7 +1812,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         //change status to the widget
         this.g.setIsOpen(!this.g.isOpen);
-        this.appStorageService.setItem('isOpen', this.g.isOpen);
+        this.appStorageService.setItem(LOCALSTORAGE_KEYS.IS_OPEN, this.g.isOpen);
         //show loading if widget is open and user is not logged
         if(this.g.isOpen === true && !this.g.isLogged){
             this.loading = true;
@@ -1875,10 +1930,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             // this.conversationSelected = $event;
             if($event.channel_type === CHANNEL_TYPE.DIRECT){
                 this.g.setParameter('recipientId', $event.sender);
-                this.appStorageService.setItem('recipientId', $event.sender)
+                this.setStoredRecipientId($event.sender)
             }else {
                 this.g.setParameter('recipientId', $event.recipient);
-                this.appStorageService.setItem('recipientId', $event.recipient)
+                this.setStoredRecipientId($event.recipient)
             }
             this.g.isOpenPrechatForm = false;
             this.isOpenConversation = true;
@@ -1958,7 +2013,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isOpenConversation = true;
 
         this.g.setParameter('recipientId', requestId);
-        this.appStorageService.setItem('recipientId', requestId)
+        this.setStoredRecipientId(requestId)
 
         this.isConversationArchived = false;
         if (this.g.isOpen === false) {
@@ -2003,7 +2058,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     onBackConversation() {
         this.logger.debug('[APP-COMP] onCloseConversation')
-        this.appStorageService.removeItem('recipientId');
+        clearStoredRecipientId(this.appStorageService);
         this.g.setParameter('recipientId', null, false)
         // this.g.setParameter('activeConversation', null, false);
         this.isOpenHome = true;
@@ -2158,7 +2213,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!tiledeskDiv) {
             // Widget container not yet available; still persist choice for later restores.
             try {
-                this.appStorageService.setItem('size', normalizedMode);
+                this.appStorageService.setItem(LOCALSTORAGE_KEYS.SIZE, normalizedMode);
             } catch (e) {
                 this.logger.warn('[APP-COMP] onWidgetSizeChange > cannot persist size', e);
             }
@@ -2186,7 +2241,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // Persist size changes also from the home (conversations list) view.
         try {
-            this.appStorageService.setItem('size', normalizedMode);
+            this.appStorageService.setItem(LOCALSTORAGE_KEYS.SIZE, normalizedMode);
         } catch (e) {
             this.logger.warn('[APP-COMP] onWidgetSizeChange > cannot persist size', e);
         }

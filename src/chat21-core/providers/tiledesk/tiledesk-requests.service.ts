@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { AppStorageService } from '../abstract/app-storage.service';
 import { LoggerService } from '../abstract/logger.service';
 import { LoggerInstance } from '../logger/loggerInstance';
+import { LOCALSTORAGE_KEYS } from 'src/app/utils/constants';
 
 @Injectable()
 export class TiledeskRequestsService {
@@ -30,7 +31,7 @@ export class TiledeskRequestsService {
 
 
   closeSupportGroup(supportgroupid: string): Promise<string> {
-    this.tiledeskToken = this.appStorage.getItem('tiledeskToken')
+    this.tiledeskToken = this.appStorage.getItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN)
     this.logger.debug('[TILEDESK-REQUEST-SERV] - closeSupportGroup', supportgroupid);
     const headers = new HttpHeaders({
       'Accept': 'application/json',
@@ -70,7 +71,7 @@ export class TiledeskRequestsService {
   }
 
   public getMyRequests(): Promise<{ requests: Array<any>}> {
-    this.tiledeskToken = this.appStorage.getItem('tiledeskToken')
+    this.tiledeskToken = this.appStorage.getItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN)
     const url = this.URL_TILEDESK_REQUEST + 'me?preflight=true'
     this.logger.log('[TILEDESK-SERVICE] - GET REQUEST url ', url);
     const httpOptions = {

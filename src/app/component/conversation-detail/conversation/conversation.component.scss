@@ -280,6 +280,16 @@ dialog:-internal-dialog-in-top-layer{
             34px
         ) !important;
     }
+
+    /* Con `.close-stream-button` (stream in ascolto): spazio per alert stream sopra il footer */
+    #chat21-conversation-component.chat21-conversation--close-stream-active ::ng-deep .chat21-sheet-content {
+        bottom: calc(
+            var(--chat-footer-logo-height) +
+            var(--chat-footer-height) +
+            var(--chat-footer-stream-button-height) +
+            34px
+        ) !important;
+    }
     
 }
 

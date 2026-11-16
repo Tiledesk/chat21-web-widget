@@ -5,9 +5,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, TYPE_MSG_URL_PREVIEW } from 'src/chat21-core/utils/constants';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
-import { JsonSourcesParserService, UrlPreviewDisplayFields } from 'src/app/providers/json-sources-parser.service';
 import { calcImageSize, isAudio, isAudioTTS, isFile, isFrame, isImage, isJsonSources, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
+import { JsonSourcesParserService, UrlPreviewDisplayFields } from 'src/app/providers/json-sources-parser.service';
 import { VoiceService } from 'src/app/providers/voice/voice.service';
 import { JsonSourceItem } from '../json-sources/json-sources.component';
 import { VoiceTtsKaraokeWord } from 'src/app/providers/voice/voice-streaming.types';
@@ -77,8 +77,8 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
   readonly isFile = isFile;
   readonly isFrame = isFrame;
   readonly isAudio = isAudio;
-  readonly isJsonSources = isJsonSources;
   readonly isAudioTTS = isAudioTTS;
+  readonly isJsonSources = isJsonSources;
   readonly messageType = messageType;
   readonly convertColorToRGBA = convertColorToRGBA;
   readonly MESSAGE_TYPE_MINE = MESSAGE_TYPE_MINE;
@@ -94,10 +94,10 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
   private urlPreviewReqId = 0;
 
   constructor(
-    public sanitizer: DomSanitizer, 
-    public voiceService: VoiceService, 
-    private jsonSourcesParser: JsonSourcesParserService
-  ) { }
+    public sanitizer: DomSanitizer,
+    private jsonSourcesParser: JsonSourcesParserService,
+    public voiceService: VoiceService,
+  ) {}
 
   ngOnInit() {
     // If this TTS message arrived while the voice proxy was active, mark it so
@@ -222,6 +222,14 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  trackWord(_index: number, item: { word: string; index: number }): number {
+    return item.index;
+  }
+
+  trackKaraokeWord(index: number): number {
+    return index;
+  }
+  
   private firstDefined<T>(...values: Array<T | undefined>): T | undefined {
     return values.find((v) => v !== undefined && v !== null);
   }

@@ -65,8 +65,8 @@ export class MQTTAuthService extends MessagingAuthService {
     return new Promise((resolve, reject) => {
       this.chat21Service.chatClient.close(() => {
         // remove
-        // this.appStorage.removeItem('tiledeskToken');
-        // this.appStorage.removeItem('currentUser');
+        // this.appStorage.removeItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN);
+        // this.appStorage.removeItem(LOCALSTORAGE_KEYS.CURRENT_USER);
         this.currentUser = null;
         this.logger.debug("[MQTTAuthService] logout: mqtt connection closed. user removed. OK");
         this.BSSignOut.next(true);
@@ -98,7 +98,7 @@ z
    */
   onAuthStateChanged() {
     this.logger.debug('UserService::onAuthStateChanged');
-    // if (this.appStorage.getItem('tiledeskToken') == null) {
+    // if (this.appStorage.getItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN) == null) {
     //   this.currentUser = null;
       this.BSAuthStateChanged.next('offline');
     // }
@@ -106,7 +106,7 @@ z
     this.logger.debug("STORAGE CHANGED: added listner")
     // window.addEventListener('storage', (e) => {
     //   console.log('STORAGE CHANGED:', e.key);
-    //   if (this.appStorage.getItem('tiledeskToken') == null && this.appStorage.getItem('currentUser') == null) {
+    //   if (this.appStorage.getItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN) == null && this.appStorage.getItem(LOCALSTORAGE_KEYS.CURRENT_USER) == null) {
     //     console.log('STORAGE CHANGED: CASO TOKEN NULL');
     //     this.currentUser = null;
     //     // that.logout(() => {
@@ -114,10 +114,10 @@ z
     //     // });
     //     this.logout();
     //   }
-    //   else if (this.currentUser == null && this.appStorage.getItem('tiledeskToken') != null && this.appStorage.getItem('currentUser') != null) {
+    //   else if (this.currentUser == null && this.appStorage.getItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN) != null && this.appStorage.getItem(LOCALSTORAGE_KEYS.CURRENT_USER) != null) {
     //     console.log('STORAGE CHANGED: CASO LOGGED OUTSIDE');
-    //     this.currentUser = JSON.parse(this.appStorage.getItem('currentUser'));
-    //     const tiledeskToken = this.appStorage.getItem('tiledeskToken');
+    //     this.currentUser = JSON.parse(this.appStorage.getItem(LOCALSTORAGE_KEYS.CURRENT_USER));
+    //     const tiledeskToken = this.appStorage.getItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN);
     //     this.connectWithCustomToken(tiledeskToken);
     //   }
     // }, false);
@@ -160,7 +160,7 @@ z
   //     .subscribe(data => {
   //       console.log("native auth data:", JSON.stringify(data));
   //       if (data['token'] && data['userid']) {
-  //         this.appStorage.setItem('tiledeskToken', data['token']);
+  //         this.appStorage.setItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN, data['token']);
   //         this.tiledeskToken = data['token'];
   //         data['_id'] = data['userid'];
   //         this.createCompleteUser(data);
@@ -187,7 +187,7 @@ z
   //       if (data['success'] && data['token']) {
   //         this.tiledeskToken = data['token'];
   //         // this.createCompleteUser(data['user']);
-  //         this.appStorage.setItem('tiledeskToken', this.tiledeskToken);
+  //         this.appStorage.setItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN, this.tiledeskToken);
   //         this.connectWithCustomToken(this.tiledeskToken);
   //         resolve(this.currentUser)
   //       }
@@ -216,7 +216,7 @@ z
   //       if (data['success'] && data['token']) {
   //         this.tiledeskToken = data['token'];
   //         this.createCompleteUser(data['user']);
-  //         this.appStorage.setItem('tiledeskToken', this.tiledeskToken);
+  //         this.appStorage.setItem(LOCALSTORAGE_KEYS.TILEDESK_TOKEN, this.tiledeskToken);
   //         this.connectWithCustomToken(this.tiledeskToken);
   //         // that.firebaseCreateCustomToken(tiledeskToken);
   //       }
@@ -309,7 +309,7 @@ z
   //   console.log('createCompleteUser: ', member);
   //   this.currentUser = member;
   //   // salvo nel local storage e sollevo l'evento
-  //   this.appStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+  //   this.appStorage.setItem(LOCALSTORAGE_KEYS.CURRENT_USER, JSON.stringify(this.currentUser));
   // }
 
 }

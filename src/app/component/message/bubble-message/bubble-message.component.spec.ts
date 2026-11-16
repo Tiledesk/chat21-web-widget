@@ -35,14 +35,18 @@ describe('BubbleMessageComponent', () => {
 
   const jsonSourcesParserMock = {
     getUrlPreviewPayload: () => null,
-    parseBaseFromMessage: jasmine.createSpy('parseBaseFromMessage').and.returnValue(null),
+    parseBaseFromMessage: () => null,
     enrichSources: jasmine.createSpy('enrichSources').and.resolveTo([]),
   };
 
   const voiceServiceMock = {
     isWssVoiceActive: false,
     markProxyHandled: jasmine.createSpy('markProxyHandled'),
-    voiceTtsKaraoke$: of({ text: '', words: [], activeIndex: -1 }),
+    voiceTtsKaraoke$: {
+      pipe: () => ({
+        subscribe: () => ({ unsubscribe: () => undefined }),
+      }),
+    },
   };
 
   const textMessage: any = {
@@ -191,6 +195,69 @@ describe('BubbleMessageComponent', () => {
       expect(s.width).toBeUndefined();
       expect(s.height).toBe(10);
     });
+
+    it('should keep width when it equals MAX_WIDTH_IMAGES', () => {
+      const s = calcImageSize({ width: MAX_WIDTH_IMAGES, height: 50 });
+      expect(s.width).toBe(MAX_WIDTH_IMAGES);
+      expect(s.height).toBe(50);
+    });
+  });
+
+  describe('reply types from chatbot (image / frame / audio / html)', () => {
+    it('should render chat-image for image metadata', () => {
+      component.message = {
+        ...textMessage,
+        type: 'image',
+        metadata: { src: 'https://cdn.example/img.png', width: 100, height: 50 },
+      };
+      fixture.detectChanges();
+      expect(fixture.debugElement.query(By.css('chat-image'))).toBeTruthy();
+    });
+
+    it('should render chat-frame for frame metadata', () => {
+      component.message = {
+        ...textMessage,
+        type: 'frame',
+        metadata: { src: 'https://player.example/v/1', width: 400, height: 300 },
+      };
+      fixture.detectChanges();
+      expect(fixture.debugElement.query(By.css('chat-frame'))).toBeTruthy();
+    });
+
+    it('should render chat-audio and hide chat-text for audio files', () => {
+      component.message = {
+        ...textMessage,
+        type: 'file',
+        text: 'voice',
+        metadata: { src: 'blob:audio', type: 'audio/wav' },
+      };
+      fixture.detectChanges();
+      expect(fixture.debugElement.query(By.css('chat-audio'))).toBeTruthy();
+      expect(fixture.debugElement.query(By.css('chat-text'))).toBeNull();
+    });
+
+    it('should render chat-html when message type is html', () => {
+      component.message = { ...textMessage, type: 'html', text: '<b>hi</b>' };
+      fixture.detectChanges();
+      expect(fixture.debugElement.query(By.css('chat-html'))).toBeTruthy();
+      expect(fixture.debugElement.query(By.css('chat-text'))).toBeNull();
+    });
+
+    it('should show sender fullname for others when not same sender', () => {
+      component.message = { ...textMessage, isSender: false, sender_fullname: 'Reply types Chatbot' };
+      component.isSameSender = false;
+      fixture.detectChanges();
+      const name = fixture.debugElement.query(By.css('.message_sender_fullname'));
+      expect(name).toBeTruthy();
+      expect(name.nativeElement.textContent).toContain('Reply types Chatbot');
+    });
+
+    it('should hide sender fullname when isSameSender', () => {
+      component.message = { ...textMessage, isSender: false, sender_fullname: 'Reply types Chatbot' };
+      component.isSameSender = true;
+      fixture.detectChanges();
+      expect(fixture.debugElement.query(By.css('.message_sender_fullname'))).toBeNull();
+    });
   });
 
   describe('ngOnChanges', () => {
@@ -203,49 +270,10 @@ describe('BubbleMessageComponent', () => {
       expect(component.sizeImage.width).toBe(100);
     });
 
-    it('should cap width when metadata exceeds MAX_WIDTH_IMAGES (calcImageSize)', () => {
-      component.message = {
-        ...textMessage,
-        metadata: { width: MAX_WIDTH_IMAGES * 2, height: 100 },
-      };
-      component.ngOnChanges();
-      expect(component.sizeImage.width).toBe(MAX_WIDTH_IMAGES);
-    });
-
-    it('should scale up narrow thumbnails when width <= 55 (calcImageSize)', () => {
-      component.message = {
-        ...textMessage,
-        metadata: { width: 40, height: 80 },
-      };
-      component.ngOnChanges();
-      expect(component.sizeImage.width).toBe(MIN_WIDTH_IMAGES);
-      expect(component.sizeImage.height).toBe(MIN_WIDTH_IMAGES / (40 / 80));
-    });
-
-    it('should keep metadata dimensions for mid-sized images', () => {
-      component.message = {
-        ...textMessage,
-        metadata: { width: 120, height: 60 },
-      };
-      component.ngOnChanges();
-      expect(component.sizeImage.width).toBe(120);
-      expect(component.sizeImage.height).toBe(60);
-    });
-
-    it('should leave width undefined when metadata has no width (calcImageSize)', () => {
-      component.message = {
-        ...textMessage,
-        metadata: { width: undefined, height: 10 },
-      };
-      component.ngOnChanges();
-      expect(component.sizeImage.width).toBeUndefined();
-      expect(component.sizeImage.height).toBe(10);
-    });
-
     it('should ignore non-object metadata', () => {
       component.message = { ...textMessage, metadata: 'x' as any };
       component.ngOnChanges();
-      expect(component.sizeImage).toEqual({ width: 0, height: 0 });
+      expect(component.sizeImage).toBeUndefined();
     });
 
     it('should derive fullnameColor from fontColor', () => {
