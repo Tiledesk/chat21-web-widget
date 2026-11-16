@@ -7,7 +7,7 @@
       
     <div style="max-width: 70%;">
         
-        <span class="base_info" [innerHTML]="message?.text | marked" tooltip="{{message.timestamp | dateAgo}} ({{message.timestamp | date:'shortDate'}} {{message.timestamp | date:'HH:mm:ss'}})" placement="left"></span>
+        <span class="base_info" [innerHTML]="$safeNavigationMigration(message?.text) | marked" tooltip="{{message.timestamp | dateAgo}} ({{message.timestamp | date:'shortDate'}} {{message.timestamp | date:'HH:mm:ss'}})" placement="left"></span>
         <!-- <ng-template #timeTooltipLeft>
             <span>{{message.timestamp | amTimeAgo}} ({{message.timestamp | amLocal | amDateFormat: 'L HH:mm:ss'}})</span>
         </ng-template>  -->

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 
 // models
 import { MessageModel } from 'src/chat21-core/models/message';
@@ -7,6 +7,7 @@ import { MessageModel } from 'src/chat21-core/models/message';
     selector: 'chat-message-attachment',
     templateUrl: './message-attachment.component.html',
     styleUrls: ['./message-attachment.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MessageAttachmentComponent implements OnInit {

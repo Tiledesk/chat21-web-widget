@@ -3,7 +3,7 @@ import { Globals } from '../utils/globals';
 import { TestBed, inject } from '@angular/core/testing';
 
 import { StarRatingWidgetService } from './star-rating-widget.service';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 describe('StarRatingWidgetService', () => {
   beforeEach(() => {
@@ -13,7 +13,7 @@ describe('StarRatingWidgetService', () => {
         StarRatingWidgetService,
         Globals,
         AppConfigService,
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(withXhr(), withInterceptorsFromDi())
     ]
 });
   });

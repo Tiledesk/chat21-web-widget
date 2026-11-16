@@ -18,11 +18,11 @@
       <div class="card"
         role="group"
         aria-roledescription="slide"
-        [attr.aria-label]="getSlideLabel(i + 1, gallery?.length)">
+        [attr.aria-label]="getSlideLabel(i + 1, $safeNavigationMigration(gallery?.length))">
         <div>
           @if (card?.preview?.src !== '') {
             <div class="card-image">
-              <img [src]="card?.preview?.src" [attr.alt]="card?.title || 'Carousel image'" draggable="false">
+              <img [src]="$safeNavigationMigration(card?.preview?.src)" [attr.alt]="card?.title || 'Carousel image'" draggable="false">
             </div>
           }
           @if (card?.preview?.src == '') {
@@ -40,7 +40,7 @@
               @for (button of card?.buttons; track button) {
                 <button type="button"
                   class="single-button action c21-button-clean"
-                  [ngClass]="{'disabled': (isConversationArchived || (!isLastMessage && button.type !== TYPE_BUTTON.URL)), 'active': button?.active}"
+                  [ngClass]="{'disabled': (isConversationArchived || (!isLastMessage && button.type !== TYPE_BUTTON.URL)), 'active': $safeNavigationMigration(button?.active)}"
                   [attr.aria-label]="button?.value"
                   (click)="actionButtonClick($event, button, i)" >
                   {{button.value}}

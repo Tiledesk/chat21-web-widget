@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 
 import { UploadService } from 'src/chat21-core/providers/abstract/upload.service';
@@ -46,7 +46,7 @@ describe('ConversationContentComponent', () => {
       providers: [
         { provide: UploadService, useValue: uploadServiceStub },
         ImageRepoService,
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
       imports: [

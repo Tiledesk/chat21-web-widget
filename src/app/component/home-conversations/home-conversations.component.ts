@@ -1,5 +1,5 @@
 
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
@@ -25,6 +25,7 @@ import { ConversationModel } from '../../../chat21-core/models/conversation';
     selector: 'chat-home-conversations',
     templateUrl: './home-conversations.component.html',
     styleUrls: ['./home-conversations.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

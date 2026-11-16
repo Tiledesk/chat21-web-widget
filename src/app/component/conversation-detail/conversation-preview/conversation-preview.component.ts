@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MIN_WIDTH_IMAGES } from 'src/app/utils/constants';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
@@ -8,6 +8,7 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
     selector: 'chat-conversation-attachment-preview',
     templateUrl: './conversation-preview.component.html',
     styleUrls: ['./conversation-preview.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ConversationPreviewComponent implements OnInit {

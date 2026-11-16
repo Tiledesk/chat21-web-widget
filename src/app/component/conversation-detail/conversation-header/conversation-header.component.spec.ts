@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { HttpTestingController } from '@angular/common/http/testing';
 
 import { AppConfigService } from '../../../providers/app-config.service';
@@ -30,7 +30,7 @@ describe('ConversationHeaderComponent', () => {
       declarations: [ConversationHeaderComponent],
       providers: [
         { provide: AppConfigService, useValue: appConfigStub },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
     })

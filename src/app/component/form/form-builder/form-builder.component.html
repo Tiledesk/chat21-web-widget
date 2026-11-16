@@ -5,7 +5,7 @@
         @if (element?.type === 'text') {
           <chat-form-text
             [element]="element"
-            [controlName]="element?.name"
+            [controlName]="$safeNavigationMigration(element?.name)"
             [translationErrorLabelMap]="translationErrorLabelMap"
             [stylesMap]="stylesMap"
             [hasSubmitted]="submitted"
@@ -15,7 +15,7 @@
         @if (element?.type === 'static') {
           <chat-form-label
             [element]="element"
-            [controlName]="element?.name"
+            [controlName]="$safeNavigationMigration(element?.name)"
             [hasSubmitted]="submitted"
             (onKeyEnterPressed)="onEnterButtonPressed($event)">
           </chat-form-label>
@@ -23,7 +23,7 @@
         @if (element?.type === 'checkbox') {
           <chat-form-checkbox
             [element]="element"
-            [controlName]="element?.name"
+            [controlName]="$safeNavigationMigration(element?.name)"
             [translationErrorLabelMap]="translationErrorLabelMap"
             [stylesMap]="stylesMap"
             [hasSubmitted]="submitted"
@@ -33,8 +33,8 @@
         @if (element?.type === 'textarea') {
           <chat-form-textarea
             [element]="element"
-            [controlName]="element?.name"
-            [rows]="element?.rows"
+            [controlName]="$safeNavigationMigration(element?.name)"
+            [rows]="$safeNavigationMigration(element?.rows)"
             [translationErrorLabelMap]="translationErrorLabelMap"
             [stylesMap]="stylesMap"
             [hasSubmitted]="submitted"
@@ -49,10 +49,10 @@
     <button [tabindex]="lastTabIndex" type="button" class="c21-button-primary"
       (click)="onSubmitPreChatForm()"
       (keydown.enter)="onEnterButtonPressed($event)"
-      [ngStyle]="{'background-color': stylesMap?.get('themeColor'), 'border-color': stylesMap?.get('themeColor'), 'color': stylesMap?.get('foregroundColor') }">
+      [ngStyle]="{'background-color': $safeNavigationMigration(stylesMap?.get('themeColor')), 'border-color': $safeNavigationMigration(stylesMap?.get('themeColor')), 'color': $safeNavigationMigration(stylesMap?.get('foregroundColor')) }">
       <span class="v-align-center">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"  [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}"/>
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"  [ngStyle]="{'fill': $safeNavigationMigration(stylesMap?.get('foregroundColor'))}"/>
           <path d="M0 0h24v24H0z" fill="none"/>
         </svg>
       </span>

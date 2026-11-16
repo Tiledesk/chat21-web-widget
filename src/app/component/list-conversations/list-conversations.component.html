@@ -25,7 +25,7 @@
             </div>
           </div>
           <div class="c21-right-conv">
-            <div class="c21-last-time">{{conversation?.timestamp | dateAgo}}</div>
+            <div class="c21-last-time">{{$safeNavigationMigration(conversation?.timestamp) | dateAgo}}</div>
             <div class="truncate c21-name">{{conversation?.sender_fullname }}</div>
             <!-- --- IMAGE PREVIEW ICON ---- -->
             @if (conversation?.type ==='image') {

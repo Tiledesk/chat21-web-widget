@@ -6,9 +6,9 @@
     </label>
     <textarea
       [id]="fieldBaseId"
-      [formControlName]="element?.name"
+      [formControlName]="$safeNavigationMigration(element?.name)"
       [rows]="rows"
-      [tabIndex]="element?.tabIndex"
+      [tabIndex]="$safeNavigationMigration(element?.tabIndex)"
       type="text"
       class="form-control"
       [attr.aria-required]="element?.mandatory ? 'true' : null"

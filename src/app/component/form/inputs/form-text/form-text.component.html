@@ -7,9 +7,9 @@
     </label>
     <input
       [id]="fieldBaseId"
-      [formControlName]="element?.name"
+      [formControlName]="$safeNavigationMigration(element?.name)"
       [type]="inputType"
-      [tabIndex]="element?.tabIndex"
+      [tabIndex]="$safeNavigationMigration(element?.tabIndex)"
       class="form-control"
       [class.errors]="form?.controls[element?.name].errors && hasSubmitted"
       [attr.aria-required]="element?.mandatory ? 'true' : null"

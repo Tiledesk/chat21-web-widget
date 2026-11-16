@@ -3,16 +3,16 @@
     <input  class="form-check-input errors"
       type="checkbox"
       [id]="fieldBaseId"
-      [formControlName]="element?.name"
-      [checked]="element?.value"
-      [tabIndex]="element?.tabIndex"
+      [formControlName]="$safeNavigationMigration(element?.name)"
+      [checked]="$safeNavigationMigration(element?.value)"
+      [tabIndex]="$safeNavigationMigration(element?.tabIndex)"
       [ngClass]="{'errors': hasSubmitted && form.controls[element?.name].errors}"
       [attr.aria-required]="element?.mandatory ? 'true' : null"
       [attr.aria-invalid]="ariaInvalid"
       [attr.aria-describedby]="ariaDescribedByErrors"
       (keydown.enter)="onEnterPressed($event)">
     <label class="c21-form-message-field" [attr.for]="fieldBaseId">{{element?.text}}</label>
-    @if (hasSubmitted && form.get(element?.name)?.errors) {
+    @if (hasSubmitted && form.get($safeNavigationMigration(element?.name))?.errors) {
       <div [id]="errorsId" class="text-danger" role="alert">
         {{translationErrorLabelMap.get('LABEL_ERROR_FIELD_REQUIRED')}}
       </div>

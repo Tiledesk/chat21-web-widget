@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Globals } from 'src/app/utils/globals';
 import { AppStorageService } from 'src/chat21-core/providers/abstract/app-storage.service';
@@ -10,6 +10,7 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
     selector: 'chat-prechat-form',
     templateUrl: './prechat-form.component.html',
     styleUrls: ['./prechat-form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class PrechatFormComponent implements OnInit, AfterViewInit {

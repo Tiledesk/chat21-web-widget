@@ -2,7 +2,7 @@ import { SimpleChange } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 import { ConversationFooterComponent } from './conversation-footer.component';
 import { ChatManager } from 'src/chat21-core/providers/chat-manager';
@@ -74,7 +74,7 @@ describe('ConversationFooterComponent', () => {
         { provide: TtsAudioPlaybackCoordinator, useValue: ttsMock },
         { provide: TiledeskAuthService, useValue: { getTiledeskToken: () => '' } },
         { provide: AppStorageService, useValue: { getItem: () => null, setItem: () => undefined, removeItem: () => undefined } },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
     })

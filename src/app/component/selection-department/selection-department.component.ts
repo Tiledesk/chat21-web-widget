@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { Globals } from '../../utils/globals';
 
@@ -10,6 +10,7 @@ import { DepartmentModel } from 'src/models/department';
     selector: 'chat-selection-department',
     templateUrl: './selection-department.component.html',
     styleUrls: ['./selection-department.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

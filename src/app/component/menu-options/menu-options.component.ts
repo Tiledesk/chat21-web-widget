@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import { Globals } from 'src/app/utils/globals';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 
@@ -8,6 +8,7 @@ import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
     selector: 'chat-menu-options',
     templateUrl: './menu-options.component.html',
     styleUrls: ['./menu-options.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MenuOptionsComponent implements OnInit {

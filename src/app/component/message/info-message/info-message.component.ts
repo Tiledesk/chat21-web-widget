@@ -1,5 +1,5 @@
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MessageModel } from '../../../../chat21-core/models/message';
 import { LoggerService } from '../../../../chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from '../../../../chat21-core/providers/logger/loggerInstance';
@@ -8,6 +8,7 @@ import { LoggerInstance } from '../../../../chat21-core/providers/logger/loggerI
     selector: 'chat-info-message',
     templateUrl: './info-message.component.html',
     styleUrls: ['./info-message.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class InfoMessageComponent implements OnInit {

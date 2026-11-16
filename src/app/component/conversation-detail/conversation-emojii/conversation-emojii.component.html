@@ -1,11 +1,11 @@
 <emoji-mart id="emoji-mart"
     class="emoji-mart"
-    [showPreview]="emojiiOptions?.showPreview"
-    [color]="stylesMap?.get('themeColor')" 
-    [perLine]="emojiiOptions?.emojiPerLine"
-    [totalFrequentLines]="emojiiOptions?.totalFrequentLines"
-    [enableSearch]="emojiiOptions?.enableSearch"
-    [darkMode]="emojiiOptions?.darkMode"
-    [include]="emojiiOptions?.include"
+    [showPreview]="$safeNavigationMigration(emojiiOptions?.showPreview)"
+    [color]="$safeNavigationMigration(stylesMap?.get('themeColor'))" 
+    [perLine]="$safeNavigationMigration(emojiiOptions?.emojiPerLine)"
+    [totalFrequentLines]="$safeNavigationMigration(emojiiOptions?.totalFrequentLines)"
+    [enableSearch]="$safeNavigationMigration(emojiiOptions?.enableSearch)"
+    [darkMode]="$safeNavigationMigration(emojiiOptions?.darkMode)"
+    [include]="$safeNavigationMigration(emojiiOptions?.include)"
     (emojiSelect)="addEmojiFN($event)">
 </emoji-mart>

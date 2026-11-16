@@ -149,7 +149,7 @@
     <div>
       <chat-last-message
         [conversation]="lastConversation"
-        [baseLocation]="g?.windowContext['tiledesk']?.getBaseLocation()"
+        [baseLocation]="$safeNavigationMigration(g?.windowContext['tiledesk']?.getBaseLocation())"
         [stylesMap]="styleMapConversation"
         (onCloseMessagePreview)="triggerHandler.triggerOnCloseMessagePreview()"
         (onSelectedConversation)="onSelectedConversation($event)">

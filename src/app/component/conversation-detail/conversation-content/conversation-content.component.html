@@ -13,7 +13,7 @@
       @if (messages && this.messages.length === 0 && !isTypings) {
         <span>
           <user-typing class="loading"
-            [color]="stylesMap?.get('iconColor')"
+            [color]="$safeNavigationMigration(stylesMap?.get('iconColor'))"
             [translationMap]="translationMap"
             [idUserTypingNow]="idUserTypingNow"
             [nameUserTypingNow]="nameUserTypingNow">
@@ -35,7 +35,7 @@
                       <!-- class="messages msg_sent slide-in-right" -->
                       <chat-bubble-message class="messages msg_sent"
                         [class.no-background]="(isImage(message) || isFrame(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"
-                        [class.emoticon]="isEmojii(message?.text)"
+                        [class.emoticon]="isEmojii($safeNavigationMigration(message?.text))"
                         [ngStyle]="{'background': stylesMap.get('bubbleSentBackground'), 'color': stylesMap.get('bubbleSentTextColor')}"
                         [ngClass]="{'button-in-msg' : message?.metadata && message?.metadata?.button}"
                         [message]="message"
@@ -48,18 +48,18 @@
                       </chat-bubble-message>
                       <!-- icon status message -->
                       <chat-return-receipt
-                        [status]="message?.status">
+                        [status]="$safeNavigationMigration(message?.status)">
                       </chat-return-receipt>
                     </div>
                   }
                   <!-- message RECIPIENT:: -->
                   @if (messageType(MESSAGE_TYPE_OTHERS, message)) {
                     <div role="article" class="msg_container base_receive">
-                      @if (!isSameSender(message?.sender, i) && !isStreamAudioActive) {
+                      @if (!isSameSender($safeNavigationMigration(message?.sender), i) && !isStreamAudioActive) {
                         <chat-avatar-image
                           [ngClass]="{'slide-in-left': false}"
-                          [senderID]="message?.sender"
-                          [senderFullname]="message?.sender_fullname"
+                          [senderID]="$safeNavigationMigration(message?.sender)"
+                          [senderFullname]="$safeNavigationMigration(message?.sender_fullname)"
                           [baseLocation]="baseLocation">
                         </chat-avatar-image>
                       }
@@ -68,11 +68,11 @@
                       <chat-bubble-message class="messages msg_receive"
                         [ngClass]="{'slide-in-left': false}"
                         [class.no-background]="(isImage(message) || isFrame(message) || isCarousel(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"
-                        [class.emoticon]="isEmojii(message?.text)"
+                        [class.emoticon]="isEmojii($safeNavigationMigration(message?.text))"
                         [class.fullSizeMessage]="isStreamAudioActive"
-                        [style.margin-left]="isSameSender(message?.sender, i) && !isStreamAudioActive ? 'calc(var(--avatar-width) + 10px)' : null"
+                        [style.margin-left]="isSameSender($safeNavigationMigration(message?.sender), i) && !isStreamAudioActive ? 'calc(var(--avatar-width) + 10px)' : null"
                         [ngStyle]="{'background': stylesMap.get('bubbleReceivedBackground'), 'color': stylesMap.get('bubbleReceivedTextColor'), 'width':isFrame(message) ?'100%' : null}"
-                        [isSameSender]="isSameSender(message?.sender, i)"
+                        [isSameSender]="isSameSender($safeNavigationMigration(message?.sender), i)"
                         [message]="message"
                         [fontColor]="stylesMap.get('bubbleReceivedTextColor')"
                         [stylesMap]="stylesMap"
@@ -97,7 +97,7 @@
                   <div class="time slide-in-left" [ngClass]="{'sender' : message?.sender == senderId}">
                     <!-- <time #timeTooltip *ngIf="message?.sender!=='' && message?.timestamp !== '{.sv: timestamp}'" >{{message?.timestamp  | amTimeAgo}} </time> -->
                     @if (message?.sender!=='' && message?.timestamp !== '{.sv: timestamp}') {
-                      <time #timeTooltip >{{message?.timestamp  | dateAgo}} </time>
+                      <time #timeTooltip >{{$safeNavigationMigration(message?.timestamp)  | dateAgo}} </time>
                     }
                   </div>
                   <!-- message type:: button &&  -->
@@ -107,7 +107,7 @@
                         style="height: 100%; display: block;"
                         [message]="message"
                         [isConversationArchived]="isConversationArchived"
-                        [isLastMessage] = "isLastMessage(message?.uid)"
+                        [isLastMessage] = "isLastMessage($safeNavigationMigration(message?.uid))"
                         [stylesMap]="stylesMap"
                         (onElementRendered)="onElementRenderedFN($event)"
                         (onAttachmentButtonClicked)="onAttachmentButtonClickedFN($event)">
@@ -120,7 +120,7 @@
                       <chat-carousel class="carousel_container"
                         [message]="message"
                         [isConversationArchived]="isConversationArchived"
-                        [isLastMessage] = "isLastMessage(message?.uid)"
+                        [isLastMessage] = "isLastMessage($safeNavigationMigration(message?.uid))"
                         [stylesMap]="stylesMap"
                         [translationMap]="translationMap"
                         (onElementRendered)="onElementRenderedFN($event)"
@@ -154,7 +154,7 @@
                     </chat-avatar-image>
                   }
                   <user-typing
-                    [color]="stylesMap?.get('iconColor')"
+                    [color]="$safeNavigationMigration(stylesMap?.get('iconColor'))"
                     [ngClass]="{'userTypingNowExist': !idUserTypingNow}"
                     [translationMap]="translationMap"
                     [idUserTypingNow]="idUserTypingNow"
@@ -167,7 +167,7 @@
                 <div class="msg_container base_receive thinking_receive">
                   <user-typing class="loading thinking-dots"
                     [class.fullSize]="isStreamAudioActive"
-                    [color]="stylesMap?.get('iconColor')"
+                    [color]="$safeNavigationMigration(stylesMap?.get('iconColor'))"
                     [class.fullSize]="isStreamAudioActive"
                     [translationMap]="translationMap"
                     [idUserTypingNow]="idUserTypingNow"

@@ -31,10 +31,10 @@
           [class.left-indicator]="isFirst && (!isImage(message) || isFrame(message))"
           [class.no-background]="(isImage(message) || isFrame(message)) && message?.text?.trim() === ''">
           <chat-bubble-message class="messages no-background"
-            [class.emoticon]="isEmojii(message?.text)"
+            [class.emoticon]="isEmojii($safeNavigationMigration(message?.text))"
             [ngClass]="{'button-in-msg' : message?.metadata && message?.metadata?.button}"
             [message]="message"
-            [isSameSender]="isSameSender(message?.sender, i)"
+            [isSameSender]="isSameSender($safeNavigationMigration(message?.sender), i)"
             [fontColor]="stylesMap.get('bubbleReceivedTextColor')"
             [stylesMap]="stylesMap"
             (onElementRendered)="onElementRenderedFN($event)">
@@ -43,8 +43,8 @@
             <div class="c21-icon-avatar">
               <div class="c21-avatar-image profile_image">
                 <chat-avatar-image class="slide-in-left"
-                  [senderID]="message?.sender"
-                  [senderFullname]="message?.sender_fullname"
+                  [senderID]="$safeNavigationMigration(message?.sender)"
+                  [senderFullname]="$safeNavigationMigration(message?.sender_fullname)"
                   [baseLocation]="baseLocation">
                 </chat-avatar-image>
               </div>

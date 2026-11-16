@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -15,6 +15,7 @@ import { FormLabelComponent } from './form-label.component';
         [hasSubmitted]="hasSubmitted"
       ></chat-form-label>
     </form>`,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 class FormLabelHostComponent {

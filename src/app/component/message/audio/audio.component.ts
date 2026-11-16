@@ -1,4 +1,4 @@
-import { Component, ElementRef, AfterViewInit, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
@@ -8,6 +8,7 @@ import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
     selector: 'chat-audio',
     templateUrl: './audio.component.html',
     styleUrls: ['./audio.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AudioComponent implements AfterViewInit {

@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { FormArray } from '../../../../../chat21-core/models/formArray';
 
@@ -6,6 +6,7 @@ import { FormArray } from '../../../../../chat21-core/models/formArray';
     selector: 'chat-form-checkbox',
     templateUrl: './form-checkbox.component.html',
     styleUrls: ['./form-checkbox.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FormCheckboxComponent implements OnInit {

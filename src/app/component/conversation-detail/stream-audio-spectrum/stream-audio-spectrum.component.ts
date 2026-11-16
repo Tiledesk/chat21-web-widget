@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, Optional, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, Optional, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { VoiceService } from 'src/app/providers/voice/voice.service';
 
@@ -12,6 +12,7 @@ export type StreamAudioSpectrumMode = 'alert' | 'button';
     selector: 'chat-stream-audio-spectrum',
     templateUrl: './stream-audio-spectrum.component.html',
     styleUrl: './stream-audio-spectrum.component.scss',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class StreamAudioSpectrumComponent implements OnInit, OnChanges {

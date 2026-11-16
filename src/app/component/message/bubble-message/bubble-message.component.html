@@ -11,16 +11,16 @@
       @if (isImage(message)) {
         <chat-image
           [metadata]="message.metadata"
-          [width]="sizeImage?.width"
-          [height]="sizeImage?.height"
+          [width]="$safeNavigationMigration(sizeImage?.width)"
+          [height]="$safeNavigationMigration(sizeImage?.height)"
           (onElementRendered)="onElementRenderedFN($event)">
         </chat-image>
       }
       @if (isFrame(message)) {
         <chat-frame
           [metadata]="message.metadata"
-          [width]="sizeImage?.width"
-          [height]="sizeImage?.height"
+          [width]="$safeNavigationMigration(sizeImage?.width)"
+          [height]="$safeNavigationMigration(sizeImage?.height)"
           (onElementRendered)="onElementRenderedFN($event)">
         </chat-frame>
       }
@@ -42,7 +42,7 @@
       }
       <!-- TTS player: only when voice proxy is NOT active (avoids double playback)
       and the message was not already played by the proxy (avoids replay on session end) -->
-      @if (isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && !voiceService.wasProxyHandled(message?.uid)) {
+      @if (isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && !voiceService.wasProxyHandled($safeNavigationMigration(message?.uid))) {
         <chat-audio-sync
           [message]="message"
           [color]="fontColor">
@@ -51,15 +51,15 @@
       <!-- Karaoke display for TTS messages while a WSS voice session is active -->
       @if (isAudioTTS(message) && (voiceService.isWssVoiceActive$ | async) && _wssKaraokeWords$) {
         <chat-text
-          [text]="message?.text"
+          [text]="$safeNavigationMigration(message?.text)"
           [color]="fontColor"
           [karaokeWords]="_wssKaraokeWords$ | async">
         </chat-text>
       }
       <!-- Text fallback for TTS messages after the voice proxy session ended -->
-      @if (isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && voiceService.wasProxyHandled(message?.uid) && message?.text) {
+      @if (isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && voiceService.wasProxyHandled($safeNavigationMigration(message?.uid)) && message?.text) {
         <chat-text
-          [text]="message?.text"
+          [text]="$safeNavigationMigration(message?.text)"
           [color]="fontColor">
         </chat-text>
       }
@@ -74,7 +74,7 @@
       <div>
         @if (jsonSources === null && message?.type !=='html') {
           <chat-text
-            [text]="message?.text"
+            [text]="$safeNavigationMigration(message?.text)"
             [color]="fontColor"
             [streamingWords]="_isStreaming ? _streamingWords : null"
             (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
@@ -83,7 +83,7 @@
         }
         @if (jsonSources === null && message?.type==='html') {
           <chat-html
-            [htmlText]="message?.text"
+            [htmlText]="$safeNavigationMigration(message?.text)"
             [fontSize]="stylesMap.get('buttonFontSize')"
             [themeColor]="stylesMap.get('themeColor')"
             [foregroundColor]="stylesMap.get('foregroundColor')">

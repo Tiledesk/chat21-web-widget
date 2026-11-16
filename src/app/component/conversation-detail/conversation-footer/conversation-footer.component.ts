@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef, ChangeDetectionStrategy } from '@angular/core';
 import { error } from 'console';
 import { FILE_SIZE_LIMIT } from 'src/app/utils/constants';
 import { Globals } from 'src/app/utils/globals';
@@ -26,6 +26,7 @@ import { AppStorageService } from 'src/chat21-core/providers/abstract/app-storag
     selector: 'chat-conversation-footer',
     templateUrl: './conversation-footer.component.html',
     styleUrls: ['./conversation-footer.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ConversationFooterComponent implements OnInit, OnChanges, OnDestroy {

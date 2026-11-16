@@ -39,7 +39,7 @@
       <chat-stream-audio-spectrum
         mode="alert"
         [volume]="isBotSpeaking ? 0 : currentVolume"
-        [accentColor]="stylesMap?.get('themeColor')">
+        [accentColor]="$safeNavigationMigration(stylesMap?.get('themeColor'))">
       </chat-stream-audio-spectrum>
     </div>
   }
@@ -63,7 +63,7 @@
       <chat-stream-audio-spectrum
         mode="alert"
         [volume]="isBotSpeaking ? 0 : currentVolume"
-        [accentColor]="stylesMap?.get('themeColor')">
+        [accentColor]="$safeNavigationMigration(stylesMap?.get('themeColor'))">
       </chat-stream-audio-spectrum>
     </div>
   }
@@ -222,9 +222,9 @@
       }
       @if (closeChatInConversation) {
         <div class="close-chat-container">
-          <button type="button" aflistconv #aflistconv  class="c21-button-primary c21-close" (click)="onCloseChat($event)" [ngStyle]="{'background-color': stylesMap.get('themeColor'), 'border-color': stylesMap.get('themeColor'), 'color': stylesMap?.get('foregroundColor')}">
+          <button type="button" aflistconv #aflistconv  class="c21-button-primary c21-close" (click)="onCloseChat($event)" [ngStyle]="{'background-color': stylesMap.get('themeColor'), 'border-color': stylesMap.get('themeColor'), 'color': $safeNavigationMigration(stylesMap?.get('foregroundColor'))}">
             <span class="v-align-center">
-              <svg [ngStyle]="{'stroke': stylesMap?.get('foregroundColor'), 'fill': stylesMap?.get('foregroundColor') }" role="img" id="archive" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg"
+              <svg [ngStyle]="{'stroke': $safeNavigationMigration(stylesMap?.get('foregroundColor')), 'fill': $safeNavigationMigration(stylesMap?.get('foregroundColor')) }" role="img" id="archive" aria-labelledby="altIconTitle" class="icon-menu" xmlns="http://www.w3.org/2000/svg"
                 width="15px" height="15px" viewBox="0 0 512 512">
                 <path d="M80 152v256a40.12 40.12 0 0040 40h272a40.12 40.12 0 0040-40V152" stroke-linecap="round" stroke-linejoin="round" stroke-width="50px" fill="none"></path>
                 <rect x="48" y="64" width="416" height="80" rx="28" ry="28" stroke-linejoin="round" stroke-width="50px" fill="none" ></rect>
@@ -254,13 +254,13 @@
   @if (showEmojiPicker) {
     <emoji-mart id="emoji-mart"
       class="emoji-mart"
-      [showPreview]="emojiiOptions?.showPreview"
-      [color]="stylesMap?.get('themeColor')"
-      [perLine]="emojiiOptions?.emojiPerLine"
-      [totalFrequentLines]="emojiiOptions?.totalFrequentLines"
-      [enableSearch]="emojiiOptions?.enableSearch"
-      [darkMode]="emojiiOptions?.darkMode"
-      [include]="emojiiOptions?.include"
+      [showPreview]="$safeNavigationMigration(emojiiOptions?.showPreview)"
+      [color]="$safeNavigationMigration(stylesMap?.get('themeColor'))"
+      [perLine]="$safeNavigationMigration(emojiiOptions?.emojiPerLine)"
+      [totalFrequentLines]="$safeNavigationMigration(emojiiOptions?.totalFrequentLines)"
+      [enableSearch]="$safeNavigationMigration(emojiiOptions?.enableSearch)"
+      [darkMode]="$safeNavigationMigration(emojiiOptions?.darkMode)"
+      [include]="$safeNavigationMigration(emojiiOptions?.include)"
       (emojiSelect)="addEmoji($event)">
     </emoji-mart>
   }
@@ -269,10 +269,10 @@
 <!-- NEW CONV & CONTINE buttons: conv archived-->
 @if (hideTextAreaContent) {
   <div id="floating-container" class="fade-in-bottom" start-focus-chat21-conversation-component>
-    <button type="button" aflistconv #aflistconv class="c21-button-primary" (click)="openNewConversation()" [ngStyle]="{'background-color': stylesMap.get('themeColor'), 'border-color': stylesMap.get('themeColor'), 'color': stylesMap?.get('foregroundColor')}">
+    <button type="button" aflistconv #aflistconv class="c21-button-primary" (click)="openNewConversation()" [ngStyle]="{'background-color': stylesMap.get('themeColor'), 'border-color': stylesMap.get('themeColor'), 'color': $safeNavigationMigration(stylesMap?.get('foregroundColor'))}">
       <span class="v-align-center">
         <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" [ngStyle]="{'fill': stylesMap?.get('foregroundColor')}"/>
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" [ngStyle]="{'fill': $safeNavigationMigration(stylesMap?.get('foregroundColor'))}"/>
         </svg>
       </span>
       <span class="v-align-center c21-label-button">

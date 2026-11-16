@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StarRatingWidgetComponent } from './star-rating-widget.component';
 import { Globals } from '../../utils/globals';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 describe('StarRatingWidgetComponent', () => {
   let component: StarRatingWidgetComponent;
@@ -18,7 +18,7 @@ describe('StarRatingWidgetComponent', () => {
         Globals,
         AppConfigService,
         StarRatingWidgetService,
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(withXhr(), withInterceptorsFromDi())
     ]
 })
     .compileComponents();

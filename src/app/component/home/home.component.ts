@@ -1,5 +1,5 @@
 import { TiledeskAuthService } from './../../../chat21-core/providers/tiledesk/tiledesk-auth.service';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { CustomTranslateService } from 'src/chat21-core/providers/custom-translate.service';
 import { ConversationModel } from '../../../chat21-core/models/conversation';
 import { LoggerService } from '../../../chat21-core/providers/abstract/logger.service';
@@ -13,6 +13,7 @@ import { HEADER_MENU_OPTION } from '../../utils/constants';
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
     encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HomeComponent implements OnInit, AfterViewInit {

@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import { saveAs } from 'file-saver';
 
 @Component({
     selector: 'chat-image',
     templateUrl: './image.component.html',
     styleUrls: ['./image.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ImageComponent implements OnInit {

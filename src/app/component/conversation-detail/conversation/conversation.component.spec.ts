@@ -1,7 +1,7 @@
 import { SimpleChange } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { Subject, BehaviorSubject } from 'rxjs';
 
 import { ConversationComponent } from './conversation.component';
@@ -122,7 +122,7 @@ describe('ConversationComponent', () => {
         { provide: TypingService, useValue: { isTyping: jasmine.createSpy(), BSIsTyping: new Subject() } },
         { provide: TiledeskRequestsService, useValue: tiledeskStub },
         EventsService,
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
     })

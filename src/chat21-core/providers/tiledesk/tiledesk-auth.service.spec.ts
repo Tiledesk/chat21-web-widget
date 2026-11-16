@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, HttpHeaders, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { AppStorageService } from '../abstract/app-storage.service';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -21,7 +21,7 @@ describe('TiledeskAuthService', () => {
     providers: [
         TiledeskAuthService,
         AppStorageService,
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
     ]
 })

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import { Globals } from '../../utils/globals';
 
 
@@ -9,6 +9,7 @@ import { LoggerInstance } from '../../../chat21-core/providers/logger/loggerInst
     selector: 'chat-eyeeye-catcher-card',
     templateUrl: './eyeeye-catcher-card.component.html',
     styleUrls: ['./eyeeye-catcher-card.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EyeeyeCatcherCardComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, SimpleChange, SimpleChanges, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, SimpleChange, SimpleChanges, ViewChild, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 
@@ -7,6 +7,7 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
     selector: 'chat-confirm-close',
     templateUrl: './confirm-close.component.html',
     styleUrls: ['./confirm-close.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ConfirmCloseComponent implements OnInit{
