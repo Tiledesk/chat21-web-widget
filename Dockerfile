@@ -1,7 +1,7 @@
 ### STAGE 1: Build ###
 
 # We label our stage as ‘builder’
-FROM --platform=$BUILDPLATFORM node:20.12.2-bookworm-slim AS builder
+FROM --platform=$BUILDPLATFORM node:22.23.2-bookworm-slim AS builder
 
 COPY package.json package-lock.json ./
 
