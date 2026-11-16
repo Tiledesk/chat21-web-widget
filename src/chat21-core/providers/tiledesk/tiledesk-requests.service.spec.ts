@@ -3,7 +3,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { AppStorageService } from '../abstract/app-storage.service';
 
 import { TiledeskRequestsService } from './tiledesk-requests.service';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 describe('TiledeskRequestsService', () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('TiledeskRequestsService', () => {
     providers: [
         TiledeskRequestsService,
         AppStorageService,
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting()
     ]
 });

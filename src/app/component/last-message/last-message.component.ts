@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges, ElementRef, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges, ElementRef, QueryList, ViewChildren, ChangeDetectionStrategy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MessageModel } from './../../../chat21-core/models/message';
 import { EventsService } from './../../providers/events.service';
@@ -18,6 +18,7 @@ import { commandToMessage, conversationToMessage, isEmojii, isFrame, isImage, is
     selector: 'chat-last-message',
     templateUrl: './last-message.component.html',
     styleUrls: ['./last-message.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class LastMessageComponent implements OnInit, AfterViewInit, OnDestroy {

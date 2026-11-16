@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { FormArray } from '../../../../../chat21-core/models/formArray';
 
@@ -6,6 +6,7 @@ import { FormArray } from '../../../../../chat21-core/models/formArray';
     selector: 'chat-form-label',
     templateUrl: './form-label.component.html',
     styleUrls: ['./form-label.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FormLabelComponent implements OnInit {

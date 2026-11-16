@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -16,6 +16,7 @@ import { VoiceTtsKaraokeWord } from 'src/app/providers/voice/voice-streaming.typ
     selector: 'chat-bubble-message',
     templateUrl: './bubble-message.component.html',
     styleUrls: ['./bubble-message.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {

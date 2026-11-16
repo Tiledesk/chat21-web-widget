@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { Globals } from 'src/app//utils/globals';
 import { AppConfigService } from 'src/app/providers/app-config.service';
 import { HEADER_MENU_OPTION } from 'src/app/utils/constants';
@@ -10,6 +10,7 @@ import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
     selector: 'chat-conversation-header',
     templateUrl: './conversation-header.component.html',
     styleUrls: ['./conversation-header.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ConversationHeaderComponent implements OnInit, OnChanges {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -17,6 +17,7 @@ import { FormCheckboxComponent } from './form-checkbox.component';
         [hasSubmitted]="hasSubmitted"
       ></chat-form-checkbox>
     </form>`,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 class FormCheckboxHostComponent {

@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, OnDestroy, Output, SimpleChange, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, OnDestroy, Output, SimpleChange, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { FormArray } from '../../../../../chat21-core/models/formArray';
@@ -7,6 +7,7 @@ import { FormArray } from '../../../../../chat21-core/models/formArray';
     selector: 'chat-form-text',
     templateUrl: './form-text.component.html',
     styleUrls: ['./form-text.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FormTextComponent implements OnInit, OnDestroy {

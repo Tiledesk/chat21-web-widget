@@ -26,7 +26,7 @@ import { Globals } from './utils/globals';
 
 import { CustomLogger } from 'src/chat21-core/providers/logger/customLogger';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { of } from 'rxjs';
 import { LocalSessionStorage } from 'src/chat21-core/providers/localSessionStorage';
 import { UserModel } from 'src/chat21-core/models/user';
@@ -66,7 +66,7 @@ describe('AppComponent', () => {
         TypingService,
         PresenceService,
         UploadService,
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting()
     ]
 }).compileComponents();

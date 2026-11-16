@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, OnDestroy, Output, SimpleChanges, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MAX_WIDTH_IMAGES, MSG_STATUS_RETURN_RECEIPT, MSG_STATUS_SENT, MSG_STATUS_SENT_SERVER } from 'src/app/utils/constants';
 import { MessageModel } from 'src/chat21-core/models/message';
@@ -12,6 +12,7 @@ import { isCarousel, isEmojii, isFirstMessage, isFrame, isImage, isInfo, isLastM
     selector: 'chat-conversation-content',
     templateUrl: './conversation-content.component.html',
     styleUrls: ['./conversation-content.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ConversationContentComponent implements OnInit, OnDestroy {

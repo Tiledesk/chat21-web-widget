@@ -1,3 +1,3 @@
 <div class="c21-header-label">
-  <label [innerHTML]="element?.text" [tabIndex]="element?.tabIndex" class="c21-form-message-field"></label>
+  <label [innerHTML]="$safeNavigationMigration(element?.text)" [tabIndex]="$safeNavigationMigration(element?.tabIndex)" class="c21-form-message-field"></label>
 </div>

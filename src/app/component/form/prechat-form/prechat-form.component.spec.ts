@@ -1,5 +1,5 @@
 import { A11yModule } from '@angular/cdk/a11y';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
@@ -13,10 +13,11 @@ import { PrechatFormComponent } from './prechat-form.component';
 @Component({
     selector: 'chat-form-builder',
     template: '',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 class ChatFormBuilderStubComponent {
-  @Input() formArray: unknown;
+  @Input() preChatFormJson: unknown;
   @Input() isOpenPrechatForm: boolean;
   @Input() stylesMap: Map<string, string> | undefined;
   @Output() onSubmitForm = new EventEmitter<Record<string, string>>();

@@ -1,16 +1,14 @@
-<button aflauncherbutton #aflauncherbutton type="button" id="c21-launcher-button" class="c21-button-clean scale-in-center c21-align-right"
-    *ngIf="g.isLogged == true"
+@if (g.isLogged == true) {
+  <button aflauncherbutton #aflauncherbutton type="button" id="c21-launcher-button" class="c21-button-clean scale-in-center c21-align-right"
     [style]="{ 'background-color': g.themeColor, 'bottom': g.marginY+'px!important', 'left':(g.align==='left')?g.marginX+'px!important':'', 'right':(g.align==='right')?g.marginX+'px!important':'', 'width': g.launcherWidth, 'height': g.launcherHeight, 'border-radius': g.baloonShape}"
     (click)="onSendPressed($event)"
     [attr.aria-label]="g.LABEL_SEND_NEW_MESSAGE || 'Send new message'">
-
     <!-- SEND ICON -->
     <div class="launcher-button rotate-center">
-        <svg aria-hidden="true" focusable="false" [style]="{'fill': g.themeForegroundColor, 'display': (g.baloonImage==='')?'':'none' }" xmlns="http://www.w3.org/2000/svg" width="100%"
-            height="100%" viewBox="0 0 90 90">
-            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-        </svg>
+      <svg aria-hidden="true" focusable="false" [style]="{'fill': g.themeForegroundColor, 'display': (g.baloonImage==='')?'':'none' }" xmlns="http://www.w3.org/2000/svg" width="100%"
+        height="100%" viewBox="0 0 90 90">
+        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+      </svg>
     </div>
-
-
-</button>
+  </button>
+}

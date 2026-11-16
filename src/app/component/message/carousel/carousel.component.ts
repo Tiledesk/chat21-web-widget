@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChange, SimpleChanges, ViewChildren } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChange, SimpleChanges, ViewChildren, ChangeDetectionStrategy } from '@angular/core';
 import { MessageModel } from 'src/chat21-core/models/message';
 import { TYPE_BUTTON } from 'src/chat21-core/utils/constants';
 import { isCarousel } from 'src/chat21-core/utils/utils-message';
@@ -7,6 +7,7 @@ import { isCarousel } from 'src/chat21-core/utils/utils-message';
     selector: 'chat-carousel',
     templateUrl: './carousel.component.html',
     styleUrls: ['./carousel.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CarouselComponent implements OnInit{

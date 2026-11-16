@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import { StarRatingWidgetService } from 'src/app/providers/star-rating-widget.service';
 import { Globals } from 'src/app/utils/globals';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
@@ -9,6 +9,7 @@ import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance'
     selector: 'chat-star-rating-widget',
     templateUrl: './star-rating-widget.component.html',
     styleUrls: ['./star-rating-widget.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class StarRatingWidgetComponent implements OnInit {

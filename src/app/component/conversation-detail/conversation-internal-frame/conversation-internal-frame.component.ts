@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
@@ -8,6 +8,7 @@ import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
     selector: 'chat-internal-frame',
     templateUrl: './conversation-internal-frame.component.html',
     styleUrls: ['./conversation-internal-frame.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ConversationInternalFrameComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -18,6 +18,7 @@ import { FormTextComponent } from './form-text.component';
         [hasSubmitted]="hasSubmitted"
       ></chat-form-text>
     </form>`,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 class FormTextHostComponent {

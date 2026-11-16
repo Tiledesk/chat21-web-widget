@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { getTopLevelDomainFromUrl } from 'src/app/utils/url-utils';
 
 export type JsonSourceItem = {
@@ -21,6 +21,7 @@ export type JsonSourcesDisplayFields = {
     selector: 'chat-json-sources',
     templateUrl: './json-sources.component.html',
     styleUrls: ['./json-sources.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class JsonSourcesComponent {

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, IterableDiffers, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, IterableDiffers, OnDestroy, OnInit, Output, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 // services
@@ -15,6 +15,7 @@ import { ConversationModel } from 'src/chat21-core/models/conversation';
     selector: 'chat-list-all-conversations',
     templateUrl: './list-all-conversations.component.html',
     styleUrls: ['./list-all-conversations.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

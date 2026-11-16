@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Globals } from '../../utils/globals';
 
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
@@ -9,6 +9,7 @@ import { AppStorageService } from '../../../chat21-core/providers/abstract/app-s
     selector: 'chat-launcher-button',
     templateUrl: './launcher-button.component.html',
     styleUrls: ['./launcher-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

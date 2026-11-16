@@ -1,9 +1,10 @@
-import { Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     selector: 'chat-html',
     templateUrl: './html.component.html',
     styleUrls: ['./html.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HtmlComponent implements OnInit {

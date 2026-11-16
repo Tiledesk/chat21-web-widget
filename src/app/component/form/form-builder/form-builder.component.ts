@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChange } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChange, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import * as parser from 'accept-language-parser';
 import { FormArray } from 'src/chat21-core/models/formArray';
@@ -11,11 +11,12 @@ import { validateRegex } from 'src/chat21-core/utils/utils';
     selector: 'chat-form-builder',
     templateUrl: './form-builder.component.html',
     styleUrls: ['./form-builder.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FormBuilderComponent implements OnInit {
 
-  @Input() formArray: Array<FormArray>;
+  @Input('preChatFormJson') formArray: Array<FormArray>;
   @Input() isOpenPrechatForm: boolean;
   @Input() stylesMap: Map<string, string>;
   @Output() onSubmitForm = new EventEmitter<{}>();

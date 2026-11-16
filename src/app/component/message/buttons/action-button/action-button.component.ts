@@ -1,10 +1,11 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
 
 @Component({
     selector: 'chat-action-button-attachment',
     templateUrl: './action-button.component.html',
     styleUrls: ['./action-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ActionButtonComponent implements OnInit {

@@ -1,29 +1,39 @@
 <!-- Text message -->
-<p *ngIf="!streamingWords?.length && !karaokeWords?.length"
-   #messageEl
-   class="message_innerhtml marked"
-   [innerHTML]="printMessage(text, messageEl, this) | marked"
-   [style.color]="color"></p>
+@if (!streamingWords?.length && !karaokeWords?.length) {
+  <p
+    #messageEl
+    class="message_innerhtml marked"
+    [innerHTML]="printMessage(text, messageEl, this) | marked"
+  [style.color]="color"></p>
+}
 
 <!-- Karaoke words: TTS message while a WSS voice session is active -->
-<p *ngIf="!streamingWords?.length && karaokeWords?.length"
-   class="message_innerhtml marked"
-   [style.color]="color">
-  <span *ngFor="let w of karaokeWords; trackBy: trackKaraokeWord"
+@if (!streamingWords?.length && karaokeWords?.length) {
+  <p
+    class="message_innerhtml marked"
+    [style.color]="color">
+    @for (w of karaokeWords; track trackKaraokeWord($index)) {
+      <span
         class="wss-word"
         [class.future]="w.state === 'future'"
         [class.active]="w.state === 'active'"
-        [class.past]="w.state === 'past'">{{ w.text }}&nbsp;</span>
-</p>
+      [class.past]="w.state === 'past'">{{ w.text }}&nbsp;</span>
+    }
+  </p>
+}
 
 <!-- Streaming words: TTS message while a WSS voice session is NOT active -->
-<p *ngIf="streamingWords?.length"
-   class="message_innerhtml marked"
-   [style.color]="color">
-  <span *ngFor="let w of streamingWords; trackBy: trackStreamingWord"
+@if (streamingWords?.length) {
+  <p
+    class="message_innerhtml marked"
+    [style.color]="color">
+    @for (w of streamingWords; track trackStreamingWord($index, w)) {
+      <span
         class="stream-word"
-        [style.animation-delay]="(w.index * 80) + 'ms'">{{ w.word }} </span>
-</p>
+      [style.animation-delay]="(w.index * 80) + 'ms'">{{ w.word }} </span>
+    }
+  </p>
+}
 
 
 

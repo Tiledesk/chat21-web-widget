@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, IterableDiffers, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, IterableDiffers, OnInit, Output, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { ConversationModel } from '../../../chat21-core/models/conversation';
 import { LoggerService } from '../../../chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from '../../../chat21-core/providers/logger/loggerInstance';
@@ -8,6 +8,7 @@ import { avatarPlaceholder, convertMessage, setColorFromString } from '../../uti
     selector: 'chat-list-conversations',
     templateUrl: './list-conversations.component.html',
     styleUrls: ['./list-conversations.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ListConversationsComponent implements OnInit {

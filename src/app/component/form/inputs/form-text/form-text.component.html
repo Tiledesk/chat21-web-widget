@@ -1,15 +1,15 @@
 <form [formGroup]="form">
   <div class="form-group label-floating"
-      [ngClass]="{'is-empty': !form?.controls[element.name].value}"
-      [id]="'wrap-' + fieldBaseId" #div_input>
+    [ngClass]="{'is-empty': !form?.controls[element.name].value}"
+    [id]="'wrap-' + fieldBaseId" #div_input>
     <label class="control-label" [attr.for]="fieldBaseId">
       {{element?.text}}
     </label>
     <input
       [id]="fieldBaseId"
-      [formControlName]="element?.name"
+      [formControlName]="$safeNavigationMigration(element?.name)"
       [type]="inputType"
-      [tabIndex]="element?.tabIndex"
+      [tabIndex]="$safeNavigationMigration(element?.tabIndex)"
       class="form-control"
       [class.errors]="form?.controls[element?.name].errors && hasSubmitted"
       [attr.aria-required]="element?.mandatory ? 'true' : null"
@@ -18,8 +18,14 @@
       (keydown.enter)="onEnterPressed($event)"
       (focus)="onFocus()" (focusout)="onFocusOut()">
   </div>
-  <div [id]="errorsId" *ngIf="hasSubmitted && form?.controls[element?.name]?.errors" class="text-danger" role="alert">
-    <span *ngIf="form?.controls[element?.name].hasError('required')">{{translationErrorLabelMap?.get('LABEL_ERROR_FIELD_REQUIRED')}}</span>
-    <span *ngIf="form?.controls[element?.name].hasError('pattern') && element?.errorLabel">{{element?.errorLabel}}</span>
-  </div>
+  @if (hasSubmitted && form?.controls[element?.name]?.errors) {
+    <div [id]="errorsId" class="text-danger" role="alert">
+      @if (form?.controls[element?.name].hasError('required')) {
+        <span>{{translationErrorLabelMap?.get('LABEL_ERROR_FIELD_REQUIRED')}}</span>
+      }
+      @if (form?.controls[element?.name].hasError('pattern') && element?.errorLabel) {
+        <span>{{element?.errorLabel}}</span>
+      }
+    </div>
+  }
 </form>

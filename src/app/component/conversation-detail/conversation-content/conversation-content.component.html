@@ -1,177 +1,187 @@
 <div class="c21-body" (click)="hideOutsideElements()">
 
   <div class="c21-body-container">
-  
+
     <div class="c21-body-content"
-         role="log"
-         aria-live="polite"
-         aria-relevant="additions text"
-         aria-atomic="false"
-         [attr.aria-label]="translationMap?.get('CONVERSATION_LOG_LABEL') || 'Conversation messages'">
-  
+      role="log"
+      aria-live="polite"
+      aria-relevant="additions text"
+      aria-atomic="false"
+      [attr.aria-label]="translationMap?.get('CONVERSATION_LOG_LABEL') || 'Conversation messages'">
+
       <!-- USER TYPING (WAIT MESSAGE)  -->
-      <span *ngIf="messages && this.messages.length === 0 && !isTypings">
-        <user-typing class="loading"
-          [color]="stylesMap?.get('iconColor')"
-          [translationMap]="translationMap"
-          [idUserTypingNow]="idUserTypingNow"
-          [nameUserTypingNow]="nameUserTypingNow">
-        </user-typing>
-      </span>
-    
+      @if (messages && this.messages.length === 0 && !isTypings) {
+        <span>
+          <user-typing class="loading"
+            [color]="$safeNavigationMigration(stylesMap?.get('iconColor'))"
+            [translationMap]="translationMap"
+            [idUserTypingNow]="idUserTypingNow"
+            [nameUserTypingNow]="nameUserTypingNow">
+          </user-typing>
+        </span>
+      }
+
       <div id="chat21-sheet-content" class="chat21-sheet-content">
-          <div class="chat21-conversation-parts-container">
-              <div #scrollMe id="scroll-me" (scroll)="onScroll($event)">
-    
-                  <div id="{{idDivScroll}}" class="c21-contentScroll" > <!-- (resized)="onResized($event)" -->
-                      <div *ngFor="let message of messages; let first = first; let last = last; let i = index" class="rowMsg">
+        <div class="chat21-conversation-parts-container">
+          <div #scrollMe id="scroll-me" (scroll)="onScroll($event)">
 
-                          <!-- message SENDER:: -->
-                          <div role="article" *ngIf="messageType(MESSAGE_TYPE_MINE, message) && !message.isJustRecived" class="msg_container base_sent">
-                          
-                            <!--backgroundColor non viene ancora usato -->
-                            <!-- class="messages msg_sent slide-in-right" -->
-                            <chat-bubble-message class="messages msg_sent"
-                              [class.no-background]="(isImage(message) || isFrame(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"
-                              [class.emoticon]="isEmojii(message?.text)"
-                              [ngStyle]="{'background': stylesMap.get('bubbleSentBackground'), 'color': stylesMap.get('bubbleSentTextColor')}"
-                              [ngClass]="{'button-in-msg' : message?.metadata && message?.metadata?.button}"
-                              [message]="message"
-                              [fontColor]="stylesMap.get('bubbleSentTextColor')"
-                              [stylesMap]="stylesMap"
-                              [translationMap]="translationMap"
-                              (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
-                              (onAfterMessageRender)="onAfterMessageRenderFN($event)"
-                              (onElementRendered)="onElementRenderedFN($event)">
-                            </chat-bubble-message>
-
-                            <!-- icon status message -->
-                            <chat-return-receipt
-                              [status]="message?.status">
-                            </chat-return-receipt>
-
-                          </div>
-    
-                          <!-- message RECIPIENT:: -->
-                          <div role="article" *ngIf="messageType(MESSAGE_TYPE_OTHERS, message)" class="msg_container base_receive">
-                            
-                            <chat-avatar-image *ngIf="!isSameSender(message?.sender, i) && !isStreamAudioActive"
-                              [ngClass]="{'slide-in-left': false}"    
-                              [senderID]="message?.sender"
-                              [senderFullname]="message?.sender_fullname"
-                              [baseLocation]="baseLocation">
-                            </chat-avatar-image>
-
-                            <!--backgroundColor non viene ancora usato -->
-                            <!-- [ngClass]="{'slide-in-left': !isFirstMessage(message?.sender, i)}"  -->
-                            <chat-bubble-message class="messages msg_receive"
-                              [ngClass]="{'slide-in-left': false}"
-                              [class.no-background]="(isImage(message) || isFrame(message) || isCarousel(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"
-                              [class.emoticon]="isEmojii(message?.text)"
-                              [class.fullSizeMessage]="isStreamAudioActive"
-                              [style.margin-left]="isSameSender(message?.sender, i) && !isStreamAudioActive ? 'calc(var(--avatar-width) + 10px)' : null"
-                              [ngStyle]="{'background': stylesMap.get('bubbleReceivedBackground'), 'color': stylesMap.get('bubbleReceivedTextColor'), 'width':isFrame(message) ?'100%' : null}"
-                              [isSameSender]="isSameSender(message?.sender, i)"
-                              [message]="message"
-                              [fontColor]="stylesMap.get('bubbleReceivedTextColor')"
-                              [stylesMap]="stylesMap"
-                              [translationMap]="translationMap"
-                              [streamOnArrival]="canPlayIncomingStreamAnimation(message)"
-                              [isLastIncoming]="canPlayIncomingStreamAnimation(message)"
-                              (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
-                              (onAfterMessageRender)="onAfterMessageRenderFN($event)"
-                              (onElementRendered)="onElementRenderedFN($event)">
-                            </chat-bubble-message>
-
-                          </div>
-                          
-                          <!-- message INFO/SUPPORT-->
-                          <!-- !hideBubbleInfoMessage && && message.text.indexOf('INFO_SUPPORT_USER_ADDED_VERB') === -1 -->
-                          <div *ngIf="messageType(MESSAGE_TYPE_INFO, message)" class="msg_info_container">
-                            <chat-info-message class="messages"
-                                [message]="message">
-                            </chat-info-message>
-                          </div>
-                          
-    
-                          <div class="time slide-in-left" [ngClass]="{'sender' : message?.sender == senderId}">
-                            <!-- <time #timeTooltip *ngIf="message?.sender!=='' && message?.timestamp !== '{.sv: timestamp}'" >{{message?.timestamp  | amTimeAgo}} </time> -->
-                            <time #timeTooltip *ngIf="message?.sender!=='' && message?.timestamp !== '{.sv: timestamp}'" >{{message?.timestamp  | dateAgo}} </time>
-                          </div>
-    
-    
-                          <!-- message type:: button &&  -->
-                          <div *ngIf="message?.attributes && message?.attributes?.attachment " [ngClass]="{'slide-in-left': false}" class="attachment_container"> 
-                              <chat-message-attachment 
-                                  style="height: 100%; display: block;"
-                                  [message]="message"
-                                  [isConversationArchived]="isConversationArchived"
-                                  [isLastMessage] = "isLastMessage(message?.uid)"
-                                  [stylesMap]="stylesMap"
-                                  (onElementRendered)="onElementRenderedFN($event)"
-                                  (onAttachmentButtonClicked)="onAttachmentButtonClickedFN($event)">
-                              </chat-message-attachment>
-                          </div>
-
-                          <!-- carousel -->
-                          <div *ngIf="isCarousel(message)" [ngClass]="{'slide-in-left': false}" class="carousel_container">
-                            <chat-carousel class="carousel_container"
-                              [message]="message"
-                              [isConversationArchived]="isConversationArchived"
-                              [isLastMessage] = "isLastMessage(message?.uid)"
-                              [stylesMap]="stylesMap"
-                              [translationMap]="translationMap"
-                              (onElementRendered)="onElementRenderedFN($event)"
-                              (onAttachmentButtonClicked)="onAttachmentButtonClickedFN($event)">
-                            </chat-carousel>
-                          </div>
-    
-                      </div>
-
-                      <!-- FILE PENDING UPLOAD -->
-                      <!--  -->
-                      <div *ngIf="showUploadProgress && !showThinkingMessage" class="msg_container base_sent" >
-                        <div class="chat21-spinner active" id="chat21-spinner" style="margin: 0px 6px 0px;">
-                          <div class="chat21-bounce1" [ngStyle]="{'background-color': stylesMap.get('iconColor')}"></div>
-                          <div class="chat21-bounce2" [ngStyle]="{'background-color': stylesMap.get('iconColor'), 'opacity': 0.4}"></div>
-                          <div class="chat21-bounce3" [ngStyle]="{'background-color': stylesMap.get('iconColor'), 'opacity': 0.6}"></div>
-                        </div>
-                      </div>
-
-
-                      <div *ngIf="isTypings && !showThinkingMessage && typingLocation==='content'" class="msg_container base_receive">
-                        <chat-avatar-image *ngIf="idUserTypingNow " class="slide-in-left"  
-                          [senderID]="idUserTypingNow"
-                          [senderFullname]="nameUserTypingNow"
+            <div id="{{idDivScroll}}" class="c21-contentScroll" > <!-- (resized)="onResized($event)" -->
+              @for (message of messages; track message; let first = $first; let last = $last; let i = $index) {
+                <div class="rowMsg">
+                  <!-- message SENDER:: -->
+                  @if (messageType(MESSAGE_TYPE_MINE, message) && !message.isJustRecived) {
+                    <div role="article" class="msg_container base_sent">
+                      <!--backgroundColor non viene ancora usato -->
+                      <!-- class="messages msg_sent slide-in-right" -->
+                      <chat-bubble-message class="messages msg_sent"
+                        [class.no-background]="(isImage(message) || isFrame(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"
+                        [class.emoticon]="isEmojii($safeNavigationMigration(message?.text))"
+                        [ngStyle]="{'background': stylesMap.get('bubbleSentBackground'), 'color': stylesMap.get('bubbleSentTextColor')}"
+                        [ngClass]="{'button-in-msg' : message?.metadata && message?.metadata?.button}"
+                        [message]="message"
+                        [fontColor]="stylesMap.get('bubbleSentTextColor')"
+                        [stylesMap]="stylesMap"
+                        [translationMap]="translationMap"
+                        (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
+                        (onAfterMessageRender)="onAfterMessageRenderFN($event)"
+                        (onElementRendered)="onElementRenderedFN($event)">
+                      </chat-bubble-message>
+                      <!-- icon status message -->
+                      <chat-return-receipt
+                        [status]="$safeNavigationMigration(message?.status)">
+                      </chat-return-receipt>
+                    </div>
+                  }
+                  <!-- message RECIPIENT:: -->
+                  @if (messageType(MESSAGE_TYPE_OTHERS, message)) {
+                    <div role="article" class="msg_container base_receive">
+                      @if (!isSameSender($safeNavigationMigration(message?.sender), i) && !isStreamAudioActive) {
+                        <chat-avatar-image
+                          [ngClass]="{'slide-in-left': false}"
+                          [senderID]="$safeNavigationMigration(message?.sender)"
+                          [senderFullname]="$safeNavigationMigration(message?.sender_fullname)"
                           [baseLocation]="baseLocation">
                         </chat-avatar-image>
-                        
-                        <user-typing
-                          [color]="stylesMap?.get('iconColor')"
-                          [ngClass]="{'userTypingNowExist': !idUserTypingNow}"
-                          [translationMap]="translationMap"
-                          [idUserTypingNow]="idUserTypingNow"
-                          [nameUserTypingNow]="nameUserTypingNow">
-                        </user-typing>
-                      </div>
-
-                      <div *ngIf="showThinkingMessage && lastServerSenderKind === 'bot'" class="msg_container base_receive thinking_receive">
-                        <user-typing class="loading thinking-dots"
-                          [class.fullSize]="isStreamAudioActive"
-                          [color]="stylesMap?.get('iconColor')"
-                          [class.fullSize]="isStreamAudioActive"
-                          [translationMap]="translationMap"
-                          [idUserTypingNow]="idUserTypingNow"
-                          [nameUserTypingNow]="nameUserTypingNow">
-                        </user-typing>
-                      </div>
-   
+                      }
+                      <!--backgroundColor non viene ancora usato -->
+                      <!-- [ngClass]="{'slide-in-left': !isFirstMessage(message?.sender, i)}"  -->
+                      <chat-bubble-message class="messages msg_receive"
+                        [ngClass]="{'slide-in-left': false}"
+                        [class.no-background]="(isImage(message) || isFrame(message) || isCarousel(message)) && ((message?.text && message?.text.trim() === '') || !message?.text)"
+                        [class.emoticon]="isEmojii($safeNavigationMigration(message?.text))"
+                        [class.fullSizeMessage]="isStreamAudioActive"
+                        [style.margin-left]="isSameSender($safeNavigationMigration(message?.sender), i) && !isStreamAudioActive ? 'calc(var(--avatar-width) + 10px)' : null"
+                        [ngStyle]="{'background': stylesMap.get('bubbleReceivedBackground'), 'color': stylesMap.get('bubbleReceivedTextColor'), 'width':isFrame(message) ?'100%' : null}"
+                        [isSameSender]="isSameSender($safeNavigationMigration(message?.sender), i)"
+                        [message]="message"
+                        [fontColor]="stylesMap.get('bubbleReceivedTextColor')"
+                        [stylesMap]="stylesMap"
+                        [translationMap]="translationMap"
+                        [streamOnArrival]="canPlayIncomingStreamAnimation(message)"
+                        [isLastIncoming]="canPlayIncomingStreamAnimation(message)"
+                        (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
+                        (onAfterMessageRender)="onAfterMessageRenderFN($event)"
+                        (onElementRendered)="onElementRenderedFN($event)">
+                      </chat-bubble-message>
+                    </div>
+                  }
+                  <!-- message INFO/SUPPORT-->
+                  <!-- !hideBubbleInfoMessage && && message.text.indexOf('INFO_SUPPORT_USER_ADDED_VERB') === -1 -->
+                  @if (messageType(MESSAGE_TYPE_INFO, message)) {
+                    <div class="msg_info_container">
+                      <chat-info-message class="messages"
+                        [message]="message">
+                      </chat-info-message>
+                    </div>
+                  }
+                  <div class="time slide-in-left" [ngClass]="{'sender' : message?.sender == senderId}">
+                    <!-- <time #timeTooltip *ngIf="message?.sender!=='' && message?.timestamp !== '{.sv: timestamp}'" >{{message?.timestamp  | amTimeAgo}} </time> -->
+                    @if (message?.sender!=='' && message?.timestamp !== '{.sv: timestamp}') {
+                      <time #timeTooltip >{{$safeNavigationMigration(message?.timestamp)  | dateAgo}} </time>
+                    }
                   </div>
-              </div>
+                  <!-- message type:: button &&  -->
+                  @if (message?.attributes && message?.attributes?.attachment ) {
+                    <div [ngClass]="{'slide-in-left': false}" class="attachment_container">
+                      <chat-message-attachment
+                        style="height: 100%; display: block;"
+                        [message]="message"
+                        [isConversationArchived]="isConversationArchived"
+                        [isLastMessage] = "isLastMessage($safeNavigationMigration(message?.uid))"
+                        [stylesMap]="stylesMap"
+                        (onElementRendered)="onElementRenderedFN($event)"
+                        (onAttachmentButtonClicked)="onAttachmentButtonClickedFN($event)">
+                      </chat-message-attachment>
+                    </div>
+                  }
+                  <!-- carousel -->
+                  @if (isCarousel(message)) {
+                    <div [ngClass]="{'slide-in-left': false}" class="carousel_container">
+                      <chat-carousel class="carousel_container"
+                        [message]="message"
+                        [isConversationArchived]="isConversationArchived"
+                        [isLastMessage] = "isLastMessage($safeNavigationMigration(message?.uid))"
+                        [stylesMap]="stylesMap"
+                        [translationMap]="translationMap"
+                        (onElementRendered)="onElementRenderedFN($event)"
+                        (onAttachmentButtonClicked)="onAttachmentButtonClickedFN($event)">
+                      </chat-carousel>
+                    </div>
+                  }
+                </div>
+              }
+
+              <!-- FILE PENDING UPLOAD -->
+              <!--  -->
+              @if (showUploadProgress && !showThinkingMessage) {
+                <div class="msg_container base_sent" >
+                  <div class="chat21-spinner active" id="chat21-spinner" style="margin: 0px 6px 0px;">
+                    <div class="chat21-bounce1" [ngStyle]="{'background-color': stylesMap.get('iconColor')}"></div>
+                    <div class="chat21-bounce2" [ngStyle]="{'background-color': stylesMap.get('iconColor'), 'opacity': 0.4}"></div>
+                    <div class="chat21-bounce3" [ngStyle]="{'background-color': stylesMap.get('iconColor'), 'opacity': 0.6}"></div>
+                  </div>
+                </div>
+              }
+
+
+              @if (isTypings && !showThinkingMessage && typingLocation==='content') {
+                <div class="msg_container base_receive">
+                  @if (idUserTypingNow ) {
+                    <chat-avatar-image class="slide-in-left"
+                      [senderID]="idUserTypingNow"
+                      [senderFullname]="nameUserTypingNow"
+                      [baseLocation]="baseLocation">
+                    </chat-avatar-image>
+                  }
+                  <user-typing
+                    [color]="$safeNavigationMigration(stylesMap?.get('iconColor'))"
+                    [ngClass]="{'userTypingNowExist': !idUserTypingNow}"
+                    [translationMap]="translationMap"
+                    [idUserTypingNow]="idUserTypingNow"
+                    [nameUserTypingNow]="nameUserTypingNow">
+                  </user-typing>
+                </div>
+              }
+
+              @if (showThinkingMessage && lastServerSenderKind === 'bot') {
+                <div class="msg_container base_receive thinking_receive">
+                  <user-typing class="loading thinking-dots"
+                    [class.fullSize]="isStreamAudioActive"
+                    [color]="$safeNavigationMigration(stylesMap?.get('iconColor'))"
+                    [class.fullSize]="isStreamAudioActive"
+                    [translationMap]="translationMap"
+                    [idUserTypingNow]="idUserTypingNow"
+                    [nameUserTypingNow]="nameUserTypingNow">
+                  </user-typing>
+                </div>
+              }
+
+            </div>
           </div>
-      
+        </div>
+
       </div>
-    </div>  
+    </div>
   </div>
 </div>
 

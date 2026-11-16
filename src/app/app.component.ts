@@ -1,6 +1,6 @@
 import { ScriptService } from './../chat21-core/providers/scripts/script.service';
 /** ANGULAR MODULES */
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { v4 as uuidv4 } from 'uuid';
@@ -68,6 +68,7 @@ interface MessageObj {
     encapsulation: ViewEncapsulation.None /* it allows to customize 'Powered By' */
     // providers: [AgentAvailabilityService, TranslatorService]
     ,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {

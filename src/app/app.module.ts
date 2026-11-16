@@ -55,7 +55,7 @@ import { MenuOptionsComponent } from './component/menu-options/menu-options.comp
 import { AppConfigService } from './providers/app-config.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { A11yModule } from '@angular/cdk/a11y';
 import { environment } from 'src/environments/environment';
@@ -418,7 +418,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     BrandService,
     { provide: SpeechToTextProvider, useExisting: OpenAiVoiceProviderService },
     { provide: TextToSpeechProvider, useExisting: OpenAiVoiceProviderService },
-    provideHttpClient(withInterceptorsFromDi())
+    provideHttpClient(withXhr(), withInterceptorsFromDi())
   ],
   bootstrap: [AppComponent]
 })

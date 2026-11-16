@@ -1,4 +1,4 @@
-import { enableProdMode } from '@angular/core';
+import { enableProdMode, provideZoneChangeDetection } from '@angular/core';
 import { platformBrowser } from '@angular/platform-browser';
 
 import { AppModule } from './app/app.module';
@@ -9,5 +9,9 @@ if (environment.production) {
   enableProdMode();
 }
 
-platformBrowser().bootstrapModule(AppModule)
+const bootstrapOptions = {
+  applicationProviders: [provideZoneChangeDetection()],
+} as NonNullable<Parameters<ReturnType<typeof platformBrowser>['bootstrapModule']>[1]>;
+
+platformBrowser().bootstrapModule(AppModule, bootstrapOptions)
   .catch(err => console.error(err));

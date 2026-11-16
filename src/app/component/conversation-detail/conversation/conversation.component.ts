@@ -4,7 +4,7 @@ import { EventsService } from './../../../providers/events.service';
 import { ConversationFooterComponent } from './../conversation-footer/conversation-footer.component';
 
 // tslint:disable-next-line:max-line-length
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 
 
@@ -50,6 +50,7 @@ import { computeConversationBadgeState } from 'src/app/utils/conversation-sender
     styleUrls: ['./conversation.component.scss'],
     // tslint:disable-next-line:use-host-property-decorator
     host: { '(window:resize)': 'onResize($event)' },
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {

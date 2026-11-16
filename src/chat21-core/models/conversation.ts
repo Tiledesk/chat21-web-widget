@@ -21,6 +21,7 @@ export class ConversationModel {
     public avatar: string,
     public archived: boolean,
     public type: string,
-    public sound: boolean
+    public sound: boolean,
+    public badge?: number
   ) { }
 } 

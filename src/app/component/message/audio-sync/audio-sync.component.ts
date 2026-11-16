@@ -8,6 +8,7 @@ import {
   OnDestroy,
   SimpleChanges,
   ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MessageModel } from 'src/chat21-core/models/message';
@@ -23,6 +24,7 @@ const BROWSER_TTS_OUTPUT_FORMAT = 'mp3_44100_128';
     selector: 'chat-audio-sync',
     templateUrl: './audio-sync.component.html',
     styleUrl: './audio-sync.component.scss',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AudioSyncComponent implements AfterViewInit, OnChanges, OnDestroy {
