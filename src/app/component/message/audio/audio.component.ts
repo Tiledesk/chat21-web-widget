@@ -1,5 +1,4 @@
 import { Component, ElementRef, AfterViewInit, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
@@ -21,7 +20,6 @@ export class AudioComponent implements AfterViewInit {
   @Input() color: string;
   @Input() stylesMap: Map<string, string>;
   @Input() translationMap: Map<string, string>;
-  audioUrl: SafeUrl | null = null;
   rawAudioUrl: string | null = null;
   audioContext!: AudioContext;
   audioBuffer!: AudioBuffer;
@@ -31,18 +29,15 @@ export class AudioComponent implements AfterViewInit {
 
   private logger: LoggerService = LoggerInstance.getInstance();
   constructor(
-    private sanitizer: DomSanitizer,
     private elementRef: ElementRef
   ) {}
 
   ngAfterViewInit() {
     if (this.audioBlob) {
       this.rawAudioUrl = URL.createObjectURL(this.audioBlob);
-      this.audioUrl = this.sanitizer.bypassSecurityTrustUrl(this.rawAudioUrl);
       this.setupAudioContext();
-    } else {
+    } else if (typeof this.metadata?.src === 'string') {
       this.rawAudioUrl = this.metadata.src;
-      this.audioUrl = this.sanitizer.bypassSecurityTrustUrl(this.rawAudioUrl);
       this.setupAudioContext();
     }
 
@@ -107,11 +102,17 @@ export class AudioComponent implements AfterViewInit {
 
   playPauseAudio() {
     const audio = this.audioElement.nativeElement;
+    if (!audio.currentSrc && this.rawAudioUrl) {
+      audio.src = this.rawAudioUrl;
+    }
     if (audio.paused) {
       this.isPlaying = true;
       this.updateWaveform();
-      audio.play();
-      this.audioContext.resume();
+      audio.play().catch((error) => {
+        this.isPlaying = false;
+        this.logger.error('[AUDIO] playback failed', error);
+      });
+      this.audioContext?.resume();
     } else {
       audio.pause();
       this.isPlaying = false;
