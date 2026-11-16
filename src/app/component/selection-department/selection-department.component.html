@@ -1,60 +1,62 @@
 <div id="chat21-selection-department"
-    #afSelectionDepartment
-    role="dialog"
-    aria-modal="true"
-    cdkTrapFocus
-    [cdkTrapFocusAutoCapture]="true"
-    [attr.aria-label]="g.LABEL_SELECT_TOPIC">
+  #afSelectionDepartment
+  role="dialog"
+  aria-modal="true"
+  cdkTrapFocus
+  [cdkTrapFocusAutoCapture]="true"
+  [attr.aria-label]="g.LABEL_SELECT_TOPIC">
 
-    <!-- HEADER -->
-    <div class="c21-header" [ngStyle]="{'color': g.themeForegroundColor, 'background-image': g.colorGradient180 }">
-        <div class="c21-header-container">
+  <!-- HEADER -->
+  <div class="c21-header" [ngStyle]="{'color': g.themeForegroundColor, 'background-image': g.colorGradient180 }">
+    <div class="c21-header-container">
 
-            <!-- ICON CLOSE PANEL -->
-            <div class="c21-header-button">
-                <div class="c21-close-button c21-small">
-                    <button type="button"
-                        [attr.aria-label]="g.BUTTON_CLOSE_TO_ICON || 'Close panel'"
-                        class="c21-close-button-body"
-                        (click)="closePage()">
-                        <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24">
-                            <path fill="none" d="M0 0h24v24H0V0z"/>
-                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- CONTENT HEADER -->
-            <div class="c21-header-content">
-                <div class="c21-title" [ngStyle]="{'color': g.themeForegroundColor}">
-                </div>
-            </div>
-
+      <!-- ICON CLOSE PANEL -->
+      <div class="c21-header-button">
+        <div class="c21-close-button c21-small">
+          <button type="button"
+            [attr.aria-label]="g.BUTTON_CLOSE_TO_ICON || 'Close panel'"
+            class="c21-close-button-body"
+            (click)="closePage()">
+            <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24">
+              <path fill="none" d="M0 0h24v24H0V0z"/>
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+            </svg>
+          </button>
         </div>
-    </div>
+      </div>
 
-    <!-- CONTENT -->
-    <div class="c21-body">
-        <div class="c21-body-container">
-
-            <div class="c21-body-header">
-                <h2 start-focus-chat21-selection-department class="c21-message-field">{{g.LABEL_SELECT_TOPIC}}</h2>
-            </div>
-
-            <div class="c21-body-content">
-                <ul class="chat21-content-modal-select">
-                    <li *ngFor="let department of departments; let i = index">
-                        <button type="button"
-                            class="c21-button-department c21-button-clean"
-                            (click)="onSelectDepartment(department)">
-                            <span class="chat21-badge" aria-hidden="true">{{i+1}}</span>
-                            <span class="chat21-name-list">{{department?.name}}</span>
-                        </button>
-                    </li>
-                </ul>
-            </div>
-
+      <!-- CONTENT HEADER -->
+      <div class="c21-header-content">
+        <div class="c21-title" [ngStyle]="{'color': g.themeForegroundColor}">
         </div>
+      </div>
+
     </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="c21-body">
+    <div class="c21-body-container">
+
+      <div class="c21-body-header">
+        <h2 start-focus-chat21-selection-department class="c21-message-field">{{g.LABEL_SELECT_TOPIC}}</h2>
+      </div>
+
+      <div class="c21-body-content">
+        <ul class="chat21-content-modal-select">
+          @for (department of departments; track department; let i = $index) {
+            <li>
+              <button type="button"
+                class="c21-button-department c21-button-clean"
+                (click)="onSelectDepartment(department)">
+                <span class="chat21-badge" aria-hidden="true">{{i+1}}</span>
+                <span class="chat21-name-list">{{department?.name}}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      </div>
+
+    </div>
+  </div>
 </div>

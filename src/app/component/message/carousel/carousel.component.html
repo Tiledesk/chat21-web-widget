@@ -1,53 +1,66 @@
 <div class="wrapper"
-    role="region"
-    aria-roledescription="carousel"
-    [attr.aria-label]="translationMap?.get('CAROUSEL_LABEL') || 'Cards carousel'">
+  role="region"
+  aria-roledescription="carousel"
+  [attr.aria-label]="translationMap?.get('CAROUSEL_LABEL') || 'Cards carousel'">
+  @if (activeElement > 1) {
     <button type="button"
-        id="left"
-        class="arrow left c21-button-clean"
-        [attr.aria-label]="translationMap?.get('CAROUSEL_PREVIOUS') || 'Previous slide'"
-        (click)="goTo('previous')" *ngIf="activeElement > 1">
-        <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
-            <path d="M0 0h24v24H0V0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"/>
-        </svg>
+      id="left"
+      class="arrow left c21-button-clean"
+      [attr.aria-label]="translationMap?.get('CAROUSEL_PREVIOUS') || 'Previous slide'"
+      (click)="goTo('previous')">
+      <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+        <path d="M0 0h24v24H0V0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"/>
+      </svg>
     </button>
-    <div class="carousel">
-        <div class="card"
-            *ngFor="let card of gallery; let i = index"
-            role="group"
-            aria-roledescription="slide"
-            [attr.aria-label]="getSlideLabel(i + 1, gallery?.length)">
-            <div>
-                <div class="card-image" *ngIf="card?.preview?.src !== ''">
-                    <img [src]="card?.preview?.src" [attr.alt]="card?.title || 'Carousel image'" draggable="false">
-                </div>
-                <div class="card-image card-image-placeholder" *ngIf="card?.preview?.src == ''">
-                    <img src="assets/images/icons/no-image.svg" alt="" draggable="false">
-                    <span>Image not available</span>
-                </div>
-                <div class="card-content">
-                    <div class="card-title">{{card?.title}}</div>
-                    <div class="card-description">{{card?.description}}</div>
-                </div>
-                <div class="buttons" *ngIf="card?.buttons && card?.buttons.length > 0">
-                    <button type="button" *ngFor="let button of card?.buttons"
-                        class="single-button action c21-button-clean"
-                        [ngClass]="{'disabled': (isConversationArchived || (!isLastMessage && button.type !== TYPE_BUTTON.URL)), 'active': button?.active}"
-                        [attr.aria-label]="button?.value"
-                        (click)="actionButtonClick($event, button, i)" >
-                        {{button.value}}
-                    </button>
-                </div>
+  }
+  <div class="carousel">
+    @for (card of gallery; track card; let i = $index) {
+      <div class="card"
+        role="group"
+        aria-roledescription="slide"
+        [attr.aria-label]="getSlideLabel(i + 1, gallery?.length)">
+        <div>
+          @if (card?.preview?.src !== '') {
+            <div class="card-image">
+              <img [src]="card?.preview?.src" [attr.alt]="card?.title || 'Carousel image'" draggable="false">
             </div>
+          }
+          @if (card?.preview?.src == '') {
+            <div class="card-image card-image-placeholder">
+              <img src="assets/images/icons/no-image.svg" alt="" draggable="false">
+              <span>Image not available</span>
+            </div>
+          }
+          <div class="card-content">
+            <div class="card-title">{{card?.title}}</div>
+            <div class="card-description">{{card?.description}}</div>
+          </div>
+          @if (card?.buttons && card?.buttons.length > 0) {
+            <div class="buttons">
+              @for (button of card?.buttons; track button) {
+                <button type="button"
+                  class="single-button action c21-button-clean"
+                  [ngClass]="{'disabled': (isConversationArchived || (!isLastMessage && button.type !== TYPE_BUTTON.URL)), 'active': button?.active}"
+                  [attr.aria-label]="button?.value"
+                  (click)="actionButtonClick($event, button, i)" >
+                  {{button.value}}
+                </button>
+              }
+            </div>
+          }
         </div>
-    </div>
+      </div>
+    }
+  </div>
+  @if (activeElement !== gallery.length) {
     <button type="button"
-        id="right"
-        class="arrow right c21-button-clean"
-        [attr.aria-label]="translationMap?.get('CAROUSEL_NEXT') || 'Next slide'"
-        (click)="goTo('next')" *ngIf="activeElement !== gallery.length">
-        <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
-            <path d="M0 0h24v24H0V0z" fill="none"/><path d="M10.02 6L8.61 7.41 13.19 12l-4.58 4.59L10.02 18l6-6-6-6z"/>
-        </svg>
+      id="right"
+      class="arrow right c21-button-clean"
+      [attr.aria-label]="translationMap?.get('CAROUSEL_NEXT') || 'Next slide'"
+      (click)="goTo('next')">
+      <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+        <path d="M0 0h24v24H0V0z" fill="none"/><path d="M10.02 6L8.61 7.41 13.19 12l-4.58 4.59L10.02 18l6-6-6-6z"/>
+      </svg>
     </button>
+  }
 </div>

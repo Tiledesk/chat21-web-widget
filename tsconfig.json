@@ -18,10 +18,6 @@
     "typeRoots": [
       "node_modules/@types"
     ],
-    "lib": [
-      "es2020",
-      "dom"
-    ],
     "resolveJsonModule": true,
     "paths": {
       "onnxruntime-web/wasm": [

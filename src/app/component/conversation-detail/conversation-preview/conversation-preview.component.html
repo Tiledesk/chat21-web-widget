@@ -1,9 +1,9 @@
 <div id='c21-preview'
-    role="dialog"
-    aria-modal="true"
-    cdkTrapFocus
-    [cdkTrapFocusAutoCapture]="true"
-    [attr.aria-label]="translationMap?.get('LABEL_PREVIEW')">
+  role="dialog"
+  aria-modal="true"
+  cdkTrapFocus
+  [cdkTrapFocusAutoCapture]="true"
+  [attr.aria-label]="translationMap?.get('LABEL_PREVIEW')">
   <div class="modal-preview-image" #divPreview id="divPreview">
 
     <div class="c21-header">
@@ -12,15 +12,15 @@
         <div class="c21-header-content">
           <!-- ICON CLOSE PREVIEW -->
           <button type="button"
-              class="c21-header-button c21-right c21-close c21-button-clean"
-              [attr.aria-label]="translationMap?.get('BUTTON_CLOSE_PREVIEW') || translationMap?.get('CLOSE')"
-              [ngStyle]="{'display': (hideHeaderCloseButton)?'none':'flex'}"
-              (click)="onClickClose()">
+            class="c21-header-button c21-right c21-close c21-button-clean"
+            [attr.aria-label]="translationMap?.get('BUTTON_CLOSE_PREVIEW') || translationMap?.get('CLOSE')"
+            [ngStyle]="{'display': (hideHeaderCloseButton)?'none':'flex'}"
+            (click)="onClickClose()">
             <svg aria-hidden="true" focusable="false" [ngStyle]="{'fill': stylesMap?.get('themeColor') }" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
-                <path fill="none" d="M0 0h24v24H0V0z" />
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+              <path fill="none" d="M0 0h24v24H0V0z" />
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
             </svg>
-        </button>
+          </button>
 
         </div>
 
@@ -29,13 +29,15 @@
     </div>
 
     <div class="c21-content" #scrollMePreview id="scroll-me-preview">
-        <chat-image *ngIf="fileSelected"
+      @if (fileSelected) {
+        <chat-image
           [metadata]="fileSelected"
           [width]="sizeImage?.width"
           [height]="sizeImage?.height"
           (onImageRendered)="onImageRenderedFN($event)">
         </chat-image>
-        <div id="img-preview-file-extension">{{ file_extension }} </div>
+      }
+      <div id="img-preview-file-extension">{{ file_extension }} </div>
     </div>
 
 
@@ -59,15 +61,15 @@
 
       </div>
       <button type="button"
-          class="chat21-textarea-button c21-button-clean"
-          id="chat21-button-send"
-          [class.active]="!isFilePendingToLoad"
-          [attr.aria-label]="translationMap?.get('BUTTON_SEND_MESSAGE')"
-          (click)="onSendPressed($event)">
+        class="chat21-textarea-button c21-button-clean"
+        id="chat21-button-send"
+        [class.active]="!isFilePendingToLoad"
+        [attr.aria-label]="translationMap?.get('BUTTON_SEND_MESSAGE')"
+        (click)="onSendPressed($event)">
         <span class="v-align-center">
-            <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-              <path d="M1.8,18.9V1.7L22,10.3L1.8,18.9z M3.9,15.6l12.6-5.4L3.9,4.9v3.7l6.4,1.6l-6.4,1.6V15.6z M3.9,15.6V4.9v7V15.6z"/>
-            </svg>
+          <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M1.8,18.9V1.7L22,10.3L1.8,18.9z M3.9,15.6l12.6-5.4L3.9,4.9v3.7l6.4,1.6l-6.4,1.6V15.6z M3.9,15.6V4.9v7V15.6z"/>
+          </svg>
         </span>
       </button>
 

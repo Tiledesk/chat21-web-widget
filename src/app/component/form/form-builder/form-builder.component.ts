@@ -15,7 +15,7 @@ import { validateRegex } from 'src/chat21-core/utils/utils';
 })
 export class FormBuilderComponent implements OnInit {
 
-  @Input() formArray: Array<FormArray>;
+  @Input('preChatFormJson') formArray: Array<FormArray>;
   @Input() isOpenPrechatForm: boolean;
   @Input() stylesMap: Map<string, string>;
   @Output() onSubmitForm = new EventEmitter<{}>();

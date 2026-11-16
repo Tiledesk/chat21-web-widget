@@ -16,7 +16,7 @@ import { PrechatFormComponent } from './prechat-form.component';
     standalone: false
 })
 class ChatFormBuilderStubComponent {
-  @Input() formArray: unknown;
+  @Input() preChatFormJson: unknown;
   @Input() isOpenPrechatForm: boolean;
   @Input() stylesMap: Map<string, string> | undefined;
   @Output() onSubmitForm = new EventEmitter<Record<string, string>>();
