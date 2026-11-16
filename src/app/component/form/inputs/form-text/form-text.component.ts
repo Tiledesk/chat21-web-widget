@@ -22,6 +22,7 @@ export class FormTextComponent implements OnInit, OnDestroy {
   @ViewChild('div_input') input: ElementRef;
   form: FormGroup<any>;
   inputType: string = 'text'
+  private valueChangesSub?: Subscription;
 
   get fieldBaseId(): string {
     const raw = this.element?.name || this.controlName || 'field';
@@ -47,7 +48,6 @@ export class FormTextComponent implements OnInit, OnDestroy {
     }
     return this.form.controls[name].invalid ? 'true' : 'false';
   }
-  private valueChangesSub?: Subscription;
 
   constructor(private rootFormGroup: FormGroupDirective,
               private elementRef: ElementRef) { }

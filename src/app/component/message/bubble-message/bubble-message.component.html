@@ -1,69 +1,53 @@
 @if (hasRenderableContent()) {
-  <div class="bubble-message messages primary-color">
-    <div>
-      @if (messageType(MESSAGE_TYPE_OTHERS, message) && !isSameSender) {
-        <div
-          [style.color]="fullnameColor"
-          [ngStyle]="{'margin': (isImage(message) || isFrame(message))? '12px 16px 8px 16px': '12px 16px 0px 16px'}" class="message_sender_fullname">
-          {{message?.sender_fullname}}
-        </div>
-      }
-      @if (isImage(message)) {
-        <chat-image
-          [metadata]="message.metadata"
-          [width]="$safeNavigationMigration(sizeImage?.width)"
-          [height]="$safeNavigationMigration(sizeImage?.height)"
-          (onElementRendered)="onElementRenderedFN($event)">
-        </chat-image>
-      }
-      @if (isFrame(message)) {
-        <chat-frame
-          [metadata]="message.metadata"
-          [width]="$safeNavigationMigration(sizeImage?.width)"
-          [height]="$safeNavigationMigration(sizeImage?.height)"
-          (onElementRendered)="onElementRenderedFN($event)">
-        </chat-frame>
-      }
-      @if (isAudio(message)) {
-        <chat-audio
-          [metadata]="message.metadata"
-          [color]="fontColor"
-          [stylesMap]="stylesMap"
-          [translationMap]="translationMap">
-        </chat-audio>
-      }
-      @if (jsonSources !== null && jsonSources.length > 0) {
-        <chat-json-sources
-          [items]="jsonSources"
-          [displayFields]="jsonSourcesDisplayFields"
-          [backgroundColor]="jsonSourcesBackgroundColor"
-          (onElementRendered)="onElementRenderedFN($event)">
-        </chat-json-sources>
-      }
-      <!-- TTS player: only when voice proxy is NOT active (avoids double playback)
+<div class="bubble-message messages primary-color">
+  <div>
+    @if (messageType(MESSAGE_TYPE_OTHERS, message) && !isSameSender) {
+    <div [style.color]="fullnameColor"
+      [ngStyle]="{'margin': (isImage(message) || isFrame(message))? '12px 16px 8px 16px': '12px 16px 0px 16px'}"
+      class="message_sender_fullname">
+      {{message?.sender_fullname}}
+    </div>
+    }
+    @if (isImage(message)) {
+    <chat-image [metadata]="message.metadata" [width]="$safeNavigationMigration(sizeImage?.width)"
+      [height]="$safeNavigationMigration(sizeImage?.height)" (onElementRendered)="onElementRenderedFN($event)">
+    </chat-image>
+    }
+    @if (isFrame(message)) {
+    <chat-frame [metadata]="message.metadata" [width]="$safeNavigationMigration(sizeImage?.width)"
+      [height]="$safeNavigationMigration(sizeImage?.height)" (onElementRendered)="onElementRenderedFN($event)">
+    </chat-frame>
+    }
+    @if (isAudio(message)) {
+    <chat-audio [metadata]="message.metadata" [color]="fontColor" [stylesMap]="stylesMap"
+      [translationMap]="translationMap">
+    </chat-audio>
+    }
+    @if (jsonSources !== null && jsonSources.length > 0) {
+    <chat-json-sources [items]="jsonSources" [displayFields]="jsonSourcesDisplayFields"
+      [backgroundColor]="jsonSourcesBackgroundColor" (onElementRendered)="onElementRenderedFN($event)">
+    </chat-json-sources>
+    }
+    <!-- TTS player: only when voice proxy is NOT active (avoids double playback)
       and the message was not already played by the proxy (avoids replay on session end) -->
-      @if (isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && !voiceService.wasProxyHandled($safeNavigationMigration(message?.uid))) {
-        <chat-audio-sync
-          [message]="message"
-          [color]="fontColor">
-        </chat-audio-sync>
-      }
-      <!-- Karaoke display for TTS messages while a WSS voice session is active -->
-      @if (isAudioTTS(message) && (voiceService.isWssVoiceActive$ | async) && _wssKaraokeWords$) {
-        <chat-text
-          [text]="$safeNavigationMigration(message?.text)"
-          [color]="fontColor"
-          [karaokeWords]="_wssKaraokeWords$ | async">
-        </chat-text>
-      }
-      <!-- Text fallback for TTS messages after the voice proxy session ended -->
-      @if (isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) && voiceService.wasProxyHandled($safeNavigationMigration(message?.uid)) && message?.text) {
-        <chat-text
-          [text]="$safeNavigationMigration(message?.text)"
-          [color]="fontColor">
-        </chat-text>
-      }
-      <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"
+    @if (isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) &&
+    !voiceService.wasProxyHandled($safeNavigationMigration(message?.uid))) {
+    <chat-audio-sync [message]="message" [color]="fontColor">
+    </chat-audio-sync>
+    }
+    <!-- Karaoke display for TTS messages while a WSS voice session is active -->
+    @if (isAudioTTS(message) && (voiceService.isWssVoiceActive$ | async) && _wssKaraokeWords$) {
+    <chat-text [text]="$safeNavigationMigration(message?.text)" [color]="fontColor"
+      [karaokeWords]="_wssKaraokeWords$ | async">
+    </chat-text>
+    }
+    <!-- Text fallback for TTS messages after the voice proxy session ended -->
+    @if (isAudioTTS(message) && !(voiceService.isWssVoiceActive$ | async) &&
+    voiceService.wasProxyHandled($safeNavigationMigration(message?.uid)) && message?.text) {
+    <chat-text [text]="$safeNavigationMigration(message?.text)" [color]="fontColor">
+    </chat-text>
+    }
+    <!-- <chat-frame *ngIf="message.metadata && message.metadata.type && message.metadata.type.includes('video')"
       [metadata]="message.metadata"
       [width]="message.metadata.width"
       [height]="message.metadata.height">
@@ -71,25 +55,20 @@
     <!-- tooltip="{{message.timestamp | dateAgo}} ({{message.timestamp | date:'shortDate'}} {{message.timestamp | date:'HH:mm:ss'}})" placement="bottom" -->
     <!-- message type:: TEXT -->
     @if ((message?.text && !isAudio(message) && !isAudioTTS(message)) && !isJsonSources(message)) {
-      <div>
-        @if (jsonSources === null && message?.type !=='html') {
-          <chat-text
-            [text]="$safeNavigationMigration(message?.text)"
-            [color]="fontColor"
-            [streamingWords]="_isStreaming ? _streamingWords : null"
-            (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
-            (onAfterMessageRender)="onAfterMessageRenderFN($event)">
-          </chat-text>
-        }
-        @if (jsonSources === null && message?.type==='html') {
-          <chat-html
-            [htmlText]="$safeNavigationMigration(message?.text)"
-            [fontSize]="stylesMap.get('buttonFontSize')"
-            [themeColor]="stylesMap.get('themeColor')"
-            [foregroundColor]="stylesMap.get('foregroundColor')">
-          </chat-html>
-        }
-      </div>
+    <div>
+      @if (jsonSources === null && message?.type !=='html') {
+      <chat-text [text]="$safeNavigationMigration(message?.text)" [color]="fontColor"
+        [streamingWords]="_isStreaming ? _streamingWords : null"
+        (onBeforeMessageRender)="onBeforeMessageRenderFN($event)"
+        (onAfterMessageRender)="onAfterMessageRenderFN($event)">
+      </chat-text>
+      }
+      @if (jsonSources === null && message?.type==='html') {
+      <chat-html [htmlText]="$safeNavigationMigration(message?.text)" [fontSize]="stylesMap.get('buttonFontSize')"
+        [themeColor]="stylesMap.get('themeColor')" [foregroundColor]="stylesMap.get('foregroundColor')">
+      </chat-html>
+      }
+    </div>
     }
   </div>
 </div>

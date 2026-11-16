@@ -14,10 +14,11 @@ import { ConversationModel } from 'src/chat21-core/models/conversation';
 
 // utils
 import { v4 as uuidv4 } from 'uuid';
-import { HEADER_MENU_OPTION, UID_SUPPORT_GROUP_MESSAGES } from 'src/app/utils/constants';
+import { HEADER_MENU_OPTION, LOCALSTORAGE_KEYS, UID_SUPPORT_GROUP_MESSAGES } from 'src/app/utils/constants';
 import { CHANNEL_TYPE, INFO_MESSAGE_TYPE, MSG_STATUS_SENT, TYPE_MSG_TEXT } from 'src/chat21-core/utils/constants';
 import { getDateDifference } from 'src/chat21-core/utils/utils';
 import { isJustRecived, isUserBanned } from 'src/chat21-core/utils/utils-message';
+import { clearStoredRecipientId } from 'src/chat21-core/utils/recipient-id-storage';
 
 // Import the resized event model
 
@@ -92,7 +93,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   hideFooterTextReply: boolean = false;
   hideTextAreaContent: boolean = false;
   footerMessagePlaceholder: string = '';
-  textInputTextArea: String;
+  textInputTextArea: string;
   isTrascriptDownloadEnabled = false;
   // showContinueConversationButton: boolean = false
   // ========= begin:: gestione scroll view messaggi ======= //
@@ -531,22 +532,26 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       return this.isConversationArchived;
     }
 
-    //   //FALLBACK TO TILEDESK
-    const requests_list = await this.tiledeskRequestService.getMyRequests().catch(err => {
+    // FALLBACK TO TILEDESK
+    let requests_list: { requests: any[] };
+    try {
+      requests_list = await this.tiledeskRequestService.getMyRequests();
+    } catch (err) {
       this.logger.error('[CONV-COMP] getConversationDetail: error getting request from Tiledesk', err);
-      this.isConversationArchived=true
-      return { requests: [] }
-    });
+      this.isConversationArchived = true;
+      return this.isConversationArchived;
+    }
+
     if (requests_list && requests_list.requests.length > 0) {
       this.logger.debug('[CONV-COMP] getConversationDetail: request exist on Tiledesk', requests_list);
-      let conversation = requests_list.requests.find((request)=> request.request_id === this.conversationId)
-      if(conversation){
-        this.isConversationArchived = false
-        return this.isConversationArchived
+      const conversation = requests_list.requests.find((request) => request.request_id === this.conversationId);
+      if (conversation) {
+        this.isConversationArchived = false;
+        return this.isConversationArchived;
       }
       this.logger.debug('[CONV-COMP] getConversationDetail: request NOT EXIST on Tiledesk', requests_list);
-      this.isConversationArchived = true
-      return this.isConversationArchived
+      this.isConversationArchived = true;
+      return this.isConversationArchived;
     }
 
     // Not found in the live list, the archived list, or Tiledesk's request list at all —
@@ -1055,14 +1060,14 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       this.logger.debug('[CONV-COMP] newMessageAdded --> updateUserFullname', userFullname)
       this.g.setAttributeParameter('userFullname', userFullname);
       this.g.setParameter('userFullname', userFullname);
-      this.appStorageService.setItem('attributes', JSON.stringify(this.g.attributes));
+      this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(this.g.attributes));
     }
     if (msg.attributes && msg.attributes['updateUserEmail']) {
       const userEmail = msg.attributes['updateUserEmail'];
       this.logger.debug('[CONV-COMP] newMessageAdded --> userEmail', userEmail)
       this.g.setAttributeParameter('userEmail', userEmail);
       this.g.setParameter('userEmail', userEmail);
-      this.appStorageService.setItem('attributes', JSON.stringify(this.g.attributes));
+      this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(this.g.attributes));
     }
   }
 
@@ -1079,7 +1084,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
       this.g.setAttributeParameter('userEmail', userEmail);
       this.g.setParameter('userEmail', userEmail);
     }
-    this.appStorageService.setItem('attributes', JSON.stringify(this.g.attributes));
+    this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(this.g.attributes));
   }
 
   
@@ -1129,7 +1134,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   // =========== BEGIN: event emitter function ====== //
   /** CALLED BY: conv-header component */
   onBackHomeFN() {
-    //this.storageService.removeItem('activeConversation');
+    //this.storageService.removeItem(LOCALSTORAGE_KEYS.ACTIVE_CONVERSATION);
     //this.g.setParameter('activeConversation', null, false);
     this.onBackHome.emit();
   }
@@ -1166,7 +1171,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
         this.tiledeskRequestService.closeSupportGroup(this.conversationId).then(data => {
           if(data === 'closed'){
             this.mydialog.nativeElement.close();
-            this.appStorageService.removeItem('recipientId');
+            clearStoredRecipientId(this.appStorageService);
             this.logger.debug('[CONV-COMP] chat closed successfully with uid ', this.conversationId) 
           }
         }).catch(error => {
@@ -1238,7 +1243,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
     // Persist user-driven size changes so, when `size` is not specified via URL/settings,
     // GlobalSettingsService can restore it from storage (it already loads `size` from storage).
     try{
-      this.appStorageService.setItem('size', normalizedMode);
+      this.appStorageService.setItem(LOCALSTORAGE_KEYS.SIZE, normalizedMode);
     }catch(e){
       this.logger.warn('[CONV-COMP] onWidgetSizeChange > cannot persist size', e);
     }
@@ -1488,7 +1493,7 @@ export class ConversationComponent implements OnInit, AfterViewInit, OnChanges {
   /** elimino tutte le sottoscrizioni */
   ngOnDestroy() {
     this.logger.debug('[CONV-COMP] ngOnDestroy ------------------> this.subscriptions', this.subscriptions);
-    //this.storageService.removeItem('activeConversation');
+    //this.storageService.removeItem(LOCALSTORAGE_KEYS.ACTIVE_CONVERSATION);
     this.isConversationArchived = false;
     this.hideTextAreaContent = false;
     this.showThinkingMessage = false;
