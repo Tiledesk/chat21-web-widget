@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { Globals } from '../../utils/globals';
 
-import { animate, style, transition, trigger } from '@angular/animations';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 import { AppStorageService } from '../../../chat21-core/providers/abstract/app-storage.service';
 // vedi: https://angular.io/guide/animations
@@ -10,28 +9,6 @@ import { AppStorageService } from '../../../chat21-core/providers/abstract/app-s
     selector: 'chat-launcher-button',
     templateUrl: './launcher-button.component.html',
     styleUrls: ['./launcher-button.component.scss'],
-    animations: [
-        trigger('enterCloseAnimation', [
-            transition(':enter', [
-                style({ transform: 'rotate(-90deg)', opacity: 1 }),
-                animate('450ms ease-out', style({ transform: 'rotate(0deg)', opacity: 1 }))
-            ]),
-            transition(':leave', [
-                style({ transform: 'scale(1)', opacity: 1 }),
-                animate('200ms ease-in', style({ transform: 'scale(0.5)', opacity: 0 }))
-            ])
-        ]),
-        trigger('enterBubbleAnimation', [
-            transition(':enter', [
-                style({ transform: 'scale(0.5)', opacity: 0 }),
-                animate('200ms ease-out', style({ transform: 'scale(1)', opacity: 1 }))
-            ]),
-            transition(':leave', [
-                style({ transform: 'scale(1)', opacity: 1 }),
-                animate('200ms ease-in', style({ transform: 'scale(0.5)', opacity: 0 }))
-            ])
-        ])
-    ],
     standalone: false
 })
 

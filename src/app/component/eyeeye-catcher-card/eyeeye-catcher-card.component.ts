@@ -2,7 +2,6 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Globals } from '../../utils/globals';
 
 
-import { trigger } from '@angular/animations';
 import { LoggerService } from '../../../chat21-core/providers/abstract/logger.service';
 import { LoggerInstance } from '../../../chat21-core/providers/logger/loggerInstance';
 
@@ -10,14 +9,6 @@ import { LoggerInstance } from '../../../chat21-core/providers/logger/loggerInst
     selector: 'chat-eyeeye-catcher-card',
     templateUrl: './eyeeye-catcher-card.component.html',
     styleUrls: ['./eyeeye-catcher-card.component.scss'],
-    animations: [
-        trigger('rotatedState', [
-        // state('default', style({ transform: 'scale(0)' })),
-        // state('rotated', style({ transform: 'scale(1)' })),
-        // transition('rotated => default', animate('1000ms ease-out')),
-        // transition('default => rotated', animate('1000ms ease-in'))
-        ])
-    ],
     standalone: false
 })
 export class EyeeyeCatcherCardComponent implements OnInit {

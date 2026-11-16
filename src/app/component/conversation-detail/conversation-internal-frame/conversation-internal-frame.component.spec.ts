@@ -1,4 +1,3 @@
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ConversationInternalFrameComponent } from './conversation-internal-frame.component';
@@ -14,7 +13,6 @@ describe('ConversationInternalFrameComponent', () => {
     LoggerInstance.setInstance(customLogger);
     TestBed.configureTestingModule({
       declarations: [ConversationInternalFrameComponent],
-      imports: [BrowserAnimationsModule],
     })
       .overrideComponent(ConversationInternalFrameComponent, {
         set: {

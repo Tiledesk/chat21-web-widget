@@ -1,4 +1,3 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LoggerService } from 'src/chat21-core/providers/abstract/logger.service';
@@ -9,18 +8,6 @@ import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
     selector: 'chat-internal-frame',
     templateUrl: './conversation-internal-frame.component.html',
     styleUrls: ['./conversation-internal-frame.component.scss'],
-    animations: [
-        trigger('enterAnimation', [
-            transition(':enter', [
-                style({ transform: 'translateX(100%)', opacity: 0 }),
-                animate('400ms', style({ transform: 'translateX(0)', opacity: 1 }))
-            ]),
-            transition(':leave', [
-                style({ transform: 'translateX(0)', opacity: 1 }),
-                animate('400ms', style({ transform: 'translateX(100%)', opacity: 0 }))
-            ])
-        ])
-    ],
     standalone: false
 })
 export class ConversationInternalFrameComponent implements OnInit {

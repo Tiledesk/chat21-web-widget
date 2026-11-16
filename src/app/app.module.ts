@@ -54,7 +54,6 @@ import { MenuOptionsComponent } from './component/menu-options/menu-options.comp
 //ANGULAR MODULES
 import { AppConfigService } from './providers/app-config.service';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -325,7 +324,6 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     ConfirmCloseComponent
   ],
   imports: [BrowserModule,
-    BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     A11yModule,

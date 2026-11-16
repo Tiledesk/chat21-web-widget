@@ -1,4 +1,3 @@
-import { style } from '@angular/animations';
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MessageModel } from './../../../chat21-core/models/message';

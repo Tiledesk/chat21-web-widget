@@ -21,8 +21,10 @@
     "voice-mock": "node mocks/voice-websocket-mock/server.cjs"
   },
   "private": false,
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+  },
   "dependencies": {
-    "@angular/animations": "^20.3.35",
     "@angular/cdk": "^20.2.14",
     "@angular/common": "^20.3.35",
     "@angular/compiler": "^20.3.35",
@@ -30,7 +32,6 @@
     "@angular/forms": "^20.3.35",
     "@angular/localize": "^20.3.35",
     "@angular/platform-browser": "^20.3.35",
-    "@angular/platform-browser-dynamic": "^20.3.35",
     "@angular/router": "^20.3.35",
     "@ctrl/ngx-emoji-mart": "^9.2.0",
     "@ngx-translate/core": "^16.0.4",

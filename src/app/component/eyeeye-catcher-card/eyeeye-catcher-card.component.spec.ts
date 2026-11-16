@@ -1,4 +1,3 @@
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -19,7 +18,6 @@ describe('EyeeyeCatcherCardComponent', () => {
     LoggerInstance.setInstance(new CustomLogger(ngxlogger));
     TestBed.configureTestingModule({
       declarations: [EyeeyeCatcherCardComponent],
-      imports: [BrowserAnimationsModule],
       providers: [Globals],
     }).compileComponents();
   }));

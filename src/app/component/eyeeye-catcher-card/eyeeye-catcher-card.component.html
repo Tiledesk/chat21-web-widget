@@ -24,7 +24,7 @@
             class="eye-catcher_column ec_left c21-button-clean"
             [attr.aria-label]="g.START_A_CONVERSATION || g.BUTTON_OPEN_CHAT"
             (click)="openChatFromEyeCatcherCard()">
-            <div [@rotatedState]='state' class="eye-catcher-card-emoticons-wrapper">
+            <div class="eye-catcher-card-emoticons-wrapper">
                 <span *ngIf="emoticon" class="chat21-card-emoticons">{{emoticon}}</span>
             </div>
         </button>

@@ -1,7 +1,6 @@
 import { Injectable, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AppStorageService } from '../../../chat21-core/providers/abstract/app-storage.service';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 import { Globals } from '../../utils/globals';
@@ -30,7 +29,6 @@ describe('LauncherButtonComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [LauncherButtonComponent],
-      imports: [NoopAnimationsModule],
       providers: [Globals, { provide: AppStorageService, useClass: AppStorageStub }],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
