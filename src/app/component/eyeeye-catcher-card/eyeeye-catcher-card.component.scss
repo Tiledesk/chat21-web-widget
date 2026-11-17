@@ -80,9 +80,8 @@ button.eye-catcher_column {
     // bottom: 0px;
     // right: 0px;
     // max-width: none;
-    fill: #ffffff;
-    width: 18px;
-    height: 18px;
+    color: #ffffff;
+    --chat-icon-size: 18px;
     margin: calc(50% - 9px);
 }
 /* CLOSE BTN IS MOBILE - CLOSE IMG WRAPPER */
@@ -281,7 +280,7 @@ button.eye-catcher_column {
                 display: block;
             }
             .eye-catcher-card-close-btn-img{
-                fill: #5d6c80;
+                color: #5d6c80;
             }
         }
     }

@@ -15,7 +15,7 @@ export class ConversationPreviewComponent implements OnInit {
   @ViewChild('divPreview') public scrollMe: ElementRef;
 
   @Input() textInputTextArea: string;
-  @Input() attachments: [{ file: Array<any>, metadata: {}}];
+  @Input() attachments: Array<{ file: Array<any>, metadata: {}}>;
   @Input() baseLocation: string;
   @Input() translationMap: Map< string, string>;
   @Input() stylesMap: Map<string, string>;
@@ -283,7 +283,7 @@ export class ConversationPreviewComponent implements OnInit {
 
   /** Component-level Esc handler to close the modal even when focus is not on the textarea. */
   @HostListener('keydown.escape', ['$event'])
-  onHostEscape(event: KeyboardEvent){
+  onHostEscape(event: Event){
     event.preventDefault();
     event.stopPropagation();
     this.onClickClose();

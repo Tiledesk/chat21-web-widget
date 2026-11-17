@@ -143,10 +143,9 @@
         // -webkit-box-shadow: 0 3px 2px $trasp-light-black;
         // box-shadow: 0 3px 2px $trasp-light-black;
         text-align: center;
-        svg {
-            margin: auto;
-            fill: var(--gray);
-        }
+        align-items: center;
+        justify-content: center;
+        color: var(--gray);
     }
     #chat21-buttonToBottom:hover {
         background-color: var(--themeColor);
@@ -155,9 +154,7 @@
         -moz-transition: all .45s ease-in-out!important;
         -webkit-transition: all .45s ease-in-out!important;
         border: 1px solid var(--foregroundColor);
-        svg {
-            fill: var(--foregroundColor);
-        }
+        color: var(--foregroundColor);
     }
 
 }

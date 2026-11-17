@@ -13,6 +13,7 @@ import { ConversationComponent } from './component/conversation-detail/conversat
 import { ConversationHeaderComponent } from './component/conversation-detail/conversation-header/conversation-header.component';
 import { ConversationContentComponent } from './component/conversation-detail/conversation-content/conversation-content.component';
 import { ConversationFooterComponent } from './component/conversation-detail/conversation-footer/conversation-footer.component';
+import { ConversationEmojiiComponent } from './component/conversation-detail/conversation-emojii/conversation-emojii.component';
 import { ConversationInternalFrameComponent } from './component/conversation-detail/conversation-internal-frame/conversation-internal-frame.component';
 import { ConversationPreviewComponent } from './component/conversation-detail/conversation-preview/conversation-preview.component';
 import { ConversationAudioRecorderComponent } from './component/conversation-detail/conversation-audio-recorder/conversation-audio-recorder.component';
@@ -50,6 +51,7 @@ import { LauncherButtonComponent } from './component/launcher-button/launcher-bu
 import { EyeeyeCatcherCardComponent } from './component/eyeeye-catcher-card/eyeeye-catcher-card.component';
 import { SelectionDepartmentComponent } from './component/selection-department/selection-department.component';
 import { MenuOptionsComponent } from './component/menu-options/menu-options.component';
+import { IconComponent } from './component/icon/icon.component';
 
 //ANGULAR MODULES
 import { AppConfigService } from './providers/app-config.service';
@@ -293,6 +295,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     ConversationHeaderComponent,
     ConversationContentComponent,
     ConversationFooterComponent,
+    ConversationEmojiiComponent,
     ConversationPreviewComponent,
     ConversationInternalFrameComponent,
     ConversationAudioRecorderComponent,
@@ -324,6 +327,7 @@ export function uploadFactory(http: HttpClient, appConfig: AppConfigService, app
     ConfirmCloseComponent
   ],
   imports: [BrowserModule,
+    IconComponent,
     FormsModule,
     ReactiveFormsModule,
     A11yModule,

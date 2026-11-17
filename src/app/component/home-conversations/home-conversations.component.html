@@ -11,9 +11,7 @@
             [attr.aria-label]="g.SHOW_ALL_CONV"
             (click)="returnOpenAllConversation()">
             <span style="display:inline-block; line-height: 40px; margin-right: 10px;">{{g.SHOW_ALL_CONV}} </span>
-            <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
-              <path d="M1.9,15.4h16.2v-1.8H1.9V15.4z M1.9,10.9h16.2V9.1H1.9V10.9z M1.9,4.6v1.8h16.2V4.6H1.9z"/>
-            </svg>
+            <chat-icon name="menu" class="icon-menu"></chat-icon>
           </button>
         }
       </div>
@@ -28,10 +26,7 @@
               [attr.aria-label]="g.SHOW_ALL_CONV"
               (click)="returnOpenAllConversation()">
               <span style="display:inline-block; line-height: 40px; margin-right: 10px;">{{g.SHOW_ALL_CONV}}</span>
-              <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-                <path fill="none" d="M0 0h24v24H0V0z" />
-                <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7zm-4 6h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
-              </svg>
+              <chat-icon name="list" class="icon-sm icon-menu"></chat-icon>
             </button>
           </div>
         }
@@ -95,9 +90,7 @@
           (click)="openNewConversation()"
           [ngStyle]="{'background-color': g.themeColor, 'border-color': g.themeColor, 'color': g.themeForegroundColor }">
           <span class="v-align-center">
-            <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"  [ngStyle]="{'fill': g.themeForegroundColor}"/>
-            </svg>
+            <chat-icon name="send" [color]="g.themeForegroundColor"></chat-icon>
           </span>
           <span class="v-align-center c21-label-button">
             {{g.LABEL_START_NW_CONV}}
@@ -127,9 +120,7 @@
             (click)="openNewConversation()"
             [ngStyle]="{'background-color': g.themeColor, 'border-color': g.themeColor, 'color': g.themeForegroundColor }">
             <span class="v-align-center">
-              <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"  [ngStyle]="{'fill': g.themeForegroundColor}"/>
-              </svg>
+              <chat-icon name="send" [color]="g.themeForegroundColor"></chat-icon>
             </span>
             <span class="v-align-center c21-label-button">
               <!-- {{LABEL_START_NW_CONV}} -->

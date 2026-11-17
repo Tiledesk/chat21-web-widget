@@ -73,9 +73,8 @@ button {
         // background-color: rgb(82, 160, 252);
         background-color: var(--hoverBackgroundColor);
         color: var(--hoverTextColor);
-        svg{
-            //fill:#fff;
-            fill: var(--hoverTextColor)
+        chat-icon {
+            color: var(--hoverTextColor);
         }
     }
     .duration {

@@ -28,7 +28,7 @@ export class ConfirmCloseComponent implements OnInit{
   }
 
   @HostListener('keydown.escape', ['$event'])
-  onEscape(event: KeyboardEvent){
+  onEscape(event: Event){
     event.preventDefault();
     event.stopPropagation();
     this.onBack();

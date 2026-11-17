@@ -630,7 +630,7 @@ chat-root {
                 padding: 0 9px;
 
                 .c21-header-button{
-                    display: block;
+                    display: flex;
                     align-items: center;
                     justify-content: center;
                     text-align: center;
@@ -651,14 +651,6 @@ chat-root {
                     &.c21-close{
                         display: none;
                     }
-
-                    svg {
-                        height: 20px;
-                        width: 20px;
-                        // margin: 10px;
-                    }
-
-                    
                 }
 
                 .c21-title {

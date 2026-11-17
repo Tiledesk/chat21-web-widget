@@ -1,14 +1,3 @@
-<style>
-  .star.active{
-  fill:#FFD700;
-}
-svg.star{
-fill: #efefef;
-}
-svg.star:hover{
-fill: #FFD700;
-}
-</style>
 <div id="chat21-star-rating-widget" role="dialog" aria-modal="true" [attr.aria-label]="g.CUSTOMER_SATISFACTION">
   <!-- HEADER -->
   <div class="c21-header" [ngStyle]="{ 'color': g.themeForegroundColor, 'background-image': g.colorGradient180 }">
@@ -22,11 +11,7 @@ fill: #FFD700;
             [attr.aria-label]="g['BACK']"
             class="c21-header-button c21-left c21-button-clean"
             (click)="prevStep()">
-            <svg aria-hidden="true" focusable="false" [ngStyle]="{'fill': $safeNavigationMigration(stylesMap?.get('foregroundColor')) }" xmlns="http://www.w3.org/2000/svg"
-              width="24px" height="24px" viewBox="0 0 24 24">
-              <path fill="none" d="M0 0h24v24H0V0z" />
-              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z" />
-            </svg>
+            <chat-icon name="chevron-left" class="icon-lg" [color]="$safeNavigationMigration(stylesMap?.get('foregroundColor'))"></chat-icon>
           </button>
         }
         <!-- TITLE HEADER -->
@@ -64,23 +49,23 @@ fill: #FFD700;
                 <legend class="visually-hidden">{{ g.YOUR_RATING }}</legend>
                 <input class="c21-input-star" type="radio" id="star1" name="rating" value="1" />
                 <label (mouseover)="mouseOverRate(1)" (mouseleave)="mouseOverRate(0)" (click)="openRate(1)" class="full c21-button" for="star1" title="scarso - 1 star">
-                  <svg aria-hidden="true" focusable="false" class="star" [class.active]="mouseRate>=1" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
+                  <chat-icon name="star" class="star icon-xl" [filled]="true" [class.active]="mouseRate>=1"></chat-icon>
                 </label>
                 <input class="c21-input-star" type="radio" id="star2" name="rating" value="2" />
                 <label (mouseover)="mouseOverRate(2)" (mouseleave)="mouseOverRate(0)" (click)="openRate(2)" class="full c21-button" for="star2" title="sufficiente - 2 stars">
-                  <svg aria-hidden="true" focusable="false" class="star" [class.active]="mouseRate>=2" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
+                  <chat-icon name="star" class="star icon-xl" [filled]="true" [class.active]="mouseRate>=2"></chat-icon>
                 </label>
                 <input class="c21-input-star" type="radio" id="star3" name="rating" value="3" />
                 <label (mouseover)="mouseOverRate(3)" (mouseleave)="mouseOverRate(0)" (click)="openRate(3)" class="full c21-button" for="star3" title="buono - 3 stars">
-                  <svg aria-hidden="true" focusable="false" class="star" [class.active]="mouseRate>=3" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
+                  <chat-icon name="star" class="star icon-xl" [filled]="true" [class.active]="mouseRate>=3"></chat-icon>
                 </label>
                 <input class="c21-input-star" type="radio" id="star4" name="rating" value="4" />
                 <label (mouseover)="mouseOverRate(4)" (mouseleave)="mouseOverRate(0)" (click)="openRate(4)" class="full c21-button" for="star4" title="ottimo - 4 stars">
-                  <svg aria-hidden="true" focusable="false" class="star" [class.active]="mouseRate>=4" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
+                  <chat-icon name="star" class="star icon-xl" [filled]="true" [class.active]="mouseRate>=4"></chat-icon>
                 </label>
                 <input class="c21-input-star" type="radio" id="star5" name="rating" value="5" />
                 <label (mouseover)="mouseOverRate(5)" (mouseleave)="mouseOverRate(0)" (click)="openRate(5)" class="full c21-button" for="star5" title="eccellente - 5 stars">
-                  <svg aria-hidden="true" focusable="false" class="star" [class.active]="mouseRate>=5" width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
+                  <chat-icon name="star" class="star icon-xl" [filled]="true" [class.active]="mouseRate>=5"></chat-icon>
                 </label>
               </fieldset>
             </div>
@@ -91,11 +76,7 @@ fill: #FFD700;
               (click)="returnClosePage()"
               [ngStyle]="{'background-color': $safeNavigationMigration(stylesMap?.get('themeColor')), 'border-color': $safeNavigationMigration(stylesMap?.get('themeColor')), 'color': $safeNavigationMigration(stylesMap?.get('foregroundColor')) }">
               <span class="v-align-center">
-                <svg aria-hidden="true" focusable="false" [ngStyle]="{'fill': $safeNavigationMigration(stylesMap?.get('foregroundColor'))}" xmlns="http://www.w3.org/2000/svg"
-                  width="18" height="18" viewBox="0 0 24 24">
-                  <path fill="none" d="M0 0h24v24H0V0z" />
-                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-                </svg>
+                <chat-icon name="close" class="icon-sm" [color]="$safeNavigationMigration(stylesMap?.get('foregroundColor'))"></chat-icon>
               </span>
               <span class="v-align-center c21-label-button">
                 {{ g.CLOSE }}
@@ -121,11 +102,7 @@ fill: #FFD700;
                 (click)="returnClosePage()"
                 [ngStyle]="{'background-color': $safeNavigationMigration(stylesMap?.get('themeColor')), 'border-color': $safeNavigationMigration(stylesMap?.get('themeColor')), 'color': $safeNavigationMigration(stylesMap?.get('foregroundColor')) }">
                 <span class="v-align-center">
-                  <svg aria-hidden="true" focusable="false" [ngStyle]="{'fill': $safeNavigationMigration(stylesMap?.get('foregroundColor'))}" xmlns="http://www.w3.org/2000/svg"
-                    width="18" height="18" viewBox="0 0 24 24">
-                    <path fill="none" d="M0 0h24v24H0V0z" />
-                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-                  </svg>
+                  <chat-icon name="close" class="icon-sm" [color]="$safeNavigationMigration(stylesMap?.get('foregroundColor'))"></chat-icon>
                 </span>
                 <span class="v-align-center c21-label-button">
                   {{ g.CLOSE }}
@@ -138,11 +115,7 @@ fill: #FFD700;
                 (click)="sendRate()"
                 [ngStyle]="{'background-color': $safeNavigationMigration(stylesMap?.get('themeColor')), 'border-color': $safeNavigationMigration(stylesMap?.get('themeColor')), 'color': $safeNavigationMigration(stylesMap?.get('foregroundColor')) }">
                 <span class="v-align-center">
-                  <svg aria-hidden="true" focusable="false" [ngStyle]="{'fill': $safeNavigationMigration(stylesMap?.get('foregroundColor'))}" xmlns="http://www.w3.org/2000/svg"
-                    width="18" height="18" viewBox="0 0 24 24">
-                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                    <path d="M0 0h24v24H0z" fill="none"/>
-                  </svg>
+                  <chat-icon name="send" class="icon-sm" [color]="$safeNavigationMigration(stylesMap?.get('foregroundColor'))"></chat-icon>
                 </span>
                 <span class="v-align-center c21-label-button">
                   {{ g.SUBMIT }}
@@ -176,11 +149,7 @@ fill: #FFD700;
               (click)="returnClosePage()"
               [ngStyle]="{'background-color': $safeNavigationMigration(stylesMap?.get('themeColor')), 'border-color': $safeNavigationMigration(stylesMap?.get('themeColor')), 'color': $safeNavigationMigration(stylesMap?.get('foregroundColor')) }">
               <span class="v-align-center">
-                <svg aria-hidden="true" focusable="false" [ngStyle]="{'fill': $safeNavigationMigration(stylesMap?.get('foregroundColor'))}" xmlns="http://www.w3.org/2000/svg"
-                  width="18" height="18" viewBox="0 0 24 24">
-                  <path fill="none" d="M0 0h24v24H0V0z" />
-                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-                </svg>
+                <chat-icon name="close" class="icon-sm" [color]="$safeNavigationMigration(stylesMap?.get('foregroundColor'))"></chat-icon>
               </span>
               <span class="v-align-center c21-label-button">
                 {{ g.CLOSE }}

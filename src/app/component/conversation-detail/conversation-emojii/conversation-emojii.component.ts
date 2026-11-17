@@ -10,6 +10,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy
 export class ConversationEmojiiComponent implements OnInit {
 
   @Input() var: string;
+  @Input() stylesMap: Map<string, string>;
   @Output() addEmoji = new EventEmitter();
   
   emojiiOptions = {

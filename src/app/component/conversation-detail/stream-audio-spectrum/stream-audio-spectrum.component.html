@@ -25,15 +25,7 @@
   @case ('button') {
     @if (!active) {
       <span class="stream-audio-button__icon" aria-hidden="true">
-        <svg role="img" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 23 23" aria-labelledby="altIconTitle">
-          <rect x="0" y="7.5" height="6px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
-          <rect x="4" y="5.5" height="10px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
-          <rect x="8" y="2.5" height="16px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
-          <rect x="12" y="5.5" height="10px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
-          <rect x="16" y="2.5" height="16px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
-          <rect x="20" y="7.5" height="6px" fill-opacity="1" width="2px" rx="0.75" ry="0.75"></rect>
-          <title id="altIconTitle">{{ translationMap.get('STREAM_AUDIO') }}</title>
-        </svg>
+        <chat-icon name="audio-lines"></chat-icon>
       </span>
     }
     @if (active) {

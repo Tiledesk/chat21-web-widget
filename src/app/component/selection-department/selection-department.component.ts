@@ -175,7 +175,7 @@ export class SelectionDepartmentComponent implements OnInit, AfterViewInit {
     }
 
     @HostListener('keydown.escape', ['$event'])
-    onEscape(event: KeyboardEvent){
+    onEscape(event: Event){
         event.preventDefault();
         event.stopPropagation();
         this.closePage();
