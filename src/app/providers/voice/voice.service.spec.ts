@@ -346,9 +346,9 @@ describe('VoiceService', () => {
     });
 
     /** Start a WSS session with barge-in on and the bot speaking. */
-    async function botSpeaking(): Promise<void> {
+    async function botSpeaking(sessionExtra: Record<string, unknown> = {}): Promise<void> {
       await startWssSession();
-      wsControl$.next({ event: 'session_started', bargeIn: true } as VoiceWsControlMessage);
+      wsControl$.next({ event: 'session_started', bargeIn: true, ...sessionExtra } as VoiceWsControlMessage);
       await Promise.resolve(); await Promise.resolve();    // let the local VAD load
       wsControl$.next({ event: 'thinking' } as VoiceWsControlMessage);
       wsControl$.next({ event: 'speaking', text: 'hello there' } as VoiceWsControlMessage);
@@ -449,6 +449,86 @@ describe('VoiceService', () => {
       } finally {
         jasmine.clock().uninstall();
       }
+    });
+
+    describe('volume-drop settings from the flow (session_started.bargeInDuck)', () => {
+      it('lowers the bot to the flow volume', async () => {
+        await botSpeaking({ bargeInDuck: { volume: 40 } });
+        const gainSpy = spyOn(service as any, '_applyTtsGain');
+
+        vadOpts.onSpeechStart();
+
+        expect(gainSpy).toHaveBeenCalledWith(0.4);
+      });
+
+      it('uses 15% when the flow sets no volume', async () => {
+        await botSpeaking();
+        const gainSpy = spyOn(service as any, '_applyTtsGain');
+
+        vadOpts.onSpeechStart();
+
+        expect(gainSpy).toHaveBeenCalledWith(0.15);
+      });
+
+      it('waits the flow release time after the user stops', async () => {
+        jasmine.clock().install();
+        try {
+          await botSpeaking({ bargeInDuck: { releaseMs: 3000 } });
+          vadOpts.onSpeechStart();
+          vadOpts.onSpeechEnd(new Float32Array(0));
+
+          jasmine.clock().tick(2900);
+          expect(ducked()).toBeTrue();
+          jasmine.clock().tick(200);
+          expect(ducked()).toBeFalse();
+        } finally {
+          jasmine.clock().uninstall();
+        }
+      });
+
+      it('never stays lowered longer than the flow maximum', async () => {
+        jasmine.clock().install();
+        try {
+          await botSpeaking({ bargeInDuck: { maxMs: 2000 } });
+          vadOpts.onSpeechStart();
+
+          jasmine.clock().tick(1900);
+          expect(ducked()).toBeTrue();
+          jasmine.clock().tick(200);
+          expect(ducked()).toBeFalse();
+        } finally {
+          jasmine.clock().uninstall();
+        }
+      });
+
+      it('ignores invalid values and keeps the defaults', async () => {
+        jasmine.clock().install();
+        try {
+          await botSpeaking({ bargeInDuck: { volume: 500, releaseMs: -1, maxMs: 'abc' } });
+          const gainSpy = spyOn(service as any, '_applyTtsGain');
+          vadOpts.onSpeechStart();
+          expect(gainSpy).toHaveBeenCalledWith(0.15);
+          vadOpts.onSpeechEnd(new Float32Array(0));
+
+          jasmine.clock().tick(1100);
+          expect(ducked()).toBeTrue();
+          jasmine.clock().tick(200);
+          expect(ducked()).toBeFalse();
+        } finally {
+          jasmine.clock().uninstall();
+        }
+      });
+
+      it('a session_started without settings goes back to the defaults', async () => {
+        await botSpeaking({ bargeInDuck: { volume: 40 } });
+        wsControl$.next({ event: 'session_started', bargeIn: true } as VoiceWsControlMessage);
+        wsControl$.next({ event: 'speaking', text: 'hello again' } as VoiceWsControlMessage);
+        const gainSpy = spyOn(service as any, '_applyTtsGain');
+
+        vadOpts.onSpeechStart();
+
+        expect(gainSpy).toHaveBeenCalledWith(0.15);
+      });
     });
 
     it('a confirmed barge_in clears the duck and its timers for the next turn', async () => {
