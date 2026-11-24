@@ -98,6 +98,11 @@ export type VoiceWsControlMessage = {
   message?: string;
   /** `session_started`: the flow allows the user to interrupt the bot (BARGE_IN global). */
   bargeIn?: boolean;
+  /**
+   * `session_started`: the flow's volume-drop settings for barge-in, only the ones it sets
+   * (BARGE_IN_DUCK_VOLUME 0–100 %, BARGE_IN_DUCK_RELEASE_MS, BARGE_IN_DUCK_MAX_MS).
+   */
+  bargeInDuck?: { volume?: number; releaseMs?: number; maxMs?: number };
 } & Record<string, unknown>;
 
 /** Single word with its karaoke highlight state. */
