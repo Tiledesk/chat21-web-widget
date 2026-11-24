@@ -6,6 +6,9 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.4.0-rc3
+- **added**: with interruption on, the flow can set how much the assistant lowers its voice while you talk over it, how long it waits after you stop before the volume comes back, and the longest time the volume stays lowered (Voice settings in the Design Studio). Without them it keeps 15%, 1.2 s and 6 s
+
 # 5.4.0-rc2
 - **added**: ANGULAR 22
 
