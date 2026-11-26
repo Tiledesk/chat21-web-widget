@@ -143,5 +143,5 @@ describe('TextComponent (render via MarkedPipe)', () => {
       expect(p.textContent).toContain('Hello');
       expect(p.querySelectorAll('.stream-word').length).toBe(2);
     });
-  })
+  });
 });

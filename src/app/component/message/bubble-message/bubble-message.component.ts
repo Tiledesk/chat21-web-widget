@@ -3,13 +3,13 @@ import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MessageModel } from 'src/chat21-core/models/message';
-import { MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS } from 'src/chat21-core/utils/constants';
+import { MESSAGE_TYPE_MINE, MESSAGE_TYPE_OTHERS, TYPE_MSG_URL_PREVIEW } from 'src/chat21-core/utils/constants';
 import { convertColorToRGBA } from 'src/chat21-core/utils/utils';
 import { calcImageSize, isAudio, isAudioTTS, isFile, isFrame, isImage, isJsonSources, messageType } from 'src/chat21-core/utils/utils-message';
 import { getColorBck } from 'src/chat21-core/utils/utils-user';
 import { JsonSourcesParserService, UrlPreviewDisplayFields } from 'src/app/providers/json-sources-parser.service';
-import { JsonSourceItem } from '../json-sources/json-sources.component';
 import { VoiceService } from 'src/app/providers/voice/voice.service';
+import { JsonSourceItem } from '../json-sources/json-sources.component';
 import { VoiceTtsKaraokeWord } from 'src/app/providers/voice/voice-streaming.types';
 
 @Component({
@@ -55,6 +55,7 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
   _wssKaraokeWords$?: Observable<VoiceTtsKaraokeWord[]>;
 
   private _kSub?: Subscription;
+  
   @Output() onBeforeMessageRender = new EventEmitter();
   @Output() onAfterMessageRender = new EventEmitter();
   @Output() onElementRendered = new EventEmitter<{ element: string; status: boolean }>();
@@ -73,6 +74,32 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
     if (this.isUrlPreviewMessage) return false;
     return !!(msg.text && String(msg.text).trim().length > 0);
   }
+
+  readonly isImage = isImage;
+  readonly isFile = isFile;
+  readonly isFrame = isFrame;
+  readonly isAudio = isAudio;
+  readonly isAudioTTS = isAudioTTS;
+  readonly isJsonSources = isJsonSources;
+  readonly messageType = messageType;
+  readonly convertColorToRGBA = convertColorToRGBA;
+  readonly MESSAGE_TYPE_MINE = MESSAGE_TYPE_MINE;
+  readonly MESSAGE_TYPE_OTHERS = MESSAGE_TYPE_OTHERS;
+
+  sizeImage: { width: number; height: number } = { width: 0, height: 0 };
+  fullnameColor: string = '';
+  jsonSources: JsonSourceItem[] | null = null;
+  isUrlPreviewMessage = false;
+  jsonSourcesDisplayFields?: UrlPreviewDisplayFields;
+  jsonSourcesBackgroundColor?: string;
+
+  private urlPreviewReqId = 0;
+
+  constructor(
+    public sanitizer: DomSanitizer,
+    private jsonSourcesParser: JsonSourcesParserService,
+    public voiceService: VoiceService,
+  ) {}
 
   ngOnInit() {
     // If this TTS message arrived while the voice proxy was active, mark it so
@@ -110,32 +137,6 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
     this._kSub = undefined;
   }
 
-  readonly isImage = isImage;
-  readonly isFile = isFile;
-  readonly isFrame = isFrame;
-  readonly isAudio = isAudio;
-  readonly isAudioTTS = isAudioTTS;
-  readonly isJsonSources = isJsonSources;
-  readonly messageType = messageType;
-  readonly convertColorToRGBA = convertColorToRGBA;
-  readonly MESSAGE_TYPE_MINE = MESSAGE_TYPE_MINE;
-  readonly MESSAGE_TYPE_OTHERS = MESSAGE_TYPE_OTHERS;
-
-  sizeImage: { width: number; height: number } = { width: 0, height: 0 };
-  fullnameColor: string = '';
-  jsonSources: JsonSourceItem[] | null = null;
-  isUrlPreviewMessage = false;
-  jsonSourcesDisplayFields?: UrlPreviewDisplayFields;
-  jsonSourcesBackgroundColor?: string;
-
-  private urlPreviewReqId = 0;
-
-  constructor(
-    public sanitizer: DomSanitizer,
-    private jsonSourcesParser: JsonSourcesParserService,
-    public voiceService: VoiceService,
-  ) {}
-
   ngOnChanges(changes?: SimpleChanges): void {
     if (this.message?.metadata && typeof this.message.metadata === 'object') {
       this.sizeImage = calcImageSize(this.message.metadata);
@@ -149,6 +150,10 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
       this.fullnameColor = getColorBck(this.message.sender_fullname);
     }
 
+    // Reset on every message change: we must not "leak" sources across different messages.
+    this.jsonSources = null;
+    this.jsonSourcesDisplayFields = undefined;
+    this.jsonSourcesBackgroundColor = undefined;
     // Already-visible bubbles must stay static when stream-audio is toggled on.
     if (this.message && !this.streamOnArrival) {
       this._hasRenderedStatic = true;
@@ -191,10 +196,10 @@ export class BubbleMessageComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    // Reset on every message change: we must not "leak" sources across different messages.
-    this.jsonSources = null;
-    this.jsonSourcesDisplayFields = undefined;
-    this.jsonSourcesBackgroundColor = undefined;
+    if (this.message?.type !== TYPE_MSG_URL_PREVIEW) {
+      this.jsonSources = null;
+      return;
+    }
 
     // url_preview payload can live on message root OR inside metadata/attributes depending on the integration.
     const urlPreviewPayload = this.jsonSourcesParser.getUrlPreviewPayload(this.message);

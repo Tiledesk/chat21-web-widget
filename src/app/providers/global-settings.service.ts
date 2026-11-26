@@ -11,6 +11,7 @@ import { LoggerService } from '../../chat21-core/providers/abstract/logger.servi
 import { LoggerInstance } from '../../chat21-core/providers/logger/loggerInstance';
 import { ensureAccessibleTextColor, invertColor, isAllowedUrlInText, isJsonArray, normalizeColorToHex } from '../../chat21-core/utils/utils';
 import { AppConfigService } from './app-config.service';
+import { LOCALSTORAGE_KEYS } from '../utils/constants';
 
 
 @Injectable()
@@ -66,6 +67,8 @@ export class GlobalSettingsService {
         this.globals.logLevel = this.appConfigService.getConfig().logLevel
         /**SET PERSISTENCE parameter */
         this.globals.persistence = this.appConfigService.getConfig().authPersistence
+        /**SET CLOSE CHAT IN CONVERSATION parameter */
+        this.globals.closeChatInConversation = stringToBoolean(this.appConfigService.getConfig().closeChatInConversation);
 
         // ------------------------------- //
         /** LOAD PARAMETERS FROM SERVER
@@ -73,37 +76,37 @@ export class GlobalSettingsService {
          * set parameters in globals
         */
         // const projectid = globals.projectid;
-        this.getProjectParametersById(projectid).subscribe( response => {
-            const project = response['project'];
-            if (project) {
-                that.globals.project.initialize(
-                    project['id'],
-                    project['activeOperatingHours'],
-                    project['channels'],
-                    project['name'],
-                    project['createdAt'],
-                    project['createdBy'],
-                    project['isActiveSubscription'],
-                    project['profile'],
-                    project['agents'],
-                    project['trialDays'],
-                    project['type'],
-                    project['status'],
-                    project['trialDaysLeft'],
-                    project['trialExpired'],
-                    project['updatedAt'],
-                    project['settings'],
-                    project['versions']
-                );
-            }
-            // console.log('globals.project ----------------->', that.globals.project);
-            that.setParameters(response);
-        }, (error) => {
-            // console.log('2 - ::getProjectParametersById', error);
-            that.setParameters(null);
-        }, () => {
-            // console.log('3 - setParameters ');
-            // that.setParameters(null);
+        this.getProjectParametersById(projectid).subscribe({
+            next: (response) => {
+                const project = response['project'];
+                if (project) {
+                    that.globals.project.initialize(
+                        project['id'],
+                        project['activeOperatingHours'],
+                        project['channels'],
+                        project['name'],
+                        project['createdAt'],
+                        project['createdBy'],
+                        project['isActiveSubscription'],
+                        project['profile'],
+                        project['agents'],
+                        project['trialDays'],
+                        project['type'],
+                        project['status'],
+                        project['trialDaysLeft'],
+                        project['trialExpired'],
+                        project['updatedAt'],
+                        project['settings'],
+                        project['versions']
+                    );
+                }
+                // console.log('globals.project ----------------->', that.globals.project);
+                that.setParameters(response);
+            },
+            error: () => {
+                // console.log('2 - ::getProjectParametersById', error);
+                that.setParameters(null);
+            },
         });
 
     }
@@ -622,7 +625,7 @@ export class GlobalSettingsService {
             this.logger.error('[GLOBAL-SET] setVariablesFromService > ipAddress > Error :', error);
         }
 
-        this.appStorageService.setItem('attributes', JSON.stringify(this.globals.attributes))
+        this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(this.globals.attributes))
 
         // if (response && response.project && response.project.widget !== null) {
         //     this.logger.debug('[GLOBAL-SET] setVariablesFromService response.widget: ', response.project.widget);
@@ -1969,10 +1972,14 @@ export class GlobalSettingsService {
             if (globals.isMobile === true && key === 'size') {
                 // On mobile we always open fullscreen, so legacy/persisted widget size must be ignored.
                 try {
-                    this.appStorageService.removeItem('size');
+                    this.appStorageService.removeItem(LOCALSTORAGE_KEYS.SIZE);
                 } catch (e) {
                     this.logger.warn('[GLOBAL-SET] setVariableFromStorage > cannot remove size from storage', e);
                 }
+                continue;
+            }
+            if (key === LOCALSTORAGE_KEYS.RECIPIENT_ID) {
+                // the stored recipientId must be validated against its owner: it is read only through getStoredRecipientId()
                 continue;
             }
             const val = this.appStorageService.getItem(key);
@@ -2072,7 +2079,7 @@ export class GlobalSettingsService {
         this.logger.log('[GLOBAL-SET] setDepartment: ', JSON.stringify(department));
         this.globals.setParameter('departmentSelected', department);
         // let attributes = this.globals.attributes;
-        let attributes: any = JSON.parse(this.appStorageService.getItem('attributes'));
+        let attributes: any = JSON.parse(this.appStorageService.getItem(LOCALSTORAGE_KEYS.ATTRIBUTES));
         if (!attributes) {
             attributes = {
                 departmentId: department._id,
@@ -2088,7 +2095,7 @@ export class GlobalSettingsService {
         this.logger.debug('[GLOBAL-SET] setDepartment > setAttributes: ', JSON.stringify(attributes));
         this.globals.setParameter('departmentSelected', department);
         this.globals.setParameter('attributes', attributes);
-        this.appStorageService.setItem('attributes', JSON.stringify(attributes));
+        this.appStorageService.setItem(LOCALSTORAGE_KEYS.ATTRIBUTES, JSON.stringify(attributes));
 
     }
     // ========= end:: GET DEPARTEMENTS ============//

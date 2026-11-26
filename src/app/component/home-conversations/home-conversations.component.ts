@@ -149,7 +149,7 @@ export class HomeConversationsComponent implements OnInit, OnDestroy {
     // if (this.g.supportMode) {
     //   this.showWaitingTime();
     // }
-    this.showWaitingTime();
+    // this.showWaitingTime();
     //this.showConversations();
   }
 
