@@ -158,6 +158,10 @@ export class VoiceService {
   private static readonly TTS_DUCK_GAIN = 0.15;
   private static readonly DUCK_RELEASE_MS = 1200;  // after the user stops, wait this long for barge_in
   private static readonly DUCK_MAX_MS = 6000;      // never stay ducked longer than this
+  // The flow can change the three values above (session_started.bargeInDuck).
+  private _duckGain = VoiceService.TTS_DUCK_GAIN;
+  private _duckReleaseMs = VoiceService.DUCK_RELEASE_MS;
+  private _duckMaxMs = VoiceService.DUCK_MAX_MS;
   private _bargeInVad?: MicVAD;
   private _botSpeaking = false;
   private _ttsGain?: GainNode;
@@ -335,6 +339,7 @@ export class VoiceService {
     switch (msg.event) {
       case 'session_started':
         this._bargeInEnabled = msg.bargeIn === true;
+        this._applyDuckSettings(msg.bargeInDuck);
         this.logger.log('[VoiceService] session_started', { requestId: msg.requestId ?? '', bargeIn: this._bargeInEnabled });
         if (this._bargeInEnabled) void this._initBargeInVad();
         break;
@@ -641,6 +646,15 @@ export class VoiceService {
 
   // ── Barge-in: duck, then confirm ──────────────────────────────────────────
 
+  /** The flow's volume-drop settings for this session; anything missing or invalid keeps the default. */
+  private _applyDuckSettings(duck: VoiceWsControlMessage['bargeInDuck']): void {
+    const valid = (v: unknown, max = Number.MAX_SAFE_INTEGER): v is number =>
+      typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= max;
+    this._duckGain = valid(duck?.volume, 100) ? duck.volume / 100 : VoiceService.TTS_DUCK_GAIN;
+    this._duckReleaseMs = valid(duck?.releaseMs) ? duck.releaseMs : VoiceService.DUCK_RELEASE_MS;
+    this._duckMaxMs = valid(duck?.maxMs) ? duck.maxMs : VoiceService.DUCK_MAX_MS;
+  }
+
   /** Load the local VAD on the session's microphone (barge-in flows only). */
   private async _initBargeInVad(): Promise<void> {
     if (this._bargeInVad || !this.stream) return;
@@ -670,8 +684,8 @@ export class VoiceService {
     this._clearDuckReleaseTimer();
     if (this._ttsDucked) return;
     this._ttsDucked = true;
-    this._applyTtsGain(VoiceService.TTS_DUCK_GAIN);
-    this._duckMaxTimer = setTimeout(() => this._restoreTtsVolume(), VoiceService.DUCK_MAX_MS);
+    this._applyTtsGain(this._duckGain);
+    this._duckMaxTimer = setTimeout(() => this._restoreTtsVolume(), this._duckMaxMs);
     this.logger.log('[VoiceService] barge-in: user speaking over the bot – TTS ducked');
   }
 
@@ -679,7 +693,7 @@ export class VoiceService {
     if (!this._ttsDucked) return;
     this._clearDuckReleaseTimer();
     // No barge_in yet: the proxy may still be transcribing. Give it a moment, then give up.
-    this._duckReleaseTimer = setTimeout(() => this._restoreTtsVolume(), VoiceService.DUCK_RELEASE_MS);
+    this._duckReleaseTimer = setTimeout(() => this._restoreTtsVolume(), this._duckReleaseMs);
   }
 
   private _restoreTtsVolume(): void {
