@@ -154,7 +154,6 @@
                 right: 35px;
                 margin: 10px;
                 z-index: 10;
-                justify-content: center;
                 align-items: center;
                 button {
                     display: flex;
@@ -166,6 +165,7 @@
                     margin: 0px;
                     display: flex;
                     align-items: center;
+                    justify-content: center;
                     border: none;
                     background-color: rgba(0, 0, 0, 0);
                     &:hover {
