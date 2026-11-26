@@ -38,17 +38,13 @@
 
         right: 0px;
     }
-    .button-menu-options svg {
-        fill: var(--icon-fill-color);
-        display: none;
+    .button-menu-options chat-icon {
+        color: var(--icon-fill-color);
     }
 
     .button-menu-options:hover{
         // background-color: whitesmoke;
         border-radius: 50%;
-        svg {
-            display: block;
-        }
     }
 }
 

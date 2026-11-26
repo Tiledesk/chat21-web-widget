@@ -35,13 +35,8 @@
   width: 100%;
 }
 
-.stream-audio-button__icon svg {
-  width: 20px;
-  height: 20px;
-  display: block;
-  rect {
-    fill: var(--icon-fill-color);
-  }
+.stream-audio-button__icon chat-icon {
+  color: var(--icon-fill-color);
 }
 
 .stream-audio-button__expanded {

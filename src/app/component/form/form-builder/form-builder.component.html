@@ -51,10 +51,7 @@
       (keydown.enter)="onEnterButtonPressed($event)"
       [ngStyle]="{'background-color': $safeNavigationMigration(stylesMap?.get('themeColor')), 'border-color': $safeNavigationMigration(stylesMap?.get('themeColor')), 'color': $safeNavigationMigration(stylesMap?.get('foregroundColor')) }">
       <span class="v-align-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"  [ngStyle]="{'fill': $safeNavigationMigration(stylesMap?.get('foregroundColor'))}"/>
-          <path d="M0 0h24v24H0z" fill="none"/>
-        </svg>
+        <chat-icon name="send" class="icon-sm" [color]="$safeNavigationMigration(stylesMap?.get('foregroundColor'))"></chat-icon>
       </span>
       <span class="v-align-center c21-label-button">
         {{translationMap?.get('LABEL_START_NW_CONV')}}

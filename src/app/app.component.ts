@@ -1918,8 +1918,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param $event
      * return conversation selected from chat-last-message output event
      */
-    public onSelectedConversation($event: ConversationModel) {
-        if ($event) {
+    public onSelectedConversation(conversation: ConversationModel) {
+        if (conversation) {
             if (this.g.isOpen === false) {
 
                 if(this.forceDisconnect){
@@ -1931,17 +1931,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.f21_open();
             }
             // this.conversationSelected = $event;
-            if($event.channel_type === CHANNEL_TYPE.DIRECT){
-                this.g.setParameter('recipientId', $event.sender);
-                this.setStoredRecipientId($event.sender)
+            if(conversation.channel_type === CHANNEL_TYPE.DIRECT){
+                this.g.setParameter('recipientId', conversation.sender);
+                this.appStorageService.setItem('recipientId', conversation.sender)
             }else {
-                this.g.setParameter('recipientId', $event.recipient);
-                this.setStoredRecipientId($event.recipient)
+                this.g.setParameter('recipientId', conversation.recipient);
+                this.appStorageService.setItem('recipientId', conversation.recipient)
             }
             this.g.isOpenPrechatForm = false;
             this.isOpenConversation = true;
-            $event.archived? this.isConversationArchived = $event.archived : this.isConversationArchived = false;
-            this.logger.debug('[APP-COMP] onSelectConversation in APP COMPONENT: ', $event);
+            conversation.archived? this.isConversationArchived = conversation.archived : this.isConversationArchived = false;
+            this.logger.debug('[APP-COMP] onSelectConversation in APP COMPONENT: ', conversation);
             // this.messagingService.initialize(this.senderId, this.tenant, this.channelType);
             // this.messages = this.messagingService.messages;
         }

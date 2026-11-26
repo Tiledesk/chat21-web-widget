@@ -1,0 +1,84 @@
+/*
+ * Unified Lucide icon style.
+ * Change these variables to restyle every <chat-icon> in the widget.
+ *
+ *   --chat-icon-size    default box size
+ *   --chat-icon-stroke  stroke width (Lucide default is 2)
+ *   --chat-icon-color   fallback color; icons otherwise inherit currentColor
+ *
+ * Size helpers: .icon-xs .icon-sm .icon-lg .icon-xl .icon-status .launcher-glyph
+ * Tone helpers: .icon-menu (uses --icon-fill-color)
+ * .filled  paints the shape; .spin rotates it (loaders)
+ */
+:root {
+  --chat-icon-size: 20px;
+  --chat-icon-stroke: 2;
+  --chat-icon-color: currentColor;
+}
+
+chat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--chat-icon-size, 20px);
+  height: var(--chat-icon-size, 20px);
+  color: var(--chat-icon-color, currentColor);
+  line-height: 0;
+  flex-shrink: 0;
+  vertical-align: middle;
+
+  .chat-icon__glyph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    line-height: 0;
+  }
+
+  .chat-icon__glyph > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+chat-icon:not(.filled) svg,
+chat-icon:not(.filled) svg :is(path, circle, line, rect, polyline, polygon) {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: var(--chat-icon-stroke, 2);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+chat-icon.filled svg,
+chat-icon.filled svg :is(path, circle, line, rect, polyline, polygon) {
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  stroke-width: var(--chat-icon-stroke, 2);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+chat-icon.icon-xs { --chat-icon-size: 15px; }
+chat-icon.icon-sm { --chat-icon-size: 18px; }
+chat-icon.icon-lg { --chat-icon-size: 24px; }
+chat-icon.icon-xl { --chat-icon-size: 30px; }
+chat-icon.icon-status { --chat-icon-size: 13px; }
+chat-icon.launcher-glyph { --chat-icon-size: 46%; }
+
+chat-icon.icon-menu {
+  color: var(--icon-fill-color);
+}
+
+chat-icon.spin svg {
+  transform-origin: center;
+  animation: chat-icon-spin 0.8s linear infinite;
+}
+
+@keyframes chat-icon-spin {
+  to { transform: rotate(360deg); }
+}

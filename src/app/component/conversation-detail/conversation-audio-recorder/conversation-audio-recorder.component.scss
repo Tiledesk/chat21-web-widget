@@ -23,14 +23,14 @@
   // --hoverTextColor:var(--backgroundColor);
 
     button.play-pause{
-      svg{
-        fill: var(--chat-footer-color) !important;
+      chat-icon {
+        color: var(--chat-footer-color);
       }
       &:hover{
         color: var(--chat-footer-background-color) !important;
         background-color: var(--chat-footer-color) !important;
-        svg{
-          fill: var(--chat-footer-background-color) !important;
+        chat-icon {
+          color: var(--chat-footer-background-color);
         }
       }
     }
@@ -68,10 +68,8 @@ button {
     z-index: 0;
   }
   
-  .mic-button svg {
-    width: 24px;
-    height: 24px;
-    fill: var(--icon-fill-color);
+  .mic-button chat-icon {
+    color: var(--icon-fill-color);
   }
   
   .mic-button::before {
@@ -95,9 +93,8 @@ button {
   }
   
   .mic-button:active {
-    svg {
+    chat-icon {
         color: #fff;
-        fill: #fff;
     }
   }
 

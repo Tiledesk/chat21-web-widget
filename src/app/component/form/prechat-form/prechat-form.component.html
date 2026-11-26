@@ -1,53 +1,43 @@
-<div id="chat21-prechat-form"
-    #afPrechatFormComponent
-    role="dialog"
-    aria-modal="true"
-    cdkTrapFocus
-    [cdkTrapFocusAutoCapture]="true"
-    [attr.aria-label]="g.LABEL_COMPLETE_FORM">
+<div id="chat21-prechat-form" #afPrechatFormComponent role="dialog" aria-modal="true" cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true" [attr.aria-label]="g.LABEL_COMPLETE_FORM">
 
-        <!-- HEADER -->
-        <div class="c21-header" [ngStyle]="{'color': g.themeForegroundColor, 'background-image': g.colorGradient180 }">
-            <div class="c21-header-container">
+    <!-- HEADER -->
+    <div class="c21-header" [ngStyle]="{'color': g.themeForegroundColor, 'background-image': g.colorGradient180 }">
+        <div class="c21-header-container">
 
-                <!-- ICON CLOSE PANEL -->
-                <div class="c21-header-button">
-                    <div class="c21-close-button c21-small">
-                        <button type="button"
-                            [attr.aria-label]="g.BUTTON_CLOSE_TO_ICON || 'Close panel'"
-                            class="c21-close-button-body"
-                            (click)="returnClosePage()">
-                            <svg aria-hidden="true" focusable="false" [ngStyle]="{'fill': g.themeForegroundColor }" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24">
-                                <path fill="none" d="M0 0h24v24H0V0z"/>
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-                            </svg>
-                        </button>
-                    </div>
+            <!-- ICON CLOSE PANEL -->
+            <div class="c21-header-button">
+                <div class="c21-close-button c21-small">
+                    <button type="button" [attr.aria-label]="g.BUTTON_CLOSE_TO_ICON || 'Close panel'"
+                        class="c21-close-button-body" (click)="returnClosePage()">
+                        <chat-icon name="close" [color]="g.themeForegroundColor"></chat-icon>
+                    </button>
                 </div>
-
-                 <!-- CONTENT HEADER -->
-                <div class="c21-header-content">
-                    <!-- TITLE HEADER -->
-                    <div class="c21-title" [ngStyle]="{'color': g.themeForegroundColor}">
-                    </div>
-                </div>
-
             </div>
-        </div>
-    
 
-        <!-- CONTENT -->
-        <div class="c21-body">
-
-            <div class="c21-body-container">
-
-                <div class="c21-body-header">
-                    <h2 start-focus-chat21-prechat-form class="c21-form-message-field">{{g.LABEL_COMPLETE_FORM}}</h2>
+            <!-- CONTENT HEADER -->
+            <div class="c21-header-content">
+                <!-- TITLE HEADER -->
+                <div class="c21-title" [ngStyle]="{'color': g.themeForegroundColor}">
                 </div>
+            </div>
 
-                <div class="c21-body-content">
+        </div>
+    </div>
 
-                    <!-- <form id="chat21-form-container" [formGroup]="preChatFormGroup" novalidate >
+
+    <!-- CONTENT -->
+    <div class="c21-body">
+
+        <div class="c21-body-container">
+
+            <div class="c21-body-header">
+                <h2 start-focus-chat21-prechat-form class="c21-form-message-field">{{g.LABEL_COMPLETE_FORM}}</h2>
+            </div>
+
+            <div class="c21-body-content">
+
+                <!-- <form id="chat21-form-container" [formGroup]="preChatFormGroup" novalidate >
                             <!- - (ngSubmit)="save(preChatFormGroup.value, preChatFormGroup.valid)" - ->
                         <div class="c21-input-container">
                             <input tabindex="1411" [attr.disabled]="!g.isOpenPrechatForm? '' : null" type="text" id="form-field-name" formControlName="name" placeholder="{{g.LABEL_FIELD_NAME}}">
@@ -67,16 +57,13 @@
                         </div>
                     </form> -->
 
-                    <chat-form-builder
-                        [preChatFormJson]='g.preChatFormJson'
-                        [isOpenPrechatForm]='g.isOpenPrechatForm'
-                        [stylesMap]="stylesMap"
-                        (onSubmitForm)='onSubmitForm($event)'
-                        (onErrorRenderForm)='onErrorRenderForm()'>
-                    </chat-form-builder>
-                    
-                    
-                    <!-- <button tabindex="1413" [disabled]="!preChatFormGroup.controls.name.valid || !preChatFormGroup.controls.email.valid" class="c21-button-primary" (click)="openNewConversation()" [ngStyle]="{'background-color': g.themeColor, 'border-color': g.themeColor, 'color': g.themeForegroundColor }">
+                <chat-form-builder [preChatFormJson]='g.preChatFormJson' [isOpenPrechatForm]='g.isOpenPrechatForm'
+                    [stylesMap]="stylesMap" (onSubmitForm)='onSubmitForm($event)'
+                    (onErrorRenderForm)='onErrorRenderForm()'>
+                </chat-form-builder>
+
+
+                <!-- <button tabindex="1413" [disabled]="!preChatFormGroup.controls.name.valid || !preChatFormGroup.controls.email.valid" class="c21-button-primary" (click)="openNewConversation()" [ngStyle]="{'background-color': g.themeColor, 'border-color': g.themeColor, 'color': g.themeForegroundColor }">
                         <span class="v-align-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
                             <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"  [ngStyle]="{'fill': g.themeForegroundColor}"/>
@@ -89,23 +76,18 @@
                         <div class="clear"></div>
                     </button> -->
 
-                </div>
-
             </div>
 
-        
-            <!-- <label *ngIf="g.privacyField" class="privacy-field">
+        </div>
+
+
+        <!-- <label *ngIf="g.privacyField" class="privacy-field">
                 <div class="privacy-link" [innerHtml]="g.privacyField"></div>
                 <input #privacyInputField type="checkbox">
                 <span id="span-checkmark" class="checkmark" (click)="checkInput()"></span>
             </label> -->
-            <!-- <div class="privacy-check"><input #privacyCheck type="checkbox" id="privacyCheck"></div> -->
-                
-            
-        </div>
-        
+        <!-- <div class="privacy-check"><input #privacyCheck type="checkbox" id="privacyCheck"></div> -->
 
-        
 
     </div>
-
+</div>

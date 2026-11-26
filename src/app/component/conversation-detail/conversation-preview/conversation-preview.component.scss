@@ -230,6 +230,9 @@
             height: var(--heigth);
             opacity: 0.3;
             cursor: initial;
+            pointer-events: auto;
+            fill: var(--icon-fill-color);
+            color: var(--icon-fill-color);
             &.active {
                 opacity: 1;
                 cursor: pointer;
@@ -247,14 +250,6 @@
             background-color: var(--chat-footer-background-color);
             -webkit-box-flex: 1;
             width: 88%;
-        }
-        
-        .chat21-textarea-button {
-            pointer-events: auto;
-        }
-        .chat21-textarea-button {
-            fill: var(--icon-fill-color);
-            pointer-events: auto;
         }
 
         textarea,
