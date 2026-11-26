@@ -28,6 +28,8 @@ import { CustomLogger } from 'src/chat21-core/providers/logger/customLogger';
 import { LoggerInstance } from 'src/chat21-core/providers/logger/loggerInstance';
 import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { of } from 'rxjs';
+import { LocalSessionStorage } from 'src/chat21-core/providers/localSessionStorage';
+import { UserModel } from 'src/chat21-core/models/user';
  
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -88,6 +90,63 @@ describe('AppComponent', () => {
 
   it('should create the app', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('recipientId ownership', () => {
+    let storage: LocalSessionStorage;
+    let tiledeskAuthService: TiledeskAuthService;
+    const guestB = { uid: 'user-B', firstname: 'Guest', lastname: '', email: '' } as UserModel;
+
+    beforeEach(() => {
+      localStorage.clear();
+      storage = new LocalSessionStorage();
+      storage.initialize('widget_sv5', 'local', 'proj-123');
+      (component as any).appStorageService = storage;
+      storage.setItem('recipientId', 'support-group-proj-123-of-A');
+      storage.setItem('recipientIdOwner', 'user-A');
+      component.g.recipientId = 'support-group-proj-123-of-A';
+      component.g.attributes = {};
+
+      tiledeskAuthService = TestBed.inject(TiledeskAuthService);
+      spyOn(tiledeskAuthService, 'signInAnonymously').and.returnValue(Promise.resolve('JWT token-B'));
+      spyOn(tiledeskAuthService, 'getCurrentUser').and.returnValue(guestB);
+      component.messagingAuthService = jasmine.createSpyObj('MessagingAuthService', ['createCustomToken']);
+      component.chatManager.initialize();
+    });
+
+    afterEach(() => {
+      localStorage.clear();
+    });
+
+    it('window.Tiledesk("signInAnonymous") removes recipientId and recipientIdOwner', async () => {
+      await (component as any).signInAnonymous();
+      expect(storage.getItem('recipientId')).toBeNull();
+      expect(storage.getItem('recipientIdOwner')).toBeNull();
+      expect(component.g.recipientId).toBeNull();
+    });
+
+    it('authenticate() without a token signs in anonymously and removes recipientId and recipientIdOwner', async () => {
+      component.g.tiledeskToken = null;
+      (component as any).authenticate();
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(tiledeskAuthService.signInAnonymously).toHaveBeenCalled();
+      expect(storage.getItem('recipientId')).toBeNull();
+      expect(storage.getItem('recipientIdOwner')).toBeNull();
+      expect(component.g.recipientId).toBeNull();
+    });
+
+    it('startUI() does not reopen a conversation stored by another user', () => {
+      component.g.recipientId = null;
+      component.g.singleConversation = false;
+      component.g.departments = [];
+      spyOn(component as any, 'triggerOnViewInit').and.stub();
+      spyOn(component.g, 'setParentBodyStyleMobile').and.stub();
+      spyOn(component.g, 'setElementStyle').and.stub();
+      (component as any).startUI();
+      expect(component.g.recipientId).not.toBe('support-group-proj-123-of-A');
+      expect(storage.getItem('recipientId')).not.toBe('support-group-proj-123-of-A');
+    });
   });
 
   // it(`should have as title 'widget'`, () => {

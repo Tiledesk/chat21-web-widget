@@ -1,0 +1,66 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2870
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 # Bug: un nuovo guest pu\'f2 scrivere nella conversazione di un guest precedente\
+\
+## Contesto\
+Repository: chat21-web-widget (Angular). In produzione \'e8 successo questo: nello stesso browser il widget ha perso il `tiledeskToken` del guest A ma ha mantenuto `recipientId`. Al caricamento successivo si \'e8 autenticato in forma anonima come guest B e ha riaperto la conversazione di A. B scrive in una conversazione che a lui appare vuota, perch\'e9 non \'e8 membro del gruppo. I messaggi per\'f2 finiscono nella request di A e la dashboard mostra due guest diversi nella stessa conversazione.\
+\
+Le chiavi dello storage hanno la forma `widget_sv5_<projectId>_<key>` (vedi `LocalSessionStorage`).\
+\
+## Causa\
+Il problema \'e8 un'asimmetria tra le due chiavi. `recipientId` viene scritto in molti punti; `tiledeskToken` solo durante un sign-in. Nessuno dei due \'e8 legato all'utente a cui appartiene.\
+\
+1. Il sito ospite (un'app SPA) esegue `localStorage.clear()` mentre il widget \'e8 ancora attivo in memoria, collegato come A.\
+2. Il widget riscrive `recipientId` ma non il token. I punti in cui lo fa:\
+   - `manageWidgetSingleConversation()`, che dopo `getLastConversation()` salva la conversazione di A (circa riga 1029). \'c8 il percorso riprodotto in modalit\'e0 single conversation: si riduce a icona il widget e lo si riapre.\
+   - `onSelectedConversation()` (circa righe 1866 e 1869)\
+   - `startUI()` (circa riga 732)\
+   - `openConversationById()` (circa riga 1949)\
+3. Al reload non c'\'e8 pi\'f9 un token. `authenticate()` chiama `signInAnonymously()` (circa righe 608-627), che a differenza di `signInWithCustomToken()` (riga 634) non pulisce `recipientId`.\
+4. `startUI()` legge `recipientId` dallo storage (circa righe 733-739) e riapre la conversazione di A con l'utente B.\
+\
+Ci sono anche due difetti secondari che portano allo stesso stato:\
+- `TiledeskAuthService.logOut()` (`tiledesk-auth.service.ts`, chiamato anche sul 401 di `signInWithCustomToken`) rimuove `tiledeskToken` e `currentUser` ma non `recipientId`. Inoltre `AppComponent.signOut()` pulisce lo storage solo se `isLogged === true`, che all'avvio \'e8 falso.\
+- `LocalSessionStorage.clear()` scorre sempre `localStorage`, anche quando la persistenza \'e8 `session`. Con `persistence: 'session'`, quindi, `logout` e `reInit` non cancellano davvero le chiavi.\
+\
+## Cosa fare\
+1. **Legare `recipientId` all'utente che lo possiede.** Centralizza lettura e scrittura in due helper, sostituendo tutti gli usi diretti di `appStorageService.getItem/setItem/removeItem('recipientId')`:\
+   - `setStoredRecipientId(convId, ownerUid)` salva sia `recipientId` sia una nuova chiave `recipientIdOwner` con l'uid dell'utente corrente (`g.senderId` o `tiledeskAuthService.getCurrentUser().uid`). Con `convId` nullo rimuove entrambe.\
+   - `getStoredRecipientId(currentUid)` restituisce `recipientId` solo se `recipientIdOwner === currentUid`. Altrimenti rimuove entrambe le chiavi e restituisce `null`.\
+   - Ogni lettura di `recipientId` dallo storage (`startUI`, `openCloseWidget`, ecc.) deve passare da `getStoredRecipientId` con l'uid dell'utente autenticato in quel momento. Se l'utente non \'e8 ancora autenticato, la lettura va rimandata a dopo l'autenticazione.\
+2. **Pulire esplicitamente quando cambia l'identit\'e0:**\
+   - dopo un `signInAnonymously` riuscito, sia nel flusso `authenticate()` sia nel metodo esposto `window.Tiledesk('signInAnonymous')`, rimuovi `recipientId` e `recipientIdOwner` e azzera `g.recipientId`;\
+   - in `TiledeskAuthService.logOut()`, rimuovi anche `recipientId` e `recipientIdOwner`;\
+   - in `BSAuthStateChanged` con stato `online`: se `user.uid` \'e8 diverso dall'uid precedente in memoria, azzera `g.recipientId` e le chiavi nello storage prima di chiamare `startUI()` o `initConversationsHandler()`.\
+3. **Correggere `LocalSessionStorage.clear()`** perch\'e9 scorra lo storage effettivamente configurato: `sessionStorage` per `session`, `localStorage` per `local` o default, niente per `none`.\
+4. **Migrazione.** Gli utenti gi\'e0 esistenti hanno `recipientId` senza `recipientIdOwner`. In quel caso accetta `recipientId` e scrivi l'owner solo se l'utente si \'e8 autenticato con il token gi\'e0 presente nello storage (percorso `signInWithCustomToken`). Se nella sessione \'e8 stato creato un nuovo utente anonimo, scartalo.\
+5. **Non cambiare:**\
+   - il `recipientId` passato esplicitamente dal sito ospite (`tiledeskSettings.recipientId`, attributo o parametro URL): il sito lo imposta di proposito;\
+   - il comportamento di `restartConversation`, `startFromHome` e `singleConversation`, salvo quanto descritto sopra;\
+   - le API pubbliche `window.Tiledesk(...)`.\
+\
+## Fuori ambito\
+Le verifiche lato server (chat21-server che accetta messaggi da non membri, il webhook di tiledesk-server, la rotta `/closeg`) vengono corrette a parte: non modificarle qui.\
+\
+## Verifica\
+**Test unitari** (Jasmine/Karma, sul modello degli `*.spec.ts` esistenti), per gli helper e per `LocalSessionStorage.clear()` in modalit\'e0 `local` e `session`:\
+- con owner uguale all'utente corrente, `recipientId` viene restituito;\
+- con owner diverso o mancante dopo un sign-in anonimo, la funzione restituisce `null` e pulisce le chiavi;\
+- dopo `logOut()` e dopo un sign-in anonimo, le chiavi non ci sono pi\'f9.\
+\
+**Riproduzione manuale**, che prima della correzione deve fallire e dopo deve passare, con il widget in modalit\'e0 single conversation:\
+1. apri il widget e avvia una chat come guest A;\
+2. da console esegui `localStorage.clear()`;\
+3. riduci a icona il widget e riaprilo (oggi `recipientId` ricompare);\
+4. ricarica la pagina: nasce un nuovo guest B.\
+\
+Risultato atteso: B parte da una conversazione nuova con un `recipientId` nuovo, e nessun messaggio di B finisce nella request di A. Ripeti la prova senza single conversation, toccando la conversazione nella home del widget al posto del passo 3. Ripetila anche con `persistence: 'session'` usando `window.Tiledesk('logout')`.\
+\
+**Regressione:** un utente che ricarica la pagina senza aver perso il token deve ritrovare la propria conversazione aperta, sia in modalit\'e0 standard sia in single conversation.\
+\
+Infine aggiorna il `CHANGELOG.md` del widget con una voce che descriva la correzione.}

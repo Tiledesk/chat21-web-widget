@@ -6,6 +6,15 @@
 ### **Copyrigth**: 
 *Tiledesk SRL*
 
+# 5.3.2
+
+# 5.3.3
+- **added**: with interruption on, the flow can set how much the assistant lowers its voice while you talk over it, how long it waits after you stop before the volume comes back, and the longest time the volume stays lowered (Voice settings in the Design Studio, sent by the speech proxy). Without them it keeps 15%, 1.2 s and 6 s
+
+# 5.3.2-rc1
+- **bug fixed**: a new guest could reopen and write in the conversation of a previous guest in the same browser (e.g. after the host site ran `localStorage.clear()`). The stored `recipientId` is now bound to the user that owns it (`recipientIdOwner`) and is discarded when another user is authenticated, after an anonymous sign-in, on `logOut()` and when the logged user changes
+- **bug fixed**: `clear()` of the widget storage now clears `sessionStorage` when `persistence` is `session` (before it always cleared `localStorage`), so `logout` and `reInit` really remove the widget keys
+
 # 5.3.1
 - **bug fixed**: uploadService and tiledeskRequestSerivce cannot able to get tiledeskToken until widget is opened 
 

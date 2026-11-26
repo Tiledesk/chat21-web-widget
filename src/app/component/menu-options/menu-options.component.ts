@@ -35,9 +35,9 @@ export class MenuOptionsComponent implements OnInit {
     this.g.setParameter('isOpenMenuOptions', false, true);
     // this.g.soundEnabled = !this.g.soundEnabled;
     // if ( this.g.soundEnabled === false ) {
-    //   this.storageService.setItem('soundEnabled', false);
+    //   this.storageService.setItem(LOCALSTORAGE_KEYS.SOUND_ENABLED, false);
     // } else {
-    //   this.storageService.setItem('soundEnabled', true);
+    //   this.storageService.setItem(LOCALSTORAGE_KEYS.SOUND_ENABLED, true);
     // }
   }
 
